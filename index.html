@@ -849,6 +849,116 @@
             }
         }
 
+    
+        /* HOMEPAGE — one clear end-to-end workflow */
+        .workflow-section {
+            background: linear-gradient(180deg, #0b192b 0%, #07111f 100%);
+        }
+        .workflow-list {
+            position: relative;
+            display: grid;
+            gap: 13px;
+            max-width: 930px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            counter-reset: workflow;
+        }
+        .workflow-step {
+            display: grid;
+            grid-template-columns: 52px minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 20px;
+            padding: 22px 24px;
+            border: 1px solid rgba(255,255,255,.09);
+            border-radius: 15px;
+            background: rgba(16,34,57,.72);
+        }
+        .workflow-number {
+            display: grid;
+            place-items: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(57,135,255,.13);
+            color: #69b7ff;
+            font-size: 14px;
+            font-weight: 900;
+        }
+        .workflow-copy { min-width: 0; }
+        .workflow-kicker {
+            display: block;
+            margin-bottom: 4px;
+            color: #24d5e8;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+        }
+        .workflow-copy h3 {
+            margin: 0 0 5px;
+            color: #f5f8ff;
+            font-size: 18px;
+        }
+        .workflow-copy p {
+            margin: 0;
+            color: #9aabc1;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .workflow-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #55dce8;
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+        .workflow-link:hover { color: #fff; }
+        .workflow-links {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .workflow-note {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 10px;
+            max-width: 930px;
+            margin-top: 18px;
+            padding: 15px 18px;
+            border-left: 3px solid #24d5e8;
+            background: rgba(36,213,232,.06);
+            color: #9aabc1;
+            font-size: 12px;
+        }
+        .workflow-note strong { color: #f5f8ff; }
+        @media (max-width: 700px) {
+            .workflow-step {
+                grid-template-columns: 42px minmax(0, 1fr);
+                gap: 12px;
+                padding: 17px;
+            }
+            .workflow-number { width: 38px; height: 38px; }
+            .workflow-copy h3 { font-size: 16px; }
+            .workflow-copy p { font-size: 12px; }
+            .workflow-step > .workflow-link,
+            .workflow-step > .workflow-links {
+                grid-column: 2;
+                margin-top: 1px;
+            }
+            .workflow-links {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 8px 16px;
+            }
+            .workflow-link { font-size: 11px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .workflow-link { transition: none; }
+        }
+
     </style>
     <link rel="stylesheet" href="assets/idea-shell.css">\n</head>
 
@@ -930,276 +1040,89 @@
     </div>
 </section>
 
-<!-- FEATURES -->
-<section class="section features-section">
-    <div class="container">
-
-        <div class="section-header">
-            <div class="section-label">OUR ECOSYSTEM</div>
-            <h2 class="section-title">Bitta platforma. Cheksiz imkoniyatlar.</h2>
-            <p class="section-description">
-                G‘oyadan natijagacha bo‘lgan jarayon uchun
-                barcha muhim imkoniyatlar yagona maydonda.
-            </p>
-        </div>
-
-        <div class="feature-grid">
-
-            <article class="feature-card">
-                <div class="feature-icon">🚀</div>
-                <h3>Loyihalar</h3>
-                <p>
-                    O‘z g‘oyangizni loyiha sifatida taqdim eting,
-                    kerakli resurslar va hamkorlarni izlang.
-                </p>
-                <a href="projects.html" class="feature-link">
-                    Loyihalarni ko‘rish →
-                </a>
-            </article>
-
-            <article class="feature-card">
-                <div class="feature-icon">👥</div>
-                <h3>Jamoalar</h3>
-                <p>
-                    O‘z yo‘nalishingiz bo‘yicha hamfikr insonlarni
-                    toping va kuchli jamoa shakllantiring.
-                </p>
-                <a href="teams.html" class="feature-link">
-                    Jamoalarni ko‘rish →
-                </a>
-            </article>
-
-            <article class="feature-card">
-                <div class="feature-icon">💼</div>
-                <h3>Investorlar markazi</h3>
-                <p>
-                    Istiqbolli loyihalar va ularni qo‘llab-quvvatlash
-                    imkoniyatlarini bir joyda toping.
-                </p>
-                <a href="investors.html" class="feature-link">
-                    Investorlar →
-                </a>
-            </article>
-
-            <article class="feature-card">
-                <div class="feature-icon">🤝</div>
-                <h3>Hamkorlik tizimi</h3>
-                <p>
-                    Loyiha egalari va investorlar o‘rtasida
-                    hamkorlik takliflarini shakllantiring.
-                </p>
-                <a href="offers.html" class="feature-link">
-                    Takliflarni ko‘rish →
-                </a>
-            </article>
-
-            <article class="feature-card">
-                <div class="feature-icon">🌍</div>
-                <h3>Global bozor</h3>
-                <p>
-                    Loyihalar, xizmatlar, resurslar va
-                    imkoniyatlarni yagona maydonda kashf eting.
-                </p>
-                <a href="marketplace.html" class="feature-link">
-                    Bozorga o‘tish →
-                </a>
-            </article>
-            <article class="feature-card">
-                <div class="feature-icon">👤</div>
-                <h3>Shaxsiy kabinet</h3>
-                <p>
-                    Profilingizni boshqaring va platformadagi
-                    faoliyatingizni nazorat qiling.
-                </p>
-                <a href="profile.html" class="feature-link">
-                    Kabinetga o‘tish →
-                </a>
-            </article>
-
-        </div>
+<!-- MAIN WORKFLOW -->
+<section class="section workflow-section" id="ecosystem-map">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">IDEA LAB ISH JARAYONI</div>
+      <h2 class="section-title">G‘oyadan natijagacha — bitta izchil yo‘l.</h2>
+      <p class="section-description">
+        Har bir bo‘lim o‘z vazifasini bajaradi. Keyingi bosqichga kerakli havola shu yerda.
+        Keraksiz takrorlar va aralash menyularsiz.
+      </p>
     </div>
-</section>
 
-<!-- ECOSYSTEM MAP -->
-<section class="section" id="ecosystem-map">
-    <div class="container">
-        <div class="section-header">
-            <div class="section-label">IDEA LAB PLATFORM MAP</div>
-            <h2 class="section-title">Bitta ekotizim — o‘zaro bog‘langan imkoniyatlar.</h2>
-            <p class="section-description">
-                Mavjud bo‘limlar va kelgusi xizmatlar bir xaritada.
-                Holat belgisi interfeys tayyorligini bildiradi, xizmat to‘liq ishga tushganini emas.
-            </p>
-            <div class="hero-actions">
-                <a class="btn btn-outline" href="roadmap.html">Barcha kelajak rejalarini ko‘rish →</a>
-            </div>
+    <ol class="workflow-list">
+      <li class="workflow-step">
+        <span class="workflow-number">01</span>
+        <div class="workflow-copy">
+          <span class="workflow-kicker">BOSHLASH</span>
+          <h3>G‘oya va loyiha</h3>
+          <p>G‘oyani shakllantiring, loyiha sifatida taqdim eting va mavjud loyihalarni ko‘ring.</p>
         </div>
-
-        <div class="feature-grid">
-            <article class="feature-card module-card">
-                <span class="module-status available">Interfeys mavjud</span>
-                <div class="feature-icon">🚀</div>
-                <h3>G‘oyalar va loyihalar</h3>
-                <p>G‘oyani loyiha sifatida taqdim etish, ko‘rish va rivojlantirish.</p>
-                <a class="feature-link" href="projects.html">Loyihalarga o‘tish →</a>
-            </article>
-            <article class="feature-card module-card">
-                <span class="module-status available">Interfeys mavjud</span>
-                <div class="feature-icon">👥</div>
-                <h3>Jamoa va vakansiyalar</h3>
-                <p>Loyiha uchun jamoa tuzish, ish o‘rinlari va arizalarni ko‘rish.</p>
-                <a class="feature-link" href="teams.html">Jamoalar markazi →</a>
-            </article>
-            <article class="feature-card module-card">
-                <span class="module-status available">Interfeys mavjud</span>
-                <div class="feature-icon">🧑‍💻</div>
-                <h3>Mutaxassislar</h3>
-                <p>Ko‘nikmalar, tajriba va professional profillar katalogi.</p>
-                <a class="feature-link" href="specialists.html">Mutaxassislarni ko‘rish →</a>
-            </article>
-            <article class="feature-card module-card">
-                <span class="module-status available">Interfeys mavjud</span>
-                <div class="feature-icon">🤝</div>
-                <h3>Investorlar va hamkorlik</h3>
-                <p>Investor profillari, hamkorlik takliflari va murojaatlar.</p>
-                <a class="feature-link" href="investors.html">Investorlar markazi →</a>
-            </article>
-            <article class="feature-card module-card">
-                <span class="module-status available">Demo rejim</span>
-                <div class="feature-icon">🔄</div>
-                <h3>Talab va takliflar</h3>
-                <p>Mahsulot, xizmat, uskuna va resurslarga ehtiyoj yoki taklif joylash.</p>
-                <a class="feature-link" href="exchange.html">Talab va takliflar →</a>
-            </article>
-            <article class="feature-card module-card">
-                <span class="module-status available">Demo rejim</span>
-                <div class="feature-icon">🌐</div>
-                <h3>Global bozor</h3>
-                <p>Loyihalar va imkoniyatlarni yagona katalogda kashf etish.</p>
-                <a class="feature-link" href="marketplace.html">Bozorga o‘tish →</a>
-            </article>
-            <article class="feature-card module-card">
-                <span class="module-status available">Interfeys mavjud</span>
-                <div class="feature-icon">📨</div>
-                <h3>Takliflar va muloqot</h3>
-                <p>Hamkorlik takliflari, arizalar va muloqot interfeysi.</p>
-                <a class="feature-link" href="offers.html">Takliflar markazi →</a>
-            </article>
-            <article class="feature-card module-card">
-                <span class="module-status available">Demo rejim</span>
-                <div class="feature-icon">📊</div>
-                <h3>Shaxsiy boshqaruv</h3>
-                <p>Profil va platformadagi faoliyatni boshqarish ko‘rinishi.</p>
-                <a class="feature-link" href="dashboard.html">Dashboard →</a>
-            </article>
-            <article class="feature-card module-card planned">
-                <span class="module-status planned">Kelajak rejasi</span>
-                <div class="feature-icon">💳</div>
-                <h3>Moliya va hisob-kitob</h3>
-                <p>Hisob-faktura, to‘lov provayderlari va hisob yuritish integratsiyalari.</p>
-                <a class="feature-link" href="roadmap.html">Reja tafsilotlari →</a>
-            </article>
-            <article class="feature-card module-card planned">
-                <span class="module-status planned">Kelajak rejasi</span>
-                <div class="feature-icon">🏢</div>
-                <h3>Mulk va infratuzilma</h3>
-                <p>Yer, bino, ofis, ombor va ijara imkoniyatlari.</p>
-                <a class="feature-link" href="roadmap.html">Reja tafsilotlari →</a>
-            </article>
-            <article class="feature-card module-card planned">
-                <span class="module-status planned">Kelajak rejasi</span>
-                <div class="feature-icon">📚</div>
-                <h3>Ta’lim va hamjamiyat</h3>
-                <p>Ta’lim, tadbirlar, ilmiy va ijtimoiy tashabbuslar.</p>
-                <a class="feature-link" href="roadmap.html">Reja tafsilotlari →</a>
-            </article>
-            <article class="feature-card module-card planned">
-                <span class="module-status planned">Kelajak rejasi</span>
-                <div class="feature-icon">📡</div>
-                <h3>IoT va aqlli tahlil</h3>
-                <p>Qurilmalar monitoringi, tahlil va avtomatlashtirish integratsiyalari.</p>
-                <a class="feature-link" href="roadmap.html">Reja tafsilotlari →</a>
-            </article>
-
-            <article class="feature-card module-card planned">
-                <span class="module-status planned">Kelajak rejasi</span>
-                <div class="feature-icon">🪪</div>
-                <h3>Yagona akkaunt va ko‘p rolli profil</h3>
-                <p>Bitta akkaunt orqali tadbirkor, mutaxassis, xaridor, ish izlovchi va boshqa faoliyatlarni boshqarish.</p>
-                <a class="feature-link" href="roadmap.html">Reja tafsilotlari →</a>
-            </article>
-            <article class="feature-card module-card planned">
-                <span class="module-status planned">Kelajak rejasi</span>
-                <div class="feature-icon">📨</div>
-                <h3>Yagona arizalar va xabarlar</h3>
-                <p>Barcha modullardagi murojaatlar, statuslar, suhbatlar va shaxsiy bildirishnomalar.</p>
-                <a class="feature-link" href="roadmap.html">Reja tafsilotlari →</a>
-            </article>
-            <article class="feature-card module-card planned">
-                <span class="module-status planned">Kelajak rejasi</span>
-                <div class="feature-icon">🧠</div>
-                <h3>Aqlli moslashtirish</h3>
-                <p>Talab, taklif, ko‘nikma, joylashuv va imkoniyatlarni tushuntiriladigan tavsiyalar bilan bog‘lash.</p>
-                <a class="feature-link" href="roadmap.html">Reja tafsilotlari →</a>
-            </article>
-            <article class="feature-card module-card planned">
-                <span class="module-status planned">Kelajak rejasi</span>
-                <div class="feature-icon">🛒</div>
-                <h3>Mahsulot, xizmat va buyurtmalar</h3>
-                <p>Sotuvchi, xaridor, katalog, buyurtma va xizmat ko‘rsatish jarayonlari.</p>
-                <a class="feature-link" href="roadmap.html">Reja tafsilotlari →</a>
-            </article>
-            <article class="feature-card module-card planned">
-                <span class="module-status planned">Kelajak rejasi</span>
-                <div class="feature-icon">🚚</div>
-                <h3>Logistika va ta’minot</h3>
-                <p>Yetkazib berish, ombor, inventar, xarid va ta’minot zanjiri.</p>
-                <a class="feature-link" href="roadmap.html">Reja tafsilotlari →</a>
-            </article>
-            <article class="feature-card module-card planned">
-                <span class="module-status planned">Kelajak rejasi</span>
-                <div class="feature-icon">🎓</div>
-                <h3>Ta’lim va ilm-fan</h3>
-                <p>Kurslar, mentorlik, tadqiqotlar, laboratoriyalar va innovatsion ishlanmalar.</p>
-                <a class="feature-link" href="roadmap.html">Reja tafsilotlari →</a>
-            </article>
-            <article class="feature-card module-card planned">
-                <span class="module-status planned">Kelajak rejasi</span>
-                <div class="feature-icon">🎪</div>
-                <h3>Tadbirlar va ko‘ngillilik</h3>
-                <p>Forumlar, tanlovlar, klublar, ko‘ngillilar va ijtimoiy tashabbuslar.</p>
-                <a class="feature-link" href="roadmap.html">Reja tafsilotlari →</a>
-            </article>
-            <article class="feature-card module-card planned">
-                <span class="module-status planned">Kelajak rejasi</span>
-                <div class="feature-icon">📑</div>
-                <h3>Raqamli hujjatlar va kelishuvlar</h3>
-                <p>Hujjat aylanishi, shartnoma jarayonlari, tasdiqlash va audit tarixi.</p>
-                <a class="feature-link" href="roadmap.html">Reja tafsilotlari →</a>
-            </article>
-            <article class="feature-card module-card planned">
-                <span class="module-status planned">Kelajak rejasi</span>
-                <div class="feature-icon">🛡️</div>
-                <h3>Ishonch va xavfsizlik</h3>
-                <p>Profil tasdiqlash, moderatsiya, shikoyatlar, reyting va nizolarni ko‘rib chiqish.</p>
-                <a class="feature-link" href="roadmap.html">Reja tafsilotlari →</a>
-            </article>
-            <article class="feature-card module-card planned">
-                <span class="module-status planned">Kelajak rejasi</span>
-                <div class="feature-icon">📈</div>
-                <h3>AI, analitika va avtomatlashtirish</h3>
-                <p>Hisobotlar, aqlli yordamchilar va inson tasdig‘i bilan ishlaydigan jarayonlar.</p>
-                <a class="feature-link" href="roadmap.html">Reja tafsilotlari →</a>
-            </article>
-            <article class="feature-card module-card planned">
-                <span class="module-status planned">Kelajak rejasi</span>
-                <div class="feature-icon">🌍</div>
-                <h3>Xalqaro platforma va integratsiyalar</h3>
-                <p>Ko‘p tillilik, turli valyutalar, ochiq API va tashqi xizmatlarga ulanish.</p>
-                <a class="feature-link" href="roadmap.html">Reja tafsilotlari →</a>
-            </article>
+        <a href="projects.html" class="workflow-link">Loyihalar markazi <span aria-hidden="true">→</span></a>
+      </li>
+      <li class="workflow-step">
+        <span class="workflow-number">02</span>
+        <div class="workflow-copy">
+          <span class="workflow-kicker">INSONLAR</span>
+          <h3>Jamoa va mutaxassislar</h3>
+          <p>Loyihaga mos hamkorlarni toping, jamoa tuzing va vakansiyalarni ko‘rib chiqing.</p>
         </div>
+        <div class="workflow-links">
+          <a href="teams.html" class="workflow-link">Jamoalar <span aria-hidden="true">→</span></a>
+          <a href="specialists.html" class="workflow-link">Mutaxassislar <span aria-hidden="true">→</span></a>
+        </div>
+      </li>
+      <li class="workflow-step">
+        <span class="workflow-number">03</span>
+        <div class="workflow-copy">
+          <span class="workflow-kicker">TA’MINOT</span>
+          <h3>Resurs va bozor</h3>
+          <p>Kerakli resurslarni izlang, talab yoki taklif joylang va bozor imkoniyatlarini o‘rganing.</p>
+        </div>
+        <div class="workflow-links">
+          <a href="exchange.html" class="workflow-link">Talab va taklif <span aria-hidden="true">→</span></a>
+          <a href="marketplace.html" class="workflow-link">Global bozor <span aria-hidden="true">→</span></a>
+        </div>
+      </li>
+      <li class="workflow-step">
+        <span class="workflow-number">04</span>
+        <div class="workflow-copy">
+          <span class="workflow-kicker">MOLIYALASHTIRISH</span>
+          <h3>Investor va hamkorlik</h3>
+          <p>Loyihaga sarmoya yoki hamkorlik imkoniyatlarini toping va takliflarni ko‘rib chiqing.</p>
+        </div>
+        <div class="workflow-links">
+          <a href="investors.html" class="workflow-link">Investorlar <span aria-hidden="true">→</span></a>
+          <a href="offers.html" class="workflow-link">Takliflar <span aria-hidden="true">→</span></a>
+        </div>
+      </li>
+      <li class="workflow-step">
+        <span class="workflow-number">05</span>
+        <div class="workflow-copy">
+          <span class="workflow-kicker">MUROJAATLAR</span>
+          <h3>Arizalar va kelishuvlar</h3>
+          <p>Yuborilgan va kelib tushgan arizalarni bitta markazdan kuzating.</p>
+        </div>
+        <a href="applications.html" class="workflow-link">Arizalar markazi <span aria-hidden="true">→</span></a>
+      </li>
+      <li class="workflow-step">
+        <span class="workflow-number">06</span>
+        <div class="workflow-copy">
+          <span class="workflow-kicker">NAZORAT</span>
+          <h3>Boshqaruv va natija</h3>
+          <p>Shaxsiy faoliyat, loyiha holati va keyingi vazifalarni boshqaruv panelida kuzating.</p>
+        </div>
+        <a href="dashboard.html" class="workflow-link">Boshqaruv paneli <span aria-hidden="true">→</span></a>
+      </li>
+    </ol>
+
+    <div class="workflow-note">
+      <strong>Bir-biriga bog‘langan tizimlar.</strong>
+      <span>Har bir bosqich alohida bo‘lim, lekin barchasi bitta loyiha yo‘lida xizmat qiladi.</span>
     </div>
+  </div>
 </section>
 
 <!-- RECENT PROJECTS -->
