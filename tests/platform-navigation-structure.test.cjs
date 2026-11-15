@@ -25,7 +25,7 @@ test("related platform modules are grouped into a single directory", () => {
 });
 
 test("responsive menu supports keyboard dismissal and closes after navigation", () => {
-  assert.match(shell, /event\.key==="Escape"/);
+  assert.match(shell, /\.key==="Escape"/);
   assert.match(shell, /menu\.open=false/);
   assert.match(styles, /max-height:min\(70vh,620px\)/);
 });
