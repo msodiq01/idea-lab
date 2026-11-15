@@ -19,7 +19,7 @@ Frontend demo faqat submitted holatini yaratadi. Brauzerda reviewer action yoki 
 
 ## 3. Ma’lumotlarni minimallashtirish
 - Demo/localStorage ichida pasport, STIR, bank hisob raqami, karta raqami yoki to‘liq hujjat nusxasi saqlanmaydi.
-- Backend evidence jadvali private storage yo‘li va minimal metadata uchun; migration Storage bucket yoki upload endpoint yaratmaydi.
+- Backend evidence jadvali private storage yo‘li va minimal metadata uchun; Storage va API faqat alohida migration/Edge Function orqali boshqariladi.
 - Hujjatlar keyinchalik alohida private bucket, qisqa muddatli signed URL, ruxsatli backend va retention/deletion siyosati bilan ulanadi.
 - Rozilik versiyasi va server vaqti ariza bilan qayd etiladi.
 
@@ -61,7 +61,7 @@ Fayl: supabase/migrations/20261118_supplier_verification_private_storage.sql
 - Ta’minotchi o‘z hujjatini, faol reviewer esa tekshiruv uchun hujjatni o‘qiy oladi.
 - Client uchun object update/delete siyosati yo‘q; o‘chirish yoki almashtirish keyinchalik alohida server-side auditli jarayon bo‘lishi kerak.
 
-Bu faqat bucket va Storage RLS poydevori. Hozircha upload UI, signed URL backend endpoint, antivirus/content inspection, evidence metadata yozuvchi ishonchli backend yoki retention cleanup job yo‘q. MIME header fayl mazmunining xavfsizligini isbotlamaydi. Real hujjatlarni bu bosqichda yuklamang.
+Bu bo‘lim private bucket va Storage RLS poydevorining o‘sha paytdagi holatini qayd etadi. Keyingi 2026-11-19 bo‘limida Edge Function poydevori qo‘shilgan. MIME header fayl mazmunining xavfsizligini isbotlamaydi. Real hujjatlarni hali yuklamang.
 
 ## 7. Hujjat API poydevori — 2026-11-19
 Fayllar: `supabase/functions/supplier-verification-evidence/` va `supabase/migrations/20261119_supplier_verification_evidence_access_audit.sql`.
@@ -76,7 +76,7 @@ Service-role kaliti faqat Edge Function secret bo‘lishi shart. Brauzerga hech 
 Cheklovlar: fayl mazmuni antivirus yoki haqiqiylik tekshiruvidan o‘tmaydi; MIME metadata yetarli xavfsizlik isboti emas. Audit faqat link berilganini qayd etadi, yuklab olish sodir bo‘lganini emas. Reviewer vakolati hozir global allowlist — case-level assignment yo‘q. Rate limit, retention cleanup va o‘chirish jarayoni yo‘q. Function deploy qilinmagan, migration staging'da bajarilmagan. Haqiqiy hujjatlar bilan ishlash hali boshlanmasin.
 
 ## 8. Sinov holati
-`tests/supplier-verification-migration.test.cjs` va `tests/supplier-verification-reviewers.test.cjs` migration matnining xavfsizlik shartlarini statik tekshiradi. Bu SQL parser, Postgres integratsion test yoki jonli RLS sinovi emas. Migration faqat alohida staging loyihasida qo‘llanib, ikki akkauntli testdan o‘tkazilgandan keyin foydalanishga yaroqli deb baholanadi.
+`tests/supplier-verification-migration.test.cjs`, `tests/supplier-verification-reviewers.test.cjs`, `tests/supplier-verification-storage.test.cjs` va `tests/supplier-verification-evidence-api.test.cjs` migration/API matnining xavfsizlik shartlarini statik tekshiradi. Bu SQL parser, Deno runtime testi, Postgres integratsion test yoki jonli Storage RLS sinovi emas. Migration faqat alohida staging loyihasida qo‘llanib, ikki akkauntli testdan o‘tkazilgandan keyin foydalanishga yaroqli deb baholanadi.
 
 ## 9. Qabul mezonlari
 - [ ] Test Supabase loyihasi va egasi tasdiqlangan.
