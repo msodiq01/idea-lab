@@ -2,6 +2,7 @@
 const pages=[
 ["Bosh sahifa","index.html"],
 ["Dashboard","dashboard.html"],
+["Talab & Taklif","exchange.html"],
 ["Loyihalar","projects.html"],
 ["Investorlar","investors.html"],
 ["Takliflar","offers.html"],
