@@ -145,6 +145,12 @@ comment on table public.supplier_verification_evidence is 'Private evidence meta
 comment on table public.supplier_verification_events is 'Audit trail. Clients may read own events but cannot insert, update, or delete events.';
 comment on column public.supplier_verification_evidence.private_storage_path is 'Opaque path in a future private Storage bucket; never a public URL and not proof of verification.';
 
+
+drop trigger if exists set_updated_at on public.supplier_verification_applications;
+create trigger set_updated_at
+before update on public.supplier_verification_applications
+for each row execute procedure public.set_updated_at();
+
 commit;
 
 -- Staging-only checks:
