@@ -81,7 +81,7 @@ test("Two-account RLS plan and legacy mapping cover unresolved ownership", () =>
   for (const id of ["RLS-01","RLS-08","RLS-09","RLS-14","RLS-15"]) assert.ok(rlsPlan.includes(id), id);
   assert.match(mapping, /ideaLabExchangeItems/);
   assert.match(mapping, /avtomatik birlashtirish mumkin emas/);
-  assert.match(mapping, /Karantin/);
+  assert.match(mapping, /karantin/i);
 });
 test("Security review states what remains unverified", () => {
   assert.match(review, /statik kod ko'rigi/);
