@@ -58,6 +58,7 @@ test("task assignee must be project owner or active project member", () => {
   assert.match(sql, /create trigger project_tasks_validate_assignee/i);
   assert.match(sql, /function idea_private\.is_active_project_member\([\s\S]*?security definer[\s\S]*?set search_path = ''/i);
   assert.match(sql, /auth\.uid\(\)/i);
+  assert.match(sql, /pg_catalog\.pg_trigger_depth\(\) > 0/i);
   assert.match(sql, /grant execute on function idea_private\.is_active_project_member\(uuid, uuid\)\s+to authenticated/i);
 });
 
