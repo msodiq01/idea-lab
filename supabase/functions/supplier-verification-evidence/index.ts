@@ -209,9 +209,15 @@ Deno.serve(async (request) => {
         .maybeSingle();
       if (applicationError) throw applicationError;
       const isOwner = application?.supplier_user_id === actor.id;
-      const { data: reviewer, error: reviewerError } = await admin.rpc("is_supplier_verification_reviewer");
+      const { data: reviewerRecord, error: reviewerError } = await admin
+        .from("supplier_verification_reviewers")
+        .select("user_id")
+        .eq("user_id", actor.id)
+        .eq("is_active", true)
+        .maybeSingle();
       if (reviewerError) throw reviewerError;
-      if (!isOwner && reviewer !== true) return json({ error: "Not authorized" }, 403, origin);
+      const isActiveReviewer = Boolean(reviewerRecord);
+      if (!isOwner && !isActiveReviewer) return json({ error: "Not authorized" }, 403, origin);
 
       const { data: signed, error: signError } = await admin.storage
         .from(BUCKET)
