@@ -336,6 +336,57 @@
     return allowed.filter(status => status !== "withdrawn");
   }
 
+  const APPLICATION_ACTIVITY_KEY = "activity.application.v1";
+
+  function recordApplicationActivity(application, details = {}) {
+    if (!application || typeof application !== "object" || !application.id) {
+      return reportError("INVALID_APPLICATION_ACTIVITY", "Ariza faoliyati uchun ariza ID kerak.");
+    }
+    const type = details.type === "submitted" ? "submitted" : "status_changed";
+    const toStatus = normalizeApplicationStatus(details.toStatus ?? application.status);
+    const fromStatus = details.fromStatus == null ? null : normalizeApplicationStatus(details.fromStatus);
+    if (type === "status_changed" && (!fromStatus || fromStatus === toStatus || !APPLICATION_TRANSITIONS[fromStatus]?.includes(toStatus))) {
+      return reportError("INVALID_APPLICATION_TRANSITION", "Ariza holati o‘zgarishi ruxsat etilmagan.");
+    }
+    const profile = currentProfile();
+    const source = cleanText(details.source || application.source || "unknown", 60);
+    const event = {
+      id: createId(),
+      type,
+      applicationId: String(application.id),
+      source,
+      title: cleanText(details.title || application.title || application.projectName || application.jobTitle || application.teamName || application.offerTitle || "Ariza", 180),
+      fromStatus,
+      toStatus,
+      actorId: profile?.id ? String(profile.id) : "",
+      actorName: cleanText(profile?.fullName || details.actorName || "", 120),
+      recipientId: details.recipientId ? String(details.recipientId) : "",
+      createdAt: new Date().toISOString()
+    };
+    const events = store.get(APPLICATION_ACTIVITY_KEY, []);
+    const rows = Array.isArray(events) ? events : [];
+    rows.push(event);
+    const saved = store.set(APPLICATION_ACTIVITY_KEY, rows.slice(-5000));
+    if (!saved.ok) return saved;
+    emit("application:activity", event);
+    return { ok: true, event };
+  }
+
+  function listApplicationActivity(options = {}) {
+    const events = store.get(APPLICATION_ACTIVITY_KEY, []);
+    if (!Array.isArray(events)) return [];
+    const applicationId = options.applicationId == null ? "" : String(options.applicationId);
+    const recipientId = options.recipientId == null ? "" : String(options.recipientId);
+    const source = options.source == null ? "" : String(options.source);
+    const limit = Math.min(500, Math.max(1, Number(options.limit) || 100));
+    return events
+      .filter(event => (!applicationId || String(event.applicationId) === applicationId) &&
+        (!recipientId || String(event.recipientId) === recipientId) &&
+        (!source || String(event.source) === source))
+      .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+      .slice(0, limit);
+  }
+
   function safeJsonParse(raw, fallback = null) {
     if (typeof raw !== "string") return fallback;
     try { return JSON.parse(raw); } catch (_) { return fallback; }
@@ -463,6 +514,10 @@
     safeJsonParse, cleanText, isValidMoney, isValidIsoDate, validateFields,
     normalizeApiError, normalizePagination
   });
+  const activity = Object.freeze({
+    recordApplication: recordApplicationActivity,
+    listApplications: listApplicationActivity
+  });
   const applications = Object.freeze({
     transitions: APPLICATION_TRANSITIONS,
     normalizeStatus: normalizeApplicationStatus,
@@ -492,6 +547,7 @@
     storageAvailable,
     validation,
     applications,
+    activity,
     privacy,
     backend
   });
