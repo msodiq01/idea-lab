@@ -19,7 +19,7 @@ returns boolean
 language sql
 stable
 security definer
-set search_path = pg_catalog, idea_app
+set search_path = ''
 as $function$
   select (select auth.uid()) is not null
     and exists (
@@ -37,7 +37,7 @@ returns boolean
 language sql
 stable
 security definer
-set search_path = pg_catalog, idea_app
+set search_path = ''
 as $function$
   select (select auth.uid()) is not null
     and p_allowed_roles is not null
@@ -55,7 +55,7 @@ returns boolean
 language sql
 stable
 security definer
-set search_path = pg_catalog, idea_app
+set search_path = ''
 as $function$
   select (select auth.uid()) is not null
     and exists (

@@ -83,6 +83,19 @@ Profil va tashkilotlar uchun birinchi draft migration `20261116120000_idea_app_i
 
 Bu jadval va statuslar hozirgi DDL draftining chegarasini belgilaydi; ularni frontend'dan hozircha ishlatib bo'lmaydi.
 
+### Membership commands and task assignment — repository draft
+
+Migration `20261116150000_idea_app_project_member_commands.sql` adds guarded state transitions without creating an exposed SECURITY DEFINER RPC:
+
+- Invitee accepts/declines their own invitation; owner/manager approve or reject pending requests; manager cannot promote; only owner changes active member roles; members can leave voluntarily.
+- Membership identity and invitation fields are immutable during UPDATE.
+- Task owner/manager may assign only to project owner or active project member; contributors cannot reassign another person.
+- State transitions are enforced by SECURITY INVOKER triggers plus column-level UPDATE grants and RLS.
+- A private SECURITY DEFINER lookup validates another user's active membership only while called from a trigger (`pg_trigger_depth() > 0)); it has an empty `search_path`, requires `auth.uid()`, and remains outside Data API exposed schemas.
+- `idea_app` schema USAGE is granted to authenticated for trigger execution, but no Data API exposure or table-wide SELECT/INSERT/DELETE grants are made.
+
+Acceptance plan: `verification/project-commands-acceptance.md`. This remains a repository draft; no staging or production migration has been applied.
+
 ### Projects RLS — repository draft
 
 Migration `20261116140000_idea_app_projects_rls.sql` loyiha, jamoa, vazifa va yangiliklar uchun siyosatlarni belgilaydi. U faqat repository'da, jonli Supabase'ga qo'llanmagan.

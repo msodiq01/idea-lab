@@ -7,6 +7,12 @@ Bu papkadagi SQL — IDEA LAB umumiy backendini tayyorlash uchun. Ulangan Supaba
 - `migrations/20261116120000_idea_app_identity_organizations.sql` — alohida `idea_app` sxemasida profil, maxfiy kontakt, tashkilot va tashkilot a'zoligi poydevori.
 - `migrations/20261116130000_idea_app_projects_teams.sql` — loyiha, jamoa a'zoligi, vazifalar va yangiliklar moduli; birinchi identity/organization migration'iga bog'liq.
 - `migrations/20261116140000_idea_app_projects_rls.sql` — loyiha, jamoa, vazifa va yangiliklar uchun RLS siyosatlari drafti. Faqat repository'da; jonli Supabase'ga qo'llanmagan.
+- `migrations/20261116150000_idea_app_project_member_commands.sql` — taklifni qabul/rad etish, qo'shilish so'rovini tasdiqlash/rad etish, ixtiyoriy chiqish, owner-only rol o'zgarishi va task tayinlash uchun himoyalangan triggerlar. Faqat repository draft.
+- Membership va task amallari ochiq SECURITY DEFINER RPC orqali emas, SECURITY INVOKER triggerlari + ustun darajasidagi UPDATE grantlari + RLS orqali bajariladi.
+- Bitta qo'shimcha private membership lookup SECURITY DEFINER: faqat authenticated uchun EXECUTE, `auth.uid()` talab qiladi, `search_path = ''`, `idea_private` ichida va Data API'ga expose qilinmaydi.
+- Taskni boshqa a'zoga faqat owner/manager tayinlaydi; maqsad foydalanuvchi loyiha owneri yoki active a'zo bo'lishi shart.
+- Qabul sinovlari: `verification/project-commands-acceptance.md`; read-only preflight endi command triggerlarini ham tekshiradi.
+
 - RLS yordamchi funksiyalari hech qachon Data API'ga expose qilinmasligi kerak bo'lgan alohida `idea_private` sxemasida. Ular `auth.uid()` bilan tekshiradi, qat'iy `search_path` ishlatadi va faqat `authenticated` uchun EXECUTE oladi.
 - Jadval grantlari berilmagan; `idea_app` Data API'ga expose qilinmagan. Shuning uchun policy drafti hozircha brauzerga kirish bermaydi.
 - Qabul sinovlari: `verification/project-rls-acceptance.md`; read-only staging tekshiruvi: `verification/project-rls-preflight.sql`.

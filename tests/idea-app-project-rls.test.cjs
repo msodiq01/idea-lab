@@ -27,7 +27,7 @@ test("cross-row helpers use SECURITY DEFINER with fixed search_path and auth.uid
     const bodyEnd = sql.indexOf("$function$;", sql.indexOf("as $function$", start));
     const body = sql.slice(start, bodyEnd + 11);
     assert.match(body, /security definer/i);
-    assert.match(body, /set search_path = pg_catalog, idea_app/i);
+    assert.match(body, /set search_path = ''/i);
     assert.match(body, /auth\.uid\(\)/i);
     assert.doesNotMatch(body, /execute\s+|format\s*\(/i);
   }
@@ -71,7 +71,7 @@ test("self-service membership creates only pending contributor/viewer requests",
 });
 
 test("membership transitions are not client-updatable", () => {
-  assert.doesNotMatch(executableSql, /create policy\s+\S+\s+on idea_private\.project_members\s+for update/i);
+  assert.doesNotMatch(executableSql, /create policy\s+\S+\s+on idea_app\.project_members\s+for update/i);
 });
 
 test("task writes bind creator and assignee to the current user", () => {
