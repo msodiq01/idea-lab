@@ -21,10 +21,15 @@ root.innerHTML='<div class="il-top"><a class="il-brand" href="index.html">IDEA <
 document.body.insertBefore(root,document.body.firstChild);
 /* Eski sahifa menyularini olib tashlaymiz; sahifa sarlavhasi va kontent qoladi. */
 document.querySelectorAll("body nav, body header nav").forEach(nav=>{if(root.contains(nav))return;const legacyShell=nav.closest(".navbar, .header");if(legacyShell&&!root.contains(legacyShell))legacyShell.remove();else nav.remove()});
-const read=key=>{try{const data=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(data)?data:[]}catch(_){return[]}};
+const read=key=>{try{const data=window.IDEALAB?IDEALAB.legacy.read(key,[]):JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(data)?data:[]}catch(_){return[]}};
 const set=(key,value)=>{const node=root.querySelector('[data-il-metric="'+key+'"]');if(node)node.textContent=String(value)};
+const refreshMetrics=()=>{
 set("projects",read("projects").length);
 set("requests",["investmentApplications","jobApplications","teamApplications","resourceOrders"].reduce((n,k)=>n+read(k).length,0));
 set("partners",read("teamApplications").length+read("resourceOrders").length);
 set("exchange",read("ideaLabExchangeItems").length+read("offers").length);
+};
+refreshMetrics();
+if(window.IDEALAB)IDEALAB.subscribe("legacy:changed",refreshMetrics);
+window.addEventListener("storage",event=>{if(!event.key||IDEALAB?.legacy.keys.includes(event.key))refreshMetrics()});
 })();
