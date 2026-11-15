@@ -27,6 +27,7 @@ body{background:var(--f-bg);color:var(--f-ink);font-family:Inter,Arial,sans-seri
 .f-budget-line{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:11px;margin:12px 0 7px}.f-progress{height:9px;border-radius:20px;background:#edf1f7;overflow:hidden}.f-progress span{height:100%;display:block;background:linear-gradient(90deg,#5146e5,#18b8c3);border-radius:20px}.f-note{font-size:10px;line-height:1.6;color:var(--f-muted);margin:14px 0 0;padding:11px 12px;background:#f7f9fd;border-radius:10px}
 .f-table-wrap{overflow:auto;margin-top:10px}.f-table{width:100%;border-collapse:collapse;min-width:620px}.f-table th,.f-table td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--f-line);font-size:11px}.f-table th{font-size:10px;color:var(--f-muted);font-weight:700}.f-type{display:inline-block;border-radius:30px;padding:5px 8px;font-size:9px;font-weight:800}.f-type.income{background:#e8f7ef;color:#167647}.f-type.expense{background:#fff0f0;color:#b42318}.f-amount{font-weight:800;white-space:nowrap}.f-amount.income{color:var(--f-green)}.f-amount.expense{color:var(--f-red)}.f-empty{text-align:center;padding:25px 10px;color:var(--f-muted);font-size:11px;border:1px dashed #d7e0ed;border-radius:12px}
 .f-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px}.f-bottom small{font-size:10px;color:var(--f-muted)}
+.investment-panel{margin-top:18px;border:1px solid #dce5f0;border-radius:18px;background:linear-gradient(135deg,#fff,#f6f8ff);padding:22px;box-shadow:0 8px 24px rgba(24,42,76,.04)}.investment-panel h2{font-size:19px;margin:0}.investment-panel .f-intro{max-width:800px}.investment-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.investment-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}.investment-result{background:#fff;border:1px solid #e3eaf3;border-radius:12px;padding:13px;min-width:0}.investment-result span{display:block;color:#6d7b91;font-size:10px;line-height:1.4}.investment-result strong{display:block;font-size:clamp(16px,2.5vw,22px);margin-top:7px;overflow-wrap:anywhere}.investment-result.primary{background:#eef0ff;border-color:#d9dcff}.investment-note{margin-top:15px;padding:12px 14px;background:#fff8e8;border:1px solid #f1dfb5;border-radius:11px;color:#76551b;font-size:11px;line-height:1.65}.investment-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:13px}.investment-hint{font-size:10px;color:#6d7b91}@media(max-width:850px){.investment-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.investment-results{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.investment-panel{padding:15px}.investment-grid{grid-template-columns:1fr}.investment-results{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:850px){.f-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.f-grid{grid-template-columns:1fr}}
 @media(max-width:560px){.f-wrap{width:calc(100% - 24px);margin-top:22px}.f-head{display:block}.f-demo{display:inline-block;margin-top:12px}.f-panel{padding:14px}.f-form{grid-template-columns:1fr}.f-field.full{grid-column:auto}.f-toolbar{align-items:flex-start;flex-direction:column}}
 </style>
@@ -40,6 +41,32 @@ body{background:var(--f-bg);color:var(--f-ink);font-family:Inter,Arial,sans-seri
  <article class="f-card"><div class="f-label">Jami chiqim</div><div class="f-value expense" id="expenseTotal">0 so‘m</div><div class="f-sub">Tanlangan hisob maydoni</div></article>
  <article class="f-card"><div class="f-label">Hisoblangan qoldiq</div><div class="f-value" id="balanceTotal">0 so‘m</div><div class="f-sub">Kirim minus chiqim</div></article>
  <article class="f-card"><div class="f-label">Operatsiyalar</div><div class="f-value" id="transactionCount">0</div><div class="f-sub">Qayd etilgan yozuvlar</div></article>
+</section>
+<section class="investment-panel" aria-labelledby="investmentTitle">
+ <div class="f-kicker">IDEA LAB / INVESTMENT PLANNER</div>
+ <h2 id="investmentTitle">Loyiha qiymati va investor ulushini hisoblash</h2>
+ <p class="f-intro">Loyiha bahosini kiriting, jalb qilmoqchi bo‘lgan sarmoyani belgilang va investor ulushining taxminiy foizini ko‘ring.</p>
+ <form id="investmentForm">
+  <div class="investment-grid">
+   <div class="f-field"><label for="projectValuation">Loyihaning umumiy bahosi (so‘m)</label><input id="projectValuation" type="number" min="1" max="9007199254740991" step="1" required value="1000000000"></div>
+   <div class="f-field"><label for="investmentAmount">Yangi investor kiritadigan summa (so‘m)</label><input id="investmentAmount" type="number" min="1" max="9007199254740991" step="1" required value="100000000"></div>
+   <div class="f-field"><label for="valuationBasis">Loyiha bahosi qaysi bosqichda?</label><select id="valuationBasis"><option value="pre-money">Investitsiyadan oldingi baho (Pre-money)</option><option value="post-money">Investitsiyadan keyingi baho (Post-money)</option></select></div>
+   <div class="f-field"><label for="fundingTarget">Jalb qilinishi rejalashtirilgan jami mablag‘ (ixtiyoriy)</label><input id="fundingTarget" type="number" min="0" max="9007199254740991" step="1" placeholder="Masalan: 300000000"></div>
+   <div class="f-field"><label for="committedCapital">Oldin jalb qilingan mablag‘ (ixtiyoriy)</label><input id="committedCapital" type="number" min="0" max="9007199254740991" step="1" value="0"></div>
+   <div class="f-field"><label for="totalShareUnits">Investitsiyadan oldingi jami aksiya/birlik soni (ixtiyoriy)</label><input id="totalShareUnits" type="number" min="1" max="9007199254740991" step="1" placeholder="Masalan: 1000"></div>
+  </div>
+  <div class="investment-actions"><button class="f-btn" type="submit">Ulushni hisoblash</button><span class="investment-hint">Hisob-kitob avtomatik yangilanadi. Ma’lumotlar serverga yuborilmaydi.</span></div>
+ </form>
+ <div class="investment-results" id="investmentResults" aria-live="polite">
+  <article class="investment-result primary"><span>Investor olishi mumkin bo‘lgan ulush</span><strong id="investorEquity">9,09%</strong></article>
+  <article class="investment-result"><span>Loyiha egasida qoladigan ulush</span><strong id="founderEquity">90,91%</strong></article>
+  <article class="investment-result"><span>Investitsiyadan keyingi baho</span><strong id="postMoneyValue">1 100 000 000 so‘m</strong></article>
+  <article class="investment-result"><span>Jalb qilish rejasidan qolgan summa</span><strong id="fundingGap">—</strong></article>
+  <article class="investment-result"><span>Ulushning hisobiy qiymati</span><strong id="investorValue">100 000 000 so‘m</strong></article>
+  <article class="investment-result"><span>Taxminiy aksiya/birlik miqdori</span><strong id="indicativeShares">—</strong></article>
+  <article class="investment-result"><span>Jalb qilish rejasi bajarilishi</span><strong id="fundingProgress">—</strong></article>
+ </div>
+ <div class="investment-note"><strong>Muhim:</strong> bu moliyaviy rejalashtirish uchun taxminiy kalkulyator, aksiya chiqarish yoki ulushni huquqiy rasmiylashtirish vositasi emas. Aksiyalar faqat tegishli huquqiy shakl, ustav, korporativ qaror va qonunchilik talablariga muvofiq chiqariladi. MChJdagi ulush, AJ aksiyasi va qarz shartnomasi bir-biridan farq qiladi. Hisob natijasi investitsiya taklifi yoki kafolatlangan daromad emas.</div>
 </section>
 <section class="f-grid">
  <div class="f-panel"><h2>Yangi operatsiya</h2><p class="f-intro">Kirim yoki chiqimni qo‘lda qayd eting. Summalar so‘mda butun son sifatida saqlanadi.</p>
@@ -68,6 +95,7 @@ body{background:var(--f-bg);color:var(--f-ink);font-family:Inter,Arial,sans-seri
  <div class="f-bottom"><small id="reportNote">Ma’lumotlar faqat shu brauzerda saqlanadi.</small><small id="lastUpdated">Hisobot yangilandi</small></div>
 </section>
 </main>
+<script src="assets/idea-investment-calculator.js"></script>
 <script src="assets/idea-core.js"></script>
 <script>
 (function(){
@@ -81,6 +109,36 @@ body{background:var(--f-bg);color:var(--f-ink);font-family:Inter,Arial,sans-seri
  const money=n=>new Intl.NumberFormat("uz-UZ",{maximumFractionDigits:0}).format(n)+" so‘m";
  const uid=()=>window.IDEALAB&&window.IDEALAB.createId?window.IDEALAB.createId("fin"):"fin-"+Date.now()+"-"+Math.random().toString(36).slice(2,8);
  const workspace=$("workspace");
+ const investmentForm=$("investmentForm");
+ const formatMoney=value=>new Intl.NumberFormat("uz-UZ",{maximumFractionDigits:0}).format(value)+" so‘m";
+ const formatPercent=value=>new Intl.NumberFormat("uz-UZ",{minimumFractionDigits:2,maximumFractionDigits:2}).format(value)+"%";
+ function renderInvestment(){
+  const calculator=window.IDEALABInvestmentCalculator;
+  if(!calculator)return;
+  const values={valuation:$("projectValuation").value,investment:$("investmentAmount").value,basis:$("valuationBasis").value,target:$("fundingTarget").value,committed:$("committedCapital").value,totalShares:$("totalShareUnits").value};
+  try{
+   const result=calculator.calculate(values);
+   $("investorEquity").textContent=formatPercent(result.equityPercent);
+   $("founderEquity").textContent=formatPercent(result.founderPercent);
+   $("postMoneyValue").textContent=formatMoney(result.postMoneyValue);
+   $("fundingGap").textContent=result.target>0?formatMoney(result.fundingRemaining):"Maqsad belgilanmagan";
+   $("investorValue").textContent=formatMoney(result.investment);
+   $("indicativeShares").textContent=result.indicativeShares===null?"Aksiya soni kiritilmagan":new Intl.NumberFormat("uz-UZ",{maximumFractionDigits:2}).format(result.indicativeShares)+" birlik";
+   $("fundingProgress").textContent=result.fundingProgressPercent===null?"Maqsad belgilanmagan":formatPercent(result.fundingProgressPercent);
+   $("investmentResults").removeAttribute("data-error");
+  }catch(error){
+   $("investmentResults").setAttribute("data-error","true");
+   $("investorEquity").textContent="—";$("founderEquity").textContent="—";$("postMoneyValue").textContent="—";$("fundingGap").textContent="—";$("investorValue").textContent="—";$("indicativeShares").textContent="—";$("fundingProgress").textContent="—";
+   $("investmentError")?.remove();
+   const message=document.createElement("p");message.id="investmentError";message.className="f-note";message.setAttribute("role","alert");message.textContent=error.message;
+   $("investmentResults").after(message);
+   return;
+  }
+  $("investmentError")?.remove();
+ }
+ ["projectValuation","investmentAmount","valuationBasis","fundingTarget","committedCapital","totalShareUnits"].forEach(id=>$(id).addEventListener("input",renderInvestment));
+ investmentForm.addEventListener("submit",event=>{event.preventDefault();renderInvestment()});
+ renderInvestment();
  let transactions=read(TX_KEY),budgets=read(BUDGET_KEY);
  $("date").value=localDate();
  function current(){return transactions.filter(t=>t.workspace===workspace.value)}
