@@ -36,6 +36,10 @@ main{width:min(1050px,calc(100% - 32px));margin:54px auto 70px;display:grid;grid
   <button class="tab active" type="button" data-mode="login" role="tab" aria-selected="true">Kirish</button>
   <button class="tab" type="button" data-mode="signup" role="tab" aria-selected="false">Ro‘yxatdan o‘tish</button>
  </div>
+ <div class="tabs" role="tablist" aria-label="Kirish usuli">
+  <button class="tab active" type="button" data-channel="email" role="tab" aria-selected="true">Email</button>
+  <button class="tab" type="button" data-channel="phone" role="tab" aria-selected="false">Telefon / SMS</button>
+ </div>
  <form id="loginForm" novalidate>
   <div class="field"><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" placeholder="name@example.com" required disabled></div>
   <div class="field"><label for="loginPassword">Parol</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Parolingiz" required disabled></div>
@@ -48,6 +52,12 @@ main{width:min(1050px,calc(100% - 32px));margin:54px auto 70px;display:grid;grid
   <div class="field"><label for="signupPasswordConfirm">Parolni takrorlang</label><input id="signupPasswordConfirm" type="password" autocomplete="new-password" minlength="8" placeholder="Parolni qayta kiriting" required disabled></div>
   <button class="submit" id="signupSubmit" type="submit" disabled>Akkaunt yaratish</button>
  </form>
+ <form id="phoneForm" class="hidden" novalidate>
+  <div class="field"><label for="phoneNumber">Telefon raqami</label><input id="phoneNumber" type="tel" inputmode="tel" autocomplete="tel" placeholder="+998901234567" disabled></div>
+  <div class="field hidden" id="phoneCodeField"><label for="phoneCode">SMS kodi</label><input id="phoneCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="6 xonali kod" disabled></div>
+  <button class="submit" id="phoneSubmit" type="submit" disabled>SMS kod yuborish</button>
+  <p class="sub">Raqamni xalqaro formatda kiriting. SMS provayder sozlanmagan bo‘lsa, kod yuborilmaydi.</p>
+ </form>
  <form id="resetForm" class="hidden" novalidate>
   <div class="field"><label for="resetEmail">Akkaunt emailingiz</label><input id="resetEmail" type="email" autocomplete="email" placeholder="name@example.com" required disabled></div>
   <button class="submit" id="resetSubmit" type="submit" disabled>Tiklash havolasini yuborish</button>
@@ -57,6 +67,8 @@ main{width:min(1050px,calc(100% - 32px));margin:54px auto 70px;display:grid;grid
  <div class="fine">Xavfsizlik: parol va akkaunt ma’lumotlari faqat sozlangan Auth provayderiga yuboriladi. IDEA LAB hozircha demo rejimida bo‘lsa, ushbu shakllar bloklangan bo‘ladi.</div>
 </section>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js" defer></script>
+<script src="assets/idea-config.js"></script>
 <script src="assets/idea-core.js"></script>
 <script src="assets/idea-auth.js"></script>
 <script src="assets/idea-profile-bridge.js"></script>
@@ -65,7 +77,7 @@ main{width:min(1050px,calc(100% - 32px));margin:54px auto 70px;display:grid;grid
  "use strict";
  const auth=window.IDEALAB_AUTH;
  const status=document.getElementById("backendStatus");
- const forms={login:document.getElementById("loginForm"),signup:document.getElementById("signupForm"),reset:document.getElementById("resetForm")};
+ const forms={login:document.getElementById("loginForm"),signup:document.getElementById("signupForm"),phone:document.getElementById("phoneForm"),reset:document.getElementById("resetForm")};
  const message=document.getElementById("authMessage");
  const identityPreview=document.getElementById("identityPreview");
  const signOutButton=document.getElementById("signOutButton");
@@ -87,17 +99,24 @@ main{width:min(1050px,calc(100% - 32px));margin:54px auto 70px;display:grid;grid
   identityPreview.textContent="Eski profil va faol akkaunt uchun tekshiruv taklifi tayyor. Bog‘lash hali bajarilmagan; hech qanday ma’lumot yoki rol ko‘chirilmagan.";
  }
  let mode="login";
+ let channel="email";
+ let phoneOtpSent=false;
  function showMessage(text,type){message.textContent=text;message.className="message"+(type?" "+type:"")}
+ function renderForm(){
+  const visible=mode==="reset"?"reset":(channel==="phone"?"phone":mode);
+  Object.keys(forms).forEach(key=>forms[key].classList.toggle("hidden",key!==visible));
+ }
  function switchMode(next){
-  mode=next;Object.keys(forms).forEach(key=>forms[key].classList.toggle("hidden",key!==next));
-  signOutButton.addEventListener("click",async()=>{if(!configured||signOutButton.disabled)return;signOutButton.disabled=true;const result=await auth.signOut();if(result.ok){updateSessionControls(null);showMessage("Akkauntdan chiqildi.","success");refreshIdentityPreview()}else{showMessage(result.error.message,"error");const current=await auth.getSession();updateSessionControls(current.ok&&current.data?current.data.session:null)}});
+  mode=next;if(next==="reset")channel="email";renderForm();
  document.querySelectorAll("[data-mode]").forEach(btn=>{const active=btn.dataset.mode===next;btn.classList.toggle("active",active);btn.setAttribute("aria-selected",String(active))});
   document.getElementById("authTitle").textContent=next==="signup"?"Yangi akkaunt yaratish":next==="reset"?"Parolni tiklash":"Akkauntga kirish";
   document.getElementById("authSubtitle").textContent=next==="signup"?"IDEA LAB bilan ishlashni boshlang.":next==="reset"?"Email manzilingizga tiklash havolasi yuboriladi.":"Mavjud akkauntingiz ma’lumotlarini kiriting.";
+  document.querySelectorAll("[data-channel]").forEach(btn=>{const active=btn.dataset.channel===channel;btn.classList.toggle("active",active);btn.setAttribute("aria-selected",String(active))});
   showMessage("");
  }
+ function switchChannel(next){channel=next;phoneOtpSent=false;document.getElementById("phoneCodeField").classList.add("hidden");document.getElementById("phoneCode").value="";document.getElementById("phoneSubmit").textContent="SMS kod yuborish";renderForm();document.querySelectorAll("[data-channel]").forEach(btn=>{const active=btn.dataset.channel===next;btn.classList.toggle("active",active);btn.setAttribute("aria-selected",String(active))});showMessage("");}
  function setEnabled(enabled){
-  document.querySelectorAll("#loginForm input,#loginSubmit,#forgotButton,#signupForm input,#signupSubmit,#resetForm input,#resetSubmit").forEach(el=>el.disabled=!enabled);
+  document.querySelectorAll("#loginForm input,#loginSubmit,#forgotButton,#signupForm input,#signupSubmit,#phoneForm input,#phoneSubmit,#resetForm input,#resetSubmit").forEach(el=>el.disabled=!enabled);
  }
  const configured=window.IDEALAB_CONFIG&&window.supabase&&auth.configure(window.IDEALAB_CONFIG,window.supabase).ok;
  if(configured){
@@ -111,11 +130,14 @@ main{width:min(1050px,calc(100% - 32px));margin:54px auto 70px;display:grid;grid
   refreshIdentityPreview();
  }
  document.querySelectorAll("[data-mode]").forEach(btn=>btn.addEventListener("click",()=>switchMode(btn.dataset.mode)));
+ document.querySelectorAll("[data-channel]").forEach(btn=>btn.addEventListener("click",()=>switchChannel(btn.dataset.channel)));
  document.getElementById("forgotButton").addEventListener("click",()=>switchMode("reset"));
  document.getElementById("backToLogin").addEventListener("click",()=>switchMode("login"));
  forms.login.addEventListener("submit",async event=>{event.preventDefault();if(!configured)return;const result=await auth.signIn(document.getElementById("loginEmail").value,document.getElementById("loginPassword").value);showMessage(result.ok?"Kirish so‘rovi bajarildi.":result.error.message,result.ok?"success":"error")});
  forms.signup.addEventListener("submit",async event=>{event.preventDefault();if(!configured)return;const password=document.getElementById("signupPassword").value;if(password!==document.getElementById("signupPasswordConfirm").value){showMessage("Parollar bir xil emas.","error");return}const result=await auth.signUp(document.getElementById("signupEmail").value,password);showMessage(result.ok?"Ro‘yxatdan o‘tish so‘rovi yuborildi. Email tasdig‘ini tekshiring.":result.error.message,result.ok?"success":"error")});
  forms.reset.addEventListener("submit",async event=>{event.preventDefault();if(!configured)return;const result=await auth.resetPassword(document.getElementById("resetEmail").value,window.location.origin+"/auth.html");showMessage(result.ok?"Agar ushbu email akkauntga tegishli bo‘lsa, tiklash xati yuboriladi.":result.error.message,result.ok?"success":"error")});
+ forms.phone.addEventListener("submit",async event=>{event.preventDefault();if(!configured)return;const phone=document.getElementById("phoneNumber").value.trim();const button=document.getElementById("phoneSubmit");button.disabled=true;if(!phoneOtpSent){const result=mode==="signup"?await auth.sendPhoneSignupOtp(phone):await auth.sendPhoneLoginOtp(phone);if(result.ok){phoneOtpSent=true;document.getElementById("phoneCodeField").classList.remove("hidden");document.getElementById("phoneCode").disabled=false;button.textContent="Kodni tasdiqlash";showMessage("SMS so‘rovi yuborildi. Telefoningizga kelgan kodni kiriting.","success")}else{showMessage(result.error.message,"error")}}else{const result=await auth.verifyPhoneOtp(phone,document.getElementById("phoneCode").value);if(result.ok){showMessage("Telefon tasdiqlandi. Akkaunt sessiyasi yangilandi.","success");updateSessionControls(result.data&&result.data.session);refreshIdentityPreview()}else{showMessage(result.error.message,"error")}}button.disabled=false});
+ signOutButton.addEventListener("click",async()=>{if(!configured||signOutButton.disabled)return;signOutButton.disabled=true;const result=await auth.signOut();if(result.ok){updateSessionControls(null);showMessage("Akkauntdan chiqildi.","success");refreshIdentityPreview()}else{showMessage(result.error.message,"error");const current=await auth.getSession();updateSessionControls(current.ok&&current.data?current.data.session:null)}});
 })();
 </script>
 <script src="assets/idea-shell.js" defer></script>
