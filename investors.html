@@ -481,8 +481,11 @@ footer {
     IDEA LAB — G‘oya, jamoa, investitsiya va natija.
 </footer>
 
+<script src="assets/idea-core.js"></script>
 <script>
 "use strict";
+
+const ideaCore = window.IDEALAB || null;
 
 /* ==================================
    1. MA'LUMOTLARNI SAQLASH
@@ -872,10 +875,20 @@ function showInvestmentApplications() {
                 return;
             }
 
+            const previousStatus = currentApplications[applicationIndex].status || "Yangi";
             currentApplications[applicationIndex].status = statusSelect.value;
             currentApplications[applicationIndex].updatedAt = new Date().toISOString();
 
             if (saveData("investmentApplications", currentApplications)) {
+                if (ideaCore) {
+                    ideaCore.emit("investment:application-status-changed", {
+                        applicationId: application.id,
+                        projectId: application.projectId,
+                        previousStatus: previousStatus,
+                        status: statusSelect.value,
+                        updatedAt: currentApplications[applicationIndex].updatedAt
+                    });
+                }
                 showInvestmentApplications();
             } else {
                 statusSelect.value = application.status || "Yangi";
@@ -951,5 +964,6 @@ function initializePage() {
 initializePage();
 
 </script>
-    <script src="assets/idea-shell.js" defer></script>\n</body>
+    <script src="assets/idea-shell.js" defer></script>
+</body>
 </html>
