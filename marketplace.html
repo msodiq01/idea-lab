@@ -82,7 +82,23 @@ footer{margin-top:55px;padding:24px;text-align:center;color:var(--muted);border-
     IDEA LAB © 2026 — G‘oya, jamoa, harakat, natija.
 </footer>
 
+<script src="assets/idea-core.js"></script>
 <script>
+
+const ideaCore = window.IDEALAB || null;
+const marketplaceFilters = ideaCore ? (ideaCore.store.get("marketplace.filters", {}) || {}) : {};
+
+function saveMarketplaceFilters() {
+    if (!ideaCore) return;
+    const search = document.getElementById("searchInput").value.trim();
+    const direction = document.getElementById("directionFilter").value;
+    ideaCore.store.set("marketplace.filters", { search, direction });
+    ideaCore.emit("marketplace:filters-changed", {
+        hasSearch: Boolean(search),
+        direction: direction || null,
+        updatedAt: new Date().toISOString()
+    });
+}
 
 function getProjects() {
     try {
@@ -139,6 +155,13 @@ function createProjectCard(item) {
             return;
         }
 
+        if (ideaCore) {
+            ideaCore.emit("marketplace:project-opened", {
+                projectId: String(item.id),
+                openedAt: new Date().toISOString()
+            });
+        }
+
         window.location.href =
             "project-detail.html?id=" +
             encodeURIComponent(item.id);
@@ -187,8 +210,9 @@ function loadDirections(projects) {
 
     });
 
-    if (directions.includes(previousValue)) {
-        filter.value = previousValue;
+    const savedDirection = marketplaceFilters.direction || previousValue;
+    if (directions.includes(savedDirection)) {
+        filter.value = savedDirection;
     }
 }
 
@@ -259,13 +283,22 @@ function showProjects() {
 }
 
 
+document.getElementById("searchInput").value =
+    typeof marketplaceFilters.search === "string" ? marketplaceFilters.search : "";
+
 document
     .getElementById("searchInput")
-    .addEventListener("input", showProjects);
+    .addEventListener("input", function() {
+        saveMarketplaceFilters();
+        showProjects();
+    });
 
 document
     .getElementById("directionFilter")
-    .addEventListener("change", showProjects);
+    .addEventListener("change", function() {
+        saveMarketplaceFilters();
+        showProjects();
+    });
 
 showProjects();
 
