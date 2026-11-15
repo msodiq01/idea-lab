@@ -119,6 +119,7 @@ button{cursor:pointer}
         <a class="side-link active" href="#profileSection"><span class="side-icon">◉</span> Profil ma’lumotlari</a>
         <a class="side-link" href="#projectsSection"><span class="side-icon">▦</span> Mening loyihalarim</a>
         <a class="side-link" href="#offersSection"><span class="side-icon">◇</span> Investor takliflari</a>
+        <a class="side-link" href="#applicationCenter"><span class="side-icon">✉</span> Arizalar markazi</a>
         <a class="side-link" href="#activitySection"><span class="side-icon">↗</span> Mening faoliyatim</a>
       </div>
       <div class="side-card">
@@ -156,6 +157,12 @@ button{cursor:pointer}
         <div class="panel-heading"><div><h2>Loyihalarimga kelgan investor takliflari</h2><p>Takliflarni ko‘rib chiqing va holatini belgilang.</p></div><span class="pill" id="offerBadge">0 TAKLIF</span></div>
         <div id="myInvestorOffers" class="cards"></div>
       </section>
+      <section class="panel" id="applicationCenter">
+        <div class="panel-heading"><div><h2>Yagona arizalar markazi</h2><p>Barcha tegishli modullardan kelgan va siz yuborgan murojaatlar.</p></div><span class="pill">ARIZALAR</span></div>
+        <div class="activity-group"><h3>Kiruvchi arizalar</h3><div id="incomingApplications" class="cards"></div></div>
+        <div class="activity-group"><h3>Yuborgan arizalarim</h3><div id="outgoingApplications" class="cards"></div></div>
+        <div class="notice">Faqat profil ID yoki mos email orqali ishonchli bog‘langan yangi yozuvlar ko‘rsatiladi. Eski yozuvlar avtomatik ravishda sizga biriktirilmaydi.</div>
+      </section>
       <section class="panel" id="activitySection">
         <div class="panel-heading"><div><h2>Mening faoliyatim</h2><p>Faqat profilingizga ishonchli bog‘lash mumkin bo‘lgan yozuvlar ko‘rsatiladi.</p></div><span class="pill">FAOLIYAT</span></div>
         <div id="myActivity"></div>
@@ -184,7 +191,45 @@ function showMyInvestorOffers(){const container=document.getElementById("myInves
 function updateOfferStatus(offerId,newStatus){const projects=getMyProjects();const ownedIds=projects.map(project=>String(project.id));const applications=readData("investmentApplications");const offer=applications.find(item=>String(item.id)===String(offerId)&&ownedIds.includes(String(item.projectId)));if(!offer){alert("Taklif topilmadi yoki ushbu profilga tegishli emas.");return}const previousStatus=offer.status||"Kutilmoqda";offer.status=newStatus;offer.updatedAt=new Date().toISOString();try{localStorage.setItem("investmentApplications",JSON.stringify(applications))}catch(error){alert("Holatni saqlab bo‘lmadi. Brauzer xotirasini tekshiring.");return}if(ideaCore){ideaCore.emit("investment:application-status-changed",{applicationId:String(offer.id),projectId:String(offer.projectId),previousStatus:previousStatus,status:newStatus,updatedAt:offer.updatedAt})}renderDashboard();alert("Taklif holati yangilandi.")}
 function belongsToProfile(item,profile,kind){const email=normalize(profile.email);const name=normalize(profile.fullName);const phone=normalize(profile.phone);const emailFields=kind==="order"?["email","userEmail","customerEmail","buyerEmail","ownerEmail"]:["applicantEmail","userEmail","email"];for(const field of emailFields){if(item[field]&&email&&normalize(item[field])===email)return true}const nameFields=kind==="order"?["customerName","buyerName","fullName","applicantName"]:["applicantName","fullName","name"];const phoneFields=kind==="order"?["customerPhone","buyerPhone","phone","applicantPhone"]:["applicantPhone","phone","phoneNumber"];const recordName=nameFields.map(field=>normalize(item[field])).find(Boolean);const recordPhone=phoneFields.map(field=>normalize(item[field])).find(Boolean);return Boolean(name&&phone&&recordName===name&&recordPhone===phone)}
 function showMyActivity(){const container=document.getElementById("myActivity");container.replaceChildren();const profile=getProfile();if(!profile){container.appendChild(emptyState("Faoliyatni ko‘rish uchun avval profilingizni saqlang."));return 0}const groups=[{title:"Yuborgan investitsiya arizalarim",items:readData("investmentApplications").filter(item=>normalize(item.investorEmail)===normalize(profile.email)),detail:item=>(item.projectName||"Loyiha")+" — "+money(item.offerAmount)},{title:"Ishga kirish arizalarim",items:readData("jobApplications").filter(item=>belongsToProfile(item,profile,"application")),detail:item=>(item.jobTitle||"Ish")+" — "+(item.companyName||"Tashkilot")},{title:"Jamoaga qo‘shilish arizalarim",items:readData("teamApplications").filter(item=>belongsToProfile(item,profile,"application")),detail:item=>item.teamName||"Jamoa"},{title:"Resurs buyurtmalarim",items:readData("resourceOrders").filter(item=>belongsToProfile(item,profile,"order")),detail:item=>(item.resourceName||"Resurs")+" — "+(item.supplierName||"Yetkazib beruvchi")}];let total=0;groups.forEach(group=>{const section=make("div","activity-group");section.appendChild(make("h3","",group.title));if(!group.items.length){section.appendChild(make("p","tip","Hozircha mos yozuv topilmadi."))}else{group.items.forEach(item=>{total++;const line=make("div","item-card");line.appendChild(make("p","",group.detail(item)));const status=make("p");status.appendChild(make("strong","","Holati: "));setStatus(status,item.status||"Ko‘rib chiqilmoqda");line.appendChild(status);section.appendChild(line)})}container.appendChild(section)});return total}
-function renderDashboard(){const projects=showMyProjects();const offers=showMyInvestorOffers();const activities=showMyActivity();document.getElementById("projectCount").textContent=projects.length;document.getElementById("offerCount").textContent=offers.length;document.getElementById("activityCount").textContent=activities}
+function showUnifiedApplications(){
+  const incoming=document.getElementById("incomingApplications");
+  const outgoing=document.getElementById("outgoingApplications");
+  incoming.replaceChildren();outgoing.replaceChildren();
+  const profile=getProfile();
+  if(!profile||!profile.id){
+   incoming.appendChild(emptyState("Arizalarni shaxsiy profilga bog‘lash uchun avval profilingizni saqlang."));
+   outgoing.appendChild(emptyState("Profil saqlangandan keyin yangi arizalaringiz shu yerda ko‘rinadi."));
+   return;
+  }
+  const email=normalize(profile.email);
+  const sources=[
+   {key:"investmentApplications",label:"Investitsiya",title:x=>x.projectName||"Loyiha",inbound:x=>String(x.projectOwnerId||"")===String(profile.id)||(email&&normalize(x.projectOwnerEmail)===email),outbound:x=>String(x.applicantId||"")===String(profile.id)||(email&&normalize(x.applicantEmail)===email),person:x=>x.investorName||x.applicantName||"Investor"},
+   {key:"jobApplications",label:"Ish",title:x=>x.jobTitle||"Vakansiya",inbound:x=>String(x.listingOwnerId||"")===String(profile.id)||(email&&normalize(x.listingOwnerEmail)===email),outbound:x=>String(x.applicantId||"")===String(profile.id)||(email&&normalize(x.applicantEmail)===email),person:x=>x.applicantName||"Nomzod"},
+   {key:"teamApplications",label:"Jamoa",title:x=>x.teamName||"Jamoa",inbound:x=>String(x.listingOwnerId||"")===String(profile.id)||(email&&normalize(x.listingOwnerEmail)===email),outbound:x=>String(x.applicantId||"")===String(profile.id)||(email&&normalize(x.applicantEmail)===email),person:x=>x.applicantName||"Ishtirokchi"}
+  ];
+  const incomingItems=[],outgoingItems=[];
+  sources.forEach(source=>readData(source.key).forEach(item=>{
+   if(source.inbound(item))incomingItems.push({source,item});
+   if(source.outbound(item))outgoingItems.push({source,item});
+  }));
+  const render=(target,items,emptyText,mode)=>{
+   if(!items.length){target.appendChild(emptyState(emptyText));return}
+   items.sort((a,b)=>(Date.parse(b.item.createdAt||b.item.date||"")||0)-(Date.parse(a.item.createdAt||a.item.date||"")||0));
+   items.forEach(({source,item})=>{
+    const card=make("article","item-card");
+    card.appendChild(make("h3","",source.title(item)));
+    card.appendChild(make("p","","Yo‘nalish: "+source.label));
+    card.appendChild(make("p","",(mode==="incoming"?"Arizachi: ":"Qabul qiluvchi: ")+source.person(item)));
+    card.appendChild(make("p","","Holati: "+(item.status||"Yangi")));
+    const date=item.createdAt||item.date;
+    if(date)card.appendChild(make("p","","Sana: "+new Date(date).toLocaleDateString("uz-UZ")));
+    target.appendChild(card);
+   });
+  };
+  render(incoming,incomingItems,"Hozircha profilingizga aniq bog‘langan kiruvchi ariza yo‘q.","incoming");
+  render(outgoing,outgoingItems,"Hozircha profilingizga aniq bog‘langan yuborilgan ariza yo‘q.","outgoing");
+}
+function renderDashboard(){const projects=showMyProjects();const offers=showMyInvestorOffers();showUnifiedApplications();const activities=showMyActivity();document.getElementById("projectCount").textContent=projects.length;document.getElementById("offerCount").textContent=offers.length;document.getElementById("activityCount").textContent=activities}
 function loadProfile(){const profile=getProfile();if(!profile)return;document.getElementById("fullName").value=profile.fullName||"";document.getElementById("profileEmail").value=profile.email||"";document.getElementById("profilePhone").value=profile.phone||"";document.querySelectorAll('input[name="userRoles"]').forEach(input=>{input.checked=Array.isArray(profile.roles)&&profile.roles.includes(input.value)})}
 profileForm.addEventListener("submit",function(event){event.preventDefault();const roles=Array.from(document.querySelectorAll('input[name="userRoles"]:checked')).map(input=>input.value);const previousProfile=getProfile();const profile={id:previousProfile&&previousProfile.id?previousProfile.id:(ideaCore?ideaCore.createId():"profile-"+Date.now()),fullName:document.getElementById("fullName").value.trim(),email:document.getElementById("profileEmail").value.trim(),phone:document.getElementById("profilePhone").value.trim(),roles:roles,updatedAt:new Date().toISOString()};if(!profile.fullName||!profile.email){document.getElementById("profileMessage").textContent="Ism va email manzilini to‘ldiring.";return}if(ideaCore&&!ideaCore.isValidEmail(profile.email)){document.getElementById("profileMessage").textContent="Email manzili formati noto‘g‘ri.";return}if(profile.phone&&ideaCore&&!ideaCore.isValidPhone(profile.phone)){document.getElementById("profileMessage").textContent="Telefon raqami formati noto‘g‘ri.";return}try{if(ideaCore&&ideaCore.legacy){const saved=ideaCore.legacy.write("userProfile",profile);if(!saved||!saved.ok)throw new Error("local profile save failed")}else{localStorage.setItem("userProfile",JSON.stringify(profile))}}catch(error){document.getElementById("profileMessage").textContent="Saqlashda xatolik. Brauzer xotirasini tekshiring.";return}if(ideaCore){ideaCore.emit(previousProfile?"profile:updated":"profile:created",{profileId:profile.id,roles:profile.roles,updatedAt:profile.updatedAt})}document.getElementById("profileMessage").textContent="Profil muvaffaqiyatli saqlandi. Ma’lumotlar hozircha shu brauzerda saqlanadi.";renderDashboard()});
 window.addEventListener("storage",function(event){if(["userProfile","projects","investmentApplications","jobApplications","teamApplications","resourceOrders"].includes(event.key))renderDashboard()});
