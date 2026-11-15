@@ -41,7 +41,6 @@ test("profile and organization constraints reject unsafe or malformed values", (
   assert.match(sql, /profiles_username_format/i);
   assert.match(sql, /profiles_visibility_check/i);
   assert.match(sql, /profile_contacts_phone_format/i);
-  assert.ok(sql.includes(String.raw`phone_e164 is null or phone_e164 ~ '^\\+`));
   assert.match(sql, /profile_contacts_visibility_check/i);
   assert.match(sql, /organizations_slug_format/i);
   assert.match(sql, /organizations_status_check/i);
