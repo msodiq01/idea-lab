@@ -82,8 +82,23 @@ await check("admin function allows exact staging CORS preflight", async () => {
 
 await check("evidence function allows exact staging CORS preflight", async () => {
   const r = await request("supplier-verification-evidence", { method: "OPTIONS" });
-  return { passed: r.status === 204 && r.headers.get("access-control-allow-origin") === origin, detail: "HTTP " + r.status };
+  return { passed: r.status === 204 && r.headers.get("access-control-allow-origin") === origin && (r.headers.get("access-control-allow-headers") || "").includes("authorization"), detail: "HTTP " + r.status };
 });
+
+
+if (userToken) {
+  await check("admin function rejects unsupported GET requests", async () => {
+    const r = await request("supplier-verification-admin", { method: "GET", token: userToken, contentType: "" });
+    return { passed: r.status === 405, detail: "HTTP " + r.status };
+  });
+
+  await check("evidence function rejects unsupported GET requests", async () => {
+    const r = await request("supplier-verification-evidence", { method: "GET", token: userToken, contentType: "" });
+    return { passed: r.status === 405, detail: "HTTP " + r.status };
+  });
+} else {
+  console.log("SKIP unsupported-method checks — STAGING_USER_ACCESS_TOKEN not set");
+}
 
 const unapprovedOrigin = "https://invalid-staging-origin.example";
 await check("admin function rejects an unapproved origin", async () => {
