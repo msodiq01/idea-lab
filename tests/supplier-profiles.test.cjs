@@ -1,6 +1,6 @@
 "use strict";const assert=require("node:assert/strict"),m=require("../assets/idea-supplier-profiles.js");
 const p=m.create({name:"Ta’minotchi A",category:"Qadoqlash",region:"Samarqand",documentReference:"REG-001"},"supplier-1");
-assert.equal(p.verificationStatus,"Hujjatlar yuborilgan");assert.equal(p.accountId,"supplier-1");
+assert.equal(p.verificationStatus,"Tekshirilmagan");assert.equal(p.accountId,"supplier-1");
 assert.throws(()=>m.create({name:"A",category:"B"},""),/akkaunt ID/);
 assert.throws(()=>m.create({name:"",category:"B",region:"C"},"s1"),/majburiy/);
 let profiles=m.upsert([],p);assert.equal(profiles.length,1);
