@@ -152,3 +152,20 @@ Priority work packages:
 6. Implement server-side persistence, row-level security and multi-account tests before real finance data or integrations.
 
 No production payment, bank, wallet, accounting or live organization-finance feature is enabled by this documentation change.
+
+
+## Platform operations suite — 2026-11-15
+
+Implemented a local-demo operations layer in a separate feature branch:
+1. Notifications center derives reminders from local task, project and application records.
+2. Manual activity journal records user-entered decisions and events; it is not a tamper-proof audit log.
+3. Role and permission matrix documents suggested roles and scopes; browser selection does not enforce access.
+4. Backup/restore exports an allowlist of IDEA LAB demo keys, validates JSON format/version and asks before overwriting supported keys.
+5. Resource registry records equipment, materials, spaces and other resources.
+6. Events workspace records date/time, location, organizer and description.
+7. Unified local search indexes selected projects, initiatives, tasks, resources and events.
+8. Shared navigation now links to the new workspaces.
+9. Dashboard shortcuts expose the new workspaces.
+10. Regression tests and this implementation record document supported data sources and demo limitations.
+
+Safety boundaries: all new records remain browser-local. No authentication, real server-side authorization, cross-user push notifications, tamper-proof audit log, cloud backup, inventory accounting, or calendar integrations are enabled. No existing records are deleted or migrated.
