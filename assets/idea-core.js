@@ -234,6 +234,7 @@
     events: EVENTS,
     status: STATUS,
     store,
+    legacy,
     subscribe,
     emit,
     createId,
