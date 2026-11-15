@@ -10,6 +10,7 @@ const sql = fs.readFileSync(
   path.join(root, "supabase/migrations/20261116120000_idea_app_identity_organizations.sql"),
   "utf8"
 );
+const executableSql = sql.replace(/--.*$/gm, "");
 
 test("identity and organization foundation creates only isolated idea_app objects", () => {
   assert.match(sql, /create schema idea_app/i);
