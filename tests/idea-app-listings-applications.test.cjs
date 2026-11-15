@@ -24,7 +24,8 @@ test("public projections are invoker views and select only display fields", () =
   assert.ok(sql.includes("create view idea_app.public_project_updates"));
   assert.ok(sql.includes("with (security_invoker = true)"));
   const directory = sql.slice(sql.indexOf("create view idea_app.public_project_directory"), sql.indexOf("create view idea_app.public_project_updates"));
-  assert.doesNotMatch(directory, /p[.]created_by|owner_id|phone|email|project_id/i);
+  const selected = directory.slice(directory.indexOf("as\nselect"), directory.indexOf("\nfrom"));
+  assert.doesNotMatch(selected, /created_by|owner_id|phone|email|project_id/i);
   assert.ok(directory.includes("l.listing_status = 'published'"));
   assert.ok(directory.includes("p.visibility = 'public'"));
 });
