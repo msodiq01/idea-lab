@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="IDEA LAB — kelajak loyihalari va strategik tashabbuslar portfeli.">
+<title>IDEA LAB | Kelajak loyihalari</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/idea-shell.css">
+<style>
+:root{--p-bg:#f4f7fc;--p-ink:#17243a;--p-muted:#6d7b91;--p-line:#e3eaf3;--p-primary:#5146e5}
+body{background:var(--p-bg);color:var(--p-ink);font-family:Inter,Arial,sans-serif}
+.p-wrap{width:min(1180px,calc(100% - 36px));margin:32px auto 72px}.p-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:22px}.p-kicker{font-size:11px;letter-spacing:1.7px;font-weight:800;color:var(--p-primary)}.p-head h1{font-size:clamp(28px,4vw,42px);letter-spacing:-1.4px;margin:8px 0}.p-head p{margin:0;color:var(--p-muted);line-height:1.6;max-width:680px;font-size:13px}
+.p-demo{padding:8px 11px;border-radius:30px;background:#fff7e6;color:#946200;border:1px solid #f3dfb4;font-size:11px;font-weight:700;white-space:nowrap}
+.p-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.p-card,.p-panel{background:#fff;border:1px solid var(--p-line);border-radius:17px;box-shadow:0 8px 24px rgba(24,42,76,.04)}.p-card{padding:17px}.p-label{font-size:11px;color:var(--p-muted)}.p-value{font-size:29px;font-weight:800;margin:9px 0 2px}.p-sub{font-size:10px;color:var(--p-muted)}
+.p-grid{display:grid;grid-template-columns:1fr .8fr;gap:14px;margin-top:18px}.p-panel{padding:19px;min-width:0}.p-panel h2{font-size:16px;margin:0}.p-intro{font-size:11px;color:var(--p-muted);margin:5px 0 16px;line-height:1.5}
+.p-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}.p-field{display:flex;flex-direction:column;gap:6px;min-width:0}.p-field.full{grid-column:1/-1}.p-field label{font-size:11px;font-weight:700;color:#4a5870}.p-field input,.p-field select,.p-field textarea{width:100%;min-height:42px;border:1px solid #dce4ef;border-radius:10px;padding:10px 11px;font:inherit;font-size:12px;color:var(--p-ink);background:white}.p-field textarea{min-height:75px;resize:vertical}
+.p-btn{border:0;border-radius:10px;padding:11px 14px;background:var(--p-primary);color:white;font:inherit;font-size:12px;font-weight:700;cursor:pointer}.p-btn.secondary{background:#eef0ff;color:#4036c7}.p-btn.danger{background:#fff0f0;color:#b42318}.p-btn:focus-visible,.p-field input:focus-visible,.p-field select:focus-visible,.p-field textarea:focus-visible{outline:3px solid rgba(81,70,229,.2);outline-offset:1px}
+.p-note{font-size:10px;line-height:1.6;color:var(--p-muted);margin:14px 0 0;padding:11px 12px;background:#f7f9fd;border-radius:10px}.p-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:20px 0 12px}.p-toolbar h2{font-size:16px;margin:0}.p-toolbar select{border:1px solid var(--p-line);border-radius:9px;padding:9px;background:#fff;color:var(--p-ink);font-size:11px}
+.p-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.p-project{border:1px solid var(--p-line);border-radius:14px;padding:15px;min-width:0}.p-project-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.p-project h3{font-size:14px;margin:0 0 7px;overflow-wrap:anywhere}.p-project p{font-size:11px;color:var(--p-muted);line-height:1.6;margin:0 0 12px;overflow-wrap:anywhere}.p-status{display:inline-block;border-radius:30px;padding:5px 8px;font-size:9px;font-weight:800;background:#eef0ff;color:#453bd1;white-space:nowrap}.p-status.active{background:#e8f7ef;color:#167647}.p-status.paused{background:#fff5df;color:#946200}.p-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-top:10px;border-top:1px solid var(--p-line)}.p-meta span{font-size:10px;color:var(--p-muted)}.p-meta b{display:block;font-size:11px;color:var(--p-ink);margin-top:3px}.p-progress{height:7px;background:#edf1f7;border-radius:10px;overflow:hidden;margin:12px 0 7px}.p-progress span{height:100%;display:block;background:linear-gradient(90deg,#5146e5,#18b8c3);border-radius:10px}.p-card-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.p-card-actions button{font-size:10px;padding:8px 10px}.p-empty{grid-column:1/-1;padding:25px 10px;text-align:center;color:var(--p-muted);font-size:11px;border:1px dashed #d7e0ed;border-radius:12px}
+@media(max-width:850px){.p-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.p-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.p-wrap{width:calc(100% - 24px);margin-top:22px}.p-head{display:block}.p-demo{display:inline-block;margin-top:12px}.p-panel{padding:14px}.p-form{grid-template-columns:1fr}.p-field.full{grid-column:auto}.p-list{grid-template-columns:1fr}.p-toolbar{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<main class="p-wrap">
+<header class="p-head"><div><div class="p-kicker">IDEA LAB / STRATEGY & PORTFOLIO</div><h1>Kelajak loyihalari</h1><p>G‘oyalarni strategik tashabbuslarga aylantiring: maqsad, mas’ul, ustuvorlik, muddat, resurs va kutilayotgan natijani boshqaring.</p></div><span class="p-demo">Mahalliy demo — jamoaga sinxron emas</span></header>
+<section class="p-stats" aria-label="Loyihalar portfeli ko‘rsatkichlari">
+ <article class="p-card"><div class="p-label">Jami tashabbuslar</div><div class="p-value" id="total">0</div><div class="p-sub">Portfeldagi yozuvlar</div></article>
+ <article class="p-card"><div class="p-label">Taklif / baholash</div><div class="p-value" id="review">0</div><div class="p-sub">Ko‘rib chiqish bosqichi</div></article>
+ <article class="p-card"><div class="p-label">Faol loyihalar</div><div class="p-value" id="active">0</div><div class="p-sub">Amalga oshirilmoqda</div></article>
+ <article class="p-card"><div class="p-label">Taxminiy budjet</div><div class="p-value" id="budget">0 so‘m</div><div class="p-sub">Kiritilgan reja summalari</div></article>
+</section>
+<section class="p-grid">
+ <div class="p-panel"><h2>Yangi tashabbus qo‘shish</h2><p class="p-intro">Kelajak rejasini aniq maqsad, egasi va bosqich bilan qayd eting.</p>
+  <form id="projectForm" class="p-form">
+   <div class="p-field full"><label for="title">Loyiha nomi *</label><input id="title" maxlength="120" required placeholder="Masalan: Hududiy innovatsiya markazi"></div>
+   <div class="p-field full"><label for="purpose">Maqsad va muammo</label><textarea id="purpose" maxlength="500" placeholder="Qaysi muammoni hal qiladi va qanday natija kutiladi?"></textarea></div>
+   <div class="p-field"><label for="owner">Mas’ul / tashabbuskor</label><input id="owner" maxlength="80" placeholder="Mas’ul shaxs yoki jamoa"></div>
+   <div class="p-field"><label for="priority">Ustuvorlik</label><select id="priority"><option value="O‘rta">O‘rta</option><option value="Yuqori">Yuqori</option><option value="Past">Past</option></select></div>
+   <div class="p-field"><label for="stage">Bosqich</label><select id="stage"><option value="idea">G‘oya</option><option value="proposed">Taklif</option><option value="evaluating">Baholash</option><option value="approved">Tasdiqlangan</option><option value="planned">Rejalashtirilgan</option><option value="active">Faol</option><option value="paused">To‘xtatilgan</option><option value="completed">Yakunlangan</option><option value="cancelled">Bekor qilingan</option></select></div>
+   <div class="p-field"><label for="due">Maqsadli muddat</label><input id="due" type="date"></div>
+   <div class="p-field"><label for="budgetInput">Taxminiy budjet (so‘m)</label><input id="budgetInput" type="number" min="0" max="999999999999" step="1" placeholder="0"></div>
+   <div class="p-field full"><label for="resources">Kerakli resurslar / hamkorlar</label><input id="resources" maxlength="180" placeholder="Mutaxassislar, jihozlar, hamkorlar..."></div>
+   <div class="p-field full"><button class="p-btn" type="submit">+ Tashabbusni saqlash</button></div>
+  </form>
+ </div>
+ <div class="p-panel"><h2>Portfelni boshqarish</h2><p class="p-intro">Har bir tashabbusning bosqichi va bajarilish foizini yangilang.</p>
+  <div class="p-note">Tashabbusni “tasdiqlangan” yoki “faol” deb belgilash — bu hozircha ichki reja yozuvi. Bu moliyalashtirish, shartnoma yoki ishga tushgan xizmat borligini anglatmaydi.</div>
+  <div class="p-note">Har bir loyiha yozuvi uchun maqsad, mas’ul, bosqich, muddat, taxminiy budjet va resurs ehtiyoji saqlanadi. Haqiqiy jamoaviy ruxsatlar server ulanishidan keyin amalga oshiriladi.</div>
+ </div>
+</section>
+<section class="p-panel" style="margin-top:18px">
+ <div class="p-toolbar"><h2>Tashabbuslar portfeli</h2><select id="filter" aria-label="Loyihalarni bosqich bo‘yicha filtrlash"><option value="all">Barcha bosqichlar</option><option value="idea">G‘oya</option><option value="proposed">Taklif</option><option value="evaluating">Baholash</option><option value="approved">Tasdiqlangan</option><option value="planned">Rejalashtirilgan</option><option value="active">Faol</option><option value="paused">To‘xtatilgan</option><option value="completed">Yakunlangan</option><option value="cancelled">Bekor qilingan</option></select></div>
+ <div id="portfolioList" class="p-list"><div class="p-empty">Hozircha tashabbuslar yo‘q. Birinchi kelajak loyihasini qo‘shing.</div></div>
+</section>
+</main>
+<script src="assets/idea-core.js"></script>
+<script>
+(function(){
+ "use strict";
+ const KEY="ideaLabFutureProjects", $=id=>document.getElementById(id);
+ const read=()=>{try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(v)?v:[]}catch(_){return[]}};
+ const write=items=>{try{localStorage.setItem(KEY,JSON.stringify(items));return true}catch(_){alert("Brauzer xotirasiga saqlab bo‘lmadi.");return false}};
+ const id=()=>window.IDEALAB&&window.IDEALAB.createId?window.IDEALAB.createId("future"):"future-"+Date.now()+"-"+Math.random().toString(36).slice(2,8);
+ const money=n=>new Intl.NumberFormat("uz-UZ",{maximumFractionDigits:0}).format(n)+" so‘m";
+ const labels={idea:"G‘oya",proposed:"Taklif",evaluating:"Baholash",approved:"Tasdiqlangan",planned:"Rejalashtirilgan",active:"Faol",paused:"To‘xtatilgan",completed:"Yakunlangan",cancelled:"Bekor qilingan"};
+ let items=read();
+ function render(){
+  $("total").textContent=items.length;
+  $("review").textContent=items.filter(x=>["proposed","evaluating"].includes(x.stage)).length;
+  $("active").textContent=items.filter(x=>x.stage==="active").length;
+  $("budget").textContent=money(items.reduce((s,x)=>s+(Number(x.budget)||0),0));
+  const filter=$("filter").value,rows=items.filter(x=>filter==="all"||x.stage===filter).slice().sort((a,b)=>String(a.due||"9999").localeCompare(String(b.due||"9999")));
+  if(!rows.length){$("portfolioList").innerHTML='<div class="p-empty">Tanlangan bosqichda tashabbuslar topilmadi.</div>';return}
+  $("portfolioList").replaceChildren();
+  rows.forEach(item=>{
+   const card=document.createElement("article");card.className="p-project";
+   const top=document.createElement("div");top.className="p-project-top";
+   const heading=document.createElement("div");const title=document.createElement("h3");title.textContent=item.title;const purpose=document.createElement("p");purpose.textContent=item.purpose||"Maqsad tafsiloti kiritilmagan.";heading.append(title,purpose);
+   const status=document.createElement("span");status.className="p-status"+(item.stage==="active"?" active":"")+(item.stage==="paused"?" paused":"");status.textContent=labels[item.stage]||"Noma’lum";
+   top.append(heading,status);card.appendChild(top);
+   const meta=document.createElement("div");meta.className="p-meta";
+   [[ "Mas’ul",item.owner||"Belgilanmagan"],["Ustuvorlik",item.priority||"O‘rta"],["Muddat",item.due||"Belgilanmagan"],["Budjet",money(Number(item.budget)||0)],["Resurslar",item.resources||"Belgilanmagan"]].forEach(([label,value])=>{const cell=document.createElement("span");cell.textContent=label;const b=document.createElement("b");b.textContent=value;cell.appendChild(b);meta.appendChild(cell)});
+   card.appendChild(meta);
+   const progressWrap=document.createElement("div");progressWrap.className="p-progress";const bar=document.createElement("span");bar.style.width=Math.max(0,Math.min(100,Number(item.progress)||0))+"%";progressWrap.appendChild(bar);card.appendChild(progressWrap);
+   const progressText=document.createElement("small");progressText.className="p-sub";progressText.textContent=(Number(item.progress)||0)+"% bajarilgan";card.appendChild(progressText);
+   const actions=document.createElement("div");actions.className="p-card-actions";
+   const stage=document.createElement("select");stage.setAttribute("aria-label",item.title+" bosqichi");Object.entries(labels).forEach(([value,label])=>{const opt=document.createElement("option");opt.value=value;opt.textContent=label;stage.appendChild(opt)});stage.value=item.stage;stage.addEventListener("change",()=>{items=items.map(x=>x.id===item.id?{...x,stage:stage.value,updatedAt:new Date().toISOString()}:x);if(write(items))render()});
+   const progress=document.createElement("input");progress.type="number";progress.min="0";progress.max="100";progress.value=Number(item.progress)||0;progress.setAttribute("aria-label",item.title+" bajarilish foizi");progress.style.width="65px";progress.style.padding="7px";progress.style.border="1px solid #e3eaf3";progress.style.borderRadius="8px";
+   const save=document.createElement("button");save.type="button";save.className="p-btn secondary";save.textContent="Foizni saqlash";save.addEventListener("click",()=>{const value=Math.max(0,Math.min(100,Number(progress.value)||0));items=items.map(x=>x.id===item.id?{...x,progress:value,updatedAt:new Date().toISOString()}:x);if(write(items))render()});
+   const del=document.createElement("button");del.type="button";del.className="p-btn danger";del.textContent="O‘chirish";del.addEventListener("click",()=>{if(!confirm("Ushbu tashabbusni o‘chirishni xohlaysizmi?"))return;items=items.filter(x=>x.id!==item.id);if(write(items))render()});
+   actions.append(stage,progress,save,del);card.appendChild(actions);$("portfolioList").appendChild(card);
+  });
+ }
+ $("projectForm").addEventListener("submit",event=>{
+  event.preventDefault();const title=$("title").value.trim(),budget=Number($("budgetInput").value||0);
+  if(!title)return;if(!Number.isSafeInteger(budget)||budget<0||budget>999999999999){alert("Taxminiy budjet noto‘g‘ri.");return}
+  items.push({id:id(),title,purpose:$("purpose").value.trim(),owner:$("owner").value.trim(),priority:$("priority").value,stage:$("stage").value,due:$("due").value,budget,resources:$("resources").value.trim(),progress:0,createdAt:new Date().toISOString()});
+  if(write(items)){event.target.reset();$("priority").value="O‘rta";$("stage").value="idea";render()}
+ });
+ $("filter").addEventListener("change",render);
+ window.addEventListener("storage",event=>{if(event.key===KEY){items=read();render()}});
+ render();
+})();
+</script>
+<script src="assets/idea-shell.js" defer></script>
+</body>
+</html>
