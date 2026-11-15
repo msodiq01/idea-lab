@@ -7,6 +7,7 @@ assert.throws(()=>m.create({...base,quantity:0},{projectId:"p1",actorId:"owner-1
 assert.throws(()=>m.transition(rows,id,"Yetkazib beruvchi tasdiqladi",{id:"other",role:"supplier"}),/ishtirokchisi emas/);
 rows=m.transition(rows,id,"Yetkazib beruvchi tasdiqladi",{id:"supplier-1",role:"supplier"});
 assert.equal(rows[0].supplierConfirmedAt!==null,true);
+rows=m.transition(rows,id,"Investor bilan tanishtirildi",{id:"investor-1",role:"investor"});
 rows=m.transition(rows,id,"Moliyalashtirishga ruxsat berildi",{id:"investor-1",role:"investor"});
 assert.equal(rows[0].investorAcknowledgedAt!==null,true);
 assert.throws(()=>m.transition(rows,id,"To‘lov jarayoni qayd etildi",{id:"owner-1",role:"project"}),/hujjat.*majburiy/);
@@ -14,7 +15,7 @@ rows=m.transition(rows,id,"To‘lov jarayoni qayd etildi",{id:"owner-1",role:"pr
 rows=m.transition(rows,id,"To‘lov bajarilgani qayd etildi",{id:"owner-1",role:"project",reference:"BANK-REF-1"});
 rows=m.transition(rows,id,"Resurs yetkazildi",{id:"supplier-1",role:"supplier",reference:"DEL-1"});
 rows=m.transition(rows,id,"Loyiha qabul qildi",{id:"owner-1",role:"project",reference:"GRN-1"});
-assert.equal(rows[0].history.length,6);
+assert.equal(rows[0].history.length,8);
 assert.equal(m.forParticipant(rows,"p1",{id:"investor-1"}).length,1);
 assert.equal(m.forParticipant(rows,"p1",{id:"intruder"}).length,0);
 assert.equal(m.summarize(rows,"p1").delivered,1);

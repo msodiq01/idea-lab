@@ -7,6 +7,7 @@ const path = require("node:path");
 const root = path.join(__dirname, "..");
 const read = (p) => fs.readFileSync(path.join(root, p), "utf8");
 const readme = read("supabase/README.md");
+const schema = read("supabase/schema.sql");
 const runbook = read("supabase/verification/supplier-verification-staging-runbook.md");
 const preflight = read("supabase/verification/supplier-verification-staging-preflight.sql");
 const adminReadme = read("supabase/functions/supplier-verification-admin/README.md");
@@ -29,7 +30,7 @@ test("staging runbook lists all required SQL files in dependency order", () => {
     assert.ok(index > previous, file + " must appear in migration order");
     previous = index;
   }
-  assert.match(readme, /public\.set_updated_at\(\)/);
+  assert.match(schema, /create or replace function public\.set_updated_at\(\)/);
 });
 
 test("runbook explicitly separates staging preparation from production activation", () => {

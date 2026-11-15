@@ -28,11 +28,15 @@ test('finalization checks stored object metadata before inserting evidence metad
   assert.match(fn, /UUID_RE\.test\(filename\)/);
 });
 
-test('download links require owner or active reviewer and expire quickly', () => {
+test('download links require owner or active reviewer with an exact active case assignment and expire quickly', () => {
   assert.match(fn, /from\("supplier_verification_reviewers"\)/);
   assert.match(fn, /\.eq\("user_id", actor\.id\)/);
   assert.match(fn, /\.eq\("is_active", true\)/);
-  assert.match(fn, /if \(!isOwner && !isActiveReviewer\)/);
+  assert.match(fn, /from\("supplier_verification_review_assignments"\)/);
+  assert.match(fn, /\.eq\("application_id", evidence\.application_id\)/);
+  assert.match(fn, /\.eq\("reviewer_user_id", actor\.id\)/);
+  assert.match(fn, /if \(!isOwner && !isAssignedReviewer\)/);
+  assert.ok(fn.indexOf("if (!isOwner && !isAssignedReviewer)") < fn.indexOf("createSignedUrl"));
   assert.match(fn, /DOWNLOAD_TTL_SECONDS = 60/);
   assert.match(fn, /createSignedUrl\(evidence\.private_storage_path, DOWNLOAD_TTL_SECONDS\)/);
 });
@@ -40,7 +44,7 @@ test('download links require owner or active reviewer and expire quickly', () =>
 test('link issuance is audited and API response is not cacheable', () => {
   assert.match(fn, /supplier_verification_evidence_access_events/);
   assert.match(fn, /download_link_issued/);
-  assert.match(fn, /cache-control", "no-store"/);
+  assert.match(fn, /cache-control": "no-store"/);
   assert.match(migration, /revoke all on public\.supplier_verification_evidence_access_events from public, anon, authenticated/i);
   assert.match(migration, /grant all on public\.supplier_verification_evidence_access_events to service_role/i);
 });
