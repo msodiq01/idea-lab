@@ -776,8 +776,10 @@ const ideaCore = window.IDEALAB || null;
 
 function readData(key) {
     try {
-        const value = JSON.parse(localStorage.getItem(key) || "[]");
-        return Array.isArray(value) ? value : [];
+        const data = ideaCore && ideaCore.legacy
+            ? ideaCore.legacy.read(key, [])
+            : JSON.parse(localStorage.getItem(key) || "[]");
+        return Array.isArray(data) ? data : [];
     } catch (error) {
         console.error("Ma'lumotni o'qishda xato:", key, error);
         return [];
@@ -786,6 +788,14 @@ function readData(key) {
 
 function saveData(key, data) {
     try {
+        if (ideaCore && ideaCore.legacy) {
+            const result = ideaCore.legacy.write(key, data);
+            if (!result || !result.ok) {
+                alert("Ma'lumotni saqlab bo'lmadi.");
+                return false;
+            }
+            return true;
+        }
         localStorage.setItem(key, JSON.stringify(data));
         return true;
     } catch (error) {
