@@ -58,6 +58,17 @@ Only after the migrations and preflight pass:
 - Deploy `supabase/functions/supplier-verification-evidence/` as `supplier-verification-evidence`.
 - Deploy `supabase/functions/supplier-verification-admin/` as `supplier-verification-admin`.
 
+The repository's `supabase/config.toml` explicitly keeps gateway JWT verification enabled for both functions. Do not use `--no-verify-jwt`.
+
+From a trusted local terminal after installing/authenticating the Supabase CLI, set `STAGING_PROJECT_REF` to the verified staging project's ref and deploy only to that explicit target:
+
+```sh
+supabase functions deploy supplier-verification-evidence --project-ref "$STAGING_PROJECT_REF"
+supabase functions deploy supplier-verification-admin --project-ref "$STAGING_PROJECT_REF"
+```
+
+Before each command, independently confirm the variable still names the intended disposable staging project. Never print or commit CLI access tokens.
+
 Do not enable real document collection. The functions are implementation foundations; the evidence function does not scan files for malware or prove document authenticity.
 
 ## 5. Bootstrap the first administrator
