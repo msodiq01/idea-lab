@@ -168,7 +168,10 @@ const STORAGE_KEY = "ideaLabSpecialists";
 
 function getSpecialists() {
     try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        const data = ideaCore && ideaCore.legacy
+            ? ideaCore.legacy.read(STORAGE_KEY, [])
+            : JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        return Array.isArray(data) ? data : [];
     } catch {
         return [];
     }
@@ -176,6 +179,14 @@ function getSpecialists() {
 
 function saveSpecialists(data) {
     try {
+        if (ideaCore && ideaCore.legacy) {
+            const result = ideaCore.legacy.write(STORAGE_KEY, data);
+            if (!result || !result.ok) {
+                alert("Profilni saqlab bo‘lmadi. Brauzer xotirasini tekshiring.");
+                return false;
+            }
+            return true;
+        }
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         return true;
     } catch (error) {
