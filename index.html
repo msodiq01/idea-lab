@@ -1346,7 +1346,11 @@
     </div>
 </footer>
 
+<script src="assets/idea-core.js"></script>
 <script>
+    "use strict";
+    const ideaCore = window.IDEALAB || null;
+
     function readData(key, fallback = []) {
         try {
             const value = localStorage.getItem(key);
@@ -1443,6 +1447,47 @@
     }
 
     const projectForm = document.getElementById("projectForm");
+    const projectDraftFields = [
+        ["projectName", "name"],
+        ["projectDirection", "direction"],
+        ["projectDescription", "description"],
+        ["investment", "investment"],
+        ["specialists", "specialists"],
+        ["resources", "resources"]
+    ];
+
+    function saveProjectDraft() {
+        if (!ideaCore || !ideaCore.store) return;
+        const draft = {};
+        projectDraftFields.forEach(function(field) {
+            const element = document.getElementById(field[0]);
+            draft[field[1]] = element ? element.value : "";
+        });
+        ideaCore.store.set("projects.creationDraft", draft);
+    }
+
+    function restoreProjectDraft() {
+        if (!ideaCore || !ideaCore.store) return;
+        const draft = ideaCore.store.get("projects.creationDraft", null);
+        if (!draft || typeof draft !== "object" || Array.isArray(draft)) return;
+
+        projectDraftFields.forEach(function(field) {
+            const element = document.getElementById(field[0]);
+            const value = draft[field[1]];
+            if (element && typeof value === "string") {
+                element.value = value;
+            }
+        });
+    }
+
+    projectDraftFields.forEach(function(field) {
+        const element = document.getElementById(field[0]);
+        if (!element) return;
+        element.addEventListener("input", saveProjectDraft);
+        element.addEventListener("change", saveProjectDraft);
+    });
+
+    restoreProjectDraft();
 
     projectForm.addEventListener("submit", function(event) {
         event.preventDefault();
@@ -1531,9 +1576,17 @@
 
         projectForm.reset();
 
+        if (ideaCore && ideaCore.store) {
+            ideaCore.store.remove("projects.creationDraft");
+            ideaCore.emit("project:created", {
+                projectId: project.id,
+                createdAt: project.createdAt
+            });
+        }
+
         message.className = "form-message success";
         message.textContent =
-            "Loyiha muvaffaqiyatli yaratildi!";
+            "Loyiha ushbu brauzerda saqlandi. Hozircha boshqa foydalanuvchilarga ko‘rinmaydi.";
 
         updateProjectCount();
         showRecentProjects();
@@ -1548,5 +1601,6 @@
     showRecentProjects();
 </script>
 
-    <script src="assets/idea-shell.js" defer></script>\n</body>
+    <script src="assets/idea-shell.js" defer></script>
+</body>
 </html>
