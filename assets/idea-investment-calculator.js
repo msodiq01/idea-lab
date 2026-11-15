@@ -37,7 +37,7 @@
    committed,target,
    fundingRemaining:Math.max(0,target-committed-investment),
    fundingProgressPercent:target>0?Math.min(100,(committed+investment)/target*100):null,
-   indicativeShares:totalShares===null?null:totalShares*equityPercent/100
+   indicativeShares:totalShares===null?null:totalShares*equityPercent/(100-equityPercent)
   });
  }
  return Object.freeze({calculate});
