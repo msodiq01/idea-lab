@@ -47,3 +47,16 @@ test("Auth page loads the read-only identity bridge and never claims a completed
   assert.match(html, /Bog‘lash hali bajarilmagan/);
   assert.match(html, /rol ko‘chirilmagan/);
 });
+
+test("Auth page exposes guarded session navigation and sign-out controls", () => {
+  assert.match(html, /id="profileLink" href="profile\.html" aria-disabled="true"/);
+  assert.match(html, /id="signOutButton" type="button" disabled/);
+  assert.match(html, /auth\.signOut\(\)/);
+  assert.match(html, /updateSessionControls\(session\)/);
+  assert.match(html, /if\(!configured\|\|signOutButton\.disabled\)return/);
+});
+
+test("offline mode keeps session controls unavailable", () => {
+  assert.match(html, /updateSessionControls\(null\);/);
+  assert.match(html, /signOutButton\.disabled=!configured\|\|!active/);
+});
