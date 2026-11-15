@@ -11,7 +11,7 @@ Bu papkadagi SQL — IDEA LAB backendini tayyorlash uchun. Hozir frontend Supaba
 5. `migrations/20261118_supplier_verification_private_storage.sql` — private hujjat bucket'i va Storage RLS siyosatlari.
 6. `migrations/20261119_supplier_verification_evidence_access_audit.sql` — vaqtinchalik yuklab olish havolasi berilganini qayd etuvchi audit jadvali.
 7. `migrations/20261120_supplier_verification_case_assignments.sql` — reviewerlarni alohida arizalarga biriktirish va o‘qish/qaror ruxsatlarini shu biriktirish bilan cheklash.
-7. `verification/security_audit.sql` — read-only tekshiruv so'rovlari.
+8. `verification/security_audit.sql` — read-only tekshiruv so'rovlari.
 
 ## Ishga tushirishdan oldin
 
