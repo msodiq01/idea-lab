@@ -25,6 +25,7 @@ test("staging preflight checks SECURITY DEFINER and pinned search_path on privil
   assert.match(preflight, /prosecdef/i);
   assert.match(preflight, /search_path_pinned/i);
   assert.match(preflight, /search_path=pg_catalog, public/i);
+  assert.match(preflight, /max\(\(select cfg\.setting from unnest/i);
   assert.match(preflight, /record_supplier_verification_submission/i);
   assert.match(preflight, /admin_revoke_supplier_verification_case/i);
 });
