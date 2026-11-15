@@ -732,6 +732,34 @@ button, input, textarea, select {
         <p class="notice">Sinov rejimi: arizalar faqat ushbu brauzerda saqlanadi. Vakansiya egasi va nomzodlar o‘rtasida hali server orqali almashilmaydi.</p>
     </section>
 
+    <section class="section">
+        <div class="section-heading">
+            <div>
+                <h2>Jamoa tashkilotchisi paneli — kelgan a’zolik arizalari</h2>
+                <p>Jamoaga qo‘shilishni istagan nomzodlarni ko‘ring va arizalarni boshqaring.</p>
+            </div>
+            <span class="tag" id="teamManagerApplicationCount">0 ta ariza</span>
+        </div>
+        <div class="search-row">
+            <input class="search-input" id="teamManagerApplicationSearch" type="search"
+                placeholder="Nomzod, jamoa yoki telefon bo‘yicha qidirish...">
+            <select class="search-input" id="teamManagerApplicationStatus" aria-label="A’zolik arizasi holati">
+                <option value="">Barcha holatlar</option>
+                <option value="Yangi">Yangi</option>
+                <option value="Ko‘rib chiqilmoqda">Ko‘rib chiqilmoqda</option>
+                <option value="Qabul qilindi">Qabul qilindi</option>
+                <option value="Rad etildi">Rad etildi</option>
+            </select>
+            <select class="search-input" id="teamManagerApplicationSort" aria-label="A’zolik arizalarini saralash">
+                <option value="newest">Eng yangi</option>
+                <option value="oldest">Eng eski</option>
+            </select>
+        </div>
+        <p id="teamManagerApplicationResultCount" aria-live="polite"></p>
+        <div class="cards" id="teamManagerApplications"></div>
+        <p class="notice">Sinov rejimi: a’zolik arizalari faqat ushbu brauzerda saqlanadi. Jamoa tashkilotchisi va nomzod o‘rtasida server orqali hali almashilmaydi.</p>
+    </section>
+
 </main>
 
 <footer class="footer">
@@ -1125,6 +1153,113 @@ function showEmployerApplications() {
     });
 }
 
+/* 8B. JAMOA TASHKILOTCHISI UCHUN KELGAN ARIZALAR */
+
+function showTeamManagerApplications() {
+    const applications = readData("teamApplications");
+    const search = document.getElementById("teamManagerApplicationSearch").value.trim().toLocaleLowerCase("uz-UZ");
+    const selectedStatus = document.getElementById("teamManagerApplicationStatus").value;
+    const sortMode = document.getElementById("teamManagerApplicationSort").value;
+    const container = document.getElementById("teamManagerApplications");
+
+    const filtered = applications.filter(function(application) {
+        const text = [
+            application.applicantName,
+            application.teamName,
+            application.applicantPhone
+        ].join(" ").toLocaleLowerCase("uz-UZ");
+        return text.includes(search) && (!selectedStatus || (application.status || "Yangi") === selectedStatus);
+    });
+
+    filtered.sort(function(a, b) {
+        const aDate = Date.parse(a.date || "") || 0;
+        const bDate = Date.parse(b.date || "") || 0;
+        return sortMode === "oldest" ? aDate - bDate : bDate - aDate;
+    });
+
+    document.getElementById("teamManagerApplicationCount").textContent = applications.length + " ta ariza";
+    document.getElementById("teamManagerApplicationResultCount").textContent =
+        "Ko‘rsatilmoqda: " + filtered.length + " / " + applications.length + " ta ariza";
+    container.replaceChildren();
+
+    if (!filtered.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        const title = document.createElement("h3");
+        const message = document.createElement("p");
+        title.textContent = applications.length ? "Mos ariza topilmadi" : "Hozircha jamoaga arizalar yo‘q";
+        message.textContent = applications.length
+            ? "Qidiruv yoki holat filtrini o‘zgartirib ko‘ring."
+            : "Jamoalaringizga yuborilgan a’zolik arizalari shu yerda ko‘rinadi.";
+        empty.append(title, message);
+        container.append(empty);
+        return;
+    }
+
+    filtered.forEach(function(application) {
+        const card = document.createElement("article");
+        card.className = "card";
+        const heading = document.createElement("div");
+        heading.className = "card-top";
+        const title = document.createElement("h3");
+        title.textContent = application.applicantName || "Nomsiz nomzod";
+        const badge = document.createElement("span");
+        badge.className = "tag";
+        badge.textContent = application.status || "Yangi";
+        heading.append(title, badge);
+
+        const details = [
+            "Jamoa: " + (application.teamName || "Ko‘rsatilmagan"),
+            "Telefon: " + (application.applicantPhone || "Ko‘rsatilmagan"),
+            "Yuborilgan vaqt: " + (application.date ? new Date(application.date).toLocaleString("uz-UZ") : "Ko‘rsatilmagan")
+        ];
+        card.append(heading);
+        details.forEach(function(value) {
+            const paragraph = document.createElement("p");
+            paragraph.textContent = value;
+            card.append(paragraph);
+        });
+
+        const label = document.createElement("label");
+        label.textContent = "A’zolik arizasi holati";
+        label.style.display = "block";
+        label.style.marginTop = "12px";
+        const select = document.createElement("select");
+        select.className = "search-input";
+        select.setAttribute("aria-label", "Jamoaga a’zolik arizasi holati");
+        ["Yangi", "Ko‘rib chiqilmoqda", "Qabul qilindi", "Rad etildi"].forEach(function(status) {
+            const option = document.createElement("option");
+            option.value = status;
+            option.textContent = status;
+            select.append(option);
+        });
+        select.value = ["Yangi", "Ko‘rib chiqilmoqda", "Qabul qilindi", "Rad etildi"].includes(application.status)
+            ? application.status
+            : "Yangi";
+        select.addEventListener("change", function() {
+            const current = readData("teamApplications");
+            const index = current.findIndex(function(item) {
+                return String(item.id) === String(application.id);
+            });
+            if (index < 0) {
+                alert("Ariza topilmadi. Sahifani yangilang.");
+                showTeamManagerApplications();
+                return;
+            }
+            current[index].status = select.value;
+            current[index].updatedAt = new Date().toISOString();
+            if (saveData("teamApplications", current)) {
+                showTeamManagerApplications();
+                showMyApplications();
+            } else {
+                select.value = application.status || "Yangi";
+            }
+        });
+        card.append(label, select);
+        container.append(card);
+    });
+}
+
 /* 9. STATISTIKA */
 
 function updateStats() {
@@ -1163,6 +1298,15 @@ document.getElementById("employerApplicationStatus")
 document.getElementById("employerApplicationSort")
     .addEventListener("change", showEmployerApplications);
 
+document.getElementById("teamManagerApplicationSearch")
+    .addEventListener("input", showTeamManagerApplications);
+
+document.getElementById("teamManagerApplicationStatus")
+    .addEventListener("change", showTeamManagerApplications);
+
+document.getElementById("teamManagerApplicationSort")
+    .addEventListener("change", showTeamManagerApplications);
+
 /* 11. SAHIFANI ISHGA TUSHIRISH */
 
 function initializePage() {
@@ -1170,6 +1314,7 @@ function initializePage() {
     showJobs();
     showMyApplications();
     showEmployerApplications();
+    showTeamManagerApplications();
     updateStats();
 }
 
