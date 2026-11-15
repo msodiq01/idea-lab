@@ -9,7 +9,7 @@ const migration = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrat
 test('Edge Function authenticates callers and keeps service credentials server-side', () => {
   assert.match(fn, /SUPABASE_SERVICE_ROLE_KEY/);
   assert.match(fn, /admin\.auth\.getUser\(tokenMatch\[1\]\)/);
-  assert.match(fn, /Bearer\\s\\+/);
+  assert.match(fn, /Bearer\s+/);
   assert.doesNotMatch(fn, /localStorage|document\.cookie/);
 });
 
@@ -32,7 +32,11 @@ test('download links require owner or active reviewer with an exact active case 
   assert.match(fn, /from\("supplier_verification_reviewers"\)/);
   assert.match(fn, /\.eq\("user_id", actor\.id\)/);
   assert.match(fn, /\.eq\("is_active", true\)/);
-  assert.match(fn, /if \\(!isOwner && !isAssignedReviewer\\)/);
+  assert.match(fn, /from\("supplier_verification_review_assignments"\)/);
+  assert.match(fn, /\.eq\("application_id", evidence\.application_id\)/);
+  assert.match(fn, /\.eq\("reviewer_user_id", actor\.id\)/);
+  assert.match(fn, /if \(!isOwner && !isAssignedReviewer\)/);
+  assert.ok(fn.indexOf("if (!isOwner && !isAssignedReviewer)") < fn.indexOf("createSignedUrl"));
   assert.match(fn, /DOWNLOAD_TTL_SECONDS = 60/);
   assert.match(fn, /createSignedUrl\(evidence\.private_storage_path, DOWNLOAD_TTL_SECONDS\)/);
 });
