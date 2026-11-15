@@ -65,3 +65,15 @@ test("Investor bilan hamkorlik so‘rovlari yagona markazda faqat yuboruvchi pro
  assert.match(html,/outgoing:x=>same\(x\.applicantId,x\.applicantEmail\)/);
  assert.match(html,/incoming:\(\)=>false/);
 });
+
+
+test("Arizalar markazi barcha yagona holatlarni filtrlay oladi",()=>{
+ for(const value of ["interview","negotiating","agreed","in_progress","completed","cancelled"]) assert.ok(html.includes('value="'+value+'"'));
+ assert.match(html,/IDEALAB\.applications\.normalizeStatus/);
+ assert.match(html,/IDEALAB\.applications\.nextStatuses/);
+});
+
+test("Arizalar markazi holat o‘tishlarini markaziy yadrodan oladi",()=>{
+ assert.match(html,/const transitions=IDEALAB\.applications\.transitions/);
+ assert.match(html,/all\[current\]\.status=next/);
+});
