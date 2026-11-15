@@ -257,15 +257,15 @@ grant select on idea_app.public_project_directory, idea_app.public_project_updat
   to anon, authenticated;
 
 grant select on idea_app.applications to authenticated;
-grant insert (project_id, applicant_id, applicant_note, status, reviewer_note, reviewed_at)
+grant insert (project_id, applicant_id, applicant_note)
   on idea_app.applications to authenticated;
 grant update (status, reviewer_note, reviewed_at, updated_at)
   on idea_app.applications to authenticated;
 
 grant select on idea_app.project_listings to authenticated;
-grant insert (project_id, slug, title, summary, category, listing_status, published_at, updated_at)
+grant insert (project_id, slug, title, summary, category, listing_status, published_at)
   on idea_app.project_listings to authenticated;
-grant update (slug, title, summary, category, listing_status, published_at, updated_at)
+grant update (slug, title, summary, category, listing_status, published_at)
   on idea_app.project_listings to authenticated;
 grant delete on idea_app.project_listings to authenticated;
 
@@ -286,7 +286,7 @@ using (
     select 1
     from idea_app.project_listings l
     join idea_app.projects p on p.id = l.project_id
-    where l.project_id = u.project_id
+    where l.project_id = project_updates.project_id
       and l.listing_status = 'published'
       and p.visibility = 'public'
       and p.status in ('recruiting', 'active', 'completed')
