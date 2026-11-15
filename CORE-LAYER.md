@@ -13,6 +13,9 @@ Holat: alohida tayyorlangan frontend yadro; sahifalarga hali ulanmagan.
 - `window.IDEALAB.version` — yadro versiyasi.
 - `window.IDEALAB.environment` — hozirgi holat `offline-demo`; backend va autentifikatsiya yo'q.
 - `window.IDEALAB.store` — xavfsiz JSON localStorage get/set/remove interfeysi.
+- `window.IDEALAB.legacy.inspect(keys)` — ruxsat etilgan eski kalitlarni faqat metadata darajasida tekshiradi; qiymatlarni ko‘rsatmaydi.
+- `window.IDEALAB.legacy.createBackup(keys)` — faqat aniq uzatilgan kalitlar uchun, chaqiruvchi tomonidan ishga tushiriladigan zaxira nusxa yaratadi. Xom qiymatlar nusxalanadi; shu sababli maxfiy ma’lumotlar ham zaxiraga kirishi mumkin.
+- `window.IDEALAB.legacy.readBackup(id)` — shu brauzerda saqlangan zaxirani tekshirish uchun o‘qiydi.
 - `window.IDEALAB.status` va `statusLabel()` — umumiy status lug'ati.
 - `subscribe()` / `emit()` — modullararo hodisalar.
 - `createId()`, `escapeHtml()`, `formatDate()` — umumiy utilitalar.
@@ -52,6 +55,17 @@ const unsubscribe = IDEALAB.subscribe(IDEALAB.events.storageChanged, (event) => 
 - XSS uchun `escapeHtml` test qilinsin.
 - Status lug'atidagi qiymatlar UI'dagi mavjud statuslar bilan solishtirilsin.
 - Ikki sahifaga ulashdan oldin bir sahifadagi mavjud localStorage kalitlari bilan to'qnashuv yo'qligi tekshirilsin.
+
+## Legacy ma’lumotlarini tekshirish va zaxiralash
+
+```js
+const report = IDEALAB.legacy.inspect(["projects", "jobApplications"]);
+// Faqat foydalanuvchi roziligi va aniq tanlovidan keyin:
+const backup = IDEALAB.legacy.createBackup(["projects", "jobApplications"]);
+const verified = IDEALAB.legacy.readBackup(backup.backupId);
+```
+
+Bu amallar ma’lumotni yangi formatga ko‘chirmaydi va eski kalitlarni o‘chirmaydi. Migratsiya uchun avval maydonlar xaritasi, dublikat/egasiz yozuvlar tekshiruvi, zaxirani qayta tiklash sinovi va alohida tasdiq kerak.
 
 ## Ataylab qilinmagan ishlar
 
