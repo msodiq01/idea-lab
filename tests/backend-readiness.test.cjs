@@ -90,6 +90,14 @@ test("Live Supabase audit records the empty public view set and restricted trigg
   assert.match(review, /search_path/);
 });
 
+test("Live Supabase audit distinguishes the finance schema from repository application migrations", () => {
+  assert.match(review, /profiles.*user_roles.*resource_types.*resources.*resource_accounts.*investments.*money_transfers.*transfer_allocations.*audit_logs/);
+  assert.match(review, /client INSERT\/UPDATE\/DELETE grantlari berilmagan/);
+  assert.match(review, /faqat o‘z foydalanuvchisiga SELECT bilan ochiq/);
+  assert.match(review, /20261116.*20261122/s);
+  assert.match(review, /kengroq loyiha\/jamoa\/vakansiya modeli jonli 9-jadval moliyaviy-resurs sxemasiga hali qo‘shilmagan/);
+});
+
 test("Live Supabase audit documents the read-only state and remaining Auth setup", () => {
   assert.match(review, /ACTIVE_HEALTHY/);
   assert.match(review, /9 ta jadval/);
@@ -101,7 +109,7 @@ test("Live Supabase audit documents the read-only state and remaining Auth setup
 });
 
 test("Security review states what remains unverified", () => {
-  assert.match(review, /statik kod ko'rigi/);
-  assert.match(review, /jonli Supabase loyihasida bajarilmagan/);
+  assert.match(review, /statik kod ko'rigi \+ jonli read-only audit/);
+  assert.match(review, /jonli audit faqat metadata\/read-only so'rovlar bilan cheklangan/);
   assert.match(review, /penetration test emas/);
 });
