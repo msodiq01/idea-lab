@@ -67,3 +67,9 @@ test("inspection never writes or mutates legacy profile/session objects", () => 
   assert.equal(JSON.stringify(profile), beforeProfile);
   assert.equal(JSON.stringify(session), beforeSession);
 });
+
+test("malformed array profiles are rejected", () => {
+  const result = loadBridge().inspect([profile], session, configured);
+  assert.equal(result.state, "legacy_profile_missing");
+  assert.equal(result.canLink, false);
+});
