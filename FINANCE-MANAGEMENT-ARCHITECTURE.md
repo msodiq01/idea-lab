@@ -179,3 +179,8 @@ AI may summarize authorized data, explain trends, identify unusual changes and d
 - Exports respect permissions and do not leak private records.
 - Roadmap projects have clear stage, owner, outcomes, budget estimate and dependencies.
 - No planned feature is presented as live until its end-to-end acceptance criteria pass.
+
+
+## Investor funding traceability
+
+The resource/investment payment path has a dedicated data and access contract in `INVESTMENT-FUNDING-TRACEABILITY.md`. It covers resource ownership, account-holder consent, investor-visible masked destination details, transfer allocation and server-verified status changes. This is a target specification, not a live payment feature.
