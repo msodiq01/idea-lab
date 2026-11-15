@@ -13,7 +13,8 @@
   ["Boshqaruv",[["Dashboard","dashboard.html"],["Shaxsiy kabinet","profile.html"],["Tashkilotlar","organizations.html"]]],
   ["G‘oya va rivojlanish",[["Loyihalar","projects.html"],["Talab va taklif","exchange.html"]]],
   ["Biznes va bozor",[["Global bozor","marketplace.html"],["Investorlar","investors.html"],["Takliflar markazi","offers.html"]]],
-  ["Jamoa va imkoniyatlar",[["Jamoalar","teams.html"],["Vakansiyalar","teams.html#career-section"],["Mutaxassislar","specialists.html"]]]
+  ["Jamoa va imkoniyatlar",[["Jamoalar","teams.html"],["Vakansiyalar","teams.html#career-section"],["Mutaxassislar","specialists.html"]]],
+  ["Platforma rivoji",[["Yo‘l xaritasi","roadmap.html"]]]
  ];
  const current=location.pathname.split("/").pop()||"index.html";
  const isCurrent=url=>url.split("#")[0]===current;
