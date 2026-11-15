@@ -54,6 +54,14 @@ Ushbu tekshiruv Supabase MCP orqali loyiha holati, public schema, migration tari
 - Edge Functions ro‘yxati bo‘sh.
 - Supabase Auth provayderlari, SMTP va SMS provider sozlamalari ushbu ulangan boshqaruv vositalari orqali o‘qilmadi; ular sozlangan deb hisoblanmaydi.
 
+
+### Qo‘shimcha DB obyektlari tekshiruvi
+- `public` sxemasida SQL view topilmadi. Demak, hozircha maxsus public katalog view'lari yaratilmagan.
+- `public` sxemasida ikki trigger funksiyasi topildi: `handle_new_user_profile` va `set_updated_at`.
+- `handle_new_user_profile` faqat `auth.users` insert triggeriga biriktirilgan; `SECURITY DEFINER` ishlatadi, lekin `search_path` bo‘sh qilib belgilangan va jadvalga murojaat `public.profiles` deb to‘liq ko‘rsatilgan.
+- Ikkala funksiyada ham `anon` va `authenticated` uchun EXECUTE huquqi yo‘q; huquq faqat `postgres` va `service_role` da.
+- Profil triggeri `raw_user_meta_data` dan faqat ism maydonini oladi; bu ma’lumot ruxsat/rol qarorida ishlatilmaydi.
+
 ### Keyingi xavfsiz qadamlar
 1. Email confirmation, password reset uchun Site URL va aniq redirect allowlist sozlamalarini Supabase Auth dashboardida tekshirish.
 2. Telefon OTP uchun Auth Phone provider va SMS gateway sozlamalarini alohida tasdiqlash.
