@@ -70,7 +70,18 @@ Birinchi iteratsiyada ilova jadvallari quyidagi nomlash va mas'uliyat bo'yicha l
 | `idea_app.activity_events` | Ishtirokchilarga ko'rinadigan faoliyat tarixi | actor + recipient + target |
 | `idea_app.audit_events` | Muhim xavfsizlik va boshqaruv amallari | actor + action + target |
 
-Bu yakuniy DDL emas. Ustunlar, CHECK constraintlar, unique/FK qoidalari va status transitionlari alohida migration dizaynida belgilanadi.
+Profil va tashkilotlar uchun birinchi draft migration `20261116120000_idea_app_identity_organizations.sql`, loyiha/jamoa moduli uchun ikkinchi draft migration `20261116130000_idea_app_projects_teams.sql` faylida saqlanadi. Ikkalasi ham faqat repository'da; jonli Supabase'ga qo'llanmagan.
+
+### Projects va project teams
+
+- `projects.created_by` — loyiha yaratuvchisi va individual egasi; `organization_id` ixtiyoriy tashkilot bilan bog'laydi. Tashkilotga bog'lash o'z-o'zidan tashkilot nomidan vakolat bermaydi.
+- Loyiha holatlari: `draft`, `recruiting`, `active`, `paused`, `completed`, `archived`; ko'rinish: `private`, `unlisted`, `public`.
+- Loyiha a'zolari: `manager`, `contributor`, `viewer`; a'zolik holatlari: `invited`, `pending`, `active`, `declined`, `removed`. Loyiha yaratuvchisi alohida owner bo'lib qoladi, a'zolik roli orqali o'zini ko'tarmaydi.
+- Vazifalar loyiha, yaratuvchi va ixtiyoriy mas'ul foydalanuvchiga bog'lanadi. Holatlar: `todo`, `in_progress`, `blocked`, `done`, `cancelled`; ustuvorlik: `low`, `normal`, `high`, `urgent`. `done` vazifa uchun `completed_at` talab qilinadi.
+- Yangiliklar `announcement`, `progress`, `milestone`, `blocker` turlariga ega; ko'rinish `team` yoki `public`, nashr holati `draft` yoki `published`. `public` qiymati hozircha faqat metadata: maxsus xavfsiz view va RLS siyosatlari bo'lmaguncha hech narsa ommaga ochilmaydi.
+- Vazifa assignee'si loyiha a'zosi ekanini tekshirish, owner/member CRUD, membership transitionlari va public update ko'rish qoidalari keyingi RLS/API migrationida aniq belgilanadi.
+
+Bu jadval va statuslar hozirgi DDL draftining chegarasini belgilaydi; ularni frontend'dan hozircha ishlatib bo'lmaydi.
 
 ## 4. Ma'lumot maxfiyligi va ruxsat modeli
 
@@ -118,7 +129,7 @@ Shuning uchun:
 | 0 | Jonli sxema snapshot va backup/restore imkoniyatini tasdiqlash | Qayta tiklash rejasi va schema checksum |
 | 1 | `idea_app` namespace yaratish | Mavjud `public` obyektlariga ta'sir yo'q |
 | 2 | Identity/profile va organizations | UID FK, privacy split, RLS, grants |
-| 3 | Projects, teams, tasks, updates | Owner/member cross-user testlari |
+| 3 | Projects, teams, tasks, updates | Alohida DDL draft; owner/member RLS va cross-user testlari keyingi bosqichda |
 | 4 | Listings + directory views | Maxfiy ustunlar yo'q; status filtrlari |
 | 5 | Applications + messages | Ishtirokchi doirasi, status transition |
 | 6 | Events + registrations + activity | Capacity/duplicate va audit testlari |

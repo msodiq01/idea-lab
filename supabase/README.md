@@ -5,6 +5,9 @@ Bu papkadagi SQL — IDEA LAB umumiy backendini tayyorlash uchun. Ulangan Supaba
 ## Yangi IDEA LAB ilova sxemasi (draft)
 
 - `migrations/20261116120000_idea_app_identity_organizations.sql` — alohida `idea_app` sxemasida profil, maxfiy kontakt, tashkilot va tashkilot a'zoligi poydevori.
+- `migrations/20261116130000_idea_app_projects_teams.sql` — loyiha, jamoa a'zoligi, vazifalar va yangiliklar moduli; birinchi identity/organization migration'iga bog'liq.
+- Ikkinchi migration ham repository draft: **jonli Supabase'ga qo'llanmagan**. To'rt yangi jadvalda RLS yoqilgan, browser grantlari va policy'lar yo'q.
+- Loyiha egasi `projects.created_by` orqali belgilanadi; `organization_id` ixtiyoriy bog'lanish. A'zolik, vazifa va yangiliklarning haqiqiy ruxsat siyosatlari keyingi xavfsizlik bosqichida yoziladi.
 - Bu migration faqat repository draft: **jonli Supabase loyihasiga qo'llanmagan**.
 - Mavjud `public` jadvallariga tegmaydi. To'rt jadvalda RLS yoqilgan, browser rollariga grant/policy berilmagan.
 - `idea_app` Data API'ga expose qilinmagan. Frontend `offline-demo` rejimida qoladi.
