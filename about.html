@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f6fb">
+  <meta name="description" content="IDEA LAB platformasining maqsadi, vazifalari va ishlash tamoyillari.">
+  <title>Platforma haqida | IDEA LAB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/idea-shell.css">
+  <style>
+    .about-wrap{width:min(1160px,calc(100% - 40px));margin:34px auto 76px}
+    .about-hero{padding:clamp(28px,5vw,58px);border-radius:26px;background:linear-gradient(120deg,#fff 0%,#f4f3ff 60%,#eafafa 100%);border:1px solid #e4e7f4;box-shadow:var(--il-shadow);position:relative;overflow:hidden}
+    .about-hero:after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;right:-100px;top:-150px;background:radial-gradient(circle,rgba(81,70,229,.17),transparent 70%);pointer-events:none}
+    .about-kicker{font-size:11px;font-weight:850;letter-spacing:1.7px;color:var(--il-primary);text-transform:uppercase}
+    .about-hero h1{font-size:clamp(34px,6vw,62px);line-height:1.05;letter-spacing:-.06em;margin:17px 0}
+    .about-hero h1 span{background:linear-gradient(100deg,#5146e5,#0e9f9a);background-clip:text;-webkit-background-clip:text;color:transparent}
+    .about-lead{max-width:760px;font-size:clamp(15px,2vw,18px);line-height:1.85;color:#65728a}
+    .about-tagline{display:inline-flex;margin-top:26px;padding:10px 15px;border-radius:12px;background:#fff;border:1px solid #e3e6f1;color:#4035c8;font-weight:800;font-size:13px}
+    .about-section{margin-top:54px}
+    .about-section-head{max-width:760px;margin-bottom:22px}
+    .about-section-head small{color:var(--il-primary);font-size:10px;font-weight:850;letter-spacing:1.5px;text-transform:uppercase}
+    .about-section-head h2{font-size:clamp(25px,3vw,34px);margin:8px 0}
+    .about-section-head p{color:var(--il-muted);font-size:14px;line-height:1.8}
+    .about-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+    .about-card{background:#fff;border:1px solid var(--il-line);border-radius:17px;padding:23px;box-shadow:var(--il-shadow);min-width:0}
+    .about-card .number{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:#f0efff;color:var(--il-primary);font-weight:900;font-size:12px;margin-bottom:16px}
+    .about-card h3{font-size:16px;margin-bottom:8px}
+    .about-card p{font-size:12px;line-height:1.75;color:var(--il-muted);margin:0}
+    .mission-vision{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+    .mission-box{padding:26px;border-radius:18px;background:#fff;border:1px solid var(--il-line);box-shadow:var(--il-shadow)}
+    .mission-box h3{font-size:18px;margin-bottom:10px}
+    .mission-box p{font-size:13px;line-height:1.85;color:var(--il-muted)}
+    .workflow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+    .workflow-step{padding:17px 13px;background:#fff;border:1px solid var(--il-line);border-radius:15px;min-width:0}
+    .workflow-step b{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#f0efff;color:var(--il-primary);font-size:12px;margin-bottom:12px}
+    .workflow-step strong{display:block;font-size:12px;margin-bottom:6px}
+    .workflow-step span{display:block;color:var(--il-muted);font-size:10px;line-height:1.6}
+    .principles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .principle{padding:16px 18px;border:1px solid var(--il-line);border-radius:13px;background:#fff;font-size:12px;font-weight:750}
+    .principle span{display:block;font-weight:450;color:var(--il-muted);margin-top:5px;line-height:1.6}
+    .about-note{margin-top:30px;padding:18px 20px;border-radius:14px;background:#fff8e9;border:1px solid #f4e4c4;color:#775d31;font-size:11px;line-height:1.8}
+    .about-cta{margin-top:34px;padding:27px;border-radius:19px;background:linear-gradient(120deg,#26215f,#4540b8);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .about-cta h2{font-size:22px;color:#fff;margin-bottom:6px}
+    .about-cta p{font-size:12px;color:#d8d7ff;margin:0}
+    .about-cta a{flex:none;background:#fff;color:#4035c8;padding:12px 17px;border-radius:10px;font-size:12px;font-weight:850}
+    @media(max-width:900px){.workflow{grid-template-columns:repeat(3,minmax(0,1fr))}.about-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:620px){.about-wrap{width:calc(100% - 24px);margin-top:20px}.about-grid,.mission-vision,.principles{grid-template-columns:1fr}.workflow{grid-template-columns:repeat(2,minmax(0,1fr))}.about-cta{align-items:flex-start;flex-direction:column}.about-cta a{width:100%;text-align:center}.about-section{margin-top:38px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <main class="about-wrap">
+    <section class="about-hero" aria-labelledby="about-title">
+      <div class="about-kicker">IDEA LAB / Platforma konsepsiyasi</div>
+      <h1 id="about-title">G‘oyadan <span>natijagacha.</span></h1>
+      <p class="about-lead">IDEA LAB — tashabbuskorlar, loyiha egalari, jamoalar, mutaxassislar va hamkorlarni yagona raqamli muhitda bog‘lashga mo‘ljallangan ekotizim. Uning vazifasi g‘oyani topishdan tortib, uni rejalashtirish va amalga oshirishgacha bo‘lgan jarayonni tartibli qilishdir.</p>
+      <div class="about-tagline">G‘oya — jamoa — harakat — natija</div>
+    </section>
+
+    <section class="about-section" aria-labelledby="mission-title">
+      <div class="about-section-head"><small>01 / Maqsad</small><h2 id="mission-title">Nima uchun IDEA LAB yaratilmoqda?</h2><p>Ko‘plab yaxshi tashabbuslar kerakli hamkor, bilim yoki resursni topa olmagani sabab rivojlanmay qoladi. IDEA LAB shu imkoniyatlarni bir-biriga bog‘lashga xizmat qiladi.</p></div>
+      <div class="mission-vision">
+        <article class="mission-box"><h3>Asosiy maqsad</h3><p>Yoshlar va tashabbuskorlarga g‘oyalarini taqdim etish, loyiha shakliga keltirish, jamoa tuzish, mutaxassislar bilan ishlash va zarur imkoniyatlarni izlash uchun yagona muhit yaratish.</p></article>
+        <article class="mission-box"><h3>Kelajak tasavvuri</h3><p>G‘oyalar qoralama holida qolib ketmaydigan, aniq vazifalar, mas’uliyat, hamkorlik va o‘lchanadigan natijalar bilan rivojlanadigan ochiq ekotizimni shakllantirish.</p></article>
+      </div>
+    </section>
+
+    <section class="about-section" aria-labelledby="tasks-title">
+      <div class="about-section-head"><small>02 / Vazifalar</small><h2 id="tasks-title">Platformaning asosiy vazifalari</h2><p>IDEA LAB quyidagi yo‘nalishlarni bir tizimga birlashtirishni ko‘zlaydi.</p></div>
+      <div class="about-grid">
+        <article class="about-card"><div class="number">01</div><h3>G‘oyalarni jamlash</h3><p>Tashabbuslarni kiritish, tavsiflash, yo‘nalishlarga ajratish va ko‘rib chiqish.</p></article>
+        <article class="about-card"><div class="number">02</div><h3>Loyihalarni rivojlantirish</h3><p>Maqsad, reja, bosqich, vazifa va loyiha yangilanishlarini boshqarish.</p></article>
+        <article class="about-card"><div class="number">03</div><h3>Jamoa shakllantirish</h3><p>Loyiha uchun hamkorlar, ko‘ngillilar va kerakli a’zolarni topishga ko‘maklashish.</p></article>
+        <article class="about-card"><div class="number">04</div><h3>Mutaxassislarni bog‘lash</h3><p>Bilim va tajribaga ega insonlarni tegishli tashabbuslar bilan bog‘lash.</p></article>
+        <article class="about-card"><div class="number">05</div><h3>Resurslarga yo‘l ochish</h3><p>Maslahat, xizmat, jihoz va boshqa zarur resurslarni izlash imkonini berish.</p></article>
+        <article class="about-card"><div class="number">06</div><h3>Hamkorlikni tashkil etish</h3><p>Takliflar, murojaatlar va hamkorlik jarayonlarini tartibga solish.</p></article>
+        <article class="about-card"><div class="number">07</div><h3>Imkoniyatlarni ko‘rsatish</h3><p>Tadbirlar, tanlovlar, vakansiyalar va volontyorlik imkoniyatlarini jamlash.</p></article>
+        <article class="about-card"><div class="number">08</div><h3>Natijalarni tahlil qilish</h3><p>Loyiha faolligi, bajarilgan ishlar va erishilgan natijalarni kuzatish.</p></article>
+        <article class="about-card"><div class="number">09</div><h3>Shaffof boshqaruv</h3><p>Rollar, arizalar, vazifalar va faoliyat holatini tushunarli yuritish.</p></article>
+      </div>
+    </section>
+
+    <section class="about-section" aria-labelledby="modules-title">
+      <div class="about-section-head"><small>03 / Ekotizim</small><h2 id="modules-title">Bir-biriga bog‘langan yo‘nalishlar</h2><p>Modullar alohida sahifalar bo‘lsa-da, umumiy foydalanuvchi profili va loyiha jarayonlari atrofida birlashadi.</p></div>
+      <div class="about-grid">
+        <article class="about-card"><h3>G‘oyalar va loyihalar</h3><p>Tashabbus katalogi, loyiha sahifasi, vazifalar va yangilanishlar.</p></article>
+        <article class="about-card"><h3>Jamoa va mutaxassislar</h3><p>Jamoalar, a’zolik, mutaxassis profillari va hamkor izlash.</p></article>
+        <article class="about-card"><h3>Investitsiya va resurslar</h3><p>Loyiha arizalari, investorlar, resurslar va buyurtmalar.</p></article>
+        <article class="about-card"><h3>Takliflar va hamkorlik</h3><p>Takliflar, murojaatlar, yozishmalar va kelishuv jarayonlari.</p></article>
+        <article class="about-card"><h3>Imkoniyatlar va tadbirlar</h3><p>Vakansiyalar, volontyorlik, tadbirlar va ro‘yxatdan o‘tish.</p></article>
+        <article class="about-card"><h3>Kabinet va tahlil</h3><p>Shaxsiy profil, bildirishnomalar, boshqaruv va ko‘rsatkichlar.</p></article>
+      </div>
+    </section>
+
+    <section class="about-section" aria-labelledby="flow-title">
+      <div class="about-section-head"><small>04 / Ishlash tartibi</small><h2 id="flow-title">G‘oyadan natijagacha bo‘lgan yo‘l</h2><p>Platforma foydalanuvchiga keyingi amaliy qadamlarni tartibga solishda yordam beradi.</p></div>
+      <div class="workflow">
+        <div class="workflow-step"><b>1</b><strong>Kiritish</strong><span>G‘oya yoki loyiha tavsiflanadi.</span></div>
+        <div class="workflow-step"><b>2</b><strong>Aniqlashtirish</strong><span>Maqsad va kutilgan natija belgilanadi.</span></div>
+        <div class="workflow-step"><b>3</b><strong>Jamoa</strong><span>Kerakli hamkorlar topiladi.</span></div>
+        <div class="workflow-step"><b>4</b><strong>Resurs</strong><span>Zarur yordam va imkoniyatlar izlanadi.</span></div>
+        <div class="workflow-step"><b>5</b><strong>Amalga oshirish</strong><span>Vazifalar bo‘yicha ish olib boriladi.</span></div>
+        <div class="workflow-step"><b>6</b><strong>Natija</strong><span>Erishilgan natijalar qayd etiladi.</span></div>
+      </div>
+    </section>
+
+    <section class="about-section" aria-labelledby="principles-title">
+      <div class="about-section-head"><small>05 / Tamoyillar</small><h2 id="principles-title">Biz tayanadigan qadriyatlar</h2></div>
+      <div class="principles">
+        <div class="principle">Ochiqlik<span>Ma’lumot va imkoniyatlar tushunarli bo‘lishi.</span></div>
+        <div class="principle">Hamkorlik<span>Bilim va tajribani umumiy maqsadga birlashtirish.</span></div>
+        <div class="principle">Mas’uliyat<span>Vazifa, muddat va rollarni aniq belgilash.</span></div>
+        <div class="principle">Adolat<span>Imkoniyatlardan foydalanishda teng yondashuv.</span></div>
+        <div class="principle">Xavfsizlik<span>Shaxsiy ma’lumot va foydalanuvchi huquqlarini asrash.</span></div>
+        <div class="principle">Natijadorlik<span>Faoliyatni amaliy natija bilan baholash.</span></div>
+      </div>
+    </section>
+
+    <aside class="about-note"><strong>Hozirgi texnik holat:</strong> IDEA LAB frontend prototipi sifatida rivojlantirilmoqda. Ayrim funksiyalar mahalliy brauzer xotirasida demo rejimida ishlaydi. Haqiqiy server sinxronlash, backend ruxsatlari va ishlab chiqarish darajasidagi xavfsizlik alohida integratsiya hamda sinovlarni talab qiladi.</aside>
+
+    <section class="about-cta" aria-label="Platformadan foydalanishni boshlash">
+      <div><h2>G‘oyangizni keyingi bosqichga olib chiqing.</h2><p>Platforma bo‘limlarini ko‘rib chiqing va tashabbusingiz uchun mos yo‘nalishni tanlang.</p></div>
+      <a href="projects.html">Loyihalarni ko‘rish →</a>
+    </section>
+  </main>
+  <script src="assets/idea-shell.js"></script>
+</body>
+</html>
