@@ -33,7 +33,7 @@ test("all four tables reference trusted auth identities and enable RLS", () => {
 test("browser roles receive no schema or table privileges and no policies are added", () => {
   assert.match(sql, /revoke all on schema idea_app from public, anon, authenticated/i);
   assert.match(sql, /revoke all on all tables in schema idea_app from public, anon, authenticated/i);
-  assert.doesNotMatch(sql, /\bgrant\b/i);
+  assert.doesNotMatch(executableSql, /\bgrant\b/i);
   assert.doesNotMatch(sql, /create\s+policy/i);
 });
 
