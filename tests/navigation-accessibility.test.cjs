@@ -21,7 +21,7 @@ test("Navigation uses semantic landmarks and descriptive labels",()=>{
 });
 test("All sections remain reachable from the grouped menu",()=>{
  const shell=read("assets/idea-shell.js");
- for(const name of ["Dashboard","Arizalar markazi","Tashkilotlar","Loyihalar","Talab va taklif","Investorlar","Mutaxassislar","Yo‘l xaritasi"]) assert.ok(shell.includes(name),name);
+ for(const name of ["Dashboard","Arizalar markazi","Tashkilotlar","Loyihalar","Talab va taklif","Investorlar","Mutaxassislar","Platforma haqida","Yo‘l xaritasi"]) assert.ok(shell.includes(name),name);
 });
 test("Grouped menu closes on outside click, navigation, and Escape",()=>{
  const shell=read("assets/idea-shell.js");
