@@ -54,3 +54,8 @@ test("admin UI is locked without Supabase config and uses Edge Function actions"
  assert.match(shell,/Tekshiruv boshqaruvi","supplier-verification-admin\.html/);
  assert.match(page,/Biriktirishni bekor qilish/);
 });
+
+test("admin controls unlock only after server-side allowlist check",()=>{
+ assert.ok(page.indexOf('await invoke("list_reviewers")')<page.indexOf('workspace.classList.remove("locked")'));
+ assert.doesNotMatch(page,/SUPABASE_SERVICE_ROLE_KEY/);
+});
