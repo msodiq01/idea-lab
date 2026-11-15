@@ -54,3 +54,15 @@ test("Future roadmap is reachable and clearly separates current demo from planne
   assert.ok(roadmap.includes("Demo / cheklangan"));
   assert.match(roadmap, /aniq muddat va ishga tushirish sanasi tasdiqlanmagan/);
 });
+
+test("Global navigation displays the saved profile avatar and name on every page", () => {
+  const shell = read("assets/idea-shell.js");
+  const css = read("assets/idea-shell.css");
+  assert.match(shell, /id="il-profile-link"/);
+  assert.match(shell, /localStorage\.getItem\("userProfile"\)/);
+  assert.match(shell, /profile\.avatarData/);
+  assert.match(shell, /ideaLab:profile-updated/);
+  assert.match(shell, /event\.key==="userProfile"/);
+  assert.match(css, /\.il-profile-avatar img/);
+  assert.match(css, /\.il-profile-link/);
+});
