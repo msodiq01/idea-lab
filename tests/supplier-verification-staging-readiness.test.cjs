@@ -30,7 +30,7 @@ test("staging runbook lists all required SQL files in dependency order", () => {
     assert.ok(index > previous, file + " must appear in migration order");
     previous = index;
   }
-  assert.match(readme, /public\.set_updated_at\(\)/);
+  assert.match(schema, /create or replace function public\.set_updated_at\(\)/);
 });
 
 test("runbook explicitly separates staging preparation from production activation", () => {
