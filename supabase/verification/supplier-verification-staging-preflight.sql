@@ -54,10 +54,16 @@ with expected(table_name, column_name) as (
     ('supplier_verification_review_assignments', 'reviewer_user_id'),
     ('supplier_verification_review_assignments', 'is_active'),
     ('supplier_verification_review_assignments', 'revoked_at'),
+    ('supplier_verification_assignment_events', 'id'),
+    ('supplier_verification_assignment_events', 'application_id'),
+    ('supplier_verification_assignment_events', 'assignment_id'),
+    ('supplier_verification_assignment_events', 'reviewer_user_id'),
     ('supplier_verification_assignment_events', 'actor_user_id'),
     ('supplier_verification_assignment_events', 'action'),
+    ('supplier_verification_assignment_events', 'created_at'),
     ('supplier_verification_admins', 'user_id'),
     ('supplier_verification_admins', 'is_active'),
+    ('supplier_verification_admins', 'granted_at'),
     ('supplier_verification_evidence_access_events', 'evidence_id'),
     ('supplier_verification_evidence_access_events', 'application_id'),
     ('supplier_verification_evidence_access_events', 'actor_user_id'),
@@ -110,8 +116,8 @@ select e.function_name,
        coalesce(bool_or(p.prosecdef), false) as security_definer,
        coalesce(bool_or(
          exists (
-           select 1 from unnest(p.proconfig) setting
-           where setting like 'search_path=%'
+           select 1 from unnest(coalesce(p.proconfig, array[]::text[])) as cfg(setting)
+           where cfg.setting like 'search_path=%'
          )
        ), false) as search_path_pinned
 from expected e
