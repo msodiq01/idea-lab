@@ -40,6 +40,11 @@ test("runbook explicitly separates staging preparation from production activatio
   assert.match(runbook, /Edge Functions deployed: \*\*not done\*\*/);
 });
 
+test("runbook lists application activity migration exactly once", () => {
+  const matches = runbook.match(/20261122_application_activity_notifications\.sql/g) || [];
+  assert.equal(matches.length, 1);
+});
+
 test("runbook keeps secrets server-side and forbids wildcard origins", () => {
   assert.match(runbook, /SUPABASE_SERVICE_ROLE_KEY/);
   assert.match(runbook, /server-side only/i);
