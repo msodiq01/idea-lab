@@ -66,3 +66,23 @@ test("Navigation labels and active-page state are not replaced with inert contro
  assert.match(shell,/href="exchange\.html"/);
  assert.match(shell,/isCurrent\(url\)/);
 });
+
+
+test("Personal cabinet is the final, rightmost action in the shared header",()=>{
+ const shell=read("assets/idea-shell.js");
+ const quick=shell.indexOf('class="il-quick-action"');
+ const profile=shell.indexOf('class="il-profile-link"');
+ assert.ok(quick>=0&&profile>quick,"profile link must follow the quick action");
+ assert.match(shell,/class="il-profile-link" id="il-profile-link"/);
+});
+test("Every inner page gets a back control with a home fallback; home page does not",()=>{
+ const shell=read("assets/idea-shell.js");
+ assert.match(shell,/if\(current!=="index\.html"\)/);
+ assert.match(shell,/className="il-page-tools"/);
+ assert.match(shell,/class="il-back-link" href="index\.html"/);
+ assert.match(shell,/history\.back\(\)/);
+ assert.match(shell,/new URL\(document\.referrer\)\.origin===location\.origin/);
+ const css=read("assets/idea-shell.css");
+ assert.match(css,/\.il-page-tools/);
+ assert.match(css,/\.il-back-link/);
+});
