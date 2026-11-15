@@ -37,3 +37,19 @@ Testlar frontend yadro va Organization Center uchun avtomatik tekshiruvlarni baj
 - Harakatni kamaytirish sozlamasi yoqilgan qurilmalarda animatsiyalar cheklanadi.
 
 Tekshiruv: `node --test tests/*.test.cjs`. Bu avtomatik strukturaviy/regressiya testi; haqiqiy ekran o‘lchamlarida brauzer sinovi alohida bajarilishi kerak.
+
+
+## Backend va xavfsizlikka tayyorgarlik
+
+Backend hozircha **offline demo**. Supabase schema/migration tayyorlangan, lekin hech qanday loyiha credentials yoki server ulanishi tasdiqlanmagan. SQL'ni production'da ishga tushirmang.
+
+- [Backend integratsiya shartnomasi](BACKEND-INTEGRATION-CONTRACT.md)
+- [Xavfsizlik ko'rigi](BACKEND-SECURITY-REVIEW.md)
+- [Legacy migratsiya qo'llanmasi](DATA-MIGRATION-RUNBOOK.md)
+- [Legacy data mapping](LEGACY-DATA-MAPPING.md)
+- [API xatolari katalogi](API-ERROR-CATALOG.md)
+- [Supabase tayyorlash va fayllar tartibi](supabase/README.md)
+- [Read-only xavfsizlik auditi SQL](supabase/verification/security_audit.sql)
+- [Ikki foydalanuvchili RLS test rejasi](supabase/verification/rls-test-plan.md)
+
+Avtomatik tekshiruv: `node --test tests/*.test.cjs`. Bu statik/regressiya testlari; haqiqiy Supabase RLS sinovi staging loyihasida alohida bajariladi.
