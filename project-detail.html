@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d1b">
+
+<title>IDEA LAB | Project Details</title>
+
+<style>
+:root {
+    --bg: #080d1b;
+    --surface: #101a30;
+    --surface2: #14213d;
+    --border: rgba(148,163,184,.16);
+    --blue: #4388ff;
+    --cyan: #28d9d0;
+    --text: #f1f5ff;
+    --muted: #91a0bb;
+    --green: #39d99b;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background:
+        radial-gradient(circle at 80% 0%, rgba(37,99,235,.15), transparent 32%),
+        var(--bg);
+    color: var(--text);
+    font-family: Inter, Arial, sans-serif;
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button, input, textarea {
+    font: inherit;
+}
+
+.navbar {
+    width: 100%;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,13,27,.9);
+    backdrop-filter: blur(15px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.nav-inner {
+    max-width: 1200px;
+    margin: auto;
+    padding: 17px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    font-size: 23px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.logo span {
+    color: var(--blue);
+}
+
+.nav-links {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.nav-links a {
+    color: var(--muted);
+    font-size: 13px;
+    transition: .2s;
+}
+
+.nav-links a:hover {
+    color: white;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 35px 24px 70px;
+}
+
+.breadcrumb {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 25px;
+}
+
+.breadcrumb a:hover {
+    color: var(--cyan);
+}
+
+.hero {
+    padding: 34px;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background:
+        linear-gradient(120deg, rgba(37,99,235,.16), transparent 65%),
+        var(--surface);
+    margin-bottom: 25px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    width: 230px;
+    height: 230px;
+    border-radius: 50%;
+    background: rgba(40,217,208,.07);
+    right: -65px;
+    top: -100px;
+    filter: blur(5px);
+}
+
+.eyebrow {
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 11px;
+    font-weight: 800;
+    margin-bottom: 17px;
+}
+
+.hero h1 {
+    font-size: clamp(27px, 5vw, 43px);
+    line-height: 1.2;
+    max-width: 800px;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-description {
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 750px;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 25px;
+    position: relative;
+    z-index: 1;
+}
+
+.tag {
+    padding: 9px 14px;
+    background: rgba(59,130,246,.13);
+    border: 1px solid rgba(59,130,246,.25);
+    border-radius: 30px;
+    font-size: 12px;
+    color: #bfdbfe;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 350px;
+    gap: 23px;
+    align-items: start;
+}
+
+.main-column, .side-column {
+    min-width: 0;
+}
+
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.panel-heading h2 {
+    font-size: 19px;
+}
+
+.panel-heading span {
+    font-size: 11px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.detail-item {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.detail-item h3 {
+    color: #9cb3d8;
+    font-size: 12px;
+    margin-bottom: 9px;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+}
+
+.detail-item p {
+    color: #e3eaf8;
+    font-size: 14px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.stat {
+    padding: 17px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 11px;
+    margin-bottom: 9px;
+}
+
+.stat-value {
+    font-size: 17px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.investment-value {
+    color: var(--green);
+}
+
+.owner-name {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.owner-label {
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 17px;
+}
+
+.owner-contact {
+    padding: 12px 0;
+    border-top: 1px solid var(--border);
+    color: #cbd5e1;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.owner-contact a {
+    color: var(--cyan);
+}
+
+.form-intro {
+    color: var(--muted);
+    line-height: 1.7;
+    font-size: 13px;
+    margin-top: -10px;
+    margin-bottom: 23px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 9px;
+    color: #dbeafe;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 14px;
+    color: white;
+    background: #0b1427;
+    border: 1px solid #283957;
+    border-radius: 10px;
+    outline: none;
+    transition: .2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+}
+
+.form-group textarea {
+    min-height: 130px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #64748b;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 11px;
+    background: linear-gradient(100deg, #2563eb, #087fdb);
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 9px 25px rgba(37,99,235,.25);
+}
+
+.submit-btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.form-message {
+    margin-top: 17px;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.success-message {
+    color: var(--green);
+}
+
+.error-message {
+    color: #fca5a5;
+}
+
+.info-box {
+    background: rgba(40,217,208,.06);
+    border: 1px solid rgba(40,217,208,.18);
+    padding: 15px;
+    border-radius: 11px;
+    color: #a5d9dc;
+    font-size: 12px;
+    line-height: 1.7;
+    margin-top: 17px;
+}
+
+.back-link {
+    display: inline-flex;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.back-link:hover {
+    color: var(--cyan);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 55px 20px;
+}
+
+.empty-state h2 {
+    color: #fca5a5;
+    margin-bottom: 12px;
+}
+
+.empty-state p {
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.footer {
+    border-top: 1px solid var(--border);
+    padding: 25px;
+    text-align: center;
+    color: #64748b;
+    font-size: 12px;
+}
+
+@media (max-width: 850px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .side-column {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 550px) {
+    .nav-inner {
+        padding: 15px;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .nav-links {
+        gap: 15px;
+    }
+
+    .container {
+        padding: 22px 14px 45px;
+    }
+
+    .hero {
+        padding: 23px;
+    }
+
+    .panel {
+        padding: 19px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="nav-inner">
+
+        <a href="index.html" class="logo">
+            IDEA<span>LAB</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="index.html">Bosh sahifa</a>
+            <a href="marketplace.html">Marketplace</a>
+            <a href="projects.html">Loyihalar</a>
+            <a href="investors.html">Investorlar</a>
+            <a href="offers.html">Takliflar</a>
+        </nav>
+
+    </div>
+</header>
+
+<main class="container">
+    <div class="breadcrumb">
+        <a href="marketplace.html">Marketplace</a>
+        /
+        <span>Loyiha tafsilotlari</span>
+    </div>
+
+    <section id="projectContent">
+
+        <div class="hero">
+            <div class="eyebrow">IDEA LAB / PROJECT</div>
+            <h1 id="heroTitle">Loyiha yuklanmoqda...</h1>
+            <p class="hero-description" id="heroDescription">
+                Ma'lumotlar tayyorlanmoqda.
+            </p>
+            <div class="hero-meta" id="heroMeta"></div>
+        </div>
+
+        <div class="layout">
+
+            <div class="main-column">
+
+                <section class="panel">
+                    <div class="panel-heading">
+                        <h2>Loyiha haqida</h2>
+                        <span>01 / Overview</span>
+                    </div>
+
+                    <div id="projectDetails"></div>
+                </section>
+
+                <section class="panel">
+                    <div class="panel-heading">
+                        <h2>Hamkorlik imkoniyatlari</h2>
+                        <span>02 / Collaboration</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <h3>Kerakli mutaxassislar</h3>
+                        <p id="projectSpecialists">Ma'lumot kiritilmagan</p>
+                    </div>
+
+                    <div class="detail-item">
+                        <h3>Kerakli resurslar</h3>
+                        <p id="projectResources">Ma'lumot kiritilmagan</p>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <div class="panel-heading">
+                        <h2>Investitsiya taklifi</h2>
+                        <span>03 / Investment</span>
+                    </div>
+
+                    <p class="form-intro">
+                        Loyiha egasiga o‘z taklifingizni yuboring.
+                        Taklifingiz ko‘rib chiqish uchun saqlanadi.
+                    </p>
+
+                    <form id="investmentForm">
+
+                        <div class="form-group">
+                            <label for="investorName">
+                                Investor yoki tashkilot nomi
+                            </label>
+                            <input
+                                type="text"
+                                id="investorName"
+                                placeholder="Ism yoki tashkilot nomi"
+                                maxlength="100"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="investorEmail">
+                                Elektron pochta
+                            </label>
+                            <input
+                                type="email"
+                                id="investorEmail"
+                                placeholder="example@email.com"
+                                maxlength="150"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="offerAmount">
+                                Investitsiya taklifi (UZS)
+                            </label>
+                            <input
+                                type="number"
+                                id="offerAmount"
+                                placeholder="Masalan: 50000000"
+                                min="1"
+                                step="1"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="offerMessage">
+                                Hamkorlik taklifi va izoh
+                                </label>
+                            <textarea
+                                id="offerMessage"
+                                placeholder="Investitsiya shartlari, taklifingiz va hamkorlik rejangiz haqida yozing..."
+                                maxlength="2000"
+                                required
+                            ></textarea>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="submit-btn"
+                            id="submitButton"
+                        >
+                            Investitsiya taklifini yuborish
+                        </button>
+
+                        <div
+                            id="formMessage"
+                            class="form-message"
+                            aria-live="polite"
+                        ></div>
+
+                    </form>
+
+                    <div class="info-box">
+                        Eslatma: ariza yuborish investitsiya bitimi
+                        tuzilganini anglatmaydi. Bu loyiha egasiga
+                        yuboriladigan dastlabki hamkorlik taklifidir.
+                    </div>
+                </section>
+
+            </div>
+
+            <aside class="side-column">
+
+                <section class="panel">
+                    <div class="panel-heading">
+                        <h2>Loyiha ko‘rsatkichlari</h2>
+                        <span>Data</span>
+                    </div>
+
+                    <div class="stats-grid">
+
+                        <div class="stat">
+                            <div class="stat-label">Yo‘nalish</div>
+                            <div class="stat-value" id="statDirection">—</div>
+                        </div>
+
+                        <div class="stat">
+                            <div class="stat-label">Investitsiya</div>
+                            <div class="stat-value investment-value" id="statInvestment">—</div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <div class="panel-heading">
+                        <h2>Loyiha tashabbuskori</h2>
+                        <span>Owner</span>
+                    </div>
+
+                    <div class="owner-name" id="ownerName">
+                        Ma'lumot kiritilmagan
+                    </div>
+
+                    <div class="owner-label">
+                        Loyiha egasi / Tashabbuskor
+                    </div>
+
+                    <div class="owner-contact" id="ownerEmail">
+                        Email ko‘rsatilmagan
+                    </div>
+
+                    <div class="owner-contact" id="ownerPhone">
+                        Telefon ko‘rsatilmagan
+                    </div>
+                </section>
+
+            </aside>
+
+        </div>
+
+    </section>
+
+    <a href="marketplace.html" class="back-link">
+        ← Marketplace ga qaytish
+    </a>
+
+</main>
+
+<footer class="footer">
+    IDEA LAB — Ideas. People. Resources. Opportunities.
+</footer>
+
+<script>
+"use strict";
+
+// ========================================
+// 1. MA'LUMOTLARNI O'QISH
+// ========================================
+
+function readData(key) {
+    try {
+        const data = JSON.parse(localStorage.getItem(key) || "[]");
+        return Array.isArray(data) ? data : [];
+    } catch (error) {
+        console.error("Ma'lumotni o'qishda xato:", error);
+        return [];
+    }
+}
+
+function saveData(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+        return true;
+    } catch (error) {
+        console.error("Ma'lumotni saqlashda xato:", error);
+        return false;
+    }
+}
+
+// ========================================
+// 2. LOYIHANI ANIQLASH
+// ========================================
+
+const params = new URLSearchParams(window.location.search);
+const projectId = params.get("id");
+
+const projects = readData("projects");
+
+const project = projects.find(function(item) {
+    return String(item.id) === String(projectId);
+});
+// ========================================
+// 3. HTML ELEMENTLARI
+// ========================================
+
+const projectContent = document.getElementById("projectContent");
+const heroTitle = document.getElementById("heroTitle");
+const heroDescription = document.getElementById("heroDescription");
+const heroMeta = document.getElementById("heroMeta");
+const projectDetails = document.getElementById("projectDetails");
+
+const ownerName = document.getElementById("ownerName");
+const ownerEmail = document.getElementById("ownerEmail");
+const ownerPhone = document.getElementById("ownerPhone");
+
+const investmentForm = document.getElementById("investmentForm");
+const submitButton = document.getElementById("submitButton");
+const formMessage = document.getElementById("formMessage");
+
+// ========================================
+// 4. YORDAMCHI FUNKSIYALAR
+// ========================================
+
+function getValue(value, fallback) {
+    if (value === undefined || value === null ||  value === "") {
+        return fallback || "Ma'lumot kiritilmagan";
+    }
+
+    return String(value);
+}
+
+function formatMoney(value) {
+    const amount = Number(value);
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+        return "Ko'rsatilmagan";
+    }
+
+    return amount.toLocaleString("uz-UZ") + " UZS";
+}
+
+function addDetail(title, value) {
+    const item = document.createElement("div");
+    item.className = "detail-item";
+
+    const heading = document.createElement("h3");
+    heading.textContent = title;
+
+    const paragraph = document.createElement("p");
+    paragraph.textContent = getValue(value);
+
+    item.append(heading, paragraph);
+    projectDetails.appendChild(item);
+}
+
+function showMessage(message, type) {
+    formMessage.textContent = message;
+    formMessage.className = "form-message " + type;
+}
+
+// ========================================
+// 5. LOYIHA MA'LUMOTLARINI CHIQARISH
+// ========================================
+
+function showProject() {
+
+    if (!project) {
+        projectContent.innerHTML = "";
+
+        const empty = document.createElement("div");
+        empty.className = "panel empty-state";
+
+        const heading = document.createElement("h2");
+        heading.textContent = "Loyiha topilmadi";
+
+        const paragraph = document.createElement("p");
+        paragraph.textContent =
+            "Bu loyiha mavjud emas yoki uning manzili noto'g'ri.";
+
+        empty.append(heading, paragraph);
+        projectContent.appendChild(empty);
+
+        return;
+    }
+
+    heroTitle.textContent = getValue(project.name, "Nomsiz loyiha");
+
+    heroDescription.textContent = getValue(
+        project.description,
+        "Loyiha tavsifi kiritilmagan."
+    );
+
+    const directionTag = document.createElement("span");
+    directionTag.className = "tag";
+    directionTag.textContent = getValue(project.direction, "Yo'nalish belgilanmagan");
+
+    const statusTag = document.createElement("span");
+    statusTag.className = "tag";
+    statusTag.textContent = "IDEA LAB PROJECT";
+
+    heroMeta.append(directionTag, statusTag);
+
+    addDetail("Loyiha nomi", project.name);
+    addDetail("Loyiha yo'nalishi", project.direction);
+    addDetail("Loyiha tavsifi", project.description);
+
+    document.getElementById("projectSpecialists").textContent =
+        getValue(project.specialists);
+
+    document.getElementById("projectResources").textContent =
+        getValue(project.resources);
+
+    document.getElementById("statDirection").textContent =
+        getValue(project.direction, "—");
+
+    document.getElementById("statInvestment").textContent =
+        formatMoney(project.investment);
+
+    ownerName.textContent = getValue(project.ownerName);
+
+    ownerEmail.textContent = project.ownerEmail
+        ? "Email: " + project.ownerEmail
+        : "Email ko'rsatilmagan";
+
+    ownerPhone.textContent = project.ownerPhone
+        ? "Telefon: " + project.ownerPhone
+        : "Telefon ko'rsatilmagan";
+
+    if (project.ownerEmail) {
+        ownerEmail.textContent = ""; 
+        const emailLink = document.createElement("a");
+        emailLink.href = "mailto:" + project.ownerEmail;
+        emailLink.textContent = project.ownerEmail;
+
+        ownerEmail.append("Email: ", emailLink);
+    }
+
+    if (project.ownerPhone) {
+        ownerPhone.textContent = "";
+
+        const phoneLink = document.createElement("a");
+        phoneLink.href = "tel:" + project.ownerPhone;
+        phoneLink.textContent = project.ownerPhone;
+
+        ownerPhone.append("Telefon: ", phoneLink);
+    }
+}
+
+// ========================================
+// 6. INVESTITSIYA ARIZASINI YUBORISH
+// ========================================
+
+investmentForm.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    if (!project) {
+        showMessage("Loyiha topilmadi.", "error-message");
+        return;
+    }
+
+    const investorName = document
+        .getElementById("investorName")
+        .value.trim();
+
+    const investorEmail = document
+        .getElementById("investorEmail")
+        .value.trim();
+
+    const offerAmount = Number(
+        document.getElementById("offerAmount").value
+    );
+
+    const offerMessage = document
+        .getElementById("offerMessage")
+        .value.trim();
+
+    if (!investorName || !investorEmail ||  !offerMessage) {
+        showMessage(
+            "Barcha maydonlarni to'ldiring.",
+            "error-message"
+        );
+        return;
+    }
+
+    if (!Number.isSafeInteger(offerAmount) || offerAmount <= 0) {
+        showMessage(
+            "Investitsiya miqdorini to'g'ri kiriting.",
+            "error-message"
+        );
+        return;
+    }
+
+    const applicationId =
+        "APP-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+
+    const date = new Date().toISOString();
+
+    const application = {
+        id: applicationId,
+
+        projectId: String(project.id),
+        projectName: project.name || "",
+
+        projectOwnerName: project.ownerName || "",
+        projectOwnerEmail: project.ownerEmail || "",
+        projectOwnerPhone: project.ownerPhone || "",
+
+        investorName: investorName,
+        investorEmail: investorEmail,
+
+        offerAmount: offerAmount,
+        amount: offerAmount,
+
+        offerMessage: offerMessage,
+        message: offerMessage,
+
+        status: "Yangi",
+        date: date,
+        createdAt: date
+    };
+
+    // Asosiy arizalar ro'yxati
+    const applications = readData("investmentApplications");
+    applications.push(application);
+
+    // Takliflar sahifasi bilan moslik
+    const offers = readData("investmentOffers");
+    offers.push(application);
+
+    // Ikkala ro'yxatni saqlash
+    const applicationsSaved = saveData(
+        "investmentApplications",
+        applications
+    );
+
+    const offersSaved = saveData(
+        "investmentOffers",
+        offers
+    );
+
+    if (!applicationsSaved || !offersSaved) {
+        showMessage(
+            "Saqlashda xatolik yuz berdi. Brauzer xotirasini tekshiring.",
+            "error-message"
+        );
+        return;
+    }
+
+    investmentForm.reset();
+
+    showMessage(
+        "Investitsiya taklifingiz muvaffaqiyatli saqlandi. Ariza raqami: " +
+        applicationId,
+        "success-message"
+    );
+
+});
+
+// ========================================
+// 7. SAHIFANI ISHGA TUSHIRISH
+// ========================================
+
+showProject();
+
+</script>
+
+</body>
+</html>
+        

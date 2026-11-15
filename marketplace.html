@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>IDEA LAB | Global Marketplace</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0b1120;
+    color: white;
+}
+
+header {
+    background: linear-gradient(135deg, #123b75, #087eaf);
+    padding: 35px 20px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 32px;
+    margin: 0 0 10px;
+}
+
+header p {
+    color: #dbeafe;
+}
+
+nav {
+    background: #111c32;
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: #38bdf8;
+}
+
+.container {
+    max-width: 1150px;
+    margin: auto;
+    padding: 25px 18px;
+}
+
+.intro {
+    margin-bottom: 25px;
+}
+
+.intro h2 {
+    color: #38bdf8;
+}
+
+.search-panel {
+    background: #17243b;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+input, select {
+    width: 100%;
+    padding: 13px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 1px solid #334b70;
+    background: #0b1120;
+    color: white;
+    font-size: 15px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: #17243b;
+    border: 1px solid #263b5c;
+    border-radius: 10px;
+    padding: 18px;
+}
+
+.stat-card h3 {
+    color: #38bdf8;
+    font-size: 26px;
+    margin: 5px 0;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+}
+
+.project-card {
+    background: #17243b;
+    border: 1px solid #263b5c;
+    padding: 20px;
+    border-radius: 12px;
+    transition: 0.2s;
+}
+
+.project-card:hover {
+    border-color: #38bdf8;
+    transform: translateY(-3px);
+}
+
+.project-card h3 {
+    color: #38bdf8;
+    margin-top: 0;
+}
+
+.project-card p {
+    color: #d1d5db;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.investment {
+    color: #4ade80 !important;
+    font-weight: bold;
+    font-size: 17px;
+}
+
+button {
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #087eaf;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #0369a1;
+}
+
+.empty {
+    background: #17243b;
+    padding: 30px;
+    text-align: center;
+    border-radius: 12px;
+    color: #cbd5e1;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #94a3b8;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>IDEA LAB</h1>
+    <p>GLOBAL MARKETPLACE — G‘OYALAR VA IMKONIYATLAR BOZORI</p>
+</header>
+
+<nav>
+    <a href="index.html">Bosh sahifa</a>
+    <a href="projects.html">Loyihalar</a>
+    <a href="teams.html">Jamoalar</a>
+    <a href="investors.html">Investorlar</a>
+    <a href="offers.html">Investitsiya takliflari</a>
+    <a href="profile.html">Shaxsiy kabinet</a>
+    <a href="marketplace.html">Global bozor</a>
+</nav>
+
+<main class="container">
+
+    <section class="intro">
+        <h2>Global loyiha bozori</h2>
+        <p>
+            Yangi g‘oyalarni kashf eting, loyihalarni o‘rganing
+            va hamkorlik imkoniyatlarini toping.
+        </p>
+    </section>
+
+    <section class="stats">
+        <div class="stat-card">
+            <p>Jami loyihalar</p>
+            <h3 id="totalProjects">0</h3>
+        </div>
+
+        <div class="stat-card">
+            <p>Ko‘rsatilayotgan loyihalar</p>
+            <h3 id="shownProjects">0</h3>
+        </div>
+    </section>
+
+    <section class="search-panel">
+        <h3>Loyihalarni qidirish</h3>
+
+        <input
+            type="search"
+            id="searchInput"
+            placeholder="Loyiha nomi yoki tavsifini yozing..."
+        >
+
+        <select id="directionFilter">
+            <option value="">Barcha yo‘nalishlar</option>
+        </select>
+    </section>
+
+    <h2>Barcha loyihalar</h2>
+
+    <div id="projectList" class="project-grid"></div>
+
+</main>
+<footer>
+    IDEA LAB © 2026 — G‘oya, jamoa, harakat, natija.
+</footer>
+
+<script>
+
+function getProjects() {
+    try {
+        const data = JSON.parse(
+            localStorage.getItem("projects") || "[]"
+        );
+
+        return Array.isArray(data) ? data : [];
+
+    } catch (error) {
+        console.error("Loyihalarni o‘qishda xato:", error);
+        return [];
+    }
+}
+
+
+function createProjectCard(item) {
+
+    const card = document.createElement("div");
+    card.className = "project-card";
+
+    const title = document.createElement("h3");
+    title.textContent = item.name || "Nomsiz loyiha";
+
+    const direction = document.createElement("p");
+    direction.textContent =
+        "Yo‘nalish: " + (item.direction || "Ko‘rsatilmagan");
+
+    const description = document.createElement("p");
+    description.textContent =
+        item.description || "Tavsif mavjud emas.";
+
+    const investment = document.createElement("p");
+    investment.className = "investment";
+    investment.textContent =
+        "Investitsiya: " +
+        (item.investment || "Ko‘rsatilmagan") + " UZS";
+
+    const specialists = document.createElement("p");
+    specialists.textContent =
+        "Mutaxassislar: " + (item.specialists || "Ko‘rsatilmagan");
+
+    const resources = document.createElement("p");
+    resources.textContent =
+        "Resurslar: " + (item.resources || "Ko‘rsatilmagan");
+
+    const button = document.createElement("button");
+    button.textContent = "Batafsil ko‘rish";
+
+    button.addEventListener("click", function() {
+
+        if (!item.id) {
+            alert("Bu loyihaning ID raqami mavjud emas.");
+            return;
+        }
+
+        window.location.href =
+            "project-detail.html?id=" +
+            encodeURIComponent(item.id);
+
+    });
+
+    card.append(
+        title,
+        direction,
+        description,
+        investment,
+        specialists,
+        resources,
+        button
+    );
+
+    return card;
+}
+
+
+function loadDirections(projects) {
+
+    const filter = document.getElementById("directionFilter");
+
+    const previousValue = filter.value;
+
+    filter.innerHTML =
+        '<option value="">Barcha yo‘nalishlar</option>';
+
+    const directions = [
+        ...new Set(
+            projects
+                .map(item => item.direction)
+                .filter(Boolean)
+        )
+    ];
+
+    directions.forEach(direction => {
+
+        const option = document.createElement("option");
+
+        option.value = direction;
+        option.textContent = direction;
+
+        filter.appendChild(option);
+
+    });
+
+    if (directions.includes(previousValue)) {
+        filter.value = previousValue;
+    }
+}
+
+
+function showProjects() {
+
+    const projects = getProjects();
+
+    const list = document.getElementById("projectList");
+
+    const search = document
+        .getElementById("searchInput")
+        .value.toLowerCase()
+        .trim();
+
+    const selectedDirection = document
+        .getElementById("directionFilter")
+        .value;
+
+    document.getElementById("totalProjects").textContent =
+        projects.length;
+
+    loadDirections(projects);
+
+    const filtered = projects.filter(item => {
+
+        const searchableText = [
+            item.name,
+            item.direction,
+            item.description,
+            item.specialists,
+            item.resources
+        ].join(" ").toLowerCase();
+
+        const matchesSearch = searchableText.includes(search);
+
+        const matchesDirection =
+            !selectedDirection ||
+            item.direction === selectedDirection;
+
+        return matchesSearch && matchesDirection;
+
+    });
+
+    list.innerHTML = "";
+
+    document.getElementById("shownProjects").textContent =
+        filtered.length;
+
+    if (filtered.length === 0) {
+
+        const empty = document.createElement("div");
+        empty.className = "empty";
+
+        empty.textContent = projects.length === 0
+            ? "Hozircha loyihalar mavjud emas. Birinchi loyihani joylashtiring!"
+            : "Qidiruv bo‘yicha loyihalar topilmadi.";
+
+        list.appendChild(empty);
+        return;
+    }
+
+    filtered.forEach(item => {
+    list.appendChild(createProjectCard(item));
+
+    });
+
+}
+
+
+document
+    .getElementById("searchInput")
+    .addEventListener("input", showProjects);
+
+document
+    .getElementById("directionFilter")
+    .addEventListener("change", showProjects);
+
+showProjects();
+
+</script>
+
+</body>
+</html>

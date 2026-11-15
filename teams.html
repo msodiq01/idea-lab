@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IDEA LAB | Jamoalar va Karyera</title>
+
+<style>
+:root {
+    --bg: #080d19;
+    --panel: #111a2d;
+    --panel2: #17233a;
+    --primary: #7565ff;
+    --secondary: #16c7b5;
+    --text: #f4f6ff;
+    --muted: #9ba8c2;
+    --border: rgba(255,255,255,.09);
+    --danger: #ff647c;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button, input, textarea, select {
+    font: inherit;
+}
+
+.header {
+    background: rgba(8,13,25,.96);
+    border-bottom: 1px solid var(--border);
+    padding: 17px 5%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(15px);
+}
+
+.nav {
+    max-width: 1450px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.logo span {
+    color: var(--primary);
+}
+
+.nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.nav-links a {
+    color: var(--muted);
+    padding: 10px 12px;
+    border-radius: 9px;
+    font-size: 13px;
+    transition: .2s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: white;
+    background: var(--panel2);
+}
+
+.container {
+    width: 90%;
+    max-width: 1350px;
+    margin: auto;
+}
+
+.hero {
+    margin-top: 35px;
+    padding: 55px 45px;
+    border: 1px solid var(--border);
+    border-radius: 25px;
+    background:
+        radial-gradient(circle at 90% 20%, rgba(117,101,255,.3), transparent 35%),
+        linear-gradient(130deg, #17233c, #10182a);
+}
+
+.eyebrow {
+    color: var(--secondary);
+    font-size: 12px;
+    letter-spacing: 2px;
+    font-weight: bold;
+    margin-bottom: 18px;
+}
+
+.hero h1 {
+    font-size: clamp(30px, 5vw, 53px);
+    max-width: 750px;
+    line-height: 1.15;
+    margin-bottom: 18px;
+}
+
+.hero p {
+    color: var(--muted);
+    max-width: 650px;
+    line-height: 1.8;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 25px;
+}
+
+.btn {
+    border: none;
+    padding: 13px 19px;
+    border-radius: 10px;
+    background: var(--primary);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.12);
+}
+
+.btn-secondary {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+}
+
+.btn-green {
+    background: #087e72;
+}
+
+.btn-danger {
+    background: #7d3145;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin: 25px 0 45px;
+}
+
+.stat {
+    background: var(--panel);
+    padding: 23px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+}
+
+.stat strong {
+    display: block;
+    font-size: 28px;
+    margin-bottom: 7px;
+}
+
+.stat span {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.section {
+    margin: 45px 0;
+    scroll-margin-top: 100px;
+}
+
+.section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 23px;
+}
+
+.section-heading h2 {
+    font-size: 26px;
+}
+
+.section-heading p {
+    color: var(--muted);
+    margin-top: 7px;
+    font-size: 14px;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.tab {
+    background: var(--panel);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 12px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.tab.active {
+    background: var(--primary);
+    color: white;
+}
+
+.form-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 19px;
+    padding: 25px;
+    margin-bottom: 25px;
+}
+
+.form-panel h3 {
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 17px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.field.full {
+    grid-column: 1 / -1;
+}
+
+.field label {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.field input,
+.field textarea,
+.field select,
+.search-input {
+    width: 100%;
+    background: #0b1323;
+    color: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px;
+    outline: none;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus,
+.search-input:focus {
+    border-color: var(--primary);
+}
+
+.field textarea {
+    resize: vertical;
+    min-height: 105px;
+}
+
+.field select option {
+    background: var(--panel);
+}
+
+.form-submit {
+    margin-top: 18px;
+}
+
+.search-row {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 18px;
+}
+
+.card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    padding: 22px;
+    transition: .25s;
+    min-width: 0;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(117,101,255,.55);
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 17px;
+}
+
+.tag {
+    display: inline-block;
+    color: var(--secondary);
+    background: rgba(22,199,181,.1);
+    border-radius: 20px;
+    padding: 7px 10px;
+    font-size: 11px;
+}
+
+.card h3 {
+    font-size: 19px;
+    margin-bottom: 12px;
+    overflow-wrap: anywhere;
+}
+
+.card p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 8px 0;
+    overflow-wrap: anywhere;
+}
+
+.card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 18px;
+}
+
+.card-actions .btn {
+    font-size: 12px;
+    padding: 10px 13px;
+}
+
+.empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    background: var(--panel);
+    border: 1px dashed var(--border);
+    padding: 40px 20px;
+    border-radius: 16px;
+    color: var(--muted);
+}
+
+.footer {
+    margin-top: 65px;
+    padding: 30px 5%;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@media(max-width: 950px) {
+    .cards {
+        grid-template-columns: repeat(2, minmax(0,1fr));
+    }
+}
+
+@media(max-width: 650px) {
+    .header {
+        padding: 14px 4%;
+    }
+
+    .nav {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .nav-links {
+        width: 100%;
+    }
+
+    .nav-links a {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    .container {
+        width: 92%;
+    }
+
+    .hero {
+        padding: 32px 22px;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .form-grid,
+    .cards,
+    .search-row {
+        grid-template-columns: 1fr;
+    }
+
+    .section-heading h2 {
+        font-size: 22px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+    <nav class="nav">
+        <a href="index.html" class="logo">IDEA <span>LAB</span></a>
+
+        <div class="nav-links">
+            <a href="index.html">Bosh sahifa</a>
+            <a href="projects.html">Loyihalar</a>
+            <a href="teams.html" class="active">Jamoalar</a>
+            <a href="investors.html">Investorlar</a>
+            <a href="specialists.html">Mutaxassislar</a>
+            <a href="offers.html">Takliflar</a>
+            <a href="marketplace.html">Global bozor</a>
+            <a href="profile.html">Kabinet</a>
+        </div>
+    </nav>
+</header>
+
+<main class="container">
+
+    <section class="hero">
+        <div class="eyebrow">IDEA LAB COMMUNITY & CAREER</div>
+        <h1>G‘oyangiz uchun jamoa toping. Kelajagingiz uchun imkoniyat yarating.</h1>
+        <p>
+            IDEA LAB — loyiha tashabbuskorlari, mutaxassislar,
+            jamoalar va ish beruvchilar uchrashadigan yagona muhit.
+            O‘z jamoangizni yarating yoki yangi imkoniyatlarni kashf eting.
+        </p>
+
+        <div class="hero-actions">
+            <a href="#team-section" class="btn">Jamoalarni ko‘rish</a>
+            <a href="#career-section" class="btn btn-secondary">Vakansiyalarni ko‘rish</a>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="stat">
+            <strong id="teamCount">0</strong>
+            <span>Jamoalar</span>
+        </div>
+        <div class="stat">
+            <strong id="jobCount">0</strong>
+            <span>Vakansiyalar</span>
+        </div>
+        <div class="stat">
+            <strong id="teamApplicationCount">0</strong>
+            <span>Jamoaga arizalar</span>
+        </div>
+        <div class="stat">
+            <strong id="jobApplicationCount">0</strong>
+            <span>Ishga arizalar</span>
+        </div>
+    </section>
+
+    <section class="section" id="team-section">
+
+        <div class="section-heading">
+            <div>
+                <h2>Jamoalar markazi</h2>
+                <p>O‘z g‘oyangiz uchun kuchli jamoa shakllantiring.</p>
+            </div>
+            <button class="btn" onclick="showForm('teamFormPanel')">
+                + Jamoa yaratish
+            </button>
+        </div>
+
+        <div class="form-panel hidden" id="teamFormPanel">
+            <h3>Yangi jamoa yaratish</h3>
+
+            <form id="teamForm">
+                <div class="form-grid">
+
+                    <div class="field">
+                        <label>Jamoa nomi *</label>
+                        <input id="teamName" required maxlength="80"
+                               placeholder="Masalan: Future Makers">
+                    </div>
+
+                    <div class="field">
+                        <label>Yo‘nalish *</label>
+                        <select id="teamDirection" required>
+                            <option value="">Yo‘nalishni tanlang</option>
+                            <option>IT va texnologiya</option>
+                            <option>Ta'lim va ilm-fan</option>
+                            <option>Biznes va tadbirkorlik</option>
+                            <option>Ekologiya</option>
+                            <option>Ijtimoiy loyihalar</option>
+                            <option>Media va dizayn</option>
+                            <option>Innovatsiya</option>
+                            <option>Boshqa</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label>Jamoa rahbari *</label>
+                        <input id="teamLeader" required maxlength="80"
+                               placeholder="Ism va familiya">
+                    </div>
+
+                    <div class="field">
+                        <label>Kerakli ishtirokchilar</label>
+                        <input id="teamRoles"
+                               placeholder="Dasturchi, dizayner, marketolog">
+                    </div>
+
+                    <div class="field full">
+                        <label>Bog‘liq loyiha nomi (ixtiyoriy)</label>
+                        <input id="teamProject"
+                               placeholder="Loyiha nomini kiriting">
+                    </div>
+
+                    <div class="field full">
+                        <label>Jamoa haqida *</label>
+                        <textarea id="teamDescription" required maxlength="1500"
+                                  placeholder="Jamoa maqsadi, vazifalari va imkoniyatlari..."></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label>Aloqa telefon raqami *</label>
+                        <input id="teamPhone" type="tel" required
+                               placeholder="+998 90 123 45 67">
+                    </div>
+                    <div class="field">
+                        <label>Telegram (ixtiyoriy)</label>
+                        <input id="teamTelegram" placeholder="@username">
+                    </div>
+                </div>
+
+                <button class="btn form-submit" type="submit">
+                    Jamoani joylashtirish
+                </button>
+                <button class="btn btn-secondary form-submit" type="button"
+                        onclick="showForm('teamFormPanel')">
+                    Bekor qilish
+                </button>
+            </form>
+        </div>
+
+        <div class="search-row">
+            <input class="search-input" id="teamSearch"
+                   placeholder="Jamoa yoki yo‘nalish bo‘yicha qidirish...">
+            <select class="search-input" id="teamFilter">
+                <option value="">Barcha yo‘nalishlar</option>
+                <option>IT va texnologiya</option>
+                <option>Ta'lim va ilm-fan</option>
+                <option>Biznes va tadbirkorlik</option>
+                <option>Ekologiya</option>
+                <option>Ijtimoiy loyihalar</option>
+                <option>Media va dizayn</option>
+                <option>Innovatsiya</option>
+                <option>Boshqa</option>
+            </select>
+        </div>
+
+        <div class="cards" id="teamList"></div>
+    </section>
+
+    <section class="section" id="career-section">
+
+        <div class="section-heading">
+            <div>
+                <h2>Ish va vakansiyalar markazi</h2>
+                <p>Imkoniyatlarni toping yoki o‘z vakansiyangizni e'lon qiling.</p>
+            </div>
+
+            <button class="btn btn-green"
+                    onclick="showForm('jobFormPanel')">
+                + Vakansiya joylashtirish
+            </button>
+        </div>
+
+        <div class="form-panel hidden" id="jobFormPanel">
+            <h3>Yangi vakansiya</h3>
+
+            <form id="jobForm">
+                <div class="form-grid">
+
+                    <div class="field">
+                        <label>Korxona yoki ish beruvchi *</label>
+                        <input type="text" id="companyName" required maxlength="100">
+                    </div>
+
+                    <div class="field">
+                        <label>Lavozim nomi *</label>
+                        <input type="text" id="jobTitle" required maxlength="100">
+                    </div>
+
+                    <div class="field">
+                        <label>Maosh miqdori</label>
+                        <input type="text" id="jobSalary"
+                               placeholder="Masalan: 4 000 000 so‘m">
+                    </div>
+
+                    <div class="field">
+                        <label>Ish joyi *</label>
+                        <input type="text" id="jobLocation" required
+                               placeholder="Samarqand shahri">
+                    </div>
+
+                    <div class="field">
+                        <label>Aloqa telefon raqami *</label>
+                        <input type="tel" id="employerPhone" required>
+                    </div>
+
+                    <div class="field">
+                        <label>Bandlik turi</label>
+                        <select id="jobType">
+                            <option>To‘liq ish kuni</option>
+                            <option>Yarim stavka</option>
+                            <option>Masofaviy</option>
+                            <option>Amaliyot</option>
+                            <option>Frilans</option>
+                        </select>
+                    </div>
+
+                    <div class="field full">
+                        <label>Vakansiya haqida batafsil *</label>
+                        <textarea id="jobDescription" required maxlength="2000"
+                                  placeholder="Talablar, vazifalar va shartlar..."></textarea>
+                    </div>
+                </div>
+
+                <button class="btn btn-green form-submit" type="submit">
+                    Vakansiyani joylashtirish
+                </button>
+                <button class="btn btn-secondary form-submit" type="button"
+                        onclick="showForm('jobFormPanel')">
+                    Bekor qilish
+                </button>
+            </form>
+        </div>
+
+        <div class="search-row">
+            <input class="search-input" id="jobSearch"
+                   placeholder="Lavozim, korxona yoki manzil bo‘yicha qidirish...">
+
+            <select class="search-input" id="jobFilter">
+                <option value="">Barcha ish turlari</option>
+                <option>To‘liq ish kuni</option>
+                <option>Yarim stavka</option>
+                <option>Masofaviy</option>
+                <option>Amaliyot</option>
+                <option>Frilans</option>
+            </select>
+        </div>
+
+        <div class="cards" id="jobList"></div>
+    </section>
+
+    <section class="section">
+        <div class="section-heading">
+            <div>
+                <h2>Mening arizalarim</h2>
+                <p>Jamoa va vakansiyalarga yuborgan arizalaringiz.</p>
+            </div>
+        </div>
+
+        <div class="cards" id="myApplications"></div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <p>IDEA LAB © 2026 — G‘oya. Jamoa. Harakat. Natija.</p>
+</footer>
+
+<script>
+"use strict";
+
+/* 1. MA'LUMOTLARNI O'QISH VA SAQLASH */
+
+function readData(key) {
+    try {
+        const value = JSON.parse(localStorage.getItem(key) || "[]");
+        return Array.isArray(value) ? value : [];
+    } catch (error) {
+        console.error("Ma'lumotni o'qishda xato:", key, error);
+        return [];
+    }
+}
+
+function saveData(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+        return true;
+    } catch (error) {
+        console.error("Saqlash xatosi:", error);
+        alert("Ma'lumotni saqlab bo'lmadi.");
+        return false;
+    }
+}
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, function(char) {
+        const entities = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        };
+        return entities[char];
+    });
+}
+
+function createId() {
+    return Date.now().toString() +
+        Math.random().toString(36).slice(2, 8);
+}
+
+/* 2. FORMALARNI OCHISH VA YOPISH */
+
+function showForm(id) {
+    const panel = document.getElementById(id);
+
+    if (!panel) {
+        console.error("Forma topilmadi:", id);
+        return;
+    }
+
+    panel.classList.remove("hidden");
+    panel.style.display = "block";
+
+    panel.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+/* 3. JAMOALAR MARKAZI */
+
+const teamForm = document.getElementById("teamForm");
+const teamList = document.getElementById("teamList");
+
+function showTeams() {
+    const teams = readData("teams");
+
+    const search = document.getElementById("teamSearch")
+        .value.trim().toLowerCase();
+
+    const filter = document.getElementById("teamFilter").value;
+
+    const filtered = teams.filter(team => {
+        const text = [
+            team.name,
+            team.direction,
+            team.description,
+            team.roles,
+            team.project
+        ].join(" ").toLowerCase();
+
+        return text.includes(search) &&
+            (!filter || team.direction === filter);
+    });
+
+    document.getElementById("teamCount").textContent = teams.length;
+
+   if (!filtered.length) {
+    teamList.innerHTML = 
+        <div class="empty">
+            <h3>Hozircha jamoalar topilmadi</h3>
+            <p>Yangi jamoa yarating yoki qidiruvni o'zgartiring.</p>
+        </div>
+    ;
+    return;
+}
+   teamList.innerHTML = filtered.map(team => 
+    <article class="card">
+        <div class="card-top">
+            <span class="tag">${escapeHTML(team.direction || "Yo‘nalish yo‘q")}</span>
+            <span class="tag">JAMOA</span>
+        </div>
+
+        <h3>${escapeHTML(team.name || "Nomsiz jamoa")}</h3>
+
+        <p><strong>Rahbar:</strong>
+            ${escapeHTML(team.leader || "Belgilanmagan")}
+        </p>
+
+        <p><strong>Kerakli mutaxassislar:</strong>
+            ${escapeHTML(team.roles || "Aniqlashtiriladi")}
+        </p>
+
+        <p><strong>Loyiha:</strong>
+            ${escapeHTML(team.project || "Mustaqil jamoa")}
+        </p>
+
+        <p>${escapeHTML(team.description || "")}</p>
+
+        <div class="card-actions">
+            <button class="btn"
+                onclick="joinTeam('${escapeHTML(team.id)}')">
+                Jamoaga qo'shilish
+            </button>
+
+            <a class="btn btn-secondary" href="projects.html">
+                Loyihalarni ko'rish
+            </a>
+        </div>
+    </article>
+).join("");
+}
+
+if (teamForm) {
+    teamForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const team = {
+            id: createId(),
+            name: document.getElementById("teamName").value.trim(),
+            direction: document.getElementById("teamDirection").value,
+            leader: document.getElementById("teamLeader").value.trim(),
+            roles: document.getElementById("teamRoles").value.trim(),
+            project: document.getElementById("teamProject").value.trim(),
+            description: document.getElementById("teamDescription").value.trim(),
+            phone: document.getElementById("teamPhone").value.trim(),
+            telegram: document.getElementById("teamTelegram").value.trim(),
+            date: new Date().toISOString()
+        };
+
+        if (
+            !team.name ||
+            !team.direction ||
+            !team.leader ||
+            !team.description ||
+            !team.phone
+        ) {
+            alert("Majburiy maydonlarni to'ldiring.");
+            return;
+        }
+
+        const teams = readData("teams");
+        teams.unshift(team);
+
+        if (!saveData("teams", teams)) return;
+
+        teamForm.reset();
+
+        document.getElementById("teamFormPanel").classList.add("hidden");
+        document.getElementById("teamFormPanel").style.display = "";
+
+        showTeams();
+        updateStats();
+
+        alert("Jamoa muvaffaqiyatli joylashtirildi!");
+    });
+}
+
+/* 4. JAMOAGA QO'SHILISH */
+
+function joinTeam(id) {
+    const teams = readData("teams");
+    const team = teams.find(item => String(item.id) === String(id));
+
+    if (!team) {
+        alert("Jamoa topilmadi.");
+        return;
+    }
+
+    const name = prompt("Ism va familiyangizni kiriting:");
+
+    if (!name || !name.trim()) return;
+
+    const phone = prompt("Telefon raqamingizni kiriting:");
+
+    if (!phone || !phone.trim()) return;
+
+    const applications = readData("teamApplications");
+
+    applications.unshift({
+        id: createId(),
+        teamId: team.id,
+        teamName: team.name,
+        applicantName: name.trim(),
+        applicantPhone: phone.trim(),
+        status: "Yangi",
+        date: new Date().toISOString()
+    });
+
+    if (!saveData("teamApplications", applications)) return;
+
+    updateStats();
+    showMyApplications();
+
+    alert("Jamoaga qo'shilish arizangiz yuborildi!");
+}
+
+/* 5. VAKANSIYALAR */
+
+const jobForm = document.getElementById("jobForm");
+const jobList = document.getElementById("jobList");
+
+function showJobs() {
+    const jobs = readData("jobs");
+
+    const search = document.getElementById("jobSearch")
+        .value.trim().toLowerCase();
+
+    const filter = document.getElementById("jobFilter").value;
+
+    const filtered = jobs.filter(job => {
+        const text = [
+            job.jobTitle,
+            job.companyName,
+            job.location,
+            job.description,
+            job.jobType
+        ].join(" ").toLowerCase();
+
+        return text.includes(search) &&
+            (!filter  (job.jobType || "To'liq ish kuni") === filter);
+    });
+
+    document.getElementById("jobCount").textContent = jobs.length;
+
+    if (!filtered.length) {
+        jobList.innerHTML = 
+            <div class="empty">
+                <h3>Vakansiyalar topilmadi</h3>
+                <p>Hozircha yangi vakansiya joylashtirilmagan.</p>
+            </div>
+        ;
+        return;
+    }
+
+    jobList.innerHTML = filtered.map(job => 
+        <article class="card">
+            <div class="card-top">
+                <span class="tag">
+                    ${escapeHTML(job.jobType || "To'liq ish kuni")}
+                </span>
+                <span class="tag">VAKANSIYA</span>
+            </div>
+
+            <h3>${escapeHTML(job.jobTitle)}</h3>
+
+            <p><strong>Ish beruvchi:</strong>
+                ${escapeHTML(job.companyName)}</p>
+
+            <p><strong>Maosh:</strong>
+                ${escapeHTML(job.salary || "Kelishiladi")}</p>
+
+            <p><strong>Manzil:</strong>
+                ${escapeHTML(job.location)}</p>
+
+            <p>${escapeHTML(job.description)}</p>
+
+            <div class="card-actions">
+                <button class="btn btn-green"
+                    onclick="applyForJob('${escapeHTML(job.id)}')">
+                    Ariza yuborish
+                </button>
+            </div>
+        </article>
+    ).join("");
+}
+
+/* 6. VAKANSIYA JOYLASHTIRISH */
+if (jobForm) {
+    jobForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const job = {
+            id: createId(),
+            companyName: document.getElementById("companyName").value.trim(),
+            jobTitle: document.getElementById("jobTitle").value.trim(),
+            description: document.getElementById("jobDescription").value.trim(),
+            salary: document.getElementById("jobSalary").value.trim(),
+            location: document.getElementById("jobLocation").value.trim(),
+            phone: document.getElementById("employerPhone").value.trim(),
+            jobType: document.getElementById("jobType").value,
+            date: new Date().toISOString()
+        };
+
+        if (
+            !job.companyName ||
+            !job.jobTitle ||
+            !job.description ||
+            !job.location ||
+            !job.phone
+        ) {
+            alert("Majburiy maydonlarni to'ldiring.");
+            return;
+        }
+
+        const jobs = readData("jobs");
+        jobs.unshift(job);
+
+        if (!saveData("jobs", jobs)) return;
+
+        jobForm.reset();
+
+        document.getElementById("jobFormPanel").classList.add("hidden");
+        document.getElementById("jobFormPanel").style.display = "";
+
+        showJobs();
+        updateStats();
+
+        alert("Vakansiya muvaffaqiyatli joylashtirildi!");
+    });
+}
+
+/* 7. ISHGA ARIZA YUBORISH */
+
+function applyForJob(id) {
+    const jobs = readData("jobs");
+
+    const job = jobs.find(item => String(item.id) === String(id));
+
+    if (!job) {
+        alert("Vakansiya topilmadi.");
+        return;
+    }
+
+    const name = prompt("Ism va familiyangizni kiriting:");
+
+    if (!name || !name.trim()) return;
+
+    const phone = prompt("Telefon raqamingizni kiriting:");
+
+    if (!phone || !phone.trim()) return;
+
+    const applications = readData("jobApplications");
+
+    applications.unshift({
+        id: createId(),
+        jobId: job.id,
+        jobTitle: job.jobTitle,
+        companyName: job.companyName,
+        applicantName: name.trim(),
+        applicantPhone: phone.trim(),
+        status: "Yangi",
+        date: new Date().toISOString()
+    });
+
+    if (!saveData("jobApplications", applications)) return;
+
+    updateStats();
+    showMyApplications();
+
+    alert("Vakansiyaga arizangiz yuborildi!");
+}
+
+/* 8. MENING ARIZALARIM */
+
+function showMyApplications() {
+    const teamApplications = readData("teamApplications");
+    const jobApplications = readData("jobApplications");
+
+    const all = [
+        ...teamApplications.map(item => ({
+            ...item,
+            category: "Jamoa",
+            title: item.teamName
+        })),
+
+        ...jobApplications.map(item => ({
+            ...item,
+            category: "Ish",
+            title: item.jobTitle
+        }))
+    ];
+
+    const container = document.getElementById("myApplications");
+
+    if (!all.length) {
+        container.innerHTML = 
+            <div class="empty">
+                Hozircha arizalaringiz mavjud emas.
+            </div>
+        ;
+        return;
+    }
+
+    container.innerHTML = all.map(item => 
+        <article class="card">
+            <span class="tag">${escapeHTML(item.category)}</span>
+
+            <h3>${escapeHTML(item.title)}</h3>
+
+            <p><strong>Ism:</strong>
+                ${escapeHTML(item.applicantName)}</p>
+
+            <p><strong>Holati:</strong>
+                ${escapeHTML(item.status || "Yangi")}</p>
+
+            <p><strong>Sana:</strong>
+                ${escapeHTML(item.date || "")}</p>
+        </article>
+    ).join("");
+}
+
+/* 9. STATISTIKA */
+
+function updateStats() {
+    document.getElementById("teamCount").textContent =
+        readData("teams").length;
+
+    document.getElementById("jobCount").textContent =
+        readData("jobs").length;
+
+    document.getElementById("teamApplicationCount").textContent =
+        readData("teamApplications").length;
+
+    document.getElementById("jobApplicationCount").textContent =
+        readData("jobApplications").length;
+}
+
+/* 10. QIDIRUV VA FILTRLAR */
+document.getElementById("teamSearch")
+    .addEventListener("input", showTeams);
+
+document.getElementById("teamFilter")
+    .addEventListener("change", showTeams);
+
+document.getElementById("jobSearch")
+    .addEventListener("input", showJobs);
+
+document.getElementById("jobFilter")
+    .addEventListener("change", showJobs);
+
+/* 11. SAHIFANI ISHGA TUSHIRISH */
+
+function initializePage() {
+    showTeams();
+    showJobs();
+    showMyApplications();
+    updateStats();
+}
+
+initializePage();
+
+</script>
+</body>
+</html>

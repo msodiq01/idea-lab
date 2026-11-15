@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IDEA LAB — Investorlar</title>
+
+<style>
+:root {
+    --bg: #080d19;
+    --panel: #111a2b;
+    --panel2: #172238;
+    --text: #f3f6ff;
+    --muted: #91a0ba;
+    --accent: #8b7cff;
+    --green: #39d6a0;
+    --border: rgba(255,255,255,.09);
+}
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+}
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; }
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(8,13,25,.94);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(14px);
+}
+.nav-inner {
+    max-width: 1250px;
+    margin: auto;
+    padding: 17px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+.logo { font-size: 22px; font-weight: 900; letter-spacing: 1px; }
+.logo span { color: var(--accent); }
+.nav-links {
+    display: flex;
+    gap: 17px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--muted);
+}
+.nav-links a:hover, .nav-links a.active { color: white; }
+
+.container { max-width: 1250px; margin: auto; padding: 35px 22px 70px; }
+.hero {
+    padding: 42px;
+    border: 1px solid var(--border);
+    border-radius: 25px;
+    background:
+        radial-gradient(circle at 90% 10%, rgba(139,124,255,.25), transparent 35%),
+        linear-gradient(135deg, #172440, #10182a);
+}
+.eyebrow {
+    color: var(--green);
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+.hero h1 { font-size: clamp(30px, 5vw, 48px); margin: 15px 0; }
+.hero p { color: var(--muted); max-width: 650px; line-height: 1.7; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 25px; }
+
+.btn {
+    border: 0;
+    border-radius: 11px;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: .2s;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-primary { background: var(--accent); color: white; }
+.btn-secondary { background: rgba(255,255,255,.08); color: white; border: 1px solid var(--border); }
+.btn-green { background: var(--green); color: #071b16; }
+.btn-small { padding: 9px 13px; font-size: 12px; }
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin: 25px 0 35px;
+}
+.stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    padding: 21px;
+}
+.stat small { color: var(--muted); }
+.stat h2 { margin: 12px 0 0; font-size: 29px; }
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 35px 0 18px;
+}
+.section-heading h2 { margin: 0; font-size: 24px; }
+.muted { color: var(--muted); font-size: 13px; }
+
+.toolbar {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.field {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--panel);
+    color: white;
+    outline: none;
+}
+.field:focus { border-color: var(--accent); }
+.field option { background: var(--panel); }
+textarea.field { resize: vertical; min-height: 100px; }
+
+.investor-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 17px;
+}
+.investor-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 21px;
+    transition: .2s;
+}
+.investor-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(139,124,255,.55);
+}
+.card-top { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.avatar {
+    width: 49px;
+    height: 49px;
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #8b7cff, #39d6a0);
+    color: #08111d;
+    font-size: 20px;
+    font-weight: 900;
+}
+.tag {
+    display: inline-block;
+    padding: 6px 9px;
+    border-radius: 20px;
+    background: rgba(139,124,255,.13);
+    color: #b9b0ff;
+    font-size: 11px;
+}
+.investor-card h3 { margin: 17px 0 5px; font-size: 19px; }
+.investor-card p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+.investor-info {
+    margin: 17px 0;
+    padding: 13px;
+    background: rgba(255,255,255,.035);
+    border-radius: 12px;
+}
+.investor-info div {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 8px 0;
+    font-size: 12px;
+}
+.investor-info span:first-child { color: var(--muted); }
+.investor-info span:last-child { text-align: right; }
+.card-actions { display: flex; gap: 9px; margin-top: 15px; }
+
+.panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px;
+    margin-top: 20px;
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-group label { font-size: 12px; color: var(--muted); }
+.full { grid-column: 1 / -1; }
+.hidden { display: none !important; }
+
+.empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 45px 20px;
+    background: var(--panel);
+    border: 1px dashed var(--border);
+    border-radius: 18px;
+}
+.empty h3 { margin-top: 0; }
+.empty p { color: var(--muted); font-size: 13px; }
+
+.notice {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 16px;
+}
+footer {
+    border-top: 1px solid var(--border);
+    padding: 25px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+@media (max-width: 900px) {
+    .investor-grid { grid-template-columns: repeat(2, 1fr); }
+    .nav-inner { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 650px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .toolbar, .form-grid { grid-template-columns: 1fr; }
+    .investor-grid { grid-template-columns: 1fr; }
+    .hero { padding: 27px 21px; }
+    .container { padding: 22px 14px 50px; }
+    .full { grid-column: auto; }
+}
+</style>
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="nav-inner">
+        <a class="logo" href="index.html">IDEA <span>LAB</span></a>
+
+        <nav class="nav-links">
+            <a href="index.html">Bosh sahifa</a>
+            <a href="projects.html">Loyihalar</a>
+            <a href="teams.html">Jamoalar</a>
+            <a href="investors.html" class="active">Investorlar</a>
+            <a href="specialists.html">Mutaxassislar</a>
+            <a href="offers.html">Takliflar</a>
+            <a href="marketplace.html">Global bozor</a>
+            <a href="profile.html">Kabinet</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="hero">
+        <div class="eyebrow">IDEA LAB • INVESTMENT NETWORK</div>
+        <h1>G‘oyangizga sarmoya toping.</h1>
+        <p>
+            Investorlar bilan tanishing, loyihangizni rivojlantirish
+            uchun hamkorlar toping va yangi imkoniyatlar yarating.
+        </p>
+
+        <div class="hero-actions">
+            <button class="btn btn-primary" onclick="toggleForm()">
+                + Investor sifatida qo‘shilish
+            </button>
+            <a href="#investorCatalog" class="btn btn-secondary">
+                Investorlarni ko‘rish
+            </a>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="stat">
+            <small>Jami investorlar</small>
+            <h2 id="investorCount">0</h2>
+        </div>
+        <div class="stat">
+            <small>Yo‘nalishlar</small>
+            <h2 id="directionCount">0</h2>
+        </div>
+        <div class="stat">
+            <small>Hamkorlik so‘rovlari</small>
+            <h2 id="requestCount">0</h2>
+        </div>
+        <div class="stat">
+            <small>Faol investorlar</small>
+            <h2 id="activeCount">0</h2>
+        </div>
+    </section>
+
+    <section id="investorFormPanel" class="panel hidden">
+        <div class="section-heading">
+            <h2>Investor profilini yaratish</h2>
+            <button class="btn btn-secondary btn-small" onclick="toggleForm()">
+                Yopish
+            </button>
+        </div>
+
+        <form id="investorForm" class="form-grid">
+
+            <div class="form-group">
+                <label>Investor yoki tashkilot nomi *</label>
+                <input class="field" id="investorName" required
+                    placeholder="Masalan: Innovatsion Capital">
+            </div>
+
+            <div class="form-group">
+                <label>Investor turi *</label>
+                <select class="field" id="investorType" required>
+                    <option value="">Tanlang</option>
+                    <option>Individual investor</option>
+                    <option>Investitsiya kompaniyasi</option>
+                    <option>Venchur fond</option>
+                    <option>Biznes angel</option>
+                    <option>Korxona</option>
+                    <option>Boshqa</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Investitsiya yo‘nalishi *</label>
+                <select class="field" id="investorDirection" required>
+                    <option value="">Tanlang</option>
+                    <option>IT va texnologiya</option>
+                    <option>Ta’lim</option>
+                    <option>Qishloq xo‘jaligi</option>
+                    <option>Tibbiyot</option>
+                    <option>Ekologiya</option>
+                    <option>Ishlab chiqarish</option>
+                    <option>Fintech</option>
+                    <option>Startaplar</option>
+                    <option>Boshqa</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Investitsiya miqdori</label>
+                <input class="field" id="investorAmount"
+                    placeholder="Masalan: 10 mln – 100 mln so‘m">
+            </div>
+
+            <div class="form-group">
+                <label>Hudud *</label>
+                <input class="field" id="investorLocation" required
+                    placeholder="Masalan: Samarqand">
+            </div>
+
+            <div class="form-group">
+                <label>Telefon raqami *</label>
+                <input class="field" id="investorPhone" required
+                    placeholder="+998 ...">
+            </div>
+
+            <div class="form-group">
+                <label>Telegram username</label>
+                <input class="field" id="investorTelegram"
+                    placeholder="@username">
+            </div>
+
+            <div class="form-group">
+                <label>Veb-sayt</label>
+                <input class="field" id="investorWebsite"
+                    placeholder="https://example.com">
+            </div>
+
+            <div class="form-group full">
+                <label>O‘zingiz haqingizda *</label>
+                <textarea class="field" id="investorDescription" required
+                    placeholder="Faoliyatingiz, tajribangiz va qanday loyihalarga qiziqishingiz haqida yozing..."></textarea>
+            </div>
+
+            <div class="full">
+                <button class="btn btn-primary" type="submit">
+                    Profilni joylashtirish
+                </button>
+            </div>
+        </form>
+
+        <p class="notice">
+            Eslatma: hozircha profil ma’lumotlari ushbu brauzer xotirasida saqlanadi.
+            Ular boshqa foydalanuvchilarga avtomatik ko‘rinmaydi.
+        </p>
+    </section>
+    <section id="investorCatalog">
+        <div class="section-heading">
+            <div>
+                <h2>Investorlar katalogi</h2>
+                <p class="muted">O‘zingizga mos sarmoyadorni toping.</p>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <input class="field" id="investorSearch"
+                placeholder="Investor nomi yoki hudud bo‘yicha qidirish...">
+
+            <select class="field" id="directionFilter">
+                <option value="">Barcha yo‘nalishlar</option>
+                <option>IT va texnologiya</option>
+                <option>Ta’lim</option>
+                <option>Qishloq xo‘jaligi</option>
+                <option>Tibbiyot</option>
+                <option>Ekologiya</option>
+                <option>Ishlab chiqarish</option>
+                <option>Fintech</option>
+                <option>Startaplar</option>
+                <option>Boshqa</option>
+            </select>
+
+            <select class="field" id="typeFilter">
+                <option value="">Barcha investor turlari</option>
+                <option>Individual investor</option>
+                <option>Investitsiya kompaniyasi</option>
+                <option>Venchur fond</option>
+                <option>Biznes angel</option>
+                <option>Korxona</option>
+                <option>Boshqa</option>
+            </select>
+        </div>
+
+        <div id="investorList" class="investor-grid"></div>
+    </section>
+
+    <section class="panel">
+        <div class="section-heading">
+            <div>
+                <h2>Hamkorlik so‘rovlari</h2>
+                <p class="muted">Yuborgan so‘rovlaringiz shu yerda ko‘rinadi.</p>
+            </div>
+            <span class="tag" id="myRequestCount">0 ta so‘rov</span>
+        </div>
+        <div id="myRequests"></div>
+    </section>
+
+</main>
+
+<footer>
+    IDEA LAB — G‘oya, jamoa, investitsiya va natija.
+</footer>
+
+<script>
+"use strict";
+
+/* ==================================
+   1. MA'LUMOTLARNI SAQLASH
+================================== */
+
+function readData(key) {
+    try {
+        const data = localStorage.getItem(key);
+        const parsed = data ? JSON.parse(data) : [];
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+        console.error("Ma'lumotni o‘qishda xato:", error);
+        return [];
+    }
+}
+
+function saveData(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+        return true;
+    } catch (error) {
+        console.error("Ma'lumotni saqlashda xato:", error);
+        alert("Ma'lumot saqlanmadi. Brauzer xotirasini tekshiring.");
+        return false;
+    }
+}
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, function(char) {
+        const entities = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        };
+        return entities[char];
+    });
+}
+
+function createId() {
+    return Date.now().toString(36) +
+        Math.random().toString(36).slice(2, 9);
+}
+
+
+/* ==================================
+   2. DEMO INVESTORLAR
+================================== */
+
+function initializeInvestors() {
+    const investors = readData("investors");
+
+    if (investors.length === 0) {
+        const demoInvestors = [
+            {
+                id: "demo-1",
+                name: "Innovatsion Capital",
+                type: "Investitsiya kompaniyasi",
+                direction: "IT va texnologiya",
+                amount: "50 mln – 500 mln so‘m",
+                location: "Toshkent",
+                phone: "",
+                telegram: "",
+                website: "",
+                description: "Texnologik startaplar va raqamli yechimlarni rivojlantirishga qiziqadigan namuna profil.",
+                status: "Faol",
+                demo: true
+            },
+            {
+                id: "demo-2",
+                name: "Future Education",
+                type: "Biznes angel",
+                direction: "Ta’lim",
+                amount: "10 mln – 100 mln so‘m",
+                location: "Samarqand",
+                phone: "",
+                telegram: "",
+                website: "",
+                description: "Ta’lim texnologiyalari, yoshlar loyihalari va yangi o‘quv platformalariga qiziqadigan namuna profil.",
+                status: "Faol",
+                demo: true
+            },
+            {
+                id: "demo-3",
+                name: "Green Development",
+                type: "Venchur fond",
+                direction: "Ekologiya",
+                amount: "100 mln so‘mdan",
+                location: "O‘zbekiston",
+                phone: "",
+                telegram: "",
+                website: "",
+                description: "Ekologik innovatsiyalar va barqaror rivojlanish loyihalariga qiziqadigan namuna profil.",
+                status: "Faol",
+                demo: true
+            }
+        ];
+
+        saveData("investors", demoInvestors);
+    }
+}
+
+
+/* ==================================
+   3. INVESTORLAR RO‘YXATI
+================================== */
+
+function showInvestors() {
+    const investors = readData("investors");
+
+    const search = document.getElementById("investorSearch")
+        .value.trim().toLowerCase();
+
+    const direction = document.getElementById("directionFilter").value;
+    const type = document.getElementById("typeFilter").value;
+
+    const filtered = investors.filter(investor => {
+        const searchableText = [
+            investor.name,
+            investor.location,
+            investor.description,
+            investor.direction
+        ].join(" ").toLowerCase();
+
+        return searchableText.includes(search) &&
+            (!direction || investor.direction === direction) &&
+            (!type || investor.type === type);
+    });
+
+    document.getElementById("investorCount").textContent =
+        investors.length;
+
+    const directions = new Set(
+        investors.map(item => item.direction).filter(Boolean)
+    );
+
+    document.getElementById("directionCount").textContent =
+        directions.size;
+
+    document.getElementById("activeCount").textContent =
+        investors.filter(item => item.status === "Faol").length;
+
+    const list = document.getElementById("investorList");
+
+    if (!filtered.length) {
+        list.innerHTML = 
+            <div class="empty">
+                <h3>Investorlar topilmadi</h3>
+                <p>Qidiruv yoki filtr shartlarini o‘zgartirib ko‘ring.</p>
+            </div>
+        ;
+        return;
+    }
+
+    list.innerHTML = filtered.map(investor => `
+        <article class="investor-card">
+            <div class="card-top">
+                <div class="avatar">
+                    ${escapeHTML((investor.name || "I").charAt(0).toUpperCase())}
+                </div>
+                <span class="tag">
+                    ${escapeHTML(investor.status || "Faol")}
+                </span>
+            </div>
+
+            <h3>${escapeHTML(investor.name)}</h3>
+            <p>${escapeHTML(investor.type)}</p>
+
+            <div class="card-top">
+                <span class="tag">
+                    ${escapeHTML(investor.direction)}
+                </span>
+            </div>
+
+            <p>${escapeHTML(investor.description)}</p>
+
+            <div class="investor-info">
+                <div>
+                    <span>Investitsiya</span>
+                    <span>${escapeHTML(investor.amount || "Kelishiladi")}</span>
+                </div>
+                <div>
+                    <span>Hudud</span>
+                    <span>${escapeHTML(investor.location)}</span>
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button class="btn btn-primary btn-small"
+                    onclick="sendRequest('${escapeHTML(investor.id)}')">
+                    Hamkorlik taklifi
+                </button>
+            </div>
+            ${investor.demo ? 
+                <p class="notice">Namuna profil — haqiqiy investor emas.</p>
+             : ""}
+        </article>
+    ).join("");
+}
+
+
+/* ==================================
+   4. INVESTOR QO‘SHISH
+================================== */
+
+function toggleForm() {
+    document.getElementById("investorFormPanel")
+        .classList.toggle("hidden");
+}
+
+const investorForm = document.getElementById("investorForm");
+
+investorForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const investors = readData("investors");
+
+    const investor = {
+        id: createId(),
+        name: document.getElementById("investorName").value.trim(),
+        type: document.getElementById("investorType").value,
+        direction: document.getElementById("investorDirection").value,
+        amount: document.getElementById("investorAmount").value.trim(),
+        location: document.getElementById("investorLocation").value.trim(),
+        phone: document.getElementById("investorPhone").value.trim(),
+        telegram: document.getElementById("investorTelegram").value.trim(),
+        website: document.getElementById("investorWebsite").value.trim(),
+        description: document.getElementById("investorDescription").value.trim(),
+        status: "Faol",
+        date: new Date().toISOString(),
+        demo: false
+    };
+
+    if (
+        !investor.name ||
+        !investor.type ||
+        !investor.direction ||
+        !investor.location ||
+        !investor.phone ||
+        !investor.description
+    ) {
+        alert("Majburiy maydonlarni to‘ldiring.");
+        return;
+    }
+
+    investors.unshift(investor);
+
+    if (!saveData("investors", investors)) {
+        return;
+    }
+
+    investorForm.reset();
+    toggleForm();
+    showInvestors();
+
+    alert("Investor profilingiz saqlandi!");
+});
+
+
+/* ==================================
+   5. HAMKORLIK SO‘ROVI
+================================== */
+
+function sendRequest(investorId) {
+    const investors = readData("investors");
+
+    const investor = investors.find(item =>
+        String(item.id) === String(investorId)
+    );
+
+    if (!investor) {
+        alert("Investor topilmadi.");
+        return;
+    }
+
+    if (investor.demo) {
+        alert("Bu namuna profil. Haqiqiy hamkorlik so‘rovi yuborib bo‘lmaydi.");
+        return;
+    }
+
+    const projectName = prompt("Loyihangiz nomini kiriting:");
+
+    if (!projectName || !projectName.trim()) {
+        return;
+    }
+
+    const description = prompt("Loyihangiz haqida qisqacha yozing:");
+
+    if (!description || !description.trim()) {
+        return;
+    }
+
+    const contact = prompt("Bog‘lanish uchun telefon yoki Telegram:");
+
+    if (!contact || !contact.trim()) {
+        return;
+    }
+
+    const requests = readData("investorRequests");
+
+    requests.unshift({
+        id: createId(),
+        investorId: investor.id,
+        investorName: investor.name,
+        projectName: projectName.trim(),
+        description: description.trim(),
+        contact: contact.trim(),
+        status: "Yuborildi",
+        date: new Date().toISOString()
+    });
+
+    if (!saveData("investorRequests", requests)) {
+        return;
+    }
+
+    showMyRequests();
+    updateRequestStats();
+
+    alert("So‘rov ushbu brauzerda saqlandi. Investor uni avtomatik olmaydi.");
+}
+
+
+/* ==================================
+   6. MENING SO‘ROVLARIM
+================================== */
+
+function showMyRequests() {
+    const requests = readData("investorRequests");
+    const container = document.getElementById("myRequests");
+
+    document.getElementById("myRequestCount").textContent =
+        requests.length + " ta so‘rov";
+
+    if (!requests.length) {
+    container.innerHTML = 
+        DIL0
+    ;
+    return;
+}
+    }
+    container.innerHTML = requests.map(request => 
+        <div class="investor-card" style="margin-bottom:12px;">
+            <div class="card-top">
+                <strong>${escapeHTML(request.projectName)}</strong>
+                <span class="tag">${escapeHTML(request.status)}</span>
+            </div>
+            <p>Investor: ${escapeHTML(request.investorName)}</p>
+            <p>${escapeHTML(request.description)}</p>
+            <p>Aloqa: ${escapeHTML(request.contact)}</p>
+            <p class="notice">
+                ${new Date(request.date).toLocaleString("uz-UZ")}
+            </p>
+        </div>
+    ).join("");
+}
+
+function updateRequestStats() {
+    document.getElementById("requestCount").textContent =
+        readData("investorRequests").length;
+}
+
+
+/* ==================================
+   7. QIDIRUV VA FILTRLAR
+================================== */
+
+document.getElementById("investorSearch")
+    .addEventListener("input", showInvestors);
+
+document.getElementById("directionFilter")
+    .addEventListener("change", showInvestors);
+
+document.getElementById("typeFilter")
+    .addEventListener("change", showInvestors);
+
+
+/* ==================================
+   8. SAHIFANI ISHGA TUSHIRISH
+================================== */
+
+function initializePage() {
+    initializeInvestors();
+    showInvestors();
+    showMyRequests();
+    updateRequestStats();
+}
+
+initializePage();
+
+</script>
+</body>
+</html>

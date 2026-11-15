@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEA LAB | Shaxsiy kabinet</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #17233b;
+            margin: 0;
+            padding: 20px;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        nav a {
+            color: #1769d2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        section {
+            background: white;
+            padding: 18px;
+            margin: 18px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        input:not([type="checkbox"]) {
+            display: block;
+            width: 100%;
+            padding: 11px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #1769d2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin: 5px 5px 5px 0;
+            cursor: pointer;
+        }
+
+        .reject {
+            background: #b83232;
+        }
+
+        .item-card {
+            border: 1px solid #dce4ef;
+            border-radius: 9px;
+            padding: 14px;
+            margin: 12px 0;
+            overflow-wrap: anywhere;
+        }
+
+        .message {
+            color: #167344;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>IDEA LAB — Shaxsiy kabinet</h1>
+<p>Platformadagi barcha faoliyatingiz shu yerda jamlanadi.</p>
+
+<nav>
+    <a href="index.html">Bosh sahifa</a>
+    <a href="projects.html">Loyihalar</a>
+    <a href="teams.html">Ish va vakansiyalar</a>
+    <a href="investors.html">Investorlar</a>
+    <a href="offers.html">Investitsiya takliflari</a>
+    <a href="marketplace.html">Global bozor</a>
+</nav>
+
+<section>
+    <h2>Foydalanuvchi profili</h2>
+
+    <form id="profileForm">
+        <input type="text" id="fullName" placeholder="Ism va familiya" required>
+        <input type="email" id="profileEmail" placeholder="Email manzil" required>
+        <input type="tel" id="profilePhone" placeholder="Telefon raqami">
+
+        <h3>Faoliyat rollaringizni tanlang</h3>
+
+        <label><input type="checkbox" name="userRoles" value="Loyiha egasi"> Loyiha egasi</label><br>
+        <label><input type="checkbox" name="userRoles" value="Investor"> Investor</label><br>
+        <label><input type="checkbox" name="userRoles" value="Ish beruvchi"> Ish beruvchi</label><br>
+        <label><input type="checkbox" name="userRoles" value="Ish izlovchi"> Ish izlovchi</label><br>
+        <label><input type="checkbox" name="userRoles" value="Yetkazib beruvchi"> Yetkazib beruvchi</label><br>
+        <label><input type="checkbox" name="userRoles" value="Mutaxassis"> Mutaxassis</label><br>
+        <label><input type="checkbox" name="userRoles" value="Ishlab chiqaruvchi"> Ishlab chiqaruvchi</label><br>
+
+        <button type="submit">Profilni saqlash</button>
+    </form>
+
+    <p id="profileMessage" class="message"></p>
+</section>
+
+<section>
+    <h2>Mening loyihalarim</h2>
+    <div id="myProjects"></div>
+</section>
+
+<section>
+    <h2>Loyihalarimga kelgan investor takliflari</h2>
+    <div id="myInvestorOffers"></div>
+</section>
+
+<section>
+    <h2>Mening faoliyatim</h2>
+    <div id="myActivity"></div>
+</section>
+
+<script>
+const profileForm = document.getElementById("profileForm");
+
+function readData(key) {
+    try {
+        return JSON.parse(localStorage.getItem(key) || "[]");
+    } catch (error) {
+        return [];
+    }
+}
+
+function getProfile() {
+    try {
+        return JSON.parse(localStorage.getItem("userProfile") || "null");
+    } catch (error) {
+        return null;
+    }
+}
+
+// Saqlangan profilni yuklash
+const savedProfile = getProfile();
+if (savedProfile) {
+    document.getElementById("fullName").value = savedProfile.fullName || "";
+    document.getElementById("profileEmail").value = savedProfile.email || "";
+    document.getElementById("profilePhone").value = savedProfile.phone || "";
+
+    document.querySelectorAll('input[name="userRoles"]').forEach(input => {
+        input.checked = (savedProfile.roles || []).includes(input.value);
+    });
+}
+
+// Profilni saqlash
+profileForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const roles = Array.from(
+        document.querySelectorAll('input[name="userRoles"]:checked')
+    ).map(input => input.value);
+
+    const profile = {
+        fullName: document.getElementById("fullName").value.trim(),
+        email: document.getElementById("profileEmail").value.trim(),
+        phone: document.getElementById("profilePhone").value.trim(),
+        roles: roles
+    };
+
+    localStorage.setItem("userProfile", JSON.stringify(profile));
+
+    document.getElementById("profileMessage").textContent =
+        "Profil muvaffaqiyatli saqlandi!";
+
+    showMyProjects();
+    showMyInvestorOffers();
+    showMyActivity();
+});
+
+// Mening loyihalarim
+function showMyProjects() {
+    const container = document.getElementById("myProjects");
+    const projects = readData("projects");
+    const profile = getProfile();
+
+    container.innerHTML = "";
+
+    if (!profile) {
+        container.textContent = "Avval profilingizni saqlang.";
+        return;
+    }
+
+    const myProjects = projects.filter(project =>
+        (project.ownerEmail || "").toLowerCase() ===
+        (profile.email || "").toLowerCase()
+    );
+
+    if (myProjects.length === 0) {
+        container.textContent = "Hozircha loyihalaringiz yo‘q.";
+        return;
+    }
+
+    myProjects.forEach(project => {
+        const card = document.createElement("div");
+        card.className = "item-card";
+
+        const title = document.createElement("h3");
+        title.textContent = project.name;
+
+        const direction = document.createElement("p");
+        direction.textContent = "Yo‘nalish: " + project.direction;
+
+        const investment = document.createElement("p");
+        investment.textContent =
+            "Kerakli investitsiya: " +
+            Number(project.investment || 0).toLocaleString("uz-UZ") +
+            " so‘m";
+
+        card.append(title, direction, investment);
+        container.appendChild(card);
+    });
+}
+
+// Loyihalarimga kelgan investor takliflari
+function showMyInvestorOffers() {
+    const container = document.getElementById("myInvestorOffers");
+
+    const projects = readData("projects");
+    const applications = readData("investmentApplications");
+    const profile = getProfile();
+
+    container.innerHTML = "";
+
+    if (!profile) {
+        container.textContent = "Avval profilingizni saqlang.";
+        return;
+    }
+
+    const myProjectIds = projects
+        .filter(project =>
+            (project.ownerEmail || "").toLowerCase() ===
+            (profile.email || "").toLowerCase()
+        )
+        .map(project => String(project.id));
+
+    const myOffers = applications.filter(application =>
+        myProjectIds.includes(String(application.projectId))
+    );
+
+    if (myOffers.length === 0) {
+        container.textContent =
+            "Hozircha loyihalaringizga investor takliflari kelmagan.";
+        return;
+    }
+
+    myOffers.forEach(offer => {
+        const card = document.createElement("div");
+        card.className = "item-card";
+
+        const title = document.createElement("h3");
+        title.textContent = offer.projectName || "Loyiha";
+
+        const investor = document.createElement("p");
+        investor.textContent = "Investor: " + (offer.investorName || "");
+
+        const email = document.createElement("p");
+        email.textContent = "Email: " + (offer.investorEmail || "");
+
+        const amount = document.createElement("p");
+        amount.textContent =
+            "Taklif: " +
+            Number(offer.offerAmount || 0).toLocaleString("uz-UZ") +
+            " so‘m";
+            const message = document.createElement("p");
+        message.textContent = "Xabar: " + (offer.offerMessage || "");
+
+        const status = document.createElement("p");
+        status.textContent = "Holati: " + (offer.status || "Kutilmoqda");
+
+        const acceptButton = document.createElement("button");
+        acceptButton.textContent = "Taklifni qabul qilish";
+        acceptButton.disabled = offer.status === "Qabul qilindi" ||
+                                offer.status === "Rad etildi";
+
+        acceptButton.onclick = function() {
+            updateOfferStatus(offer.id, "Qabul qilindi");
+        };
+
+        const rejectButton = document.createElement("button");
+        rejectButton.textContent = "Taklifni rad etish";
+        rejectButton.className = "reject";
+        rejectButton.disabled = offer.status === "Qabul qilindi" ||
+                                offer.status === "Rad etildi";
+
+        rejectButton.onclick = function() {
+            updateOfferStatus(offer.id, "Rad etildi");
+        };
+
+        card.append(
+            title,
+            investor,
+            email,
+            amount,
+            message,
+            status,
+            acceptButton,
+            rejectButton
+        );
+
+        container.appendChild(card);
+    });
+}
+
+// Investor taklifi holatini saqlash
+function updateOfferStatus(offerId, newStatus) {
+    const applications = readData("investmentApplications");
+
+    const offer = applications.find(item =>
+        String(item.id) === String(offerId)
+    );
+
+    if (!offer) {
+        alert("Taklif topilmadi.");
+        return;
+    }
+
+    offer.status = newStatus;
+
+    localStorage.setItem(
+        "investmentApplications",
+        JSON.stringify(applications)
+    );
+
+    showMyInvestorOffers();
+    showMyActivity();
+
+    alert("Taklif holati yangilandi!");
+}
+
+// Mening faoliyatim
+function showMyActivity() {
+    const activity = document.getElementById("myActivity");
+
+    const investmentApplications = readData("investmentApplications");
+    const jobApplications = readData("jobApplications");
+    const resourceOrders = readData("resourceOrders");
+
+    activity.innerHTML = "";
+
+    const title1 = document.createElement("h3");
+    title1.textContent = "Investitsiya arizalarim";
+    activity.appendChild(title1);
+
+    if (investmentApplications.length === 0) {
+        activity.append("Hozircha investitsiya arizalari yo‘q.");
+    }
+
+    investmentApplications.forEach(item => {
+        const card = document.createElement("p");
+        card.textContent =
+            (item.projectName || "Loyiha") + " — " +
+            Number(item.offerAmount || 0).toLocaleString("uz-UZ") +
+            " so‘m — " +
+            (item.status || "Kutilmoqda");
+
+        activity.appendChild(card);
+    });
+
+    const title2 = document.createElement("h3");
+    title2.textContent = "Ishga kirish arizalarim";
+    activity.appendChild(title2);
+
+    if (jobApplications.length === 0) {
+        activity.append("Hozircha ish arizalari yo‘q.");
+    }
+
+    jobApplications.forEach(item => {
+        const card = document.createElement("p");
+        card.textContent =
+            (item.jobTitle || "") + " — " +
+            (item.companyName || "") + " — " +
+            (item.applicantName || "");
+
+        activity.appendChild(card);
+    });
+
+    const title3 = document.createElement("h3");
+    title3.textContent = "Resurs buyurtmalarim";
+    activity.appendChild(title3);
+
+    if (resourceOrders.length === 0) {
+        activity.append("Hozircha resurs buyurtmalari yo‘q.");
+    }
+
+    resourceOrders.forEach(item => {
+        const card = document.createElement("p");
+        card.textContent =
+            (item.resourceName || "") + " — " +
+            (item.supplierName || "");
+
+        activity.appendChild(card);
+    });
+}
+
+// Sahifa ochilganda bo‘limlarni chiqarish
+showMyProjects();
+showMyInvestorOffers();
+showMyActivity();
+
+</script>
+
+</body>
+</html>

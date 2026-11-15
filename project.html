@@ -1,55 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Details | IDEA LAB</title>
-
-  <style>
-    body {
-      background: #0b1020;
-      color: white;
-      font-family: Arial, sans-serif;
-      padding: 30px;
-    }
-
-    .project-card {
-      background: #172554;
-      padding: 25px;
-      border-radius: 12px;
-      max-width: 700px;
-      margin: 30px auto;
-    }
-
-    a {
-      color: #93c5fd;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEA LAB | Loyihalar</title>
 </head>
 <body>
+    <h1>IDEA LAB — Loyihalar markazi</h1>
+    <p>Bu yerda barcha yangi g‘oyalar va loyihalar joylashadi.</p>
 
-  <h1>IDEA LAB</h1>
-
-  <div class="project-card">
-    <h2 id="projectName">Project Details</h2>
-    <p id="projectDirection"></p>
-    <p id="projectDescription"></p>
-  </div>
-
-  <a href="index.html">Back to Home</a>
-
-  <script>
-    const params = new URLSearchParams(window.location.search);
-
-    document.getElementById("projectName").textContent =
-      params.get("name") || "Project Details";
-
-    document.getElementById("projectDirection").textContent =
-      params.get("direction") || "";
-
-    document.getElementById("projectDescription").textContent =
-      params.get("description") || "";
-  </script>
-
+<nav>
+    <a href="index.html">Bosh sahifa</a>
+    <a href="projects.html">Loyihalar</a>
+    <a href="teams.html">Jamoalar</a>
+    <a href="investors.html">Investorlar</a>
+    <a href="offers.html">Investitsiya takliflari</a>
+    <a href="profile.html">Shaxsiy kabinet</a>
+    <a href="marketplace.html">Global bozor</a>
+</nav>
 </body>
 </html>

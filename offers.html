@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IDEA LAB — Takliflar markazi</title>
+
+<style>
+:root {
+    --bg:#080d19;
+    --panel:#111a2b;
+    --panel2:#172238;
+    --text:#f3f6ff;
+    --muted:#91a0ba;
+    --accent:#8b7cff;
+    --green:#39d6a0;
+    --border:rgba(255,255,255,.09);
+}
+*{box-sizing:border-box}
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial,sans-serif;
+}
+button,input,select,textarea{font:inherit}
+a{color:inherit;text-decoration:none}
+
+.navbar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:rgba(8,13,25,.96);
+    border-bottom:1px solid var(--border);
+    backdrop-filter:blur(14px);
+}
+.nav-inner{
+    max-width:1250px;
+    margin:auto;
+    padding:17px 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+}
+.logo{font-size:22px;font-weight:900;letter-spacing:1px}
+.logo span{color:var(--accent)}
+.nav-links{
+    display:flex;
+    flex-wrap:wrap;
+    gap:16px;
+    font-size:13px;
+    color:var(--muted);
+}
+.nav-links a:hover,.nav-links a.active{color:white}
+
+.container{
+    max-width:1250px;
+    margin:auto;
+    padding:35px 22px 70px;
+}
+.hero{
+    padding:42px;
+    border:1px solid var(--border);
+    border-radius:25px;
+    background:
+        radial-gradient(circle at 90% 10%,rgba(139,124,255,.25),transparent 35%),
+        linear-gradient(135deg,#172440,#10182a);
+}
+.eyebrow{
+    color:var(--green);
+    font-size:12px;
+    font-weight:bold;
+    letter-spacing:2px;
+}
+.hero h1{font-size:clamp(30px,5vw,48px);margin:15px 0}
+.hero p{color:var(--muted);max-width:650px;line-height:1.7}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:25px}
+
+.btn{
+    border:0;
+    border-radius:11px;
+    padding:12px 18px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:.2s;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:var(--accent);color:white}
+.btn-secondary{
+    background:rgba(255,255,255,.08);
+    color:white;
+    border:1px solid var(--border);
+}
+.btn-green{background:var(--green);color:#071b16}
+.btn-danger{background:rgba(255,90,90,.13);color:#ff9c9c}
+.btn-small{padding:9px 13px;font-size:12px}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin:25px 0 35px;
+}
+.stat{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:17px;
+    padding:21px;
+}
+.stat small{color:var(--muted)}
+.stat h2{margin:12px 0 0;font-size:29px}
+
+.section-heading{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:15px;
+    margin:35px 0 18px;
+}
+.section-heading h2{margin:0;font-size:24px}
+.muted{color:var(--muted);font-size:13px}
+
+.toolbar{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr;
+    gap:12px;
+    margin-bottom:20px;
+}
+.field{
+    width:100%;
+    padding:13px 14px;
+    border:1px solid var(--border);
+    border-radius:11px;
+    background:var(--panel);
+    color:white;
+    outline:none;
+}
+.field:focus{border-color:var(--accent)}
+.field option{background:var(--panel)}
+textarea.field{resize:vertical;min-height:110px}
+
+.offer-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:17px;
+}
+.offer-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:21px;
+    transition:.2s;
+}
+.offer-card:hover{
+    transform:translateY(-4px);
+    border-color:rgba(139,124,255,.55);
+}
+.card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+}
+.tag{
+    display:inline-block;
+    padding:6px 9px;
+    border-radius:20px;
+    background:rgba(139,124,255,.13);
+    color:#b9b0ff;
+    font-size:11px;
+    }
+.offer-card h3{margin:17px 0 8px;font-size:19px}
+.offer-card p{color:var(--muted);font-size:13px;line-height:1.65}
+.offer-info{
+    margin:17px 0;
+    padding:13px;
+    background:rgba(255,255,255,.035);
+    border-radius:12px;
+}
+.offer-info div{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin:8px 0;
+    font-size:12px;
+}
+.offer-info span:first-child{color:var(--muted)}
+.offer-info span:last-child{text-align:right}
+.card-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:15px}
+
+.panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:24px;
+    margin-top:20px;
+}
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+}
+.form-group{display:flex;flex-direction:column;gap:8px}
+.form-group label{font-size:12px;color:var(--muted)}
+.full{grid-column:1/-1}
+.hidden{display:none!important}
+
+.empty{
+    grid-column:1/-1;
+    text-align:center;
+    padding:40px 20px;
+    background:var(--panel);
+    border:1px dashed var(--border);
+    border-radius:18px;
+}
+.empty h3{margin-top:0}
+.empty p{color:var(--muted);font-size:13px;line-height:1.6}
+
+.tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    margin:18px 0;
+}
+.tab-btn{
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:10px 15px;
+    color:var(--muted);
+    background:var(--panel2);
+    cursor:pointer;
+}
+.tab-btn.active{
+    background:var(--accent);
+    color:white;
+}
+
+.application-card{
+    padding:17px;
+    background:var(--panel2);
+    border:1px solid var(--border);
+    border-radius:14px;
+    margin-bottom:12px;
+}
+.application-card h3{margin:0 0 8px}
+.application-card p{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.6;
+}
+.application-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    margin-top:13px;
+}
+
+.chat-layout{
+    display:grid;
+    grid-template-columns:310px 1fr;
+    min-height:480px;
+    border:1px solid var(--border);
+    border-radius:17px;
+    overflow:hidden;
+    background:var(--panel);
+}
+.chat-sidebar{
+    border-right:1px solid var(--border);
+    padding:15px;
+}
+.chat-sidebar h3{margin:5px 0 15px}
+.chat-list-item{
+    width:100%;
+    display:block;
+    text-align:left;
+    padding:14px;
+    margin-bottom:9px;
+    background:var(--panel2);
+    color:white;
+    border:1px solid var(--border);
+    border-radius:12px;
+    cursor:pointer;
+}
+.chat-list-item.active{border-color:var(--accent)}
+.chat-list-item strong{display:block;font-size:13px}
+.chat-list-item small{
+    display:block;
+    margin-top:6px;
+    color:var(--muted);
+    font-size:11px;
+}
+.chat-main{
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+}
+.chat-header{
+    padding:17px;
+    border-bottom:1px solid var(--border);
+}
+.chat-header strong{display:block}
+.chat-header small{color:var(--muted)}
+.chat-messages{
+    flex:1;
+    min-height:300px;
+    max-height:430px;
+    overflow-y:auto;
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+.message{
+    max-width:82%;
+    padding:12px 14px;
+    border-radius:13px;
+    background:var(--panel2);
+    align-self:flex-start;
+    overflow-wrap:anywhere;
+}
+.message.mine{
+    background:#39336d;
+    align-self:flex-end;
+}
+.message p{margin:0;font-size:13px;line-height:1.6}
+.message small{
+    display:block;
+    margin-top:7px;
+    color:#b4bed1;
+    font-size:10px;
+}
+.chat-input{
+    display:flex;
+    gap:10px;
+    padding:14px;
+    border-top:1px solid var(--border);
+}
+.chat-input input{flex:1;min-width:0}
+.chat-placeholder{
+    margin:auto;
+    text-align:center;
+    padding:25px;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.6;
+}
+.notice{color:var(--muted);font-size:12px;line-height:1.6;margin-top:15px}
+
+footer{
+    border-top:1px solid var(--border);
+    padding:25px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+}
+@media(max-width:900px){
+    .offer-grid{grid-template-columns:repeat(2,1fr)}
+    .nav-inner{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:700px){
+    .chat-layout{grid-template-columns:1fr}
+    .chat-sidebar{border-right:0;border-bottom:1px solid var(--border)}
+    .chat-list-item{display:inline-block;width:calc(50% - 6px);vertical-align:top}
+}
+@media(max-width:650px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .toolbar,.form-grid{grid-template-columns:1fr}
+    .offer-grid{grid-template-columns:1fr}
+    .hero{padding:27px 21px}
+    .container{padding:22px 14px 50px}
+    .full{grid-column:auto}
+    .chat-input{flex-wrap:wrap}
+    .chat-input input{width:100%;flex-basis:100%}
+}
+</style>
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="nav-inner">
+        <a class="logo" href="index.html">IDEA <span>LAB</span></a>
+
+        <nav class="nav-links">
+            <a href="index.html">Bosh sahifa</a>
+            <a href="projects.html">Loyihalar</a>
+            <a href="teams.html">Jamoalar</a>
+            <a href="investors.html">Investorlar</a>
+            <a href="specialists.html">Mutaxassislar</a>
+            <a href="offers.html" class="active">Takliflar</a>
+            <a href="marketplace.html">Global bozor</a>
+            <a href="profile.html">Kabinet</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="hero">
+        <div class="eyebrow">IDEA LAB • OPPORTUNITY CENTER</div>
+        <h1>Yaxshi taklif — yangi imkoniyat.</h1>
+        <p>
+            G‘oya, xizmat, loyiha va hamkorlik takliflaringizni
+            taqdim eting. Yangi hamkorlar toping va ular bilan muloqot qiling.
+        </p>
+
+        <div class="hero-actions">
+            <button class="btn btn-primary" onclick="toggleOfferForm()">
+                + Taklif joylashtirish
+            </button>
+            <a href="#offerCatalog" class="btn btn-secondary">
+                Takliflarni ko‘rish
+            </a>
+            <a href="#communication" class="btn btn-secondary">
+                Muloqot markazi
+            </a>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="stat">
+            <small>Jami takliflar</small>
+            <h2 id="offerCount">0</h2>
+        </div>
+        <div class="stat">
+            <small>Yo‘nalishlar</small>
+            <h2 id="categoryCount">0</h2>
+        </div>
+        <div class="stat">
+            <small>Jami arizalar</small>
+            <h2 id="applicationCount">0</h2>
+        </div>
+        <div class="stat">
+            <small>Jami xabarlar</small>
+            <h2 id="messageCount">0</h2>
+        </div>
+    </section>
+
+    <!-- TAKLIF QO‘SHISH -->
+
+    <section id="offerFormPanel" class="panel hidden">
+        <div class="section-heading">
+            <h2>Yangi taklif joylashtirish</h2>
+            <button class="btn btn-secondary btn-small"
+                onclick="toggleOfferForm()">Yopish</button>
+        </div>
+
+        <form id="offerForm" class="form-grid">
+
+            <div class="form-group">
+                <label>Taklif sarlavhasi *</label>
+                <input class="field" id="offerTitle" required maxlength="100"
+                    placeholder="Masalan: IT loyiha uchun hamkor izlaymiz">
+            </div>
+
+            <div class="form-group">
+                <label>Taklif turi *</label>
+                <select class="field" id="offerType" required>
+                    <option value="">Tanlang</option>
+                    <option>Hamkorlik</option>
+                    <option>Loyiha</option>
+                    <option>Mentorlik</option>
+                    <option>Xizmat</option>
+                    <option>Ko‘ngillilik</option>
+                    <option>Ta’lim</option>
+                    <option>Boshqa</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Yo‘nalish *</label>
+                <select class="field" id="offerCategory" required>
+                    <option value="">Tanlang</option>
+                    <option>IT va texnologiya</option>
+                    <option>Ta’lim</option>
+                    <option>Biznes</option>
+                    <option>Yoshlar siyosati</option>
+                    <option>Ekologiya</option>
+                    <option>Madaniyat</option>
+                    <option>Sport</option>
+                    <option>Innovatsiya</option>
+                    <option>Ijtimoiy loyiha</option>
+                    <option>Boshqa</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Hudud *</label>
+                <input class="field" id="offerLocation" required
+                    placeholder="Masalan: Samarqand">
+            </div>
+
+            <div class="form-group">
+                <label>Muallif yoki tashkilot *</label>
+                <input class="field" id="offerAuthor" required
+                    placeholder="Ism yoki tashkilot nomi">
+            </div>
+
+            <div class="form-group">
+                <label>Aloqa ma’lumoti *</label>
+                <input class="field" id="offerContact" required
+                    placeholder="Telefon yoki Telegram">
+            </div>
+
+            <div class="form-group">
+                <label>Taklif muddati</label>
+                <input class="field" id="offerDeadline" type="date">
+            </div>
+
+            <div class="form-group">
+                <label>Taklif holati</label>
+                <select class="field" id="offerStatus">
+                    <option value="Faol">Faol</option>
+                    <option value="Loyihaga hamkor izlanmoqda">Hamkor izlanmoqda</option>
+                </select>
+            </div>
+
+            <div class="form-group full">
+                <label>Taklif haqida batafsil *</label>
+                <textarea class="field" id="offerDescription" required
+                    placeholder="Taklifingiz, maqsadingiz va qanday hamkor kerakligini yozing..."></textarea>
+            </div>
+
+            <div class="full">
+                <button class="btn btn-primary" type="submit">
+                    Taklifni joylashtirish
+                </button>
+            </div>
+        </form>
+
+        <p class="notice">
+            Takliflar hozircha ushbu brauzer xotirasida saqlanadi.
+        </p>
+    </section>
+
+    <!-- TAKLIFLAR KATALOGI -->
+
+    <section id="offerCatalog">
+        <div class="section-heading">
+            <div>
+                <h2>Takliflar katalogi</h2>
+                <p class="muted">O‘zingizga mos imkoniyatni toping.</p>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <input class="field" id="offerSearch"
+                placeholder="Taklif nomi yoki hudud bo‘yicha qidirish...">
+
+            <select class="field" id="categoryFilter">
+                <option value="">Barcha yo‘nalishlar</option>
+                <option>IT va texnologiya</option>
+                <option>Ta’lim</option>
+                <option>Biznes</option>
+                <option>Yoshlar siyosati</option>
+                <option>Ekologiya</option>
+                <option>Madaniyat</option>
+                <option>Sport</option>
+                <option>Innovatsiya</option>
+                <option>Ijtimoiy loyiha</option>
+                <option>Boshqa</option>
+            </select>
+
+            <select class="field" id="typeFilter">
+                <option value="">Barcha taklif turlari</option>
+                <option>Hamkorlik</option>
+                <option>Loyiha</option>
+                <option>Mentorlik</option>
+                <option>Xizmat</option>
+                <option>Ko‘ngillilik</option>
+                <option>Ta’lim</option>
+                <option>Boshqa</option>
+            </select>
+        </div>
+
+        <div id="offerList" class="offer-grid"></div>
+    </section>
+
+    <!-- ARIZALAR -->
+     <section class="panel" id="applicationsSection">
+        <div class="section-heading">
+            <div>
+                <h2>Arizalar markazi</h2>
+                <p class="muted">Takliflarga yuborilgan va kelib tushgan arizalar.</p>
+            </div>
+            <span class="tag" id="applicationBadge">0 ta ariza</span>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" id="receivedTab"
+                onclick="switchApplicationTab('received')">
+                Kelgan arizalar
+            </button>
+            <button class="tab-btn" id="sentTab"
+                onclick="switchApplicationTab('sent')">
+                Yuborgan arizalarim
+            </button>
+        </div>
+
+        <div id="applicationList"></div>
+    </section>
+
+    <!-- CHAT MARKAZI -->
+
+    <section class="panel" id="communication">
+        <div class="section-heading">
+            <div>
+                <h2>Muloqot markazi</h2>
+                <p class="muted">
+                    Arizachilar va taklif egalari uchun alohida suhbatlar.
+                </p>
+            </div>
+            <span class="tag" id="chatBadge">0 ta suhbat</span>
+        </div>
+
+        <div class="chat-layout">
+            <aside class="chat-sidebar">
+                <h3>Suhbatlar</h3>
+                <div id="chatList"></div>
+            </aside>
+
+            <div class="chat-main">
+                <div class="chat-header" id="chatHeader">
+                    <strong>Chat tanlanmagan</strong>
+                    <small>Suhbatni boshlash uchun arizani tanlang.</small>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-placeholder">
+                        <h3>IDEA LAB Chat</h3>
+                        <p>
+                            Arizalar markazidan suhbatni tanlang.
+                            Xabarlar shu yerda ko‘rinadi.
+                        </p>
+                    </div>
+                </div>
+
+                <form class="chat-input" id="chatForm">
+                    <input class="field" id="chatMessageInput"
+                        placeholder="Xabar yozing..." maxlength="2000"
+                        autocomplete="off" disabled>
+                    <button class="btn btn-primary" type="submit" disabled
+                        id="chatSendButton">Yuborish</button>
+                </form>
+            </div>
+        </div>
+
+        <p class="notice">
+            Hozirgi chat sinov rejimida ishlaydi. Xabarlar shu brauzerda saqlanadi.
+            Turli foydalanuvchilar o‘rtasida onlayn yozishish uchun server va
+            foydalanuvchi akkauntlari ulanishi kerak.
+        </p>
+    </section>
+
+</main>
+
+<footer>
+    IDEA LAB — G‘oya • Jamoa • Hamkorlik • Natija
+</footer>
+
+<script>
+"use strict";
+
+/* ==================================
+   1. MA'LUMOTLAR BAZASI
+================================== */
+
+function readData(key) {
+    try {
+        const data = localStorage.getItem(key);
+        const parsed = data ? JSON.parse(data) : [];
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+        console.error("Ma'lumotni o‘qishda xato:", error);
+        return [];
+    }
+}
+
+function saveData(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+        return true;
+    } catch (error) {
+        console.error("Ma'lumotni saqlashda xato:", error);
+        alert("Ma'lumot saqlanmadi. Brauzer xotirasini tekshiring.");
+        return false;
+    }
+}
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, function(char) {
+        const entities = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        };
+        return entities[char];
+    });
+}
+
+function createId() {
+    return Date.now().toString(36) +
+        Math.random().toString(36).slice(2, 9);
+}
+
+function formatDate(value) {
+    if (!value) return "Ko‘rsatilmagan";
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+        return "Ko‘rsatilmagan";
+    }
+
+    return date.toLocaleDateString("uz-UZ");
+}
+
+
+/* ==================================
+   2. JORIY FOYDALANUVCHI
+================================== */
+
+// Hozircha bitta brauzerda sinov uchun.
+// Keyinchalik profil/akkaunt tizimiga ulanadi.
+
+function getCurrentUser() {
+    let user = localStorage.getItem("ideaLabCurrentUser");
+
+    if (!user) {
+        user = prompt("IDEA LAB uchun ismingizni kiriting:");
+
+        if (!user || !user.trim()) {
+            user = "Mehmon";
+        }
+
+        user = user.trim();
+        localStorage.setItem("ideaLabCurrentUser", user);
+    }
+
+    return user;
+}
+
+const currentUser = getCurrentUser();
+
+let activeApplicationId = null;
+let currentApplicationTab = "received";
+
+
+/* ==================================
+   3. TAKLIFLAR RO‘YXATI
+================================== */
+
+function showOffers() {
+    const offers = readData("offers");
+
+    const search = document.getElementById("offerSearch")
+        .value.trim().toLowerCase();
+
+    const category = document.getElementById("categoryFilter").value;
+    const type = document.getElementById("typeFilter").value;
+
+    const filtered = offers.filter(offer => {
+        const text = [
+            offer.title,
+            offer.author,
+            offer.location,
+            offer.description,
+            offer.category
+        ].join(" ").toLowerCase();
+
+        return text.includes(search) &&
+            (!category || offer.category === category) &&
+            (!type || offer.type === type);
+    });
+
+    const list = document.getElementById("offerList");
+
+    if (!filtered.length) {
+        list.innerHTML = 
+            <div class="empty">
+                <h3>Takliflar topilmadi</h3>
+                <p>Hozircha taklif joylashtirilmagan yoki qidiruv natija bermadi.</p>
+            </div>
+        ;
+    } else {
+        list.innerHTML = filtered.map(offer => 
+            <article class="offer-card">
+                <div class="card-top">
+                    <span class="tag">${escapeHTML(offer.type)}</span>
+                    <span class="tag">${escapeHTML(offer.status)}</span>
+                </div>
+
+                <h3>${escapeHTML(offer.title)}</h3>
+
+                <p>${escapeHTML(offer.description)}</p>
+
+                <div class="offer-info">
+                    <div>
+                        <span>Muallif</span>
+                        <span>${escapeHTML(offer.author)}</span>
+                    </div>
+                    <div>
+                        <span>Yo‘nalish</span>
+                        <span>${escapeHTML(offer.category)}</span>
+                    </div>
+                    <div>
+                        <span>Hudud</span>
+                        <span>${escapeHTML(offer.location)}</span>
+                    </div>
+                    <div>
+                        <span>Muddati</span>
+                        <span>${escapeHTML(formatDate(offer.deadline))}</span>
+                    </div>
+                </div>
+
+                <p class="muted">
+                    Joylashtirilgan: ${escapeHTML(formatDate(offer.date))}
+                </p>
+
+                <div class="card-actions">
+                    ${
+                        offer.author === currentUser
+                        ? <span class="tag">Sizning taklifingiz</span>
+                        : <button class="btn btn-primary btn-small"
+                            onclick="applyToOffer('${escapeHTML(offer.id)}')">
+                            Ariza yuborish
+                          </button>
+                    }
+                </div>
+            </article>
+        ).join("");
+    }
+
+    updateStats();
+}
+
+
+/* ==================================
+   4. TAKLIF JOYLASHTIRISH
+================================== */
+
+function toggleOfferForm() {
+    document.getElementById("offerFormPanel")
+        .classList.toggle("hidden");
+}
+
+const offerForm = document.getElementById("offerForm");
+
+offerForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+    const offers = readData("offers");
+
+    const offer = {
+        id: createId(),
+        title: document.getElementById("offerTitle").value.trim(),
+        type: document.getElementById("offerType").value,
+        category: document.getElementById("offerCategory").value,
+        location: document.getElementById("offerLocation").value.trim(),
+        author: currentUser,
+        contact: document.getElementById("offerContact").value.trim(),
+        deadline: document.getElementById("offerDeadline").value,
+        status: document.getElementById("offerStatus").value,
+        description: document.getElementById("offerDescription").value.trim(),
+        date: new Date().toISOString()
+    };
+
+    if (
+        !offer.title ||
+        !offer.type ||
+        !offer.category ||
+        !offer.location ||
+        !offer.author ||
+        !offer.contact ||
+        !offer.description
+    ) {
+        alert("Majburiy maydonlarni to‘ldiring.");
+        return;
+    }
+
+    offers.unshift(offer);
+
+    if (!saveData("offers", offers)) {
+        return;
+    }
+
+    offerForm.reset();
+    toggleOfferForm();
+    showOffers();
+
+    alert("Taklif muvaffaqiyatli joylashtirildi!");
+});
+
+
+/* ==================================
+   5. TAKLIFGA ARIZA YUBORISH
+================================== */
+
+function applyToOffer(offerId) {
+    const offers = readData("offers");
+
+    const offer = offers.find(item =>
+        String(item.id) === String(offerId)
+    );
+
+    if (!offer) {
+        alert("Taklif topilmadi.");
+        return;
+    }
+
+    if (offer.author === currentUser) {
+        alert("O‘zingizning taklifingizga ariza yubora olmaysiz.");
+        return;
+    }
+
+    const applications = readData("offerApplications");
+
+    const alreadyApplied = applications.some(item =>
+        item.offerId === offerId &&
+        item.applicant === currentUser
+    );
+
+    if (alreadyApplied) {
+        alert("Siz bu taklifga avval ariza yuborgansiz.");
+        return;
+    }
+
+    const message = prompt("Taklif egasiga murojaatingizni yozing:");
+
+    if (!message || !message.trim()) {
+        return;
+    }
+
+    const application = {
+        id: createId(),
+        offerId: offer.id,
+        offerTitle: offer.title,
+        offerOwner: offer.author,
+        applicant: currentUser,
+        message: message.trim(),
+        status: "Yangi",
+        date: new Date().toISOString()
+    };
+
+    applications.unshift(application);
+
+    if (!saveData("offerApplications", applications)) {
+        return;
+    }
+
+    // Ariza yuborilganda avtomatik suhbat ochiladi.
+    const messages = readData("offerMessages");
+
+    messages.push({
+        id: createId(),
+        applicationId: application.id,
+        sender: currentUser,
+        text: message.trim(),
+        date: new Date().toISOString()
+    });
+
+    if (!saveData("offerMessages", messages)) {
+        return;
+    }
+
+    activeApplicationId = application.id;
+
+    showApplications();
+    showChats();
+    openChat(application.id);
+    updateStats();
+
+    document.getElementById("communication").scrollIntoView({
+        behavior: "smooth"
+    });
+
+    alert("Ariza yuborildi. Suhbat ochildi!");
+}
+
+
+/* ==================================
+   6. ARIZALAR MARKAZI
+================================== */
+
+function switchApplicationTab(tab) {
+    currentApplicationTab = tab;
+
+    document.getElementById("receivedTab")
+        .classList.toggle("active", tab === "received");
+
+    document.getElementById("sentTab")
+        .classList.toggle("active", tab === "sent");
+
+    showApplications();
+}
+
+function showApplications() {
+    const applications = readData("offerApplications");
+    const offers = readData("offers");
+
+    const list = document.getElementById("applicationList");
+
+    let filtered = [];
+
+    if (currentApplicationTab === "received") {
+        filtered = applications.filter(application =>
+            application.offerOwner === currentUser
+        );
+    } else {
+        filtered = applications.filter(application =>
+            application.applicant === currentUser
+        );
+    }
+    document.getElementById("applicationBadge").textContent =
+        applications.length + " ta ariza";
+
+    if (!filtered.length) {
+        list.innerHTML = 
+            <div class="empty">
+                <h3>Hozircha arizalar yo‘q</h3>
+                <p>
+                    ${
+                        currentApplicationTab === "received"
+                        ? "Takliflaringizga arizalar kelganda shu yerda ko‘rinadi."
+                        : "Siz yuborgan arizalar shu yerda ko‘rinadi."
+                    }
+                </p>
+            </div>
+        ;
+        return;
+    }
+
+    list.innerHTML = filtered.map(application => {
+        const offer = offers.find(item =>
+            item.id === application.offerId
+        );
+
+        const otherPerson = currentApplicationTab === "received"
+            ? application.applicant
+            : application.offerOwner;
+
+        return 
+            <article class="application-card">
+                <div class="card-top">
+                    <span class="tag">${escapeHTML(application.status)}</span>
+                    <span class="muted">${escapeHTML(formatDate(application.date))}</span>
+                </div>
+
+                <h3>${escapeHTML(application.offerTitle)}</h3>
+
+                <p>
+                    ${
+                        currentApplicationTab === "received"
+                        ? "Arizachi: "
+                        : "Taklif egasi: "
+                    }
+                    <strong>${escapeHTML(otherPerson)}</strong>
+                </p>
+
+                <p>${escapeHTML(application.message)}</p>
+
+                ${
+                    offer && currentApplicationTab === "received"
+                    ? <p>Aloqa: ${escapeHTML(offer.contact)}</p>
+                    : ""
+                }
+
+              let actionButtons = "";
+
+let actionButtons = "";
+
+actionButtons +=
+    '<button class="btn btn-primary btn-small" onclick="openChat(\'' +
+    application.id +
+    '\')">Chatni ochish</button>';
+if (currentApplicationTab === "received") {
+    actionButtons +=
+        '<button class="btn btn-secondary btn-small" onclick="changeApplicationStatus(\'' +
+        application.id +
+        '\', \'Ko‘rib chiqilmoqda\')">Ko‘rib chiqilmoqda</button>';
+
+    actionButtons +=
+        '<button class="btn btn-green btn-small" onclick="changeApplicationStatus(\'' +
+        application.id +
+        '\', \'Qabul qilindi\')">Qabul qilish</button>';
+}
+return '<div class="application-actions">' +
+    actionButtons +
+    '</div>' +
+    '</article>
+/* ==================================
+   7. ARIZA HOLATINI O‘ZGARTIRISH
+================================== */
+
+function changeApplicationStatus(applicationId, status) {
+    const applications = readData("offerApplications");
+
+    const index = applications.findIndex(function(item) {
+        return item.id === applicationId;
+    });
+
+    if (index === -1) {
+        alert("Ariza topilmadi.");
+        return;
+    }
+
+    if (applications[index].offerOwner !== currentUser) {
+        alert("Bu arizani faqat taklif egasi boshqarishi mumkin.");
+        return;
+    }
+
+    applications[index].status = status;
+
+    if (!saveData("offerApplications", applications)) {
+        return;
+    }
+
+    showApplications();
+    showChats();
+    updateStats();
+
+    alert("Ariza holati yangilandi.");
+}
+
+
+/* ==================================
+   8. CHAT RO‘YXATI
+================================== */
+
+function showChats() {
+    const applications = readData("offerApplications");
+
+    const myApplications = applications.filter(function(application) {
+        return application.applicant === currentUser ||
+               application.offerOwner === currentUser;
+    });
+
+    const list = document.getElementById("chatList");
+    const badge = document.getElementById("chatBadge");
+
+    if (!list || !badge) {
+        console.error("Chat ro‘yxati elementlari topilmadi.");
+        return;
+    }
+
+    badge.textContent = myApplications.length + " ta suhbat";
+
+    if (myApplications.length === 0) {
+        list.innerHTML = '<div class="chat-placeholder">Hozircha suhbatlar yo‘q.</div>';
+        return;
+    }
+
+    list.innerHTML = myApplications.map(function(application) {
+        const otherPerson = application.applicant === currentUser
+            ? application.offerOwner
+            : application.applicant;
+
+        const activeClass = activeApplicationId === application.id
+            ? "active"
+            : "";
+
+        return '<button class="chat-list-item ' + activeClass + '" ' +
+            'onclick="openChat(\'' + escapeHTML(application.id) + '\')">' +
+            '<strong>' + escapeHTML(otherPerson || "") + '</strong>' +
+            '<small>' + escapeHTML(application.offerTitle || "") + '</small>' +
+            '<small>' + escapeHTML(application.status || "") + '</small>' +
+            '</button>';
+    }).join("");
+}
+
+
+/* ==================================
+   9. CHATNI OCHISH
+================================== */
+
+function openChat(applicationId) {
+    const applications = readData("offerApplications");
+
+    const application = applications.find(function(item) {
+        return item.id === applicationId;
+    });
+
+    if (!application) {
+        alert("Suhbat topilmadi.");
+        return;
+    }
+
+    if (
+        application.applicant !== currentUser &&
+        application.offerOwner !== currentUser
+    ) {
+        alert("Bu suhbatga kirish huquqingiz yo‘q.");
+        return;
+    }
+
+    activeApplicationId = applicationId;
+
+    const otherPerson = application.applicant === currentUser
+        ? application.offerOwner
+        : application.applicant;
+
+    const chatHeader = document.getElementById("chatHeader");
+    const chatInput = document.getElementById("chatMessageInput");
+    const chatSendButton = document.getElementById("chatSendButton");
+
+    if (!chatHeader || !chatInput || !chatSendButton) {
+        console.error("Chat elementlari topilmadi.");
+        return;
+    }
+
+    chatHeader.innerHTML =
+        '<strong>' + escapeHTML(otherPerson || "") + '</strong>' +
+        '<small>' + escapeHTML(application.offerTitle || "") + '</small>';
+
+    chatInput.disabled = false;
+    chatSendButton.disabled = false;
+
+    showChats();
+    showMessages();
+}
+
+
+/* ==================================
+   10. CHAT XABARLARI
+================================== */
+
+function showMessages() {
+    const messages = readData("offerMessages");
+
+    const conversation = messages.filter(function(message) {
+        return message.applicationId === activeApplicationId;
+    });
+
+    const container = document.getElementById("chatMessages");
+    if (!container) {
+        console.error("chatMessages elementi topilmadi!");
+        return;
+    }
+
+    if (conversation.length === 0) {
+        container.innerHTML =
+            '<div class="chat-placeholder">' +
+            'Bu suhbatda hali xabarlar yo‘q. Birinchi xabarni yuboring.' +
+            '</div>';
+        return;
+    }
+
+    container.innerHTML = conversation.map(function(message) {
+        const messageClass = message.sender === currentUser
+            ? "mine"
+            : "";
+
+        const messageDate = message.date
+            ? new Date(message.date).toLocaleString("uz-UZ")
+            : "";
+
+        return '<div class="message ' + messageClass + '">' +
+            '<p>' + escapeHTML(message.text || "") + '</p>' +
+            '<small>' +
+            escapeHTML(message.sender || "") + ' · ' +
+            escapeHTML(messageDate) +
+            '</small>' +
+            '</div>';
+    }).join("");
+
+    container.scrollTop = container.scrollHeight;
+}
+
+
+/* ==================================
+   11. XABAR YUBORISH
+================================== */
+
+const chatForm = document.getElementById("chatForm");
+
+if (chatForm) {
+    chatForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        if (!activeApplicationId) {
+            alert("Avval suhbatni tanlang.");
+            return;
+        }
+
+        const input = document.getElementById("chatMessageInput");
+
+        if (!input) {
+            return;
+        }
+
+        const text = input.value.trim();
+
+        if (!text) {
+            return;
+        }
+
+        const applications = readData("offerApplications");
+
+        const application = applications.find(function(item) {
+            return item.id === activeApplicationId;
+        });
+
+        if (!application) {
+            alert("Suhbat topilmadi.");
+            return;
+        }
+
+        if (
+            application.applicant !== currentUser &&
+            application.offerOwner !== currentUser
+        ) {
+            alert("Bu suhbatga xabar yuborish huquqingiz yo‘q.");
+            return;
+        }
+
+        const messages = readData("offerMessages");
+
+        messages.push({
+            id: createId(),
+            applicationId: activeApplicationId,
+            sender: currentUser,
+            text: text,
+            date: new Date().toISOString()
+        });
+
+        if (!saveData("offerMessages", messages)) {
+            return;
+        }
+
+        input.value = "";
+
+        showMessages();
+        updateStats();
+    });
+}
+
+
+/* ==================================
+   12. STATISTIKA
+================================== */
+
+function updateStats() {
+    const offers = readData("offers");
+    const applications = readData("offerApplications");
+    const messages = readData("offerMessages");
+
+    const categories = new Set(
+        offers.map(function(offer) {
+            return offer.category;
+        }).filter(Boolean)
+    );
+
+    document.getElementById("offerCount").textContent = offers.length;
+    document.getElementById("categoryCount").textContent = categories.size;
+    document.getElementById("applicationCount").textContent = applications.length;
+    document.getElementById("messageCount").textContent = messages.length;
+}
+
+
+/* ==================================
+   13. QIDIRUV VA FILTRLAR
+================================== */
+
+document.getElementById("offerSearch").addEventListener("input", showOffers);
+
+document.getElementById("categoryFilter").addEventListener("change", showOffers);
+
+document.getElementById("typeFilter").addEventListener("change", showOffers);
+
+
+/* ==================================
+   14. SAHIFANI ISHGA TUSHIRISH
+================================== */
+
+function initializePage() {
+    showOffers();
+    showApplications();
+    showChats();
+    updateStats();
+}
+
+initializePage();

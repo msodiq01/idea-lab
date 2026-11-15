@@ -1,159 +1,1250 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IDEA LAB — From Idea to Impact</title>
+    <meta name="description" content="IDEA LAB — g‘oyalar, loyihalar, investorlar va hamkorlarni birlashtiruvchi innovatsion platforma.">
+    <title>IDEA LAB | G‘oyalar platformasi</title>
+
     <style>
-* {
-    box-sizing: border-box;
-}
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0b1020;
-    color: white;
-}
+        :root {
+            --bg: #07111f;
+            --bg-light: #0b192b;
+            --card: #102239;
+            --blue: #3987ff;
+            --cyan: #24d5e8;
+            --white: #f5f8ff;
+            --muted: #9aabc1;
+            --border: rgba(255,255,255,0.09);
+        }
 
-header {
-    text-align: center;
-    padding: 60px 20px;
-    background: linear-gradient(135deg, #172554, #4f46e5);
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-header h1 {
-    font-size: 48px;
-}
-nav {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 30px;
-}
+        html {
+            scroll-behavior: smooth;
+        }
 
-nav a {
-    color: white;
-    text-decoration: none;
-    background: rgba(255,255,255,0.12);
-    padding: 10px 18px;
-    border-radius: 8px;
-}
-main {
-    max-width: 1000px;
-    margin: auto;
-    padding: 25px;
-}
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            line-height: 1.6;
+        }
 
-section {
-    background: #172033;
-    padding: 30px;
-    margin: 20px 0;
-    border-radius: 16px;
-}
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
-h2 {
-    color: #93c5fd;
-}
+        button, input, select, textarea {
+            font: inherit;
+        }
 
-input, select, textarea {
-    display: block;
-    width: 100%;
-    padding: 14px;
-    margin: 12px 0;
-    border-radius: 8px;
-    background: #0b1020;
-    color: white;
-    border: 1px solid #3b82f6;
-}
+        .container {
+            width: min(1180px, 90%);
+            margin: auto;
+        }
 
-button {
-    padding: 14px 25px;
-    background: #4f46e5;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-</style>
+        /* NAVIGATION */
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(7,17,31,0.92);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-content {
+            min-height: 78px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 25px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: var(--cyan);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 23px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--muted);
+            transition: 0.25s;
+        }
+
+        .nav-links a:hover {
+            color: var(--cyan);
+        }
+
+        .nav-button {
+            background: linear-gradient(120deg, var(--blue), var(--cyan));
+            color: #061321;
+            padding: 11px 19px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        /* HERO */
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 105px 0 90px;
+            background:
+                radial-gradient(circle at 80% 25%, rgba(36,213,232,0.14), transparent 30%),
+                radial-gradient(circle at 15% 60%, rgba(57,135,255,0.18), transparent 35%);
+        }
+
+        .hero-content {
+            max-width: 850px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-label,
+        .section-label {
+            display: inline-block;
+            color: var(--cyan);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 18px;
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 7vw, 76px);
+            line-height: 1.08;
+            letter-spacing: -3px;
+            font-weight: 900;
+            margin-bottom: 25px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(100deg, #48a0ff, #35e1e6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-description {
+            max-width: 650px;
+            color: var(--muted);
+            font-size: 17px;
+            margin-bottom: 35px;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 23px;
+            border-radius: 11px;
+            font-weight: 800;
+            font-size: 14px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(120deg, var(--blue), var(--cyan));
+            color: #061321;
+        }
+
+        .btn-outline {
+            border-color: var(--border);
+            color: var(--white);
+            background: rgba(255,255,255,0.03);
+        }
+
+        /* STATS */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-top: 70px;
+        }
+
+        .stat-card {
+            background: rgba(16,34,57,0.72);
+            border: 1px solid var(--border);
+            padding: 25px;
+            border-radius: 17px;
+        }
+
+        .stat-number {
+            font-size: 31px;
+            font-weight: 900;
+            color: var(--cyan);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 5px;
+        }
+
+        /* GENERAL SECTIONS */
+
+        .section {
+            padding: 90px 0;
+        }
+
+        .section-header {
+            max-width: 700px;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: clamp(29px, 4vw, 43px);
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            margin-bottom: 13px;
+        }
+
+        .section-description {
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        /* FEATURES */
+
+        .features-section {
+            background: var(--bg-light);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .feature-card {
+            padding: 29px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(36,213,232,0.45);
+        }
+
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: rgba(57,135,255,0.13);
+            font-size: 25px;
+            margin-bottom: 22px;
+        }
+
+        .feature-card h3 {
+            font-size: 19px;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .feature-link {
+            color: var(--cyan);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        /* PROJECTS */
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .project-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            padding: 25px;
+            transition: 0.25s;
+        }
+
+        .project-card:hover {
+            border-color: var(--blue);
+            transform: translateY(-4px);
+        }
+
+        .project-tag {
+            display: inline-block;
+            background: rgba(36,213,232,0.1);
+            color: var(--cyan);
+            padding: 6px 10px;
+            border-radius: 7px;
+            font-size: 11px;
+            margin-bottom: 16px;
+        }
+
+        .project-card h3 {
+            font-size: 19px;
+            margin-bottom: 10px;
+        }
+        .project-card p {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 18px;
+        }
+
+        .project-meta {
+            color: var(--cyan);
+            font-size: 12px;
+            margin-bottom: 17px;
+        }
+
+        .project-open {
+            color: var(--white);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            padding: 40px 20px;
+            text-align: center;
+            border: 1px dashed rgba(255,255,255,0.18);
+            border-radius: 16px;
+            color: var(--muted);
+        }
+
+        .empty-state strong {
+            display: block;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        /* CREATE PROJECT */
+
+        .create-section {
+            background: var(--bg-light);
+        }
+
+        .create-layout {
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 55px;
+            align-items: start;
+        }
+
+        .create-info h2 {
+            font-size: clamp(32px, 4vw, 48px);
+            line-height: 1.15;
+            letter-spacing: -1.8px;
+            margin-bottom: 22px;
+        }
+
+        .create-info > p {
+            color: var(--muted);
+            font-size: 15px;
+            margin-bottom: 30px;
+        }
+
+        .create-benefits {
+            display: grid;
+            gap: 15px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .benefit-icon {
+            width: 25px;
+            height: 25px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: rgba(36,213,232,0.12);
+            color: var(--cyan);
+            font-weight: 900;
+        }
+
+        .create-form-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+        }
+
+        .form-heading {
+            margin-bottom: 27px;
+        }
+
+        .form-heading h3 {
+            font-size: 24px;
+            margin-bottom: 7px;
+        }
+
+        .form-heading p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .form-group {
+            margin-bottom: 19px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #09182a;
+            color: var(--white);
+            outline: none;
+            font-size: 13px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--cyan);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #71839b;
+        }
+
+        .submit-btn {
+            width: 100%;
+        }
+
+        .form-message {
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .form-message.success {
+            color: #53e6ad;
+        }
+
+        .form-message.error {
+            color: #ff7c89;
+        }
+
+        /* CTA */
+
+        .cta-section {
+            padding: 85px 0;
+            text-align: center;
+            background:
+                radial-gradient(circle at 50% 100%, rgba(36,213,232,0.13), transparent 50%),
+                var(--bg);
+        }
+
+        .cta-content {
+            max-width: 700px;
+            margin: auto;
+        }
+
+        .cta-content h2 {
+            font-size: clamp(31px, 5vw, 48px);
+            line-height: 1.2;
+            margin-bottom: 17px;
+        }
+        .cta-content p {
+            color: var(--muted);
+            margin-bottom: 27px;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            background: #050d18;
+            border-top: 1px solid var(--border);
+            padding: 55px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 35px;
+            padding-bottom: 40px;
+        }
+
+        .footer-brand p {
+            max-width: 330px;
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 15px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-links h4 {
+            margin-bottom: 5px;
+        }
+
+        .footer-links a {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .footer-links a:hover {
+            color: var(--cyan);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            color: #71839b;
+            font-size: 11px;
+            flex-wrap: wrap;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 900px) {
+            .nav-content {
+                padding: 15px 0;
+                flex-wrap: wrap;
+            }
+
+            .nav-links {
+                order: 3;
+                width: 100%;
+                gap: 15px;
+            }
+
+            .feature-grid,
+            .project-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .create-layout {
+                grid-template-columns: 1fr;
+                gap: 35px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero {
+                padding: 75px 0 65px;
+            }
+
+            .hero h1 {
+                letter-spacing: -1.8px;
+            }
+
+            .hero-description {
+                font-size: 14px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+                margin-top: 45px;
+            }
+
+            .feature-grid,
+            .project-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 65px 0;
+            }
+
+            .create-form-card {
+                padding: 22px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .footer-brand {
+                grid-column: 1 / -1;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+            }
+
+            .nav-links {
+                gap: 12px;
+            }
+
+            .nav-links a {
+                font-size: 11px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-    <header>
-        <h1>IDEA LAB</h1>
-        <p>One Project. One Team. One Ecosystem.</p>
-        <nav>
-    <a href="#mission">Home</a>
-    <a href="#projects">Projects</a>
-    <a href="#investors">Investors</a>
-    <a href="#specialists">Specialists</a>
-    <a href="#workers">Workers</a>
-    <a href="#resources">Resources</a>
-    <a href="#marketplace">Marketplace</a>
-</nav>
-    </header>
+<!-- NAVIGATION -->
+<header class="navbar">
+    <div class="container nav-content">
 
-    <main>
-        <section id="mission">
-            <h2>Our Mission</h2>
-            <p>We turn ideas into real projects.</p>
-        </section>
+        <a href="index.html" class="logo">
+            IDEA<span>LAB</span>
+        </a>
 
-        <section id="projects">
-            <h2>Our Projects</h2>
-            <p>Turn your ideas into real-world projects.</p>
-        </section>
+        <nav class="nav-links">
+            <a href="index.html">Bosh sahifa</a>
+            <a href="projects.html">Loyihalar</a>
+            <a href="teams.html">Jamoalar</a>
+            <a href="investors.html">Investorlar</a>
+            <a href="specialists.html">Mutaxassislar</a>
+            <a href="offers.html">Takliflar</a>
+            <a href="marketplace.html">Global bozor</a>
+            <a href="profile.html">Kabinet</a>
+        </nav>
 
-        <section id="create-project">
-            <h2>Create Your Project</h2>
+        <a href="#create-project" class="nav-button">
+            Loyiha yaratish +
+        </a>
+
+    </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="container">
+
+        <div class="hero-content">
+            <div class="hero-label">IDEAS · PROJECTS · OPPORTUNITIES</div>
+
+            <h1>
+                G‘oyangizni
+                <span class="gradient-text">kelajakka</span>
+                aylantiring.
+            </h1>
+            <p class="hero-description">
+                IDEA LAB — g‘oyalar, loyihalar, investorlar,
+                mutaxassislar va hamkorlarni yagona platformada
+                birlashtiruvchi innovatsion ekotizim.
+            </p>
+
+            <div class="hero-actions">
+                <a href="#create-project" class="btn btn-primary">
+                    G‘oyangizni taqdim eting →
+                </a>
+
+                <a href="projects.html" class="btn btn-outline">
+                    Loyihalarni ko‘rish
+                </a>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="projectCount">0</div>
+                <div class="stat-label">Taqdim etilgan loyihalar</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Yangi imkoniyatlar</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-number">1</div>
+                <div class="stat-label">Yagona innovatsion ekotizim</div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section features-section">
+    <div class="container">
+
+        <div class="section-header">
+            <div class="section-label">OUR ECOSYSTEM</div>
+            <h2 class="section-title">Bitta platforma. Cheksiz imkoniyatlar.</h2>
+            <p class="section-description">
+                G‘oyadan natijagacha bo‘lgan jarayon uchun
+                barcha muhim imkoniyatlar yagona maydonda.
+            </p>
+        </div>
+
+        <div class="feature-grid">
+
+            <article class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Loyihalar</h3>
+                <p>
+                    O‘z g‘oyangizni loyiha sifatida taqdim eting,
+                    kerakli resurslar va hamkorlarni izlang.
+                </p>
+                <a href="projects.html" class="feature-link">
+                    Loyihalarni ko‘rish →
+                </a>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3>Jamoalar</h3>
+                <p>
+                    O‘z yo‘nalishingiz bo‘yicha hamfikr insonlarni
+                    toping va kuchli jamoa shakllantiring.
+                </p>
+                <a href="teams.html" class="feature-link">
+                    Jamoalarni ko‘rish →
+                </a>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon">💼</div>
+                <h3>Investorlar markazi</h3>
+                <p>
+                    Istiqbolli loyihalar va ularni qo‘llab-quvvatlash
+                    imkoniyatlarini bir joyda toping.
+                </p>
+                <a href="investors.html" class="feature-link">
+                    Investorlar →
+                </a>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon">🤝</div>
+                <h3>Hamkorlik tizimi</h3>
+                <p>
+                    Loyiha egalari va investorlar o‘rtasida
+                    hamkorlik takliflarini shakllantiring.
+                </p>
+                <a href="offers.html" class="feature-link">
+                    Takliflarni ko‘rish →
+                </a>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>Global bozor</h3>
+                <p>
+                    Loyihalar, xizmatlar, resurslar va
+                    imkoniyatlarni yagona maydonda kashf eting.
+                </p>
+                <a href="marketplace.html" class="feature-link">
+                    Bozorga o‘tish →
+                </a>
+            </article>
+            <article class="feature-card">
+                <div class="feature-icon">👤</div>
+                <h3>Shaxsiy kabinet</h3>
+                <p>
+                    Profilingizni boshqaring va platformadagi
+                    faoliyatingizni nazorat qiling.
+                </p>
+                <a href="profile.html" class="feature-link">
+                    Kabinetga o‘tish →
+                </a>
+            </article>
+
+        </div>
+    </div>
+</section>
+
+<!-- RECENT PROJECTS -->
+<section class="section projects-section">
+    <div class="container">
+
+        <div class="section-header">
+            <div class="section-label">DISCOVER IDEAS</div>
+            <h2 class="section-title">So‘nggi loyihalar</h2>
+            <p class="section-description">
+                Platformada yaratilgan loyihalar bilan tanishing.
+                Balki keyingi katta imkoniyat aynan shu yerdadir.
+            </p>
+        </div>
+
+        <div class="project-grid" id="recentProjects">
+
+            <div class="empty-state">
+                <strong>Hozircha loyihalar mavjud emas</strong>
+                Birinchi loyihani yaratish orqali platformani boshlang.
+            </div>
+
+        </div>
+
+        <div style="text-align:center;margin-top:30px">
+            <a href="projects.html" class="btn btn-outline">
+                Barcha loyihalarni ko‘rish →
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<!-- CREATE PROJECT -->
+<section class="section create-section" id="create-project">
+    <div class="container create-layout">
+
+        <div class="create-info">
+
+            <div class="section-label">START SOMETHING NEW</div>
+
+            <h2>
+                G‘oyangizni
+                <span class="gradient-text">bugun</span>
+                boshlang.
+            </h2>
+
+            <p>
+                IDEA LAB orqali g‘oyangizni keng auditoriyaga taqdim eting,
+                hamkorlar toping va loyihangizni rivojlantiring.
+            </p>
+
+            <div class="create-benefits">
+
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>G‘oyangizni keng auditoriyaga taqdim eting</span>
+                </div>
+
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>Investor va hamkorlarni toping</span>
+                </div>
+
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>Loyihangizni rivojlantiring</span>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="create-form-card">
+
+            <div class="form-heading">
+                <span class="section-label">NEW PROJECT</span>
+                <h3>Yangi loyiha yaratish</h3>
+                <p>Loyihangiz haqidagi ma’lumotlarni kiriting.</p>
+            </div>
 
             <form id="projectForm">
-                <input type="text" placeholder="Project name" required>
 
-                <select required>
-                    <option value="">Choose direction</option>
-                    <option>IT & Technology</option>
-                    <option>Business</option>
-                    <option>Social Innovation</option>
-                    <option>Education</option>
-                </select>
+                <div class="form-group">
+                    <label for="projectName">Loyiha nomi *</label>
+                    <input
+                        type="text"
+                        id="projectName"
+                        placeholder="Masalan: Smart Education"
+                        required
+                    >
+                </div>
 
-                <textarea placeholder="Describe your idea" required></textarea>
+                <div class="form-group">
+                    <label for="projectDirection">Loyiha yo‘nalishi *</label>
+                    <select id="projectDirection" required>
+                        <option value="">Yo‘nalishni tanlang</option>
+                        <option value="IT va texnologiya">IT va texnologiya</option>
+                        <option value="Ta’lim">Ta’lim</option>
+                        <option value="Biznes">Biznes</option>
+                        <option value="Qishloq xo‘jaligi">Qishloq xo‘jaligi</option>
+                        <option value="Tibbiyot">Tibbiyot</option>
+                        <option value="Ekologiya">Ekologiya</option>
+                        <option value="Ijtimoiy loyiha">Ijtimoiy loyiha</option>
+                        <option value="Boshqa">Boshqa</option>
+                    </select>
+                </div>
 
-                <button type="submit">Create Project</button>
+                <div class="form-group">
+                    <label for="projectDescription">Loyiha haqida *</label>
+                    <textarea
+                        id="projectDescription"
+                        rows="4"
+                        placeholder="Loyihangiz haqida batafsil yozing..."
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="investment">Kerakli investitsiya (so‘m)</label>
+                    <input
+                        type="number"
+                        id="investment"
+                        min="0"
+                        placeholder="Masalan: 50000000"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="specialists">Kerakli mutaxassislar</label>
+                    <input
+                        type="text"
+                        id="specialists"
+                        placeholder="Masalan: Dasturchi, dizayner"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="resources">Kerakli resurslar</label>
+                    <textarea
+                        id="resources"
+                        rows="3"
+                        placeholder="Loyiha uchun kerakli resurslar..."
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="ownerPhone">Bog‘lanish telefon raqami</label>
+                    <input
+                        type="tel"
+                        id="ownerPhone"
+                        placeholder="+998 90 123 45 67"
+                    >
+                </div>
+
+                <div id="formMessage" class="form-message"></div>
+
+                <button type="submit" class="btn btn-primary submit-btn">
+                    Loyihani yaratish →
+                </button>
+
             </form>
-        </section>
-        <section id="investors">
-    <h2>Find Investors</h2>
-    <p>Connect your project with people who can support its development.</p>
+        </div>
+
+    </div>
 </section>
-    </main>
+
+<!-- CALL TO ACTION -->
+<section class="cta-section">
+    <div class="container">
+
+        <div class="cta-content">
+            <span class="section-label">YOUR NEXT STEP</span>
+
+            <h2>
+                Kelajakni birgalikda
+                <span class="gradient-text">yaratamiz.</span>
+            </h2>
+
+            <p>
+                Yaxshi g‘oya — bu boshlanish.
+                Kuchli jamoa va to‘g‘ri hamkorlik esa natijadir.
+            </p>
+
+            <a href="projects.html" class="btn btn-primary">
+                Imkoniyatlarni kashf etish →
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="container">
+
+        <div class="footer-content">
+
+            <div class="footer-brand">
+                <a href="index.html" class="logo">
+                    IDEA<span>LAB</span>
+                </a>
+
+                <p>
+                    G‘oyalar, loyihalar va imkoniyatlarni
+                    birlashtiruvchi innovatsion platforma.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Platforma</h4>
+                <a href="projects.html">Loyihalar</a>
+                <a href="teams.html">Jamoalar</a>
+                <a href="investors.html">Investorlar</a>
+                <a href="marketplace.html">Global bozor</a>
+            </div>
+
+            <div class="footer-links">
+                <h4>Hamkorlik</h4>
+                <a href="offers.html">Takliflar</a>
+                <a href="profile.html">Shaxsiy kabinet</a>
+                <a href="#create-project">Loyiha yaratish</a>
+            </div>
+
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 IDEA LAB. Barcha huquqlar himoyalangan.</p>
+            <p>Ideas · Projects · Opportunities</p>
+        </div>
+
+    </div>
+</footer>
+
 <script>
-const form = document.getElementById("projectForm");
+    function readData(key, fallback = []) {
+        try {
+            const value = localStorage.getItem(key);
 
-form.addEventListener("submit", function(event) {
-    event.preventDefault();
+            if (!value) {
+                return fallback;
+            }
 
-    const name = form.querySelector("input").value;
-    const direction = form.querySelector("select").value;
-    const description = form.querySelector("textarea").value;
+            const parsed = JSON.parse(value);
+            return parsed ?? fallback;
 
-    const project = document.createElement("div");
-    project.className = "project-card";
+        } catch (error) {
+            console.error("Ma'lumotni o'qishda xatolik:", key, error);
+            return fallback;
+        }
+    }
 
-    project.innerHTML = `
-        <h3>${name}</h3>
-        <p>${direction}</p>
-        <p>${description}</p>
-    `;
+    function getProjects() {
+        const projects = readData("projects", []);
+        return Array.isArray(projects) ? projects : [];
+    }
 
-    document.getElementById("projects").appendChild(project);
+    function formatMoney(value) {
+        const amount = Number(value);
 
-    form.reset();
+        if (!Number.isFinite(amount) || amount <= 0) {
+            return "Belgilanmagan";
+        }
 
-    alert("Your project has been created!");
-});
+        return amount.toLocaleString("uz-UZ") + " so‘m";
+    }
+
+    function updateProjectCount() {
+        const projects = getProjects();
+
+        document.getElementById("projectCount").textContent =
+            projects.length.toLocaleString("uz-UZ");
+    }
+
+    function showRecentProjects() {
+        const projects = getProjects();
+        const list = document.getElementById("recentProjects");
+
+        list.innerHTML = "";
+
+        if (projects.length === 0) {
+            const empty = document.createElement("div");
+            empty.className = "empty-state";
+
+            const title = document.createElement("strong");
+            title.textContent = "Hozircha loyihalar mavjud emas";
+
+            const description = document.createElement("p");
+            description.textContent =
+                "Birinchi loyihani yaratish orqali platformani boshlang.";
+
+            empty.append(title, description);
+            list.appendChild(empty);
+            return;
+        }
+
+        const latestProjects = [...projects].reverse().slice(0, 6);
+
+        latestProjects.forEach(project => {
+            const card = document.createElement("article");
+            card.className = "project-card";
+
+            const tag = document.createElement("span");
+            tag.className = "project-tag";
+            tag.textContent = project.direction || "Boshqa yo‘nalish";
+
+            const title = document.createElement("h3");
+            title.textContent = project.name || "Nomsiz loyiha";
+
+            const description = document.createElement("p");
+            description.textContent =
+                project.description || "Loyiha tavsifi kiritilmagan.";
+
+            const meta = document.createElement("div");
+            meta.className = "project-meta";
+            meta.textContent =
+                "Investitsiya: " + formatMoney(project.investment);
+
+            const link = document.createElement("a");
+            link.className = "project-open";
+            link.textContent = "Loyihani ko‘rish →";
+            link.href =
+                "project-detail.html?id=" +
+                encodeURIComponent(String(project.id));
+
+            card.append(tag, title, description, meta, link);
+            list.appendChild(card);
+        });
+    }
+
+    const projectForm = document.getElementById("projectForm");
+
+    projectForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const name =
+            document.getElementById("projectName").value.trim();
+
+        const direction =
+            document.getElementById("projectDirection").value;
+
+        const description =
+            document.getElementById("projectDescription").value.trim();
+
+        const investment =
+            document.getElementById("investment").value;
+
+        const specialists =
+            document.getElementById("specialists").value.trim();
+
+        const resources =
+            document.getElementById("resources").value.trim();
+
+        const ownerPhone =
+            document.getElementById("ownerPhone").value.trim();
+
+        const message = document.getElementById("formMessage");
+        if (!name || !direction|| !description) {
+            message.className = "form-message error";
+            message.textContent =
+                "Majburiy maydonlarni to‘ldiring.";
+            return;
+        }
+
+        if (investment !== "" &&
+            (!Number.isFinite(Number(investment)) ||
+             Number(investment) < 0)) {
+
+            message.className = "form-message error";
+            message.textContent =
+                "Investitsiya miqdorini to‘g‘ri kiriting.";
+            return;
+        }
+
+        let userProfile = null;
+
+        try {
+            userProfile = JSON.parse(
+                localStorage.getItem("userProfile") || "null"
+            );
+        } catch (error) {
+            userProfile = null;
+        }
+
+        const project = {
+            id: Date.now(),
+            name: name,
+            direction: direction,
+            description: description,
+            investment: investment,
+            specialists: specialists,
+            resources: resources,
+            ownerPhone: ownerPhone,
+            ownerEmail: userProfile
+                ? userProfile.email || ""
+                : "",
+            ownerName: userProfile
+                ? userProfile.fullName || ""
+                : "",
+            createdAt: new Date().toISOString()
+        };
+
+        const projects = getProjects();
+        projects.push(project);
+
+        try {
+            localStorage.setItem(
+                "projects",
+                JSON.stringify(projects)
+            );
+        } catch (error) {
+            message.className = "form-message error";
+            message.textContent =
+                "Ma’lumotni saqlash imkoni bo‘lmadi. Brauzer xotirasini tekshiring.";
+            return;
+        }
+
+        projectForm.reset();
+
+        message.className = "form-message success";
+        message.textContent =
+            "Loyiha muvaffaqiyatli yaratildi!";
+
+        updateProjectCount();
+        showRecentProjects();
+
+        document.getElementById("recentProjects").scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    });
+
+    updateProjectCount();
+    showRecentProjects();
 </script>
+
 </body>
 </html>
