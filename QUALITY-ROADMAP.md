@@ -49,3 +49,12 @@ Bosqich: frontendni serverga ulamasdan tizimlashtirish
 ## Cheklov va qabul mezoni
 
 Bu bosqich GitHub manba kodining statik auditi va kod darajasidagi tekshiruvlardan iborat. Haqiqiy brauzer, Android ekran o‘lchamlari, turli qurilmalar, real foydalanuvchi ma’lumotlari yoki backend bilan sinov bajarilgani haqida da’vo qilinmaydi. Keyingi har bir bosqichda o‘zgargan fayllar, test natijalari va qolgan xavflar alohida qayd etiladi.
+
+
+## 2026-11-15 — avtomatlashtirilgan core testlari
+
+Yangi `tests/core.test.cjs` fayli Node.js built-in test runner bilan 11 ta testni qamrab oladi: offline holat, allowlist, store CRUD, noto‘g‘ri JSON fallback, legacy read/write/inspect, backup, HTML escaping, email/telefon validatsiyasi, event unsubscribe, status/sana va storage xatolari.
+
+Ishga tushirish: `node --test tests/core.test.cjs`.
+
+Bu testlar markaziy core funksiyalarini Node VM ichida tekshiradi; brauzer UI, mobil ko‘rinish, sahifalararo to‘liq oqim yoki backendni tekshirmaydi.
