@@ -47,3 +47,21 @@ test("case assignment only targets open cases and serializes reviewer deactivati
  assert.match(assignmentMigration,/from public\.supplier_verification_reviewers r[\s\S]*for share/i);
  assert.match(assignmentMigration,/from public\.supplier_verification_review_assignments a[\s\S]*for update/i);
 });
+
+test("admin RPC actor identity comes only from the verified JWT user",()=>{
+ const rpcBlocks = [
+  adminFn.slice(adminFn.indexOf('if (body.action === "set_reviewer")'), adminFn.indexOf('if (body.action === "assign_case")')),
+  adminFn.slice(adminFn.indexOf('if (body.action === "assign_case")'), adminFn.indexOf('if (body.action === "revoke_case")')),
+  adminFn.slice(adminFn.indexOf('if (body.action === "revoke_case")')),
+ ];
+ for (const block of rpcBlocks) assert.match(block,/p_actor_user_id:\s*actor\.id/);
+ assert.doesNotMatch(adminFn,/p_actor_user_id:\s*body\./);
+ for (const fn of [
+  "admin_set_supplier_verification_reviewer",
+  "admin_assign_supplier_verification_case",
+  "admin_revoke_supplier_verification_case",
+ ]) {
+  assert.ok(migration.includes("revoke all on function public."+fn+"("));
+  assert.ok(migration.includes("grant execute on function public."+fn+"("));
+ }
+});
