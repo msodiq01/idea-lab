@@ -65,6 +65,7 @@ Bir investitsiya uchun bir vaqtda faqat bitta amaldagi ko‘rsatma bo‘ladi. In
 - Transfer investitsiyaga bog‘langan bo‘lsa, jo‘natuvchi investor aynan shu investitsiyaning egasi bo‘lishi kerak.
 - Qabul qiluvchi hisob tanlangan va investor qabul qilgan ko‘rsatmadagi hisob bilan bir xil bo‘lishi kerak.
 - Transfer recipient_id qiymati destination account egasiga mos kelishi kerak.
+- Transfer yozuvida sender_user_id, recipient_user_id, source_account_id va destination_account_id aniq saqlanadi; recipient_user_id destination account.account_owner_id bilan mos bo‘lishi shart.
 - Transfer va allocation valyutalari mos bo‘lishi shart.
 - Bir nechta resursga taqsimlangan transferda allocation summalari transfer summasiga teng bo‘lishi kerak.
 - Transferni `confirmed` qilish faqat ishonchli provayder webhook'i yoki vakolatli server jarayoni orqali bo‘ladi. Investor yoki resurs egasi o‘zi to‘lovni tasdiqlab qo‘ya olmaydi.
@@ -84,7 +85,8 @@ Investor ko‘radigan hisob ma’lumoti:
 - bank/provayder nomi;
 - hisob turi;
 - ko‘rinadigan hisob yorlig‘i;
-- niqoblangan identifikator (masalan, oxirgi raqamlar);
+- niqoblangan identifikator (masalan, oxirgi raqamlar; DB maydoni masked_identifier);
+- ko‘rinadigan hisob yorlig‘i (DB maydoni display_label);
 - hisob egasining rozilik bergan ommaviy ko‘rinadigan nomi;
 - qaysi resurs va qaysi investitsiyaga tegishliligi.
 
