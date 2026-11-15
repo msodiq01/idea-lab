@@ -17,5 +17,8 @@ test("sensitive Edge Functions keep Supabase gateway JWT verification enabled", 
 test("staging deployment commands target the explicit staging project and do not disable JWT verification", () => {
   assert.match(runbook, /supabase functions deploy supplier-verification-evidence --project-ref "\$STAGING_PROJECT_REF"/);
   assert.match(runbook, /supabase functions deploy supplier-verification-admin --project-ref "\$STAGING_PROJECT_REF"/);
-  assert.doesNotMatch(runbook, /--no-verify-jwt/);
+  const deployCommands = runbook.split(/\r?\n/).filter((line) => /^\s*supabase functions deploy /.test(line));
+  assert.equal(deployCommands.length, 2, "only the two reviewed Edge Functions should be deployed by this runbook");
+  assert.ok(deployCommands.every((line) => !line.includes("--no-verify-jwt")));
+  assert.match(runbook, /Do not use `--no-verify-jwt`/);
 });
