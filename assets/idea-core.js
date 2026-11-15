@@ -283,6 +283,157 @@
     }
   });
 
+
+  // Shared platform foundation: client-side quality helpers only.
+  // These checks improve UX but never replace server validation or RLS.
+  const APPLICATION_TRANSITIONS = Object.freeze({
+    submitted: Object.freeze(["reviewing", "interview", "accepted", "rejected", "withdrawn"]),
+    reviewing: Object.freeze(["interview", "accepted", "rejected", "withdrawn"]),
+    interview: Object.freeze(["accepted", "rejected", "withdrawn"]),
+    accepted: Object.freeze(["negotiating", "agreed", "cancelled"]),
+    negotiating: Object.freeze(["agreed", "rejected", "cancelled"]),
+    agreed: Object.freeze(["in_progress", "cancelled"]),
+    in_progress: Object.freeze(["completed", "cancelled"]),
+    completed: Object.freeze([]),
+    rejected: Object.freeze([]),
+    withdrawn: Object.freeze([]),
+    cancelled: Object.freeze([])
+  });
+
+  function safeJsonParse(raw, fallback = null) {
+    if (typeof raw !== "string") return fallback;
+    try { return JSON.parse(raw); } catch (_) { return fallback; }
+  }
+
+  function cleanText(value, maxLength = 5000) {
+    if (typeof value !== "string") return "";
+    return value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "").trim().slice(0, Math.max(0, maxLength));
+  }
+
+  function isValidMoney(value, options = {}) {
+    const amount = typeof value === "number" ? value : Number(String(value ?? "").replace(/\s/g, "").replace(",", "."));
+    const maximum = Number.isFinite(options.maximum) ? options.maximum : 1e12;
+    return Number.isFinite(amount) && amount >= 0 && amount <= maximum && Number.isSafeInteger(Math.round(amount * 100));
+  }
+
+  function isValidIsoDate(value) {
+    if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})?)?$/.test(value)) return false;
+    const parts = value.slice(0, 10).split("-").map(Number);
+    const check = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    if (check.getUTCFullYear() !== parts[0] || check.getUTCMonth() !== parts[1] - 1 || check.getUTCDate() !== parts[2]) return false;
+    return !Number.isNaN(Date.parse(value));
+  }
+
+  function validateFields(record, rules = {}) {
+    const errors = {};
+    if (!record || typeof record !== "object" || Array.isArray(record)) {
+      return { valid: false, errors: { _form: "Ma’lumot formati noto‘g‘ri." } };
+    }
+    Object.entries(rules).forEach(([field, rule]) => {
+      const value = record[field];
+      const label = rule.label || field;
+      if (rule.required && (value === undefined || value === null || String(value).trim() === "")) {
+        errors[field] = label + " majburiy.";
+      } else if (value !== undefined && value !== null && value !== "") {
+        if (rule.type === "text" && (typeof value !== "string" || value.trim().length < (rule.minLength || 0) || value.length > (rule.maxLength || 5000))) {
+          errors[field] = label + " matn uzunligi noto‘g‘ri.";
+        } else if (rule.type === "email" && !isValidEmail(value)) {
+          errors[field] = label + " email formati noto‘g‘ri.";
+        } else if (rule.type === "phone" && !isValidPhone(value)) {
+          errors[field] = label + " telefon formati noto‘g‘ri.";
+        } else if (rule.type === "money" && !isValidMoney(value, rule)) {
+          errors[field] = label + " miqdori noto‘g‘ri.";
+        } else if (rule.type === "date" && !isValidIsoDate(value)) {
+          errors[field] = label + " sanasi noto‘g‘ri.";
+        } else if (rule.type === "enum" && (!Array.isArray(rule.values) || !rule.values.includes(value))) {
+          errors[field] = label + " qiymati ruxsat etilmagan.";
+        }
+      }
+    });
+    return { valid: Object.keys(errors).length === 0, errors };
+  }
+
+  function normalizeApiError(input, status) {
+    const source = input && typeof input === "object" ? input : {};
+    const nested = source.error && typeof source.error === "object" ? source.error : source;
+    const known = new Set(["AUTH_REQUIRED", "FORBIDDEN", "NOT_FOUND", "VALIDATION_ERROR", "CONFLICT", "RATE_LIMITED", "NETWORK_ERROR", "BACKEND_NOT_CONFIGURED", "BACKEND_UNAVAILABLE", "UNKNOWN_ERROR"]);
+    let code = typeof nested.code === "string" && known.has(nested.code) ? nested.code : "UNKNOWN_ERROR";
+    if (status === 401) code = "AUTH_REQUIRED";
+    else if (status === 403) code = "FORBIDDEN";
+    else if (status === 404) code = "NOT_FOUND";
+    else if (status === 409) code = "CONFLICT";
+    else if (status === 422) code = "VALIDATION_ERROR";
+    else if (status === 429) code = "RATE_LIMITED";
+    else if (status >= 500) code = "BACKEND_UNAVAILABLE";
+    const messages = {
+      AUTH_REQUIRED: "Davom etish uchun tizimga kiring.",
+      FORBIDDEN: "Bu amal uchun ruxsat yo‘q.",
+      NOT_FOUND: "So‘ralgan ma’lumot topilmadi.",
+      VALIDATION_ERROR: "Kiritilgan ma’lumotlarni tekshiring.",
+      CONFLICT: "Ma’lumot yangilangan yoki takroriy so‘rov yuborilgan.",
+      RATE_LIMITED: "So‘rovlar soni chegaralandi. Birozdan keyin urinib ko‘ring.",
+      NETWORK_ERROR: "Tarmoq bilan aloqa yo‘q. Kiritilgan ma’lumotni saqlab, qayta urinib ko‘ring.",
+      BACKEND_NOT_CONFIGURED: "Server hali sozlanmagan. Demo rejimida ishlayapsiz.",
+      BACKEND_UNAVAILABLE: "Server vaqtincha ishlamayapti.",
+      UNKNOWN_ERROR: "Kutilmagan xatolik yuz berdi."
+    };
+    const fields = nested.fields && typeof nested.fields === "object" && !Array.isArray(nested.fields) ? nested.fields : {};
+    return { code, message: messages[code], fields, requestId: typeof nested.requestId === "string" ? cleanText(nested.requestId, 100) : "" };
+  }
+
+  function normalizePagination(input = {}) {
+    const page = Math.max(1, Math.floor(Number(input.page) || 1));
+    const pageSize = Math.min(100, Math.max(1, Math.floor(Number(input.pageSize) || 20)));
+    const total = Math.max(0, Math.floor(Number(input.total) || 0));
+    const totalPages = Math.ceil(total / pageSize);
+    return { page: totalPages ? Math.min(page, totalPages) : 1, pageSize, total, totalPages, hasPrevious: totalPages > 0 && page > 1, hasNext: totalPages > 0 && page < totalPages };
+  }
+
+  function canTransitionApplication(application, nextStatus, actorId, targetOwnerId) {
+    if (!application || typeof application !== "object" || !actorId) return false;
+    const allowed = APPLICATION_TRANSITIONS[application.status] || [];
+    if (!allowed.includes(nextStatus)) return false;
+    if (String(actorId) === String(application.applicantId)) return nextStatus === "withdrawn";
+    if (targetOwnerId && String(actorId) === String(targetOwnerId)) {
+      return ["reviewing", "interview", "accepted", "rejected"].includes(nextStatus);
+    }
+    return false;
+  }
+
+  const PRIVATE_PROFILE_FIELDS = Object.freeze(["email", "phone", "ownerEmail", "ownerPhone", "applicantEmail", "applicantPhone", "resume_path", "resumePath", "accessToken", "password", "roles", "role"]);
+  function publicProfile(profile) {
+    if (!profile || typeof profile !== "object" || Array.isArray(profile)) return {};
+    const allowed = ["id", "fullName", "profession", "skills", "experience", "education", "about", "portfolio", "location", "avatarUrl"];
+    const result = {};
+    allowed.forEach(key => {
+      if (profile[key] !== undefined && !PRIVATE_PROFILE_FIELDS.includes(key)) result[key] = profile[key];
+    });
+    return result;
+  }
+
+  function createOfflineAdapter() {
+    const unavailable = () => ({ ok: false, error: normalizeApiError({ code: "BACKEND_NOT_CONFIGURED" }) });
+    return Object.freeze({
+      mode: "offline-demo",
+      authenticated: false,
+      list: unavailable,
+      get: unavailable,
+      create: unavailable,
+      updateStatus: unavailable
+    });
+  }
+
+  const validation = Object.freeze({
+    safeJsonParse, cleanText, isValidMoney, isValidIsoDate, validateFields,
+    normalizeApiError, normalizePagination
+  });
+  const applications = Object.freeze({
+    transitions: APPLICATION_TRANSITIONS,
+    canTransition: canTransitionApplication
+  });
+  const privacy = Object.freeze({ publicProfile });
+  const backend = Object.freeze({ createOfflineAdapter });
+
   const coreApi = Object.freeze({
     version: VERSION,
     environment: Object.freeze({ backend: "offline-demo", authenticated: false }),
@@ -299,7 +450,11 @@
     isValidEmail,
     isValidPhone,
     statusLabel,
-    storageAvailable
+    storageAvailable,
+    validation,
+    applications,
+    privacy,
+    backend
   });
 
   Object.defineProperty(global, "IDEALAB", {
