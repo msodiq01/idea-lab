@@ -956,7 +956,7 @@ function applyToOffer(offerId) {
         offerOwnerEmail: offer.ownerEmail || "",
         applicant: currentUser,
         message: message.trim(),
-        status: "Yangi",
+        status: "submitted",
         date: new Date().toISOString()
     };
 
@@ -1045,7 +1045,8 @@ function showApplications() {
         const otherPerson = currentApplicationTab === "received" ? application.applicant : application.offerOwner;
         const card = document.createElement("article"); card.className = "application-card";
         const title = document.createElement("h3"); title.textContent = application.offerTitle || "Taklif";
-        const status = document.createElement("p"); status.textContent = "Holati: " + (application.status || "Yangi") + " · " + formatDate(application.date);
+        const normalizedStatus = ideaCore.applications.normalizeStatus(application.status);
+        const status = document.createElement("p"); status.textContent = "Holati: " + ideaCore.applications.statusLabel(normalizedStatus) + " · " + formatDate(application.date);
         const person = document.createElement("p"); person.textContent = (currentApplicationTab === "received" ? "Arizachi: " : "Taklif egasi: ") + (otherPerson || "Noma’lum");
         const message = document.createElement("p"); message.textContent = application.message || "";
         card.append(title,status,person,message);
@@ -1055,11 +1056,25 @@ function showApplications() {
         const actions = document.createElement("div"); actions.className = "application-actions";
         const chat = document.createElement("button"); chat.className = "btn btn-primary btn-small"; chat.type = "button"; chat.textContent = "Chatni ochish";
         chat.addEventListener("click", () => openChat(application.id)); actions.append(chat);
-        if (currentApplicationTab === "received") {
-            [["Ko‘rib chiqilmoqda","Ko‘rib chiqilmoqda","btn btn-secondary btn-small"],["Qabul qilish","Qabul qilindi","btn btn-green btn-small"]].forEach(([label,value,cls]) => {
-                const button = document.createElement("button"); button.className = cls; button.type = "button"; button.textContent = label;
-                button.addEventListener("click", () => changeApplicationStatus(application.id,value)); actions.append(button);
+        const currentStatus = ideaCore.applications.normalizeStatus(application.status);
+        const actor = currentApplicationTab === "received" ? "owner" : "applicant";
+        const nextStatuses = ideaCore.applications.nextStatuses(currentStatus, actor);
+        if (nextStatuses.length) {
+            const statusSelect = document.createElement("select");
+            statusSelect.className = "field";
+            statusSelect.setAttribute("aria-label", "Ariza holatini o‘zgartirish");
+            nextStatuses.forEach(nextStatus => {
+                const option = document.createElement("option");
+                option.value = nextStatus;
+                option.textContent = ideaCore.applications.statusLabel(nextStatus);
+                statusSelect.append(option);
             });
+            const changeButton = document.createElement("button");
+            changeButton.className = "btn btn-secondary btn-small";
+            changeButton.type = "button";
+            changeButton.textContent = actor === "applicant" ? "Arizani qaytarib olish" : "Holatni yangilash";
+            changeButton.addEventListener("click", () => changeApplicationStatus(application.id, statusSelect.value));
+            actions.append(statusSelect, changeButton);
         }
         card.append(actions); list.append(card);
     });
@@ -1077,13 +1092,14 @@ function changeApplicationStatus(applicationId, status) {
         return;
     }
 
-    if (applications[index].offerOwner !== currentUser) {
-        alert("Bu arizani faqat taklif egasi boshqarishi mumkin.");
+    const actor = applications[index].offerOwner === currentUser ? "owner" : "applicant";
+    const previousStatus = ideaCore.applications.normalizeStatus(applications[index].status);
+    const nextStatus = ideaCore.applications.normalizeStatus(status);
+    if (!ideaCore.applications.nextStatuses(previousStatus, actor).includes(nextStatus)) {
+        alert("Bu holatga o‘tish ruxsat etilmagan.");
         return;
     }
-
-    const previousStatus = applications[index].status || "Yangi";
-    applications[index].status = status;
+    applications[index].status = nextStatus;
     applications[index].updatedAt = new Date().toISOString();
 
     if (!saveData("offerApplications", applications)) {
@@ -1095,7 +1111,7 @@ function changeApplicationStatus(applicationId, status) {
             applicationId: applicationId,
             offerId: applications[index].offerId,
             previousStatus: previousStatus,
-            status: status,
+            status: nextStatus,
             updatedAt: applications[index].updatedAt
         });
     }
