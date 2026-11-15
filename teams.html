@@ -766,8 +766,11 @@ button, input, textarea, select {
     <p>IDEA LAB © 2026 — G‘oya. Jamoa. Harakat. Natija.</p>
 </footer>
 
+<script src="assets/idea-core.js"></script>
 <script>
 "use strict";
+
+const ideaCore = window.IDEALAB || null;
 
 /* 1. MA'LUMOTLARNI O'QISH VA SAQLASH */
 
@@ -925,6 +928,14 @@ function joinTeam(id) {
 
     if (!saveData("teamApplications", applications)) return;
 
+    if (ideaCore) {
+        ideaCore.emit("membership:application-created", {
+            applicationId: applications[0].id,
+            teamId: team.id,
+            createdAt: applications[0].date
+        });
+    }
+
     updateStats();
     showMyApplications();
 
@@ -1027,6 +1038,14 @@ function applyForJob(id) {
     });
 
     if (!saveData("jobApplications", applications)) return;
+
+    if (ideaCore) {
+        ideaCore.emit("job:application-created", {
+            applicationId: applications[0].id,
+            jobId: job.id,
+            createdAt: applications[0].date
+        });
+    }
 
     updateStats();
     showMyApplications();
@@ -1139,9 +1158,19 @@ function showEmployerApplications() {
                 showEmployerApplications();
                 return;
             }
+            const previousStatus = current[index].status || "Yangi";
             current[index].status = select.value;
             current[index].updatedAt = new Date().toISOString();
             if (saveData("jobApplications", current)) {
+                if (ideaCore) {
+                    ideaCore.emit("job:application-status-changed", {
+                        applicationId: application.id,
+                        jobId: application.jobId,
+                        previousStatus: previousStatus,
+                        status: select.value,
+                        updatedAt: current[index].updatedAt
+                    });
+                }
                 showEmployerApplications();
                 showMyApplications();
             } else {
@@ -1246,9 +1275,19 @@ function showTeamManagerApplications() {
                 showTeamManagerApplications();
                 return;
             }
+            const previousStatus = current[index].status || "Yangi";
             current[index].status = select.value;
             current[index].updatedAt = new Date().toISOString();
             if (saveData("teamApplications", current)) {
+                if (ideaCore) {
+                    ideaCore.emit("membership:application-status-changed", {
+                        applicationId: application.id,
+                        teamId: application.teamId,
+                        previousStatus: previousStatus,
+                        status: select.value,
+                        updatedAt: current[index].updatedAt
+                    });
+                }
                 showTeamManagerApplications();
                 showMyApplications();
             } else {
