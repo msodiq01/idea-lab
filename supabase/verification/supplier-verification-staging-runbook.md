@@ -37,9 +37,9 @@ After each file, record the staging project ref (not a secret), filename, execut
 
 ## 2. Read-only database preflight
 
-After all eight files are applied, run `supabase/verification/supplier-verification-staging-preflight.sql`. It is read-only and checks the expected tables, functions, RLS flags, Storage bucket privacy, and public grants.
+After all eight files are applied, run `supabase/verification/supplier-verification-staging-preflight.sql`. It is read-only and checks expected tables and critical columns, required functions, privileged-function `SECURITY DEFINER` and pinned `search_path` settings, RLS flags, Storage bucket privacy, and client grants.
 
-Review every result. A missing object, public bucket, unexpected client grant, or disabled RLS is a **stop condition**, not a warning to ignore. Also run `supabase/verification/security_audit.sql` and review its output.
+Review every result set. A missing object or column, a privileged function without the expected security settings, public bucket, unexpected client grant, or disabled RLS is a **stop condition**, not a warning to ignore. The preflight is a metadata check and does not replace live RLS/Storage acceptance tests. Also run `supabase/verification/security_audit.sql` and review its output.
 
 ## 3. Configure Edge Function secrets
 
