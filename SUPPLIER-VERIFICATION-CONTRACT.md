@@ -1,6 +1,6 @@
 # IDEA LAB — Ta’minotchini tekshirish jarayoni
 
-Versiya: 1.4 · Sana: 2026-11-19  
+Versiya: 1.5 · Sana: 2026-11-20  
 Holat: backend migration tayyorlandi; jonli Supabase loyihasiga qo‘llangani tasdiqlanmagan.
 
 ## 1. Maqsad
@@ -78,12 +78,28 @@ Cheklovlar: fayl mazmuni antivirus yoki haqiqiylik tekshiruvidan o‘tmaydi; MIM
 ## 8. Sinov holati
 `tests/supplier-verification-migration.test.cjs`, `tests/supplier-verification-reviewers.test.cjs`, `tests/supplier-verification-storage.test.cjs` va `tests/supplier-verification-evidence-api.test.cjs` migration/API matnining xavfsizlik shartlarini statik tekshiradi. Bu SQL parser, Deno runtime testi, Postgres integratsion test yoki jonli Storage RLS sinovi emas. Migration faqat alohida staging loyihasida qo‘llanib, ikki akkauntli testdan o‘tkazilgandan keyin foydalanishga yaroqli deb baholanadi.
 
-## 9. Qabul mezonlari
+
+## 9. Arizaga biriktirilgan reviewerlar — 2026-11-20
+Fayl: `supabase/migrations/20261120_supplier_verification_case_assignments.sql`
+
+- `supplier_verification_review_assignments` har bir ariza uchun reviewer biriktirilishini saqlaydi.
+- Assignment jadvaliga authenticated/anon client uchun hech qanday ruxsat berilmaydi; tayinlash va bekor qilish faqat ishonchli backend/service-role orqali bajariladi.
+- `can_review_supplier_verification_application(application_id)` foydalanuvchining reviewer allowlist'da faol ekanini va aynan shu arizaga faol biriktirilganini tekshiradi.
+- Ariza, audit hodisalari va private Storage obyektlarini reviewer sifatida o‘qish endi case-level assignment bilan cheklanadi.
+- Qaror RPC ham faol assignment bo‘lmasa rad etadi. Reviewer global allowlist'da bo‘lishining o‘zi yetarli emas.
+- Assignment bekor qilinganda keyingi o‘qish va qaror so‘rovlari bloklanadi. Reviewerning o‘zi deaktivatsiya qilinsa ham ruxsat bekor bo‘ladi.
+- Bir reviewer uchun bir arizada faqat bitta faol assignment bo‘lishi mumkin; eski yozuvlar tarix uchun saqlanadi.
+
+Migration tayinlash interfeysi yoki avtomatik taqsimlash algoritmini yaratmaydi. Ishonchli server operatsiyasi assignment yaratishda application va reviewer mavjudligini, vakolatini hamda tashkilot ichidagi tasdiqni tekshirishi shart. SQL migration staging'da qo‘llanmaguncha bu cheklovlar jonli tizimda faol emas.
+
+## 10. Sinov holati
+`tests/supplier-verification-migration.test.cjs`, `tests/supplier-verification-reviewers.test.cjs`, `tests/supplier-verification-storage.test.cjs`, `tests/supplier-verification-evidence-api.test.cjs` va `tests/supplier-verification-case-assignments.test.cjs` statik kontrakt tekshiruvlaridir. Ular Postgres RLS integratsion sinovi o‘rnini bosmaydi.
+
+## 11. Qabul mezonlari
 - [ ] Test Supabase loyihasi va egasi tasdiqlangan.
 - [ ] Backup va restore sinovi bajarilgan.
 - [ ] Migration staging'da qo‘llangan.
-- [ ] Ikki test akkaunt bilan RLS sinovlari o'tgan.
-- [ ] Reviewer transition serverda ruxsat bilan ishlaydi.
-- [ ] Evidence private Storage va retention siyosati bilan himoyalangan.
-- [ ] Public view hujjat metadata yoki private path chiqarmaydi.
+- [ ] Ikki supplier va kamida ikki reviewer bilan case-level RLS sinovlari o'tgan.
+- [ ] Assignment berish/bekor qilish serverda audit bilan ishlaydi.
+- [ ] Reviewer faqat biriktirilgan arizalar va hujjatlarni ko‘radi.
 - [ ] Demo holati real tekshiruv sifatida ko‘rsatilmaydi.
