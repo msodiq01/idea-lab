@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07111f">
+<title>IDEA LAB — Tekshiruv boshqaruvi</title><link rel="stylesheet" href="assets/idea-shell.css">
+<style>
+:root{--bg:#07111f;--panel:#0e1c30;--line:rgba(148,183,220,.16);--ink:#f1f6ff;--muted:#91a5bd;--blue:#3985ff;--cyan:#27d7e8;--green:#3dd6a0;--amber:#ffc66d;--red:#ff7185}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0%,rgba(39,215,232,.08),transparent 34%),var(--bg);color:var(--ink);font-family:Inter,Arial,sans-serif}.wrap{width:min(1180px,calc(100% - 28px));margin:24px auto 70px}.hero,.panel,.stat{background:var(--panel);border:1px solid var(--line);border-radius:15px}.hero{padding:23px;background:linear-gradient(130deg,rgba(57,133,255,.14),transparent 70%),var(--panel)}.kicker{font-size:10px;letter-spacing:1.5px;color:var(--cyan);font-weight:800}.hero h1{font-size:clamp(25px,4vw,35px);margin:10px 0}.muted{color:var(--muted);font-size:11px;line-height:1.7}.notice{margin-top:13px;padding:13px;border:1px solid rgba(255,198,109,.24);border-radius:10px;background:rgba(255,198,109,.07);color:#e5cca0;font-size:11px;line-height:1.7}.status{margin:13px 0;padding:12px;border:1px solid var(--line);border-radius:10px;color:var(--muted);font-size:11px}.status.good{color:var(--green);border-color:rgba(61,214,160,.3)}.status.bad{color:#ff9aa9;border-color:rgba(255,113,133,.3)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}.panel{padding:16px;min-width:0}.panel h2{font-size:15px;margin:0 0 12px}.field{display:grid;gap:6px;margin:10px 0}.field label{font-size:10px;color:#cbd9e9;font-weight:700}.field input,.field select{width:100%;min-width:0;padding:10px;border:1px solid var(--line);border-radius:8px;background:#091526;color:var(--ink);font:11px Inter}.btn{border:0;border-radius:8px;padding:10px 13px;background:linear-gradient(120deg,var(--blue),#2764db);color:white;font:800 10px Inter;cursor:pointer}.btn.secondary{background:#172b45;border:1px solid var(--line)}.btn.danger{background:#652b3a}.btn:disabled{opacity:.45;cursor:not-allowed}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.table-wrap{overflow:auto;max-height:330px;border:1px solid var(--line);border-radius:9px}table{width:100%;border-collapse:collapse;font-size:10px;min-width:470px}th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:700;background:#0a1728;position:sticky;top:0}td{color:#dce8f7;overflow-wrap:anywhere}.empty{padding:15px;color:var(--muted);font-size:10px}.locked{opacity:.55;pointer-events:none}.small{font-size:9px;color:var(--muted);line-height:1.6}.hidden{display:none!important}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+</style></head>
+<body><main class="wrap">
+<section class="hero"><div class="kicker">IDEA LAB / ADMINISTRATION</div><h1>Tekshiruv boshqaruv markazi</h1><p class="muted">Reviewer vakolatlari, arizaga biriktirishlar va tayinlovlar tarixini boshqarish.</p></section>
+<div class="notice"><b>Xavfsizlik eslatmasi.</b> Ushbu markaz faqat serverda administrator sifatida tasdiqlangan akkauntga ishlaydi. Birinchi administrator trusted database owner orqali allowlist'ga kiritiladi. Brauzerda service-role kaliti bo‘lmaydi. Haqiqiy hujjatlar bu sahifada ko‘rsatilmaydi.</div>
+<div class="status" id="status" role="status" aria-live="polite">Backend konfiguratsiyasi tekshirilmoqda…</div>
+<section id="workspace" class="locked">
+<div class="row"><button class="btn" id="refresh">Ma’lumotlarni yangilash</button><span class="small" id="sessionInfo">Administrator sessiyasi tekshirilmagan.</span></div>
+<div class="grid">
+<section class="panel"><h2>Reviewer vakolatini boshqarish</h2>
+<div class="field"><label for="reviewerId">Reviewer akkaunt UUID</label><input id="reviewerId" autocomplete="off" placeholder="Auth user UUID"></div>
+<div class="field"><label for="reviewerState">Vakolat holati</label><select id="reviewerState"><option value="true">Faollashtirish</option><option value="false">Faolsizlantirish</option></select></div>
+<div class="field"><label for="reviewerNote">Izoh (ixtiyoriy)</label><input id="reviewerNote" maxlength="240" placeholder="Tayinlash sababi"></div>
+<button class="btn" id="saveReviewer">Vakolatni saqlash</button>
+</section>
+<section class="panel"><h2>Arizaga reviewer biriktirish</h2>
+<div class="field"><label for="caseId">Ariza UUID</label><input id="caseId" autocomplete="off" placeholder="Application UUID"></div>
+<div class="field"><label for="assignReviewerId">Faol reviewer UUID</label><input id="assignReviewerId" autocomplete="off" placeholder="Reviewer Auth UUID"></div>
+<div class="field"><label for="assignmentNote">Izoh (ixtiyoriy)</label><input id="assignmentNote" maxlength="240" placeholder="Biriktirish sababi"></div>
+<button class="btn" id="assignCase">Reviewer biriktirish</button>
+</section>
+<section class="panel"><h2>Faol arizalar</h2><div class="table-wrap" id="cases"><div class="empty">Ma’lumot yuklanmagan.</div></div></section>
+<section class="panel"><h2>Reviewerlar</h2><div class="table-wrap" id="reviewers"><div class="empty">Ma’lumot yuklanmagan.</div></div></section>
+<section class="panel"><h2>Biriktirishlar</h2><div class="table-wrap" id="assignments"><div class="empty">Ma’lumot yuklanmagan.</div></div>
+<div class="field"><label for="revokeId">Bekor qilinadigan assignment UUID</label><input id="revokeId" placeholder="Assignment UUID"></div>
+<div class="field"><label for="revokeNote">Bekor qilish izohi</label><input id="revokeNote" maxlength="240" placeholder="Sabab"></div>
+<button class="btn danger" id="revokeCase">Biriktirishni bekor qilish</button></section>
+<section class="panel"><h2>Tayinlovlar tarixi</h2><div class="table-wrap" id="history"><div class="empty">Ma’lumot yuklanmagan.</div></div></section>
+</div></section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+"use strict";
+(()=>{
+ const $=id=>document.getElementById(id),status=$("status"),workspace=$("workspace");
+ const config=window.IDEALAB_CONFIG;
+ let client=null,session=null;
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ function message(text,type){status.textContent=text;status.className="status"+(type?" "+type:"")}
+ function safe(value){return String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
+ function table(target,columns,rows){const root=$(target);root.replaceChildren();if(!rows.length){const e=document.createElement("div");e.className="empty";e.textContent="Hozircha yozuv yo‘q.";root.append(e);return}const t=document.createElement("table"),thead=document.createElement("thead"),tr=document.createElement("tr");columns.forEach(c=>{const th=document.createElement("th");th.textContent=c[1];tr.append(th)});thead.append(tr);const tbody=document.createElement("tbody");rows.forEach(row=>{const line=document.createElement("tr");columns.forEach(c=>{const td=document.createElement("td");td.textContent=row[c[0]]??"—";line.append(td)});tbody.append(line)});t.append(thead,tbody);root.append(t)}
+ async function invoke(action,payload={}){if(!client||!session)throw new Error("Faol administrator sessiyasi yo‘q.");const {data,error}=await client.functions.invoke("supplier-verification-admin",{body:{action,...payload},headers:{Authorization:"Bearer "+session.access_token}});if(error)throw new Error("Server so‘rovi bajarilmadi. Ruxsat yoki backend sozlamasini tekshiring.");if(data?.error)throw new Error(data.error);return data}
+ async function refresh(){try{const [cases,reviewers,assignments,history]=await Promise.all([invoke("list_cases"),invoke("list_reviewers"),invoke("list_assignments"),invoke("list_history")]);table("cases",[["id","Ariza UUID"],["status","Holat"],["submitted_at","Yuborilgan"]],cases.cases||[]);table("reviewers",[["user_id","Reviewer UUID"],["is_active","Faol"],["granted_at","Tayinlangan"],["note","Izoh"]],reviewers.reviewers||[]);table("assignments",[["id","Assignment UUID"],["application_id","Ariza UUID"],["reviewer_user_id","Reviewer UUID"],["is_active","Faol"],["assigned_at","Vaqt"]],assignments.assignments||[]);table("history",[["action","Amal"],["application_id","Ariza UUID"],["reviewer_user_id","Reviewer UUID"],["actor_user_id","Bajargan admin"],["created_at","Vaqt"],["note","Izoh"]],history.events||[]);message("Administrator tasdiqlandi. Ma’lumotlar yangilandi.","good")}catch(error){message(error.message,"bad")}}
+ function validate(id,label){const value=$(id).value.trim();if(!uuid.test(value))throw new Error(label+" UUID noto‘g‘ri.");return value}
+ async function start(){if(!config||config.mode!=="supabase"||!config.url||!config.anonKey||!window.supabase?.createClient){message("Backend ulanmagan. Ommaviy Supabase konfiguratsiyasi yo‘q; boshqaruv amallari o‘chirilgan.");return}try{client=window.supabase.createClient(config.url,config.anonKey,{auth:{persistSession:true,autoRefreshToken:true}});const {data,error}=await client.auth.getSession();if(error||!data.session){message("Avval IDEA LAB akkauntiga kiring. Administrator bo‘lmagan foydalanuvchiga boshqaruv ochilmaydi.","bad");return}session=data.session;await invoke("list_reviewers");workspace.classList.remove("locked");$("sessionInfo").textContent="Administrator sessiyasi: "+session.user.id;await refresh()}catch(_){session=null;workspace.classList.add("locked");message("Administrator huquqi tasdiqlanmadi yoki Auth sessiyasi mavjud emas. Boshqaruv oynasi yopiq qoldi.","bad")}}
+ $("refresh").addEventListener("click",refresh);
+ $("saveReviewer").addEventListener("click",async()=>{try{const reviewerUserId=validate("reviewerId","Reviewer");await invoke("set_reviewer",{reviewerUserId,isActive:$("reviewerState").value==="true",note:$("reviewerNote").value.trim()||null});message("Reviewer vakolati serverda yangilandi.","good");await refresh()}catch(e){message(e.message,"bad")}});
+ $("assignCase").addEventListener("click",async()=>{try{const applicationId=validate("caseId","Ariza"),reviewerUserId=validate("assignReviewerId","Reviewer");await invoke("assign_case",{applicationId,reviewerUserId,note:$("assignmentNote").value.trim()||null});message("Reviewer arizaga biriktirildi.","good");await refresh()}catch(e){message(e.message,"bad")}});
+ $("revokeCase").addEventListener("click",async()=>{try{const assignmentId=validate("revokeId","Assignment");await invoke("revoke_case",{assignmentId,note:$("revokeNote").value.trim()||null});message("Biriktirish bekor qilindi va tarixga yozildi.","good");await refresh()}catch(e){message(e.message,"bad")}});
+ start();
+})();
+</script><script src="assets/idea-shell.js" defer></script></body></html>

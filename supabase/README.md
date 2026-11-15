@@ -11,7 +11,8 @@ Bu papkadagi SQL — IDEA LAB backendini tayyorlash uchun. Hozir frontend Supaba
 5. `migrations/20261118_supplier_verification_private_storage.sql` — private hujjat bucket'i va Storage RLS siyosatlari.
 6. `migrations/20261119_supplier_verification_evidence_access_audit.sql` — vaqtinchalik yuklab olish havolasi berilganini qayd etuvchi audit jadvali.
 7. `migrations/20261120_supplier_verification_case_assignments.sql` — reviewerlarni alohida arizalarga biriktirish va o‘qish/qaror ruxsatlarini shu biriktirish bilan cheklash.
-8. `verification/security_audit.sql` — read-only tekshiruv so'rovlari.
+8. `migrations/20261121_supplier_verification_admin_control.sql` — administrator allowlist, reviewer vakolatlarini boshqarish, ariza assignment va audit tarixi.
+9. `verification/security_audit.sql` — read-only tekshiruv so'rovlari.
 
 ## Ishga tushirishdan oldin
 
@@ -44,3 +45,25 @@ Faqat frontend uchun mo'ljallangan publishable/anon key ishlatilishi mumkin. Ser
 `migrations/20261120_supplier_verification_case_assignments.sql` migration'i reviewerning umumiy allowlist vakolatini har bir arizaga alohida biriktirish bilan cheklaydi. Assignment jadvaliga faqat trusted service-role operatsiyasi kira oladi. Ariza, audit event va Storage evidence o‘qishlari hamda qaror RPC faol assignment talab qiladi.
 
 Bu migration hali qo‘llanmagan. Assignment berish/bekor qilish API'si, MFA va jonli RLS testlari alohida ishlab chiqilishi kerak. Production'da qo‘llamang; avval staging va ikki reviewer/two supplier sinovidan o'tkazing.
+
+## Tekshiruv boshqaruv markazi
+
+- Sahifa: `supplier-verification-admin.html`.
+- Edge Function: `functions/supplier-verification-admin/`.
+- Migration: `20261121_supplier_verification_admin_control.sql`.
+
+Birinchi administrator `supplier_verification_admins` jadvaliga faqat ishonchli database owner sessiyasi orqali qo‘shiladi. Haqiqiy UUID yoki credential'larni GitHub'ga yozmang. Keyingi reviewer faollashtirish, arizaga biriktirish, bekor qilish va tarixni ko‘rish amallari Edge Function orqali bajariladi. Har bir so‘rovda JWT tekshiriladi va admin allowlist qayta tekshiriladi. Service-role kaliti faqat Edge Function secret bo‘lib qoladi.
+
+Reviewer faolsizlantirilganda uning faol case assignment'lari ham bekor qilinadi va audit tarixiga yoziladi. Qayta faollashtirish eski assignment'larni tiklamaydi; admin qayta biriktirishi kerak.
+
+Deploy qilishdan oldin migration'larni tartib bilan staging'da qo‘llang, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_ORIGINS` secretlarini sozlang va Edge Function'ni deploy qiling. Frontend'da faqat publishable/anon konfiguratsiya bo‘lishi mumkin. Hozirgi repository demo holatida bo‘lsa, boshqaruv oynasi avtomatik bloklangan qoladi.
+
+## Tekshiruv boshqaruv markazi
+
+- UI: `supplier-verification-admin.html`.
+- Edge Function: `functions/supplier-verification-admin/`.
+- Migration: `migrations/20261121_supplier_verification_admin_control.sql`.
+
+Birinchi administratorni faqat ishonchli database owner sessiyasi orqali allowlist'ga kiriting. Reviewer vakolatini boshqarish, arizalar ro‘yxati, assignment berish/bekor qilish va tarix Edge Function orqali bajariladi. Reviewer deaktivatsiyasi barcha faol assignment'larni ham bekor qiladi. Hujjat download endpoint'i ham case assignment talab qiladi.
+
+Deploy va sozlash bo‘yicha batafsil ko‘rsatma `functions/supplier-verification-admin/README.md` ichida. Migration va function hali deploy qilinmagan; admin UI backend konfiguratsiyasi bo‘lmaganda yopiq turadi.

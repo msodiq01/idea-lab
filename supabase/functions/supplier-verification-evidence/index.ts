@@ -26,7 +26,7 @@ function json(body: unknown, status = 200, origin?: string) {
   if (origin) {
     headers.set("access-control-allow-origin", origin);
     headers.set("access-control-allow-methods", "POST, OPTIONS");
-    headers.set("access-control-allow-headers", "authorization, content-type");
+    headers.set("access-control-allow-headers", "authorization, apikey, content-type, x-client-info");
   }
   return new Response(JSON.stringify(body), { status, headers });
 }
@@ -55,7 +55,7 @@ Deno.serve(async (request) => {
       headers: {
         "access-control-allow-origin": origin ?? "null",
         "access-control-allow-methods": "POST, OPTIONS",
-        "access-control-allow-headers": "authorization, content-type",
+        "access-control-allow-headers": "authorization, apikey, content-type, x-client-info",
         "access-control-max-age": "600",
         "vary": "Origin",
       },
@@ -213,14 +213,22 @@ Deno.serve(async (request) => {
       if (applicationError) throw applicationError;
       const isOwner = application?.supplier_user_id === actor.id;
       const { data: reviewerRecord, error: reviewerError } = await admin
+        .from("supplier_verification_review_assignments")
+        .select("id")
+        .eq("application_id", evidence.application_id)
+        .eq("reviewer_user_id", actor.id)
+        .eq("is_active", true)
+        .maybeSingle();
+      if (reviewerError) throw reviewerError;
+      const { data: activeReviewer, error: activeReviewerError } = await admin
         .from("supplier_verification_reviewers")
         .select("user_id")
         .eq("user_id", actor.id)
         .eq("is_active", true)
         .maybeSingle();
-      if (reviewerError) throw reviewerError;
-      const isActiveReviewer = Boolean(reviewerRecord);
-      if (!isOwner && !isActiveReviewer) return json({ error: "Not authorized" }, 403, origin);
+      if (activeReviewerError) throw activeReviewerError;
+      const isAssignedReviewer = Boolean(reviewerRecord && activeReviewer);
+      if (!isOwner && !isAssignedReviewer) return json({ error: "Not authorized" }, 403, origin);
 
       const { data: signed, error: signError } = await admin.storage
         .from(BUCKET)
