@@ -10,7 +10,7 @@ Loyiha oddiy HTML/CSS/JavaScript frontend prototipidir. Repository papkasida lok
 
 `organizations.html` — kompaniya va tashkilot profili, demo a'zolar hamda loyiha bog'lanishlari uchun offline prototip. Ma'lumotlar shu brauzerning `localStorage` xotirasidagi `ideaLab.core.organizations` kalitida saqlanadi. Bu haqiqiy akkaunt, server sinxronlash, yuridik verifikatsiya yoki haqiqiy ruxsat tizimi emas.
 
-## Testlar
+## Platforma poydevori\n\nUmumiy validatsiya, xatolar, ariza status qoidalari, ommaviy profil DTO va offline adapter: [20 ta poydevor vazifasi](PLATFORM-FOUNDATION-20.md). Bu frontend yordamchilari server RLS yoki haqiqiy autentifikatsiya o'rnini bosmaydi.\n\n## Testlar
 
 Node.js o'rnatilgan muhitda repository ildizidan:
 
