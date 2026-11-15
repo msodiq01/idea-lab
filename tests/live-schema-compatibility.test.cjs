@@ -28,7 +28,7 @@ test("compatibility gate records the nine live tables and migration baseline", (
 test("compatibility gate blocks unsafe schema application and frontend activation", () => {
   assert.match(audit, /to‘g‘ridan-to‘g‘ri qo‘llash mumkin emas/);
   assert.match(audit, /Hozir bajarilmasligi kerak bo‘lgan ishlar/);
-  assert.match(audit, /ikki foydalanuvchili RLS sinovini ishlab turgan yagona loyiha ustida o‘tkazish/);
+  assert.match(audit, /ikki foydalanuvchili RLS sinovini ishlab turgan yagona loyiha ustida o‘tkazish/i);
   assert.match(config, /mode: "offline-demo"/);
   assert.doesNotMatch(config, /service_role/i);
 });
