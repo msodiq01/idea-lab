@@ -21,7 +21,7 @@
     return Object.freeze({ code, severity, message, count });
   }
   function audit(options = {}) {
-    const storage = options.storage || global.localStorage;
+    const storage = Object.prototype.hasOwnProperty.call(options, "storage") ? options.storage : global.localStorage;
     const keys = Array.isArray(options.keys) ? [...new Set(options.keys)] : [...DEFAULT_KEYS];
     const allowed = new Set(DEFAULT_KEYS);
     const findings = [];
