@@ -1,0 +1,9 @@
+# IDEA LAB Supabase CLI configuration.
+# Replace no project-specific identifiers here; link explicitly to staging at deploy time.
+# Keep gateway JWT verification enabled for both sensitive Edge Functions.
+
+[functions.supplier-verification-admin]
+verify_jwt = true
+
+[functions.supplier-verification-evidence]
+verify_jwt = true
