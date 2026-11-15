@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="IDEA LAB — vazifalar, maqsadlar va jamoa ishlarini boshqarish markazi.">
+<title>IDEA LAB | Boshqaruv markazi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/idea-shell.css">
+<style>
+:root{--m-bg:#f4f7fc;--m-ink:#17243a;--m-muted:#6d7b91;--m-line:#e3eaf3;--m-blue:#5146e5;--m-teal:#0e9f9a}
+body{background:var(--m-bg);color:var(--m-ink);font-family:Inter,Arial,sans-serif}
+.m-wrap{width:min(1180px,calc(100% - 36px));margin:32px auto 72px}
+.m-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:22px}
+.m-kicker{font-size:11px;letter-spacing:1.7px;font-weight:800;color:var(--m-blue)}
+.m-head h1{font-size:clamp(28px,4vw,42px);letter-spacing:-1.4px;margin:8px 0}
+.m-head p{margin:0;color:var(--m-muted);line-height:1.6;max-width:680px;font-size:13px}
+.m-demo{padding:8px 11px;border-radius:30px;background:#fff7e6;color:#946200;border:1px solid #f3dfb4;font-size:11px;font-weight:700;white-space:nowrap}
+.m-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.m-card,.m-panel{background:#fff;border:1px solid var(--m-line);border-radius:17px;box-shadow:0 8px 24px rgba(24,42,76,.04)}
+.m-card{padding:17px}.m-label{font-size:11px;color:var(--m-muted)}.m-value{font-size:29px;font-weight:800;letter-spacing:-1px;margin:9px 0 2px}.m-sub{font-size:10px;color:var(--m-muted)}
+.m-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:18px}
+.m-panel{padding:19px;min-width:0}.m-panel h2{font-size:16px;margin:0}.m-panel-intro{font-size:11px;color:var(--m-muted);margin:5px 0 16px;line-height:1.5}
+.m-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}.m-field{display:flex;flex-direction:column;gap:6px;min-width:0}.m-field.full{grid-column:1/-1}.m-field label{font-size:11px;font-weight:700;color:#4a5870}
+.m-field input,.m-field select,.m-field textarea{width:100%;min-height:42px;border:1px solid #dce4ef;border-radius:10px;padding:10px 11px;font:inherit;font-size:12px;color:var(--m-ink);background:#fff}
+.m-field textarea{min-height:70px;resize:vertical}
+.m-btn{border:0;border-radius:10px;padding:11px 14px;background:var(--m-blue);color:white;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.m-btn.secondary{background:#eef0ff;color:#4036c7}.m-btn.danger{background:#fff0f0;color:#b42318}.m-btn:focus-visible,.m-field input:focus-visible,.m-field select:focus-visible,.m-field textarea:focus-visible{outline:3px solid rgba(81,70,229,.2);outline-offset:1px}
+.m-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.m-list{display:flex;flex-direction:column;gap:9px}.m-item{border:1px solid var(--m-line);border-radius:12px;padding:12px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.m-item-main{min-width:0}.m-item strong{font-size:12px;display:block;overflow-wrap:anywhere}.m-item small{font-size:10px;color:var(--m-muted);display:block;margin-top:5px;line-height:1.5}
+.m-item-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.m-item select{border:1px solid var(--m-line);border-radius:8px;padding:7px;font-size:10px;background:white;color:var(--m-ink);max-width:125px}
+.m-pill{font-size:9px;font-weight:800;border-radius:30px;padding:5px 8px;background:#eef0ff;color:#453bd1;white-space:nowrap}
+.m-pill.done{background:#e8f7ef;color:#167647}.m-pill.late{background:#fff0e9;color:#b54708}
+.m-empty{padding:22px 10px;text-align:center;color:var(--m-muted);font-size:11px;line-height:1.6;border:1px dashed #d7e0ed;border-radius:12px}
+.m-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:20px 0 12px}.m-toolbar h2{font-size:16px;margin:0}.m-toolbar select{border:1px solid var(--m-line);border-radius:9px;padding:9px;background:#fff;color:var(--m-ink);font-size:11px}
+.m-goals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.m-goal{border:1px solid var(--m-line);border-radius:12px;padding:12px}.m-goal-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.m-goal strong{font-size:12px}.m-goal small{font-size:10px;color:var(--m-muted)}.m-progress{height:7px;border-radius:9px;background:#edf1f7;overflow:hidden;margin:12px 0 7px}.m-progress span{height:100%;display:block;background:linear-gradient(90deg,var(--m-blue),#18b8c3);border-radius:9px}.m-goal-controls{display:flex;align-items:center;gap:7px;margin-top:9px}.m-goal-controls input{width:62px;border:1px solid var(--m-line);border-radius:7px;padding:6px;font-size:10px}
+.m-note{font-size:10px;line-height:1.6;color:var(--m-muted);margin:14px 0 0;padding:11px 12px;background:#f7f9fd;border-radius:10px}
+@media(max-width:850px){.m-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.m-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.m-wrap{width:calc(100% - 24px);margin-top:22px}.m-head{display:block}.m-demo{display:inline-block;margin-top:12px}.m-panel{padding:14px}.m-form{grid-template-columns:1fr}.m-field.full{grid-column:auto}.m-goals{grid-template-columns:1fr}.m-item{display:block}.m-item-actions{justify-content:flex-start;margin-top:10px}}
+</style>
+</head>
+<body>
+<main class="m-wrap">
+<header class="m-head">
+ <div><div class="m-kicker">IDEA LAB / MANAGEMENT</div><h1>Boshqaruv markazi</h1><p>Maqsadlar, vazifalar, mas’ullar va bajarilish jarayonini bir joyda rejalashtiring va kuzating.</p></div>
+ <span class="m-demo">Mahalliy demo — serverga ulanmagan</span>
+</header>
+<section class="m-stats" aria-label="Boshqaruv ko‘rsatkichlari">
+ <article class="m-card"><div class="m-label">Jami vazifalar</div><div class="m-value" id="totalTasks">0</div><div class="m-sub">Mahalliy ro‘yxat</div></article>
+ <article class="m-card"><div class="m-label">Bajarilgan</div><div class="m-value" id="doneTasks">0</div><div class="m-sub">Yakunlangan vazifalar</div></article>
+ <article class="m-card"><div class="m-label">Jarayonda</div><div class="m-value" id="activeTasks">0</div><div class="m-sub">Faol vazifalar</div></article>
+ <article class="m-card"><div class="m-label">Muddati o‘tgan</div><div class="m-value" id="lateTasks">0</div><div class="m-sub">Bajarilmagan va muddati o‘tgan</div></article>
+</section>
+<section class="m-grid">
+ <div class="m-panel">
+  <h2>Yangi vazifa yaratish</h2><p class="m-panel-intro">Vazifa nomi, mas’ul, yo‘nalish va muddatni kiriting.</p>
+  <form id="taskForm" class="m-form">
+   <div class="m-field full"><label for="taskTitle">Vazifa nomi *</label><input id="taskTitle" name="title" maxlength="120" required placeholder="Masalan: loyiha rejasini tayyorlash"></div>
+   <div class="m-field"><label for="taskOwner">Mas’ul shaxs</label><input id="taskOwner" name="owner" maxlength="80" placeholder="Ism yoki jamoa"></div>
+   <div class="m-field"><label for="taskArea">Yo‘nalish</label><select id="taskArea" name="area"><option value="Umumiy">Umumiy</option><option value="Loyiha">Loyiha</option><option value="Moliya">Moliya</option><option value="Jamoa">Jamoa</option><option value="Bozor">Bozor</option><option value="Tashkilot">Tashkilot</option></select></div>
+   <div class="m-field"><label for="taskDue">Muddat</label><input id="taskDue" name="due" type="date"></div>
+   <div class="m-field"><label for="taskPriority">Ustuvorlik</label><select id="taskPriority" name="priority"><option value="O‘rta">O‘rta</option><option value="Yuqori">Yuqori</option><option value="Past">Past</option></select></div>
+   <div class="m-field full"><button class="m-btn" type="submit">+ Vazifani qo‘shish</button></div>
+  </form>
+ </div>
+ <div class="m-panel">
+  <h2>Strategik maqsad qo‘shish</h2><p class="m-panel-intro">Katta maqsadni o‘lchanadigan natijaga aylantiring.</p>
+  <form id="goalForm" class="m-form">
+   <div class="m-field full"><label for="goalTitle">Maqsad nomi *</label><input id="goalTitle" maxlength="100" required placeholder="Masalan: yangi xizmatni ishga tushirish"></div>
+   <div class="m-field"><label for="goalOwner">Mas’ul</label><input id="goalOwner" maxlength="80" placeholder="Mas’ul shaxs"></div>
+   <div class="m-field"><label for="goalTarget">Maqsadli bajarilish (%)</label><input id="goalTarget" type="number" min="1" max="100" value="100"></div>
+   <div class="m-field full"><button class="m-btn secondary" type="submit">+ Maqsadni qo‘shish</button></div>
+  </form>
+  <p class="m-note">Bu versiyada maqsadlar va vazifalar faqat shu brauzerda saqlanadi. Tashkilot a’zolari bilan umumiy ishlash uchun server va rollarga asoslangan ruxsatlar keyingi bosqichda ulanadi.</p>
+ </div>
+</section>
+<section class="m-panel" style="margin-top:18px">
+ <div class="m-toolbar"><h2>Vazifalar ro‘yxati</h2><select id="taskFilter" aria-label="Vazifalarni holati bo‘yicha filtrlash"><option value="all">Barcha vazifalar</option><option value="todo">Yangi</option><option value="in-progress">Jarayonda</option><option value="done">Bajarilgan</option></select></div>
+ <div id="taskList" class="m-list"><div class="m-empty">Hozircha vazifalar yo‘q. Birinchi vazifani yuqoridagi shakl orqali yarating.</div></div>
+</section>
+<section class="m-panel" style="margin-top:18px">
+ <div class="m-toolbar"><h2>Strategik maqsadlar</h2><span class="m-label" id="goalCount">0 ta maqsad</span></div>
+ <div id="goalList" class="m-goals"><div class="m-empty" style="grid-column:1/-1">Hozircha maqsadlar kiritilmagan.</div></div>
+</section>
+</main>
+<script src="assets/idea-core.js"></script>
+<script>
+(function(){
+ "use strict";
+ const TASK_KEY="ideaLabManagementTasks";
+ const GOAL_KEY="ideaLabManagementGoals";
+ const $=id=>document.getElementById(id);
+ const safeRead=key=>{try{const value=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(value)?value:[]}catch(_){return[]}};
+ const safeWrite=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true}catch(_){alert("Brauzer xotirasiga saqlab bo‘lmadi. Xotira cheklovini tekshiring.");return false}};
+ const uid=()=>window.IDEALAB&&window.IDEALAB.createId?window.IDEALAB.createId("mgmt"):("mgmt-"+Date.now()+"-"+Math.random().toString(36).slice(2,8));
+ const clean=value=>String(value||"").trim();
+ const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-")};
+ let tasks=safeRead(TASK_KEY),goals=safeRead(GOAL_KEY);
+ const escape=value=>window.IDEALAB?window.IDEALAB.escapeHtml(value):String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ function renderStats(){
+  const open=tasks.filter(t=>t.status!=="done");
+  $("totalTasks").textContent=tasks.length;
+  $("doneTasks").textContent=tasks.filter(t=>t.status==="done").length;
+  $("activeTasks").textContent=tasks.filter(t=>t.status==="in-progress").length;
+  $("lateTasks").textContent=open.filter(t=>t.due&&t.due<today()).length;
+  $("goalCount").textContent=goals.length+" ta maqsad";
+ }
+ function renderTasks(){
+  const filter=$("taskFilter").value;
+  const rows=tasks.filter(t=>filter==="all"||t.status===filter);
+  if(!rows.length){$("taskList").innerHTML='<div class="m-empty">Tanlangan filtr bo‘yicha vazifalar topilmadi.</div>';return}
+  $("taskList").replaceChildren();
+  rows.slice().sort((a,b)=>(a.due||"9999").localeCompare(b.due||"9999")).forEach(task=>{
+   const item=document.createElement("article");item.className="m-item";
+   const main=document.createElement("div");main.className="m-item-main";
+   const title=document.createElement("strong");title.textContent=task.title;
+   const meta=document.createElement("small");meta.textContent=[task.area||"Umumiy",task.owner?"Mas’ul: "+task.owner:"Mas’ul belgilanmagan",task.due?"Muddat: "+task.due:"Muddat belgilanmagan","Ustuvorlik: "+(task.priority||"O‘rta")].join(" · ");
+   const pill=document.createElement("span");pill.className="m-pill"+(task.status==="done"?" done":"")+(task.due&&task.due<today()&&task.status!=="done"?" late":"");pill.textContent=task.status==="done"?"Bajarilgan":task.status==="in-progress"?"Jarayonda":task.due&&task.due<today()?"Muddati o‘tgan":"Yangi";
+   main.append(title,meta,pill);
+   const actions=document.createElement("div");actions.className="m-item-actions";
+   const select=document.createElement("select");select.setAttribute("aria-label",task.title+" holati");
+   [["todo","Yangi"],["in-progress","Jarayonda"],["done","Bajarilgan"]].forEach(([v,l])=>{const o=document.createElement("option");o.value=v;o.textContent=l;select.appendChild(o)});
+   select.value=task.status||"todo";select.addEventListener("change",()=>{tasks=tasks.map(t=>t.id===task.id?{...t,status:select.value,updatedAt:new Date().toISOString()}:t);if(safeWrite(TASK_KEY,tasks)){render();}});
+   const remove=document.createElement("button");remove.type="button";remove.className="m-btn danger";remove.textContent="O‘chirish";remove.addEventListener("click",()=>{if(!confirm("Ushbu vazifani o‘chirishni xohlaysizmi?"))return;tasks=tasks.filter(t=>t.id!==task.id);if(safeWrite(TASK_KEY,tasks))render()});
+   actions.append(select,remove);item.append(main,actions);$("taskList").appendChild(item);
+  });
+ }
+ function renderGoals(){
+  if(!goals.length){$("goalList").innerHTML='<div class="m-empty" style="grid-column:1/-1">Hozircha maqsadlar kiritilmagan.</div>';return}
+  $("goalList").replaceChildren();
+  goals.forEach(goal=>{
+   const card=document.createElement("article");card.className="m-goal";
+   const top=document.createElement("div");top.className="m-goal-top";
+   const title=document.createElement("strong");title.textContent=goal.title;
+   const owner=document.createElement("small");owner.textContent=goal.owner||"Mas’ul belgilanmagan";
+   top.append(title,owner);
+   const bar=document.createElement("div");bar.className="m-progress";const fill=document.createElement("span");fill.style.width=Math.max(0,Math.min(100,Number(goal.progress)||0))+"%";bar.appendChild(fill);
+   const percent=document.createElement("small");percent.textContent=(Number(goal.progress)||0)+"% bajarilgan";
+   const controls=document.createElement("div");controls.className="m-goal-controls";
+   const input=document.createElement("input");input.type="number";input.min="0";input.max="100";input.value=Number(goal.progress)||0;input.setAttribute("aria-label",goal.title+" bajarilish foizi");
+   const save=document.createElement("button");save.type="button";save.className="m-btn secondary";save.textContent="Yangilash";save.addEventListener("click",()=>{const v=Math.max(0,Math.min(100,Number(input.value)||0));goals=goals.map(g=>g.id===goal.id?{...g,progress:v,updatedAt:new Date().toISOString()}:g);if(safeWrite(GOAL_KEY,goals))render()});
+   const remove=document.createElement("button");remove.type="button";remove.className="m-btn danger";remove.textContent="O‘chirish";remove.addEventListener("click",()=>{if(!confirm("Ushbu maqsadni o‘chirishni xohlaysizmi?"))return;goals=goals.filter(g=>g.id!==goal.id);if(safeWrite(GOAL_KEY,goals))render()});
+   controls.append(input,save,remove);card.append(top,bar,percent,controls);$("goalList").appendChild(card);
+  });
+ }
+ function render(){renderStats();renderTasks();renderGoals()}
+ $("taskForm").addEventListener("submit",event=>{
+  event.preventDefault();const title=clean($("taskTitle").value);if(!title)return;
+  tasks.push({id:uid(),title,owner:clean($("taskOwner").value),area:$("taskArea").value,due:$("taskDue").value,priority:$("taskPriority").value,status:"todo",createdAt:new Date().toISOString()});
+  if(safeWrite(TASK_KEY,tasks)){event.target.reset();$("taskPriority").value="O‘rta";render()}
+ });
+ $("goalForm").addEventListener("submit",event=>{
+  event.preventDefault();const title=clean($("goalTitle").value);if(!title)return;
+  goals.push({id:uid(),title,owner:clean($("goalOwner").value),target:Math.max(1,Math.min(100,Number($("goalTarget").value)||100)),progress:0,createdAt:new Date().toISOString()});
+  if(safeWrite(GOAL_KEY,goals)){event.target.reset();$("goalTarget").value="100";render()}
+ });
+ $("taskFilter").addEventListener("change",renderTasks);
+ window.addEventListener("storage",event=>{if(event.key===TASK_KEY||event.key===GOAL_KEY){tasks=safeRead(TASK_KEY);goals=safeRead(GOAL_KEY);render()}});
+ render();
+})();
+</script>
+<script src="assets/idea-shell.js" defer></script>
+</body>
+</html>

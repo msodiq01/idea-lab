@@ -13,6 +13,8 @@ test("Global shell has one responsive primary navigation and no repeated metric 
   assert.match(shell, /Barcha bo‘limlar/);
   assert.match(shell, /Demo rejim/);
   assert.match(shell, /Yo‘l xaritasi/);
+  assert.match(shell, /Boshqaruv markazi/);
+  assert.match(shell, /if\(menu\)/);
   assert.doesNotMatch(shell, /il-metrics/);
 });
 
@@ -32,7 +34,7 @@ test("Global design system contains responsive SaaS tokens and mobile layouts", 
 });
 
 test("Core pages load the shared design system and shell", () => {
-  for (const page of ["index.html","dashboard.html","profile.html","projects.html","marketplace.html","teams.html","investors.html","specialists.html","organizations.html","offers.html","exchange.html","roadmap.html"]) {
+  for (const page of ["index.html","dashboard.html","profile.html","projects.html","marketplace.html","teams.html","investors.html","specialists.html","organizations.html","offers.html","exchange.html","roadmap.html","management.html"]) {
     const html = read(page);
     assert.match(html, /assets\/idea-shell\.css/, page + " should load global CSS");
     assert.match(html, /assets\/idea-shell\.js/, page + " should load global shell");
@@ -80,4 +82,17 @@ test("Personal cabinet summarizes incoming and outgoing applications from verifi
   assert.match(profile, /return \{incoming:incomingItems\.length,outgoing:outgoingItems\.length\}/);
   assert.match(profile, /applications\.incoming\+applications\.outgoing/);
   assert.match(profile, /applications\.incoming\+" kiruvchi · "\+applications\.outgoing\+" yuborilgan"/);
+});
+
+
+test("Management workspace supports local task and goal records without touching legacy data", () => {
+  const page = read("management.html");
+  assert.match(page, /ideaLabManagementTasks/);
+  assert.match(page, /ideaLabManagementGoals/);
+  assert.match(page, /Yangi vazifa yaratish/);
+  assert.match(page, /Strategik maqsad qo‘shish/);
+  assert.match(page, /localStorage\.setItem/);
+  assert.match(page, /Mahalliy demo — serverga ulanmagan/);
+  assert.match(page, /textContent=task\.title/);
+  assert.match(page, /if\(!confirm\(/);
 });
