@@ -942,26 +942,17 @@ investmentForm.addEventListener("submit", function(event) {
         createdAt: date
     };
 
-    // Asosiy arizalar ro'yxati
+    // Arizani yagona asosiy ro'yxatda saqlash.
+    // Investorlar sahifasi shu ro'yxatdan o'qiydi.
     const applications = readData("investmentApplications");
     applications.push(application);
 
-    // Takliflar sahifasi bilan moslik
-    const offers = readData("investmentOffers");
-    offers.push(application);
-
-    // Ikkala ro'yxatni saqlash
     const applicationsSaved = saveData(
         "investmentApplications",
         applications
     );
 
-    const offersSaved = saveData(
-        "investmentOffers",
-        offers
-    );
-
-    if (!applicationsSaved || !offersSaved) {
+    if (!applicationsSaved) {
         showMessage(
             "Saqlashda xatolik yuz berdi. Brauzer xotirasini tekshiring.",
             "error-message"
