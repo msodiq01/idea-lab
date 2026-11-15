@@ -14,7 +14,7 @@
  const groups=[
   ["Boshqaruv",[["Dashboard","dashboard.html"],["Boshqaruv markazi","management.html"],["Moliya markazi","finance.html"],["Analitika va hisobotlar","analytics.html"],["Shaxsiy kabinet","profile.html"],["Arizalar markazi","applications.html"],["Bildirishnomalar","notifications.html"],["Faoliyatlar tarixi","activity.html"],["Rollar va ruxsatlar","access.html"],["Ma’lumotlar zaxirasi","backup.html"],["Tashkilotlar","organizations.html"],["Mening to‘plamim","collection.html"]]],
   ["G‘oya va rivojlanish",[["Loyihalar","projects.html"],["Kelajak loyihalari","portfolio.html"],["Talab va taklif","exchange.html"],["Resurslar reyestri","resources.html"],["Tadbirlar kalendari","events.html"]]],
-  ["Biznes va bozor",[["Global bozor","marketplace.html"],["Investorlar","investors.html"],["Takliflar markazi","offers.html"]]],
+  ["Biznes va bozor",[["Global bozor","marketplace.html"],["Investorlar","investors.html"],["Mening investitsiyalarim","investor-portfolio.html"],["Takliflar markazi","offers.html"]]],
   ["Jamoa va imkoniyatlar",[["Jamoalar","teams.html"],["Vakansiyalar","teams.html#career-section"],["Mutaxassislar","specialists.html"]]],
   ["Platforma rivoji",[["Platforma haqida","about.html"],["Yo‘l xaritasi","roadmap.html"]]]
  ];
