@@ -27,6 +27,13 @@ test("summary cleans skills and handles empty or malformed input",()=>{
  assert.equal(result.primaryGoal,"Loyiha topish");
  assert.equal(model.summarize(null).segments.length,0);
 });
+test("profile activity choices are descriptive and never presented as permissions",()=>{
+ const page=fs.readFileSync(path.join(__dirname,"../profile.html"),"utf8");
+ assert.match(page,/Faoliyat yo‘nalishlaringizni tanlang/);
+ assert.match(page,/administrator huquqi yoki boshqa foydalanuvchilarning ma’lumotlariga kirish ruxsatini bermaydi/);
+ assert.doesNotMatch(page,/Faoliyat rollaringizni tanlang/);
+});
+
 test("profile page includes live descriptive summary",()=>{
  const page=fs.readFileSync(path.join(__dirname,"../profile.html"),"utf8");
  assert.match(page,/id="personaRoleChips"/);
