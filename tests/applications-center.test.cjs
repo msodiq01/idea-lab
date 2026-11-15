@@ -48,7 +48,7 @@ test("Foydalanuvchi matni HTML sifatida kiritilmaydi",()=>{
 test("Ariza holatlari markaziy yadrodagi ruxsat etilgan yo‘nalish bilan boshqariladi",()=>{
  assert.match(html,/const transitions=IDEALAB\.applications\.transitions/);
  assert.match(html,/IDEALAB\.applications\.nextStatuses\(r\.status,"owner"\)/);
- assert.match(html,/IDEALAB\.applications\.nextStatuses\(r\.status,"applicant"\)/);
+ assert.match(html,/IDEALAB\.applications\.nextStatuses\(from,"applicant"\)/);
 });
 test("Ariza yozuvi identifikatorsiz bo‘lsa noto‘g‘ri birinchi yozuv yangilanmaydi",()=>{
  assert.match(html,/else if\(all\[r\.index\]===r\.item\)current=r\.index/);
