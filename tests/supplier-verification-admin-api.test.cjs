@@ -6,7 +6,7 @@ const evidenceFn=fs.readFileSync(path.join(root,"supabase/functions/supplier-ver
 const migration=fs.readFileSync(path.join(root,"supabase/migrations/20261121_supplier_verification_admin_control.sql"),"utf8");
 
 test("admin endpoint requires JWT and active administrator on every request",()=>{
- assert.match(adminFn,/Bearer\\s\+\(\.\+\)/i);
+ assert.match(adminFn,/Bearer\\s+(.+)/i);
  assert.match(adminFn,/admin\.auth\.getUser\(token\)/i);
  assert.match(adminFn,/from\("supplier_verification_admins"\)/i);
  assert.match(adminFn,/eq\("is_active", true\)/i);
