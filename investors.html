@@ -733,7 +733,7 @@ function sendRequest(investorId) {
 
     const requests = readData("investorRequests");
 
-    requests.unshift({
+    const request = {
         id: createId(),
         investorId: investor.id,
         investorName: investor.name,
@@ -742,7 +742,11 @@ function sendRequest(investorId) {
         contact: contact.trim(),
         status: "Yuborildi",
         date: new Date().toISOString()
-    });
+    };
+    if (ideaCore && ideaCore.identity) {
+        Object.assign(request, ideaCore.identity.stamp(request, "applicant"));
+    }
+    requests.unshift(request);
 
     if (!saveData("investorRequests", requests)) {
         return;
@@ -760,9 +764,14 @@ function sendRequest(investorId) {
 ================================== */
 
 function showMyRequests() {
- const requests=readData("investorRequests"),container=document.getElementById("myRequests");
+ const profile=ideaCore&&ideaCore.identity?ideaCore.identity.current():null;
+ const requests=readData("investorRequests").filter(x=>profile&&(
+  String(x.applicantId||"")===String(profile.id)||
+  (profile.email&&String(x.applicantEmail||"").trim().toLowerCase()===String(profile.email).trim().toLowerCase())
+ ));
+ const container=document.getElementById("myRequests");
  document.getElementById("myRequestCount").textContent=requests.length+" ta so‘rov";container.replaceChildren();
- if(!requests.length){const e=document.createElement("div");e.className="empty";e.textContent="Hozircha yuborilgan so‘rovlaringiz mavjud emas.";container.append(e);return}
+ if(!requests.length){const e=document.createElement("div");e.className="empty";e.textContent="Hozircha profilingizga bog‘langan yuborilgan so‘rov yo‘q.";container.append(e);return}
  requests.forEach(x=>{const card=document.createElement("div");card.className="investor-card";card.style.marginBottom="12px";
  const top=document.createElement("div");top.className="card-top";const title=document.createElement("strong");title.textContent=x.projectName||"Nomsiz loyiha";const tag=document.createElement("span");tag.className="tag";tag.textContent=x.status||"Yuborildi";top.append(title,tag);
  const fields=[["Investor: ",x.investorName],["",x.description],["Aloqa: ",x.contact],["",x.date?new Date(x.date).toLocaleString("uz-UZ"):""]];
@@ -770,8 +779,12 @@ function showMyRequests() {
 }
 
 function updateRequestStats() {
-    document.getElementById("requestCount").textContent =
-        readData("investorRequests").length;
+    const profile=ideaCore&&ideaCore.identity?ideaCore.identity.current():null;
+    const requests=readData("investorRequests").filter(x=>profile&&(
+        String(x.applicantId||"")===String(profile.id)||
+        (profile.email&&String(x.applicantEmail||"").trim().toLowerCase()===String(profile.email).trim().toLowerCase())
+    ));
+    document.getElementById("requestCount").textContent=requests.length;
 }
 
 /* ==================================

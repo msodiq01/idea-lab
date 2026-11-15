@@ -12,7 +12,7 @@ test("Yagona arizalar markazi umumiy shell va offline cheklovini ochiq ko‘rsat
  assert.match(html,/haqiqiy akkaunt, server sinxronlash/);
 });
 test("Besh mavjud ariza oqimi o‘zgartirmasdan birlashtiriladi",()=>{
- for(const key of ["investmentApplications","jobApplications","teamApplications","offerApplications","resourceOrders"]) assert.ok(html.includes(key));
+ for(const key of ["investmentApplications","investorRequests","jobApplications","teamApplications","offerApplications","resourceOrders"]) assert.ok(html.includes(key));
 });
 test("Kiruvchi va yuborilgan arizalar profil identifikatori bilan filtrlanadi",()=>{
  assert.match(html,/same\(id,email\)/);
@@ -57,4 +57,11 @@ test("Ariza yozuvi identifikatorsiz bo‘lsa noto‘g‘ri birinchi yozuv yangil
 });
 test("Holatni saqlash xatosi foydalanuvchiga bildiriladi",()=>{
  assert.match(html,/if\(!saved\|\|saved\.ok!==true\)return alert/);
+});
+
+test("Investor bilan hamkorlik so‘rovlari yagona markazda faqat yuboruvchi profilga bog‘lanadi",()=>{
+ assert.match(html,/type:"investor-request"/);
+ assert.match(html,/key:"investorRequests"/);
+ assert.match(html,/outgoing:x=>same\(x\.applicantId,x\.applicantEmail\)/);
+ assert.match(html,/incoming:\(\)=>false/);
 });

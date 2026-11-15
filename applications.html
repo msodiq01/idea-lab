@@ -72,7 +72,7 @@
 </div>
 <div class="ac-filters">
 <input id="searchInput" type="search" placeholder="Loyiha, tashkilot yoki ism bo‘yicha qidirish" aria-label="Arizalarni qidirish">
-<select id="typeFilter" aria-label="Ariza turi"><option value="">Barcha yo‘nalishlar</option><option value="investment">Investitsiya</option><option value="job">Ish</option><option value="team">Jamoa</option><option value="offer">Taklif</option><option value="resource">Resurs</option></select>
+<select id="typeFilter" aria-label="Ariza turi"><option value="">Barcha yo‘nalishlar</option><option value="investment">Investitsiya</option><option value="investor-request">Investor bilan aloqa</option><option value="job">Ish</option><option value="team">Jamoa</option><option value="offer">Taklif</option><option value="resource">Resurs</option></select>
 <select id="statusFilter" aria-label="Ariza holati"><option value="">Barcha holatlar</option><option value="submitted">Yuborildi</option><option value="reviewing">Ko‘rib chiqilmoqda</option><option value="accepted">Qabul qilindi</option><option value="rejected">Rad etildi</option><option value="withdrawn">Bekor qilindi</option></select>
 </div>
 <div id="applicationList" class="ac-list" aria-live="polite"></div>
@@ -96,6 +96,7 @@
  const statuses={submitted:"Yuborildi",reviewing:"Ko‘rib chiqilmoqda",accepted:"Qabul qilindi",rejected:"Rad etildi",withdrawn:"Bekor qilindi"};
  const sources=[
   {key:"investmentApplications",type:"investment",label:"Investitsiya",title:x=>x.projectName||"Loyiha",incoming:x=>same(x.projectOwnerId,x.projectOwnerEmail),outgoing:x=>same(x.applicantId,x.applicantEmail),person:x=>x.investorName||x.applicantName||"Investor",amount:x=>x.offerAmount},
+  {key:"investorRequests",type:"investor-request",label:"Investor bilan aloqa",title:x=>x.projectName||"Loyiha",incoming:()=>false,outgoing:x=>same(x.applicantId,x.applicantEmail),person:x=>x.investorName||"Investor"},
   {key:"jobApplications",type:"job",label:"Ish",title:x=>x.jobTitle||"Vakansiya",incoming:x=>same(x.listingOwnerId,x.listingOwnerEmail),outgoing:x=>same(x.applicantId,x.applicantEmail),person:x=>x.applicantName||"Nomzod"},
   {key:"teamApplications",type:"team",label:"Jamoa",title:x=>x.teamName||"Jamoa",incoming:x=>same(x.listingOwnerId,x.listingOwnerEmail),outgoing:x=>same(x.applicantId,x.applicantEmail),person:x=>x.applicantName||"Ishtirokchi"},
   {key:"offerApplications",type:"offer",label:"Taklif",title:x=>x.offerTitle||"Taklif",incoming:x=>same(x.offerOwnerId,x.offerOwnerEmail),outgoing:x=>same(x.applicantId,x.applicantEmail),person:x=>x.applicantName||x.applicant||"Ishtirokchi"},
