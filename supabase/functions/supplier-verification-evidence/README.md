@@ -64,7 +64,7 @@ Use synthetic files only and two separate test accounts:
 - Supplier A cannot request a ticket for Supplier B's application.
 - Supplier A cannot finalize an object outside its own application/document folder.
 - Unsupported MIME type, empty file, and file over 10 MiB are rejected.
-- Only owner and active reviewer can request a download link.
+- Only the application owner or a reviewer with an active assignment to that exact application can request a download link.
 - Revoked reviewer and unrelated supplier are denied.
 - Download-link issuance creates exactly one access event.
 - Anonymous callers, invalid JWTs, unapproved origins, and non-POST methods are rejected.
