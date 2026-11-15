@@ -52,7 +52,7 @@ create table idea_app.profile_contacts (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint profile_contacts_phone_format check (
-    phone_e164 is null or phone_e164 ~ '^\\+[1-9][0-9]{7,14}$'
+    phone_e164 is null or phone_e164 ~ '^\+[1-9][0-9]{7,14}$'
   ),
   constraint profile_contacts_telegram_length check (
     telegram_handle is null or char_length(telegram_handle) between 2 and 64
