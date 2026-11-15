@@ -459,10 +459,17 @@ footer {
                 placeholder="Loyiha, investor, xabar yoki ariza raqami bo‘yicha qidirish...">
             <select class="field" id="applicationStatusFilter" aria-label="Ariza holati bo‘yicha filter">
                 <option value="">Barcha holatlar</option>
-                <option value="Yangi">Yangi</option>
-                <option value="Ko‘rib chiqilmoqda">Ko‘rib chiqilmoqda</option>
-                <option value="Qabul qilindi">Qabul qilindi</option>
-                <option value="Rad etildi">Rad etildi</option>
+                <option value="submitted">Yuborildi</option>
+                <option value="reviewing">Ko‘rib chiqilmoqda</option>
+                <option value="interview">Suhbat belgilandi</option>
+                <option value="accepted">Qabul qilindi</option>
+                <option value="negotiating">Muzokara olib borilmoqda</option>
+                <option value="agreed">Kelishuvga erishildi</option>
+                <option value="in_progress">Amalga oshirilmoqda</option>
+                <option value="completed">Yakunlandi</option>
+                <option value="rejected">Rad etildi</option>
+                <option value="withdrawn">Ariza qaytarib olindi</option>
+                <option value="cancelled">Bitim bekor qilindi</option>
             </select>
             <select class="field" id="applicationSort" aria-label="Arizalarni tartiblash">
                 <option value="newest">Eng yangi</option>
@@ -825,7 +832,7 @@ function showInvestmentApplications() {
             application.message,
             application.id
         ].join(" ").toLocaleLowerCase("uz-UZ");
-        const status = application.status || "Yangi";
+        const status = ideaCore.applications.normalizeStatus(application.status);
         return searchable.includes(search) && (!selectedStatus || status === selectedStatus);
     });
 
@@ -866,7 +873,7 @@ function showInvestmentApplications() {
         title.textContent = application.projectName || (project && project.name) || "Nomsiz loyiha";
         const status = document.createElement("span");
         status.className = "tag";
-        status.textContent = application.status || "Yangi";
+        status.textContent = ideaCore.applications.statusLabel(application.status);
         heading.append(title, status);
 
         const statusControl = document.createElement("div");
@@ -878,16 +885,17 @@ function showInvestmentApplications() {
         statusSelect.className = "field";
         statusSelect.setAttribute("aria-label", "Ariza holatini o‘zgartirish");
 
-        ["Yangi", "Ko‘rib chiqilmoqda", "Qabul qilindi", "Rad etildi"].forEach(function(value) {
+        const currentStatus = ideaCore.applications.normalizeStatus(application.status);
+        const allowedStatuses = [currentStatus].concat(
+            ideaCore.applications.nextStatuses(currentStatus, "owner")
+        );
+        allowedStatuses.forEach(function(value) {
             const option = document.createElement("option");
             option.value = value;
-            option.textContent = value;
+            option.textContent = ideaCore.applications.statusLabel(value);
             statusSelect.append(option);
         });
-
-        statusSelect.value = ["Yangi", "Ko‘rib chiqilmoqda", "Qabul qilindi", "Rad etildi"].includes(application.status)
-            ? application.status
-            : "Yangi";
+        statusSelect.value = currentStatus;
 
         statusSelect.addEventListener("change", function() {
             const currentApplications = readData("investmentApplications");
@@ -901,7 +909,12 @@ function showInvestmentApplications() {
                 return;
             }
 
-            const previousStatus = currentApplications[applicationIndex].status || "Yangi";
+            const previousStatus = ideaCore.applications.normalizeStatus(currentApplications[applicationIndex].status);
+            if (!ideaCore.applications.nextStatuses(previousStatus, "owner").includes(statusSelect.value)) {
+                alert("Bu holatga o‘tish ruxsat etilmagan.");
+                showInvestmentApplications();
+                return;
+            }
             currentApplications[applicationIndex].status = statusSelect.value;
             currentApplications[applicationIndex].updatedAt = new Date().toISOString();
 
@@ -917,7 +930,7 @@ function showInvestmentApplications() {
                 }
                 showInvestmentApplications();
             } else {
-                statusSelect.value = application.status || "Yangi";
+                statusSelect.value = ideaCore.applications.normalizeStatus(application.status);
             }
         });
 
