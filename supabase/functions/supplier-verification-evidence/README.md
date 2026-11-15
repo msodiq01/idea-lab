@@ -20,6 +20,8 @@ Apply in order in a disposable Supabase staging project:
 2. `20261117_supplier_verification_reviewers.sql`
 3. `20261118_supplier_verification_private_storage.sql`
 4. `20261119_supplier_verification_evidence_access_audit.sql`
+5. `20261120_supplier_verification_case_assignments.sql`
+6. `20261121_supplier_verification_admin_control.sql`
 
 The earlier core schema and security migrations must also be applied as documented in `supabase/README.md`.
 
@@ -49,7 +51,7 @@ Never send the service-role key to the browser. Never accept a caller-supplied s
 - This is an implementation foundation, not a deployed or production-validated API.
 - The function does not scan file contents for malware or verify that a PDF/image is genuine. Storage MIME metadata is not proof of file safety or authenticity.
 - Download audit records link issuance, not actual download, view, screenshot, or onward sharing.
-- The current reviewer allowlist is global; any active reviewer can access evidence across applications. Case-level reviewer assignment is not implemented.
+- Reviewer evidence download tickets require an active reviewer allowlist entry AND an active assignment to the evidence's application. The assignment migration narrows Storage reads as well. Admin operations are handled by the separate supplier-verification-admin Edge Function.
 - No rate limiting, quota policy, automated retention cleanup, file-content transformation, or deletion workflow is implemented.
 - A signed upload token is temporary but its validity period is controlled by Supabase Storage; the function does not claim a custom upload-token expiry.
 - The migration and function have not been applied/deployed. Do not upload real personal, identity, banking, or business documents until an authorized adult project owner and qualified reviewer have completed privacy/legal review and staging tests.
@@ -67,3 +69,11 @@ Use synthetic files only and two separate test accounts:
 - Download-link issuance creates exactly one access event.
 - Anonymous callers, invalid JWTs, unapproved origins, and non-POST methods are rejected.
 - No browser bundle or repository file contains the service-role secret.
+
+## Administrator control plane
+
+Deploy `supplier-verification-admin` only after migrations through `20261121` are applied in staging. It supports reviewer listing/activation/deactivation, active case listing, assignment listing/history, case assignment and revocation. Every request validates the caller JWT and checks the active `supplier_verification_admins` allowlist. Mutations call service-role-only SQL functions which independently check the admin actor ID and write audit events.
+
+Bootstrap the first admin using a trusted database owner session. Never place the service-role key in the browser. Deactivating a reviewer automatically revokes their active case assignments; reactivation does not restore old assignments.
+
+The evidence download action also checks the case assignment before issuing a signed URL. An active reviewer without assignment is denied. Deploy and test both functions only with synthetic records in staging.
