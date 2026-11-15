@@ -57,3 +57,13 @@ Birinchi administrator `supplier_verification_admins` jadvaliga faqat ishonchli 
 Reviewer faolsizlantirilganda uning faol case assignment'lari ham bekor qilinadi va audit tarixiga yoziladi. Qayta faollashtirish eski assignment'larni tiklamaydi; admin qayta biriktirishi kerak.
 
 Deploy qilishdan oldin migration'larni tartib bilan staging'da qo‘llang, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_ORIGINS` secretlarini sozlang va Edge Function'ni deploy qiling. Frontend'da faqat publishable/anon konfiguratsiya bo‘lishi mumkin. Hozirgi repository demo holatida bo‘lsa, boshqaruv oynasi avtomatik bloklangan qoladi.
+
+## Tekshiruv boshqaruv markazi
+
+- UI: `supplier-verification-admin.html`.
+- Edge Function: `functions/supplier-verification-admin/`.
+- Migration: `migrations/20261121_supplier_verification_admin_control.sql`.
+
+Birinchi administratorni faqat ishonchli database owner sessiyasi orqali allowlist'ga kiriting. Reviewer vakolatini boshqarish, arizalar ro‘yxati, assignment berish/bekor qilish va tarix Edge Function orqali bajariladi. Reviewer deaktivatsiyasi barcha faol assignment'larni ham bekor qiladi. Hujjat download endpoint'i ham case assignment talab qiladi.
+
+Deploy va sozlash bo‘yicha batafsil ko‘rsatma `functions/supplier-verification-admin/README.md` ichida. Migration va function hali deploy qilinmagan; admin UI backend konfiguratsiyasi bo‘lmaganda yopiq turadi.
