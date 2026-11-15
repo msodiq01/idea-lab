@@ -131,3 +131,26 @@ Hech qanday HTML, SQL, localStorage yozuvi yoki server sozlamasi ushbu hujjatlas
 - `README.md` — lokal ishga tushirish, test buyrug'i va offline demo cheklovlari hujjatlashtirildi.
 - Ushbu bosqichda HTML ichidagi JavaScript, test fayli sintaksisi, asosiy UI IDlari, navigatsiya va xavfsiz link qoidalari statik tekshiruvdan o'tdi.
 - Muhim: bu tekshiruvlar `node --test` buyrug'ini repository muhitida bajarish yoki haqiqiy mobil brauzer sinovining o'rnini bosmaydi.
+
+
+## 2026-11-15 — Organization Center UX va boshqaruv yaxshilanishi
+
+### Bajarilgan 10 ta ish
+1. Tashkilot profilini tahrirlash formasi qo'shildi.
+2. Rasm yuklamasdan, matnli logo belgisi va rang mavzusi qo'shildi.
+3. A'zolarni ism bo'yicha qidirish qo'shildi.
+4. A'zolik holati bo'yicha filtr qo'shildi.
+5. Yangi a'zo yozuvlari endi demo taklif (`invited`) sifatida yaratiladi.
+6. Taklifni qabul qilish yoki rad etish demo holatlari qo'shildi.
+7. Takroriy faol a'zo/taklif ismi tekshiruvi qo'shildi.
+8. Loyihalarni qidirish va bog'langan loyihalar soni ko'rsatildi.
+9. Mobil ekran uchun profil formasi va boshqaruv elementlari moslashtirildi.
+10. Organization Center regressiya testlari 10 tadan 20 taga kengaytirildi.
+
+### Xavfsizlik va demo chegaralari
+- Logo rasm fayli yuklanmaydi; shu tariqa brauzer xotirasiga katta fayl yozilmaydi.
+- Taklif yaratish real xabar yubormaydi va boshqa foydalanuvchiga bildirishnoma bermaydi.
+- A'zolik rollari haqiqiy server ruxsati emas.
+- Loyiha bog'lash organization yozuvidagi projectIds ro'yxatini yangilaydi; loyiha yozuvining o'zi o'zgarmaydi.
+- Mavjud tashkilot yozuvlari saqlanadi; logo maydonlari yo'q bo'lsa standart cyan belgi ko'rsatiladi.
+- Statik sintaksis va UI tekshiruvlari bajarildi; haqiqiy `node --test` va mobil brauzer sinovi foydalanuvchi muhitida bajarilishi kerak.
