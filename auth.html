@@ -107,6 +107,7 @@ main{width:min(1050px,calc(100% - 32px));margin:54px auto 70px;display:grid;grid
   Object.keys(forms).forEach(key=>forms[key].classList.toggle("hidden",key!==visible));
  }
  function switchMode(next){
+  if(mode!==next){phoneOtpSent=false;document.getElementById("phoneCodeField").classList.add("hidden");document.getElementById("phoneCode").value="";document.getElementById("phoneCode").disabled=true;document.getElementById("phoneSubmit").textContent="SMS kod yuborish";}
   mode=next;if(next==="reset")channel="email";renderForm();
  document.querySelectorAll("[data-mode]").forEach(btn=>{const active=btn.dataset.mode===next;btn.classList.toggle("active",active);btn.setAttribute("aria-selected",String(active))});
   document.getElementById("authTitle").textContent=next==="signup"?"Yangi akkaunt yaratish":next==="reset"?"Parolni tiklash":"Akkauntga kirish";
@@ -114,7 +115,7 @@ main{width:min(1050px,calc(100% - 32px));margin:54px auto 70px;display:grid;grid
   document.querySelectorAll("[data-channel]").forEach(btn=>{const active=btn.dataset.channel===channel;btn.classList.toggle("active",active);btn.setAttribute("aria-selected",String(active))});
   showMessage("");
  }
- function switchChannel(next){channel=next;phoneOtpSent=false;document.getElementById("phoneCodeField").classList.add("hidden");document.getElementById("phoneCode").value="";document.getElementById("phoneSubmit").textContent="SMS kod yuborish";renderForm();document.querySelectorAll("[data-channel]").forEach(btn=>{const active=btn.dataset.channel===next;btn.classList.toggle("active",active);btn.setAttribute("aria-selected",String(active))});showMessage("");}
+ function switchChannel(next){channel=next;phoneOtpSent=false;document.getElementById("phoneCodeField").classList.add("hidden");document.getElementById("phoneCode").value="";document.getElementById("phoneCode").disabled=true;document.getElementById("phoneSubmit").textContent="SMS kod yuborish";renderForm();document.querySelectorAll("[data-channel]").forEach(btn=>{const active=btn.dataset.channel===next;btn.classList.toggle("active",active);btn.setAttribute("aria-selected",String(active))});showMessage("");}
  function setEnabled(enabled){
   document.querySelectorAll("#loginForm input,#loginSubmit,#forgotButton,#signupForm input,#signupSubmit,#phoneForm input,#phoneSubmit,#resetForm input,#resetSubmit").forEach(el=>el.disabled=!enabled);
  }
