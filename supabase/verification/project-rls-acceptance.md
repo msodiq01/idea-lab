@@ -48,7 +48,20 @@ Status: test plan only. No production or staging data has been changed.
 
 ## Deliberate restrictions
 - Profile, profile_contacts, organizations, and organization_members remain closed.
-- Membership status changes/acceptance are not direct client updates.
-- Task assignment to another user is not supported yet.
+- Membership status changes use the guarded column-level update and invoker trigger in migration 20261116150000; do not grant table-wide UPDATE.
+- Invited users may accept/decline their own invite; owners/managers may decide pending requests, but only owners may change an active member role.
+- Task assignment to another user is available only to owner/manager and only for the project owner or an active member; contributors cannot reassign another person.
 - Public reads are policy-ready but not Data API reachable until exposure and grants are reviewed.
 - Three narrowly scoped SECURITY DEFINER helpers are in the unexposed idea_app schema, pin search_path, contain no dynamic SQL, bind decisions to auth.uid(), and grant EXECUTE only to authenticated.
+
+
+## Follow-on command migration (20261116150000)
+
+The command migration adds:
+- guarded membership transitions: invite accept/decline, pending request approval/rejection, voluntary leave, and owner-only active role changes;
+- immutable membership identity/invitation columns;
+- column-level UPDATE privileges only, with RLS still required for row access;
+- owner/manager task assignment to the project owner or an active member;
+- SECURITY INVOKER triggers; only the private cross-row membership lookup is SECURITY DEFINER, uses an empty search_path, and remains outside exposed schemas.
+
+It is still a repository draft. No schema exposure, table-wide grants, live migration, or two-user test has occurred.
