@@ -11,8 +11,8 @@ const audit = fs.readFileSync(path.join(root, "supabase/verification/live-schema
 const config = fs.readFileSync(path.join(root, "assets/idea-config.js"), "utf8");
 
 test("compatibility gate records the exact application schema table set", () => {
-  const tables = [...schema.matchAll(/create\\s+table\\s+if\\s+not\\s+exists\\s+public\\.([a-z0-9_]+)/gi)].map(match => match[1]);
-  assert.equal(tables.length, 18);
+  const tables = [...schema.matchAll(/create\s+table\s+if\s+not\s+exists\s+public\.([a-z0-9_]+)/gi)].map(match => match[1]);
+  assert.equal(tables.length, 19);
   for (const table of tables) assert.ok(audit.includes("`" + table + "`"), "missing documented table: " + table);
 });
 
