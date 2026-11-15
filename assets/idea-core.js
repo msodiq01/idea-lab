@@ -29,8 +29,13 @@
       reviewing: "Ko'rib chiqilmoqda",
       interview: "Suhbat belgilandi",
       accepted: "Qabul qilindi",
+      negotiating: "Muzokara olib borilmoqda",
+      agreed: "Kelishuvga erishildi",
+      in_progress: "Amalga oshirilmoqda",
+      completed: "Yakunlandi",
       rejected: "Rad etildi",
-      withdrawn: "Bekor qilindi"
+      withdrawn: "Ariza qaytarib olindi",
+      cancelled: "Bitim bekor qilindi"
     }),
     project: Object.freeze({
       draft: "Qoralama",
@@ -300,6 +305,37 @@
     cancelled: Object.freeze([])
   });
 
+  const APPLICATION_STATUS_ALIASES = Object.freeze({
+    "yangi":"submitted","new":"submitted","yuborildi":"submitted","submitted":"submitted","kutilmoqda":"submitted",
+    "ko'rib chiqilmoqda":"reviewing","ko‘rib chiqilmoqda":"reviewing","korib chiqilmoqda":"reviewing","reviewing":"reviewing",
+    "suhbat belgilandi":"interview","suhbat":"interview","interview":"interview",
+    "qabul qilindi":"accepted","tasdiqlandi":"accepted","accepted":"accepted",
+    "muzokara":"negotiating","muzokara olib borilmoqda":"negotiating","negotiating":"negotiating",
+    "kelishildi":"agreed","kelishuvga erishildi":"agreed","agreed":"agreed",
+    "jarayonda":"in_progress","amalga oshirilmoqda":"in_progress","in progress":"in_progress","in_progress":"in_progress",
+    "yakunlandi":"completed","completed":"completed",
+    "rad etildi":"rejected","rad etilgan":"rejected","rejected":"rejected",
+    "bekor qilindi":"withdrawn","bekor qilingan":"withdrawn","ariza qaytarib olindi":"withdrawn","withdrawn":"withdrawn",
+    "bitim bekor qilindi":"cancelled","cancelled":"cancelled","canceled":"cancelled"
+  });
+
+  function normalizeApplicationStatus(value) {
+    const key = String(value ?? "submitted").trim().toLowerCase().replace(/[’‘]/g, "'");
+    return APPLICATION_STATUS_ALIASES[key] || "submitted";
+  }
+
+  function applicationStatusLabel(value) {
+    const key = normalizeApplicationStatus(value);
+    return STATUS.application[key] || STATUS.application.submitted;
+  }
+
+  function nextApplicationStatuses(value, actor = "owner") {
+    const current = normalizeApplicationStatus(value);
+    const allowed = APPLICATION_TRANSITIONS[current] || [];
+    if (actor === "applicant") return allowed.includes("withdrawn") ? ["withdrawn"] : [];
+    return allowed.filter(status => status !== "withdrawn");
+  }
+
   function safeJsonParse(raw, fallback = null) {
     if (typeof raw !== "string") return fallback;
     try { return JSON.parse(raw); } catch (_) { return fallback; }
@@ -429,6 +465,9 @@
   });
   const applications = Object.freeze({
     transitions: APPLICATION_TRANSITIONS,
+    normalizeStatus: normalizeApplicationStatus,
+    statusLabel: applicationStatusLabel,
+    nextStatuses: nextApplicationStatuses,
     canTransition: canTransitionApplication
   });
   const privacy = Object.freeze({ publicProfile });
