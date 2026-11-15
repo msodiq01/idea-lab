@@ -58,7 +58,8 @@ Birinchi iteratsiyada ilova jadvallari quyidagi nomlash va mas'uliyat bo'yicha l
 | `idea_app.project_members` | Loyiha jamoasi | project + user |
 | `idea_app.project_tasks` | Vazifalar | project + creator + assignee |
 | `idea_app.project_updates` | Loyiha yangiliklari | project + author |
-| `idea_app.listings` | Ish, taklif, talab, resurs, mahsulot/xizmat e'lonlari | owner + optional organization |
+| `idea_app.project_listings` | Loyiha katalogidagi e'lon metadata'si | project |
+| `idea_app.applications` | Loyihaga qo'shilish arizasi | applicant + project |
 | `idea_app.listing_details` | Listing turiga xos xavfsiz metadata | listing |
 | `idea_app.specialist_profiles` | Mutaxassislik va ko'nikmalar | profile |
 | `idea_app.applications` | Loyiha/ish/jamoa/taklif/resursga murojaat | applicant + target |
@@ -95,6 +96,14 @@ Migration `20261116150000_idea_app_project_member_commands.sql` adds guarded sta
 - `idea_app` schema USAGE is granted to authenticated for trigger execution, but no Data API exposure or table-wide SELECT/INSERT/DELETE grants are made.
 
 Acceptance plan: `verification/project-commands-acceptance.md`. This remains a repository draft; no staging or production migration has been applied.
+
+### Public listings and project applications — repository draft
+
+Migration `20261116160000_idea_app_listings_applications.sql` adds `project_listings`, participant-scoped `applications`, and public directory/update projections. Listings appear only for published public projects in recruiting/active/completed states. Applicants can apply only to published recruiting projects; duplicate applications are blocked; applicant identity is bound to `auth.uid()`. Only the applicant, project owner, and active manager can read an application. Applicant withdrawal and owner/manager review decisions are constrained by an invoker trigger.
+
+The public projection views use `security_invoker = true`. However, their underlying view dependencies require narrow base-table grants that include internal join IDs. Therefore `idea_app` must NOT be exposed as a whole through the Data API. Before exposure, the public read surface must be separated into a dedicated API schema/route or independent public projection tables. No live migration or two-user JWT acceptance test has been run.
+
+Acceptance plan: `verification/listings-applications-acceptance.md`; read-only metadata check: `verification/listings-applications-preflight.sql`.
 
 ### Projects RLS — repository draft
 
@@ -160,8 +169,8 @@ Shuning uchun:
 | 1 | `idea_app` namespace yaratish | Mavjud `public` obyektlariga ta'sir yo'q |
 | 2 | Identity/profile va organizations | UID FK, privacy split, RLS, grants |
 | 3 | Projects, teams, tasks, updates | DDL va RLS draftlari tayyor; staging'da two-user acceptance hali bajarilishi kerak |
-| 4 | Listings + directory views | Maxfiy ustunlar yo'q; status filtrlari |
-| 5 | Applications + messages | Ishtirokchi doirasi, status transition |
+| 4 | Project listings + directory views | Safe public fields; status filtrlari; API exposure alohida gate |
+| 5 | Applications + messages | Ishtirokchi doirasi, duplicate va status transition |
 | 6 | Events + registrations + activity | Capacity/duplicate va audit testlari |
 | 7 | Frontend adapter pilot | Faqat bitta modul; offline demo fallback |
 | 8 | Legacy import dry-run | Preview, duplicate/invalid quarantine, mapping report |
