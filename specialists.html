@@ -160,8 +160,10 @@ footer{background:#091727;color:var(--muted);text-align:center;padding:25px;bord
     IDEA LAB — G'oya, jamoa, harakat, natija.
 </footer>
 
+<script src="assets/idea-core.js"></script>
 <script>
 
+const ideaCore = window.IDEALAB || null;
 const STORAGE_KEY = "ideaLabSpecialists";
 
 function getSpecialists() {
@@ -212,7 +214,7 @@ document.getElementById("profileForm").addEventListener("submit", function(event
     event.preventDefault();
 
     const person = {
-        id: Date.now(),
+        id: ideaCore ? ideaCore.createId() : Date.now(),
         name: document.getElementById("name").value.trim(),
         email: document.getElementById("email").value.trim(),
         phone: document.getElementById("phone").value.trim(),
@@ -229,11 +231,24 @@ document.getElementById("profileForm").addEventListener("submit", function(event
         createdAt: new Date().toISOString()
     };
 
+    if (ideaCore && !ideaCore.isValidPhone(person.phone)) {
+        alert("Telefon raqamini xalqaro formatda to‘g‘ri kiriting.");
+        return;
+    }
+
     const specialists = getSpecialists();
 
     specialists.push(person);
 
     if (!saveSpecialists(specialists)) return;
+
+    if (ideaCore) {
+        ideaCore.emit("specialist:profile-created", {
+            profileId: person.id,
+            profession: person.profession,
+            createdAt: person.createdAt
+        });
+    }
 
     alert("Profil ushbu brauzerda saqlandi. Boshqa foydalanuvchilarga hozircha ko‘rinmaydi.");
 
