@@ -48,7 +48,12 @@ const results = [];
 async function request(functionName, { method = "POST", action, token = "", requestOrigin = origin, contentType = "application/json" } = {}) {
   const headers = { apikey: anonKey, origin: requestOrigin };
   if (token) headers.authorization = "Bearer " + token;
-  if (contentType) headers["content-type"] = contentType;
+  if (method === "OPTIONS") {
+    headers["access-control-request-method"] = "POST";
+    headers["access-control-request-headers"] = "authorization, apikey, content-type, x-client-info";
+  } else if (contentType) {
+    headers["content-type"] = contentType;
+  }
   const response = await fetch(base.origin + "/functions/v1/" + functionName, {
     method,
     headers,
@@ -72,7 +77,7 @@ async function check(name, fn) {
 
 await check("admin function allows exact staging CORS preflight", async () => {
   const r = await request("supplier-verification-admin", { method: "OPTIONS" });
-  return { passed: r.status === 204 && r.headers.get("access-control-allow-origin") === origin, detail: "HTTP " + r.status };
+  return { passed: r.status === 204 && r.headers.get("access-control-allow-origin") === origin && (r.headers.get("access-control-allow-headers") || "").includes("authorization"), detail: "HTTP " + r.status };
 });
 
 await check("evidence function allows exact staging CORS preflight", async () => {
@@ -121,7 +126,7 @@ if (adminToken) {
 }
 
 if (userToken) {
-  await check("supplier owner cannot access a non-existent synthetic evidence ID", async () => {
+  await check("authenticated caller is rejected when evidence ID is missing", async () => {
     const r = await request("supplier-verification-evidence", {
       action: "download_ticket",
       token: userToken,
