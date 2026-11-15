@@ -137,3 +137,18 @@ Shaxsiy kabinet barcha modullarni o‘ziga ko‘chirib olmaydi. Harakat tegishli
 - Kelajak yo‘nalishlari: yagona akkaunt va ko‘p rolli profil; shaxsiy ish maydoni; yagona e’lonlar; arizalar, bildirishnomalar va xabarlar; ishonch/xavfsizlik; mahsulot-xizmat savdosi; moliya; logistika; mulk va infratuzilma; raqamli hujjatlar; ishlab chiqarish; ta’lim, ilm-fan, tadbirlar, ko‘ngillilik, tashkilot boshqaruvi; aqlli moslashtirish, analitika, AI avtomatlashtirish, xalqaro imkoniyatlar, API va mobil/IoT.
 - “Kelajak rejasi” kartalari ishga tushgan xizmat sifatida ko‘rsatilmaydi. Rejalarga muddat yoki va’da berilmagan.
 - tests/design-system.test.cjs bosh sahifa havolasi, navigatsiya, roadmap sahifasi va holat belgilarini tekshiradi.
+
+
+## Next expansion — finance, management and future-project portfolio
+
+The next product-design stage adds a shared management layer and structured finance workspaces without replacing existing modules. Detailed specification: `FINANCE-MANAGEMENT-ARCHITECTURE.md`.
+
+Priority work packages:
+1. Define personal, business/organization and project finance scopes, roles and access boundaries.
+2. Define transactions, budgets, invoices, receivables/payables, payment-provider records and audit history.
+3. Define management objects: goals, departments, tasks, milestones, decisions, risks, KPIs and reports.
+4. Structure future projects with purpose, owner, priority, stage, timeline, budget estimate, dependencies, resources and expected outcomes.
+5. Build a demo dashboard with unmistakable sample-data labels; do not imply real balances or bank connectivity.
+6. Implement server-side persistence, row-level security and multi-account tests before real finance data or integrations.
+
+No production payment, bank, wallet, accounting or live organization-finance feature is enabled by this documentation change.
