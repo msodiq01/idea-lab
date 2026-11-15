@@ -16,6 +16,13 @@ const accessAudit = read("20261119_supplier_verification_evidence_access_audit.s
 const assignments = read("20261120_supplier_verification_case_assignments.sql");
 const admin = read("20261121_supplier_verification_admin_control.sql");
 
+test("security-definer verification functions pin pg_catalog before public", () => {
+  assert.match(core, /security\s+definer\s+set\s+search_path\s*=\s*pg_catalog,\s*public/i);
+  assert.match(reviewers, /security\s+definer\s+set\s+search_path\s*=\s*pg_catalog,\s*public/i);
+  assert.match(assignments, /security\s+definer\s+set\s+search_path\s*=\s*pg_catalog,\s*public/i);
+  assert.match(admin, /security\s+definer\s+set\s+search_path\s*=\s*pg_catalog,\s*public/i);
+});
+
 test("every sensitive verification table has RLS enabled", () => {
   const tableMigrations = [
     [core, "supplier_verification_applications"],
