@@ -98,7 +98,7 @@ body{background:var(--m-bg);color:var(--m-ink);font-family:Inter,Arial,sans-seri
  const safeWrite=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));return true}catch(_){alert("Brauzer xotirasiga saqlab bo‘lmadi. Xotira cheklovini tekshiring.");return false}};
  const uid=()=>window.IDEALAB&&window.IDEALAB.createId?window.IDEALAB.createId("mgmt"):("mgmt-"+Date.now()+"-"+Math.random().toString(36).slice(2,8));
  const clean=value=>String(value||"").trim();
- const today=()=>new Date().toISOString().slice(0,10);
+ const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-")};
  let tasks=safeRead(TASK_KEY),goals=safeRead(GOAL_KEY);
  const escape=value=>window.IDEALAB?window.IDEALAB.escapeHtml(value):String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  function renderStats(){
