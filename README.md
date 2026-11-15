@@ -44,6 +44,7 @@ Tekshiruv: `node --test tests/*.test.cjs`. Bu avtomatik strukturaviy/regressiya 
 Backend hozircha **offline demo**. Supabase schema/migration tayyorlangan, lekin hech qanday loyiha credentials yoki server ulanishi tasdiqlanmagan. SQL'ni production'da ishga tushirmang.
 
 - [Backend integratsiya shartnomasi](BACKEND-INTEGRATION-CONTRACT.md)
+- [Legacy profil egaligini tasdiqlash va xavfsiz import shartnomasi](LEGACY-PROFILE-OWNERSHIP-PROOF.md)
 - [Xavfsizlik ko'rigi](BACKEND-SECURITY-REVIEW.md)
 - [Legacy migratsiya qo'llanmasi](DATA-MIGRATION-RUNBOOK.md)
 - [Legacy data mapping](LEGACY-DATA-MAPPING.md)
