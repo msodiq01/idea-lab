@@ -43,7 +43,6 @@ test("Future roadmap is reachable and clearly separates current demo from planne
   const home = read("index.html");
   const roadmap = read("roadmap.html");
   assert.ok(home.includes("href=\"roadmap.html\""));
-  assert.ok(home.includes("href=\"roadmap.html\""));
   assert.match(roadmap, /Mavjud platforma yo‘nalishlari/);
   assert.match(roadmap, /Yagona ekotizim poydevori/);
   assert.match(roadmap, /Iqtisodiyot, savdo va infratuzilma/);
