@@ -44,3 +44,16 @@ test("21 returns a safe inventory without record contents", () => { const r=load
 test("22 marks clean data as okay", () => assert.equal(load({projects:'[{"id":"1","name":"A"}]'}).api.audit().ok,true));
 test("23 flags malformed data as not okay", () => assert.equal(load({projects:"broken"}).api.audit().ok,false));
 test("24 detects large individual records", () => { const obj={id:"1",payload:"x".repeat(100*1024)}; assert.ok(codes(load({projects:JSON.stringify([obj])}).api.audit()).includes("LARGE_RECORD")); });
+
+test("25 includes verified resource, event and finance keys", () => {
+  const keys = load().api.allowedKeys;
+  for (const key of ["ideaLabResourceRegistry", "ideaLabEvents", "ideaLabFinanceTransactions", "ideaLabFinanceBudgets"]) {
+    assert.ok(keys.includes(key), key + " must be audited");
+  }
+});
+test("26 audits management and notification source keys", () => {
+  const keys = load().api.allowedKeys;
+  for (const key of ["ideaLabDismissedNotices", "ideaLabManagementTasks", "ideaLabFutureProjects"]) {
+    assert.ok(keys.includes(key), key + " must be audited");
+  }
+});

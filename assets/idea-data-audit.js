@@ -9,7 +9,10 @@
     "projects", "investmentApplications", "investmentOffers", "investorRequests",
     "jobApplications", "teamApplications", "resourceOrders", "ideaLabExchangeItems",
     "offers", "userProfile", "ideaLabSpecialists", "ideaLabProfile", "ideaLabCurrentUser",
-    "teams", "jobs", "specialists", "profile", "investors", "offerApplications", "offerMessages"
+    "teams", "jobs", "specialists", "profile", "investors", "offerApplications", "offerMessages",
+    "ideaLabResourceRegistry", "ideaLabEvents", "ideaLabDismissedNotices",
+    "ideaLabManagementTasks", "ideaLabFutureProjects",
+    "ideaLabFinanceTransactions", "ideaLabFinanceBudgets"
   ]);
   const MAX_ENTRY_BYTES = 1024 * 1024;
 
