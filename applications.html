@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="IDEA LAB yagona arizalar va murojaatlar markazi">
+<title>IDEA LAB | Arizalar markazi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/idea-shell.css">
+<style>
+:root{--ac-ink:#172033;--ac-muted:#69768d;--ac-line:#e5eaf2;--ac-primary:#5146e5}
+.ac-wrap{width:min(1180px,calc(100% - 40px));margin:34px auto 76px}
+.ac-hero{padding:34px 36px;border:1px solid #e5e8fb;border-radius:22px;background:linear-gradient(115deg,#fff,#f3f4ff);box-shadow:0 10px 30px rgba(28,42,74,.06)}
+.ac-kicker{color:var(--ac-primary);font-size:10px;font-weight:800;letter-spacing:1.7px}
+.ac-hero h1{margin:10px 0;font-size:clamp(28px,4vw,44px);letter-spacing:-1.7px}
+.ac-hero p{max-width:700px;color:var(--ac-muted);font-size:14px;line-height:1.8}
+.ac-notice{margin-top:17px;padding:12px 14px;border:1px solid #f2e5c9;border-radius:12px;background:#fffaf0;color:#806333;font-size:11px;line-height:1.7}
+.ac-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:20px 0}
+.ac-stat,.ac-panel{background:#fff;border:1px solid var(--ac-line);border-radius:16px;box-shadow:0 8px 25px rgba(28,42,74,.045)}
+.ac-stat{padding:17px}.ac-stat span{display:block;color:var(--ac-muted);font-size:11px}.ac-stat strong{display:block;margin-top:8px;font-size:27px;letter-spacing:-1px}
+.ac-panel{padding:20px;margin-top:16px}.ac-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px}
+.ac-head h2{font-size:18px;margin:0}.ac-head p{font-size:11px;color:var(--ac-muted);margin:4px 0 0}
+.ac-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}
+.ac-tab{border:1px solid var(--ac-line);border-radius:10px;padding:9px 13px;background:#fff;color:#5f6b81;font-size:11px;font-weight:700;cursor:pointer}
+.ac-tab[aria-pressed=true]{background:#f0efff;border-color:#dcd8ff;color:var(--ac-primary)}
+.ac-filters{display:grid;grid-template-columns:minmax(180px,1.5fr) repeat(2,minmax(140px,1fr));gap:10px}
+.ac-filters input,.ac-filters select{width:100%;min-height:42px;border:1px solid #dce3ef;border-radius:10px;padding:10px 12px;background:#fff;color:#243047;font:inherit;font-size:12px}
+.ac-list{display:grid;gap:11px;margin-top:16px}
+.ac-item{border:1px solid var(--ac-line);border-radius:14px;padding:16px;background:#fff}
+.ac-item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.ac-item h3{font-size:14px;margin:0 0 6px;overflow-wrap:anywhere}
+.ac-meta{display:flex;flex-wrap:wrap;gap:7px 13px;color:var(--ac-muted);font-size:10px}
+.ac-status{display:inline-flex;align-items:center;padding:5px 9px;border-radius:20px;background:#f2f4f8;color:#566176;font-size:10px;font-weight:800;white-space:nowrap}
+.ac-status.good{background:#eaf8f1;color:#16845a}.ac-status.warn{background:#fff5df;color:#94651b}.ac-status.bad{background:#fff0f0;color:#b84b55}
+.ac-desc{font-size:12px;line-height:1.7;color:#69768d;margin:11px 0}
+.ac-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.ac-actions button,.ac-export{border:1px solid var(--ac-line);border-radius:9px;padding:8px 11px;background:#fff;color:#526078;font-size:10px;font-weight:750;cursor:pointer}
+.ac-actions button.primary,.ac-export{background:var(--ac-primary);border-color:var(--ac-primary);color:#fff}
+.ac-actions button:disabled{opacity:.45;cursor:not-allowed}
+.ac-empty{padding:34px 18px;text-align:center;border:1px dashed #d9e0eb;border-radius:13px;color:var(--ac-muted);font-size:12px;line-height:1.8}
+.ac-empty strong{display:block;color:#26334a;font-size:14px;margin-bottom:4px}
+.ac-detail{margin-top:10px;color:var(--ac-muted);font-size:11px}
+.ac-detail summary{cursor:pointer;color:var(--ac-primary);font-weight:700}
+.ac-timeline{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.ac-step{padding:5px 8px;border-radius:8px;background:#f4f6fa;color:#8893a5;font-size:9px}.ac-step.current{background:#eeedff;color:var(--ac-primary);font-weight:800}
+.ac-footer{color:#8a95a8;font-size:10px;margin-top:15px;line-height:1.7}
+@media(max-width:760px){.ac-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ac-filters{grid-template-columns:1fr 1fr}.ac-filters input{grid-column:1/-1}}
+@media(max-width:520px){.ac-wrap{width:calc(100% - 24px);margin-top:20px}.ac-hero{padding:24px 20px}.ac-panel{padding:14px}.ac-filters{grid-template-columns:1fr}.ac-filters input{grid-column:auto}.ac-item-top{display:block}.ac-item-top>.ac-status{margin-top:9px}}
+</style>
+</head>
+<body>
+<main class="ac-wrap">
+<section class="ac-hero">
+<div class="ac-kicker">IDEA LAB / YAGONA BOSHQARUV</div>
+<h1>Arizalar markazi</h1>
+<p>Turli bo‘limlardan kelgan murojaatlarni bir joyda ko‘ring, holatini kuzating va javob bering. Bu markaz mavjud brauzer yozuvlarini birlashtiradi.</p>
+<div class="ac-notice">Demo rejim: ma’lumotlar faqat ushbu brauzerning localStorage xotirasida. Bu haqiqiy akkaunt, server sinxronlash yoki boshqa foydalanuvchiga bildirishnoma yuborish tizimi emas. Faqat profil ID yoki email bilan aniq bog‘langan arizalar ko‘rsatiladi.</div>
+</section>
+<section class="ac-stats" aria-label="Arizalar statistikasi">
+<div class="ac-stat"><span>Jami arizalar</span><strong id="statTotal">0</strong></div>
+<div class="ac-stat"><span>Yangi / yuborilgan</span><strong id="statNew">0</strong></div>
+<div class="ac-stat"><span>Ko‘rib chiqilmoqda</span><strong id="statReview">0</strong></div>
+<div class="ac-stat"><span>Qabul qilingan</span><strong id="statAccepted">0</strong></div>
+</section>
+<section class="ac-panel">
+<div class="ac-head"><div><h2>Murojaatlar oqimi</h2><p>Kiruvchi va yuborilgan arizalarni alohida boshqaring.</p></div><button class="ac-export" id="exportBtn" type="button">CSV eksport</button></div>
+<div class="ac-tabs" role="group" aria-label="Ariza yo‘nalishi">
+<button class="ac-tab" data-mode="all" aria-pressed="true">Barchasi</button>
+<button class="ac-tab" data-mode="incoming" aria-pressed="false">Kiruvchi</button>
+<button class="ac-tab" data-mode="outgoing" aria-pressed="false">Yuborilgan</button>
+</div>
+<div class="ac-filters">
+<input id="searchInput" type="search" placeholder="Loyiha, tashkilot yoki ism bo‘yicha qidirish" aria-label="Arizalarni qidirish">
+<select id="typeFilter" aria-label="Ariza turi"><option value="">Barcha yo‘nalishlar</option><option value="investment">Investitsiya</option><option value="job">Ish</option><option value="team">Jamoa</option><option value="offer">Taklif</option><option value="resource">Resurs</option></select>
+<select id="statusFilter" aria-label="Ariza holati"><option value="">Barcha holatlar</option><option value="submitted">Yuborildi</option><option value="reviewing">Ko‘rib chiqilmoqda</option><option value="accepted">Qabul qilindi</option><option value="rejected">Rad etildi</option><option value="withdrawn">Bekor qilindi</option></select>
+</div>
+<div id="applicationList" class="ac-list" aria-live="polite"></div>
+<p class="ac-footer" id="resultCount">0 ta ariza</p>
+</section>
+<section class="ac-panel">
+<div class="ac-head"><div><h2>Holat bosqichlari</h2><p>Yagona ish jarayoni uchun tavsiya etilgan ketma-ketlik.</p></div></div>
+<div class="ac-timeline"><span class="ac-step">Yangi</span><span class="ac-step">Ko‘rib chiqilmoqda</span><span class="ac-step">Muzokara</span><span class="ac-step">Qabul qilindi</span><span class="ac-step">Jarayonda</span><span class="ac-step">Yakunlandi</span></div>
+<p class="ac-footer">Hozirgi sahifa mavjud modullarning saqlash formatini buzmaydi. Kelajakda server API va yagona autentifikatsiya ulanganda, arizalar serverdan olinishi kerak.</p>
+</section>
+</main>
+<script src="assets/idea-core.js"></script>
+<script>
+"use strict";
+(()=>{
+ const $=id=>document.getElementById(id);
+ const profile=(()=>{try{return window.IDEALAB?IDEALAB.legacy.read("userProfile",null):JSON.parse(localStorage.getItem("userProfile")||"null")}catch(_){return null}})();
+ const norm=v=>String(v??"").trim().toLowerCase();
+ const read=key=>{try{const v=window.IDEALAB?IDEALAB.legacy.read(key,[]):JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(v)?v:[]}catch(_){return[]}};
+ const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ const statuses={submitted:"Yuborildi",reviewing:"Ko‘rib chiqilmoqda",accepted:"Qabul qilindi",rejected:"Rad etildi",withdrawn:"Bekor qilindi"};
+ const sources=[
+  {key:"investmentApplications",type:"investment",label:"Investitsiya",title:x=>x.projectName||"Loyiha",incoming:x=>same(x.projectOwnerId,x.projectOwnerEmail),outgoing:x=>same(x.applicantId,x.applicantEmail),person:x=>x.investorName||x.applicantName||"Investor",amount:x=>x.offerAmount},
+  {key:"jobApplications",type:"job",label:"Ish",title:x=>x.jobTitle||"Vakansiya",incoming:x=>same(x.listingOwnerId,x.listingOwnerEmail),outgoing:x=>same(x.applicantId,x.applicantEmail),person:x=>x.applicantName||"Nomzod"},
+  {key:"teamApplications",type:"team",label:"Jamoa",title:x=>x.teamName||"Jamoa",incoming:x=>same(x.listingOwnerId,x.listingOwnerEmail),outgoing:x=>same(x.applicantId,x.applicantEmail),person:x=>x.applicantName||"Ishtirokchi"},
+  {key:"offerApplications",type:"offer",label:"Taklif",title:x=>x.offerTitle||"Taklif",incoming:x=>same(x.offerOwnerId,x.offerOwnerEmail),outgoing:x=>same(x.applicantId,x.applicantEmail),person:x=>x.applicantName||x.applicant||"Ishtirokchi"},
+  {key:"resourceOrders",type:"resource",label:"Resurs",title:x=>x.resourceName||"Resurs buyurtmasi",incoming:x=>same(x.supplierId,x.supplierEmail),outgoing:x=>same(x.applicantId,x.applicantEmail)||same(null,x.customerEmail),person:x=>x.customerName||x.applicantName||"Murojaatchi"}
+ ];
+ function same(id,email){if(!profile)return false;const idMatch=Boolean(profile.id&&id&&String(profile.id)===String(id));const emailMatch=Boolean(profile.email&&email&&norm(profile.email)===norm(email));return idMatch||emailMatch}
+ let records=[],mode="all";
+ function collect(){records=[];if(!profile||!profile.id&&!profile.email)return; sources.forEach(s=>read(s.key).forEach((item,index)=>{const incoming=s.incoming(item),outgoing=s.outgoing(item);if(!incoming&&!outgoing)return;records.push({source:s,item,index,direction:incoming&&outgoing?"both":incoming?"incoming":"outgoing",id:String(item.id||s.key+"-"+index),status:normalizeStatus(item.status),title:s.title(item),person:s.person(item),date:item.createdAt||item.date||""})}))}
+ function normalizeStatus(v){const x=norm(v);if(["accepted","qabul qilindi","tasdiqlandi"].includes(x))return"accepted";if(["rejected","rad etildi"].includes(x))return"rejected";if(["withdrawn","bekor qilindi","bekor qilingan"].includes(x))return"withdrawn";if(["reviewing","ko‘rib chiqilmoqda","korib chiqilmoqda","jarayonda"].includes(x))return"reviewing";return"submitted"}
+ function visible(){const q=norm($("searchInput").value),type=$("typeFilter").value,status=$("statusFilter").value;return records.filter(r=>(mode==="all"||r.direction==="both"||r.direction===mode)&&(!type||r.source.type===type)&&(!status||r.status===status)&&(!q||norm([r.title,r.person,r.source.label,r.item.companyName,r.item.projectName].join(" ")).includes(q)))}
+ function statusClass(s){return s==="accepted"?"good":s==="rejected"||s==="withdrawn"?"bad":s==="reviewing"?"warn":""}
+ function update(r,next){const all=read(r.source.key);const current=all.find(x=>String(x.id||"")===String(r.item.id||""))||all[r.index];if(!current)return alert("Ariza topilmadi.");if(r.direction==="outgoing"&&next!=="withdrawn")return;current.status=next==="submitted"?"Yuborildi":statuses[next];current.updatedAt=new Date().toISOString();try{if(window.IDEALAB)IDEALAB.legacy.write(r.source.key,all);else localStorage.setItem(r.source.key,JSON.stringify(all))}catch(_){return alert("Saqlash amalga oshmadi.")}collect();render()}
+ function render(){const rows=visible(),all=records;$("statTotal").textContent=all.length;$("statNew").textContent=all.filter(x=>x.status==="submitted").length;$("statReview").textContent=all.filter(x=>x.status==="reviewing").length;$("statAccepted").textContent=all.filter(x=>x.status==="accepted").length;$("resultCount").textContent=rows.length+" ta ariza ko‘rsatilmoqda";const root=$("applicationList");root.replaceChildren();if(!profile){root.innerHTML='<div class="ac-empty"><strong>Avval profilingizni sozlang</strong>Arizalarni shaxsiy profilingiz bilan bog‘lash uchun <a href="profile.html">kabinetga o‘ting</a>.</div>';return}if(!rows.length){root.innerHTML='<div class="ac-empty"><strong>Arizalar topilmadi</strong>Tanlangan filtr bo‘yicha mos murojaat yo‘q yoki hali sizga bog‘langan ariza mavjud emas.</div>';return}
+ rows.sort((a,b)=>(Date.parse(b.date)||0)-(Date.parse(a.date)||0)).forEach(r=>{const card=document.createElement("article");card.className="ac-item";const heading=document.createElement("div");heading.className="ac-item-top";const info=document.createElement("div");const h=document.createElement("h3");h.textContent=r.title;const meta=document.createElement("div");meta.className="ac-meta";meta.textContent=r.source.label+" · "+(r.direction==="incoming"?"Kiruvchi":r.direction==="outgoing"?"Yuborilgan":"Sizga tegishli");info.append(h,meta);const badge=document.createElement("span");badge.className="ac-status "+statusClass(r.status);badge.textContent=statuses[r.status];heading.append(info,badge);card.append(heading);const desc=document.createElement("p");desc.className="ac-desc";desc.textContent=(r.direction==="incoming"?"Murojaatchi: ":"Ishtirokchi: ")+r.person+(r.source.amount?" · Taklif: "+String(r.source.amount):"");card.append(desc);const details=document.createElement("details");details.className="ac-detail";const summary=document.createElement("summary");summary.textContent="Batafsil ma’lumot";const detail=document.createElement("p");detail.textContent="Yaratilgan sana: "+(r.date?new Date(r.date).toLocaleString("uz-UZ"):"Ko‘rsatilmagan")+" · Yozuv: "+r.source.key;details.append(summary,detail);card.append(details);const actions=document.createElement("div");actions.className="ac-actions";if(r.direction==="incoming"){[["reviewing","Ko‘rib chiqish"],["accepted","Qabul qilish"],["rejected","Rad etish"]].forEach(([key,label])=>{const b=document.createElement("button");b.textContent=label;b.className=key==="accepted"?"primary":"";b.disabled=r.status===key||r.status==="accepted"||r.status==="rejected";b.addEventListener("click",()=>update(r,key));actions.append(b)})}else if(r.direction==="outgoing"&&r.status!=="withdrawn"&&r.status!=="accepted"&&r.status!=="rejected"){const b=document.createElement("button");b.textContent="Arizani bekor qilish";b.addEventListener("click",()=>{if(confirm("Arizani bekor qilmoqchimisiz?"))update(r,"withdrawn")});actions.append(b)}if(actions.childElementCount)card.append(actions);root.append(card)})}
+ $("searchInput").addEventListener("input",render);$("typeFilter").addEventListener("change",render);$("statusFilter").addEventListener("change",render);document.querySelectorAll(".ac-tab").forEach(b=>b.addEventListener("click",()=>{mode=b.dataset.mode;document.querySelectorAll(".ac-tab").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));render()}));
+ $("exportBtn").addEventListener("click",()=>{const rows=visible();const quote=v=>'"'+String(v??"").replace(/"/g,'""')+'"';const csv=["Yo‘nalish,Ariza,Tomon,Holat,Sana",...rows.map(r=>[r.source.label,r.title,r.person,statuses[r.status],r.date].map(quote).join(","))].join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="idea-lab-arizalar.csv";a.click();URL.revokeObjectURL(url)});
+ window.addEventListener("storage",e=>{if(!e.key||sources.some(s=>s.key===e.key)||e.key==="userProfile"){collect();render()}});
+ collect();render();
+})();
+</script>
+<script src="assets/idea-shell.js" defer></script>
+</body>
+</html>
