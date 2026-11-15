@@ -16,7 +16,7 @@ test("Global shell provides a skip link and a stable main-content target",()=>{
 test("Navigation uses semantic landmarks and descriptive labels",()=>{
  const shell=read("assets/idea-shell.js");
  assert.match(shell,/<nav class="il-links" aria-label="Asosiy yo‘nalishlar">/);
- assert.match(shell,/aria-label="IDEA LAB asosiy navigatsiyasi"/);
+ assert.match(shell,/setAttribute\("aria-label","IDEA LAB asosiy navigatsiyasi"\)/);
  assert.match(shell,/aria-current="page"/);
 });
 test("All sections remain reachable from the grouped menu",()=>{
