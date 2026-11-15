@@ -83,6 +83,30 @@ Shaxsiy kabinet barcha modullarni o‘ziga ko‘chirib olmaydi. Harakat tegishli
 
 **Qabul mezoni:** ikki yoki undan ortiq akkaunt o‘rtasida ma’lumotlar to‘g‘ri ajratilgan; begona foydalanuvchi yozuvni ko‘ra yoki o‘zgartira olmaydi.
 
-## Keyingi amaliy ish
+## Amalga oshirilgan ishlar — 2026-11-15
 
-Avval 1-bosqichni — navigatsiya va kirish tajribasini — alohida UI o‘zgarishi sifatida bajarish. Bunda faqat umumiy shell va unga tegishli CSS/JS o‘zgartiriladi; modullar va ularning ma’lumot yozish mexanizmlari tegilmaydi. O‘zgarishdan oldin va keyin havola hamda mobil ko‘rinish testlari bajariladi.
+### 1-bosqich: navigatsiya (qisman bajarildi)
+- Umumiy navigatsiya 5 ta asosiy yo‘nalish va guruhlangan “Barcha bo‘limlar” menyusiga ajratildi.
+- Mobil ko‘rinish uchun moslashuvchan menyu qo‘shildi.
+- Eski navigatsiya o‘rniga umumiy shell qo‘llanadi; sahifa mazmuni va modullar saqlanadi.
+- Mutaxassislar sahifasidagi eskirgan `jobs.html` havolasi mavjud vakansiya bo‘limiga yo‘naltirildi.
+
+### 2-bosqich: profil identifikatori (birinchi qadam bajarildi)
+- Core ichiga mavjud `userProfile.id` dan foydalanadigan identity yordamchilari qo‘shildi.
+- Yangi jamoa va vakansiya e’lonlariga profil egasi IDsi va emaili biriktiriladi (profil oldindan saqlangan bo‘lsa).
+- Yangi jamoa/ishga arizalarga arizachi IDsi/emaili va e’lon egasining IDsi biriktiriladi.
+- Yangi investitsiya arizalariga arizachi identifikatori va loyiha egasi IDsi biriktiriladi.
+- Kabinetga kiruvchi va yuborilgan investitsiya, ish va jamoa arizalarini ko‘rsatadigan umumiy markaz qo‘shildi.
+- Eski yozuvlar avtomatik ravishda foydalanuvchiga biriktirilmaydi; eski ma’lumotlar o‘zgartirilmagan.
+
+### Tekshiruv
+- `assets/idea-core.js`, `assets/idea-shell.js` JavaScript sintaksisi tekshirildi.
+- `teams.html`, `project-detail.html`, `profile.html` ichki JavaScript sintaksisi tekshirildi.
+- Umumiy CSS qavslar balansi tekshirildi.
+- Brauzerda to‘liq funksional, mobil va ikki foydalanuvchili testlar hali bajarilishi kerak.
+
+### Keyingi ish
+- Vakansiya va jamoa e’lonlarini yaratishdan oldin profil saqlanganini tushuntiruvchi, foydalanuvchini majburlamaydigan UX qo‘shish.
+- Ariza statusini kabinetdan o‘zgartirish uchun tegishli moduldagi mavjud xavfsiz status funksiyalariga yo‘naltirish yoki umumiy API yaratish.
+- Takliflar va resurs buyurtmalarini profil IDsi bilan bog‘lash.
+- So‘ng test brauzerida to‘liq oqimni tekshirish.
