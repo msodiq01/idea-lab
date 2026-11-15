@@ -178,6 +178,9 @@ for each row
 execute function idea_private.validate_project_task_assignee();
 
 -- Column-level privileges only. No SELECT/INSERT/DELETE or table-wide access.
+-- Schema USAGE is not Data API exposure; no table-wide privileges are granted.
+grant usage on schema idea_app to authenticated;
+
 grant update (membership_role, membership_status, joined_at, updated_at)
   on idea_app.project_members to authenticated;
 
