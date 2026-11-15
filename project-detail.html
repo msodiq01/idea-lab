@@ -660,7 +660,9 @@ button, input, textarea {
                         </div>
 
                     </div>
-                </section>
+                 <div class="actions" style="margin-top:16px"><a class="submit-btn" id="projectExpensesLink" href="project-expenses.html">Xarajatlar va resurslar hisobotini ko‘rish →</a></div>
+
+</section>
 
                 <section class="panel">
                     <div class="panel-heading">
@@ -878,6 +880,7 @@ function showProject() {
     }
 
     heroTitle.textContent = getValue(project.name, "Nomsiz loyiha");
+    document.getElementById("projectExpensesLink").href = "project-expenses.html?id=" + encodeURIComponent(String(project.id));
 
     heroDescription.textContent = getValue(
         project.description,

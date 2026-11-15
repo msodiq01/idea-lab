@@ -122,7 +122,7 @@ function render(){
   else estimateBox.textContent="Taxminiy ulush hisoblanmadi: loyiha bahosi kiritilmagan yoki hisoblash uchun ma’lumot yetarli emas.";
   card.append(estimateBox);
   const actions=element("div","offer-actions");
-  if(app.projectId){const link=element("a","","Loyiha tafsilotlari →");link.href="project-detail.html?id="+encodeURIComponent(String(app.projectId));actions.append(link)}
+  if(app.projectId){const link=element("a","","Loyiha tafsilotlari →");link.href="project-detail.html?id="+encodeURIComponent(String(app.projectId));actions.append(link);const expenses=element("a","","Xarajatlar hisoboti →");expenses.href="project-expenses.html?id="+encodeURIComponent(String(app.projectId));actions.append(expenses)}
   card.append(actions);list.append(card);
  });
 }
