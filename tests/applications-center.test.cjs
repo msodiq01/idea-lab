@@ -44,3 +44,17 @@ test("Foydalanuvchi matni HTML sifatida kiritilmaydi",()=>{
  assert.match(html,/textContent/);
  assert.match(html,/replaceChildren/);
 });
+
+test("Ariza holatlari faqat ruxsat etilgan yo‘nalishda o‘zgaradi",()=>{
+ assert.match(html,/const transitions=\{submitted:\["reviewing","accepted","rejected","withdrawn"\],reviewing:\["accepted","rejected","withdrawn"\],accepted:\[\],rejected:\[\],withdrawn:\[\]\}/);
+ assert.match(html,/function canTransition\(from,to,direction\)/);
+ assert.match(html,/canTransition\(r\.status,key,"incoming"\)/);
+ assert.match(html,/canTransition\(r\.status,"withdrawn","outgoing"\)/);
+});
+test("Ariza yozuvi identifikatorsiz bo‘lsa noto‘g‘ri birinchi yozuv yangilanmaydi",()=>{
+ assert.match(html,/else if\(all\[r\.index\]===r\.item\)current=r\.index/);
+ assert.doesNotMatch(html,/all\.find\(x=>String\(x\.id\|\|""\)===String\(r\.item\.id\|\|""\)\)\|\|all\[r\.index\]/);
+});
+test("Holatni saqlash xatosi foydalanuvchiga bildiriladi",()=>{
+ assert.match(html,/if\(!saved\|\|saved\.ok!==true\)return alert/);
+});
