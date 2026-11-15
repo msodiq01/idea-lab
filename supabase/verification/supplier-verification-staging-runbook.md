@@ -81,6 +81,34 @@ The placeholder is not a usable UUID. Never commit the substituted statement or 
 - Confirm the admin workspace unlocks only after the server accepts `list_reviewers`.
 - Keep all test records synthetic and clearly labelled.
 
+
+## 7A. Read-only smoke runner
+
+After both Edge Functions are deployed to staging and the allowed origin is configured, run the local Node.js smoke runner. It creates no records, uploads no files, and performs no reviewer/admin mutations.
+
+Set these values only in the local terminal environment (never in a committed file):
+
+- `STAGING_CONFIRM=YES`
+- `SUPABASE_URL=https://<staging-project-ref>.supabase.co`
+- `STAGING_PROJECT_REF=<same-staging-project-ref>`
+- `SUPABASE_ANON_KEY=<staging-public-anon-or-publishable-key>`
+- `STAGING_ALLOWED_ORIGIN=https://<exact-staging-frontend-origin>`
+
+Optional, for role-boundary checks using synthetic accounts:
+
+- `STAGING_USER_ACCESS_TOKEN=<synthetic-ordinary-user-token>`
+- `STAGING_ADMIN_ACCESS_TOKEN=<synthetic-staging-admin-token>`
+
+Then run:
+
+```sh
+node scripts/supplier-verification-staging-smoke.mjs
+```
+
+The script verifies the project-ref/HTTPS guard, exact CORS origin, unapproved-origin rejection, unauthenticated denial, and (when optional synthetic tokens are supplied) ordinary-user denial and administrator read-only access. It prints HTTP statuses only, not credentials or response payloads.
+
+A skipped optional check is not a pass. Do not paste access tokens into chat or GitHub. Do not use production credentials or real user accounts. The smoke runner supplements, but does not replace, the full acceptance matrix below.
+
 ## 7. Acceptance tests
 
 Use separate synthetic Supplier A, Supplier B, Reviewer A, Reviewer B, Administrator, and ordinary authenticated user accounts. Use synthetic application records and harmless test files only.
