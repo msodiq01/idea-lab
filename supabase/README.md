@@ -9,7 +9,8 @@ Bu papkadagi SQL — IDEA LAB backendini tayyorlash uchun. Hozir frontend Supaba
 3. `migrations/20261116_supplier_verification.sql` — ta’minotchi tekshiruvi uchun qo‘shimcha jadvallar va cheklangan RLS.
 4. `migrations/20261117_supplier_verification_reviewers.sql` — server tomonidan boshqariladigan reviewer allowlist va atomik qaror RPC.
 5. `migrations/20261118_supplier_verification_private_storage.sql` — private hujjat bucket'i va Storage RLS siyosatlari.
-6. `verification/security_audit.sql` — read-only tekshiruv so'rovlari.
+6. `migrations/20261119_supplier_verification_evidence_access_audit.sql` — vaqtinchalik yuklab olish havolasi berilganini qayd etuvchi audit jadvali.
+7. `verification/security_audit.sql` — read-only tekshiruv so'rovlari.
 
 ## Ishga tushirishdan oldin
 
@@ -32,3 +33,7 @@ Faqat frontend uchun mo'ljallangan publishable/anon key ishlatilishi mumkin. Ser
 - SQL staging'da bajarilgan: tasdiqlanmagan.
 - Auth va server API ishlayapti: yo'q.
 - LocalStorage import qilingan: yo'q.
+
+## Ta’minotchi hujjatlari Edge Function
+
+`functions/supplier-verification-evidence/` ichida autentifikatsiyalangan upload-ticket, upload-finalization va download-ticket API poydevori bor. Sozlash, client protokoli, maxfiy kalitlar va staging qabul mezonlari shu papkadagi README'da. Function deploy qilinmagan va real hujjat qabul qilishga hali ruxsat berilmaydi.
