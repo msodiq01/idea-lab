@@ -224,9 +224,10 @@ test("phone OTP verification uses SMS type and updates session status", async ()
   } }) };
   const auth = loadAuth(sdk);
   auth.configure(config, sdk);
-  const result = await auth.verifyPhoneOtp("+998901234567", "123456");
+  const result = await auth.verifyPhoneOtp("+998 90 123 45 67", "123 456");
   assert.equal(result.ok, true);
   assert.equal(received.type, "sms");
   assert.equal(received.token, "123456");
+  assert.equal(received.phone, "+998901234567");
   assert.equal(auth.getStatus().authenticated, true);
 });
