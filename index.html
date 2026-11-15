@@ -1352,16 +1352,15 @@
     const ideaCore = window.IDEALAB || null;
 
     function readData(key, fallback = []) {
+        if (ideaCore && ideaCore.legacy && ideaCore.legacy.keys.includes(key)) {
+            const value = ideaCore.legacy.read(key, fallback);
+            return value ?? fallback;
+        }
         try {
             const value = localStorage.getItem(key);
-
-            if (!value) {
-                return fallback;
-            }
-
+            if (!value) return fallback;
             const parsed = JSON.parse(value);
             return parsed ?? fallback;
-
         } catch (error) {
             console.error("Ma'lumotni o'qishda xatolik:", key, error);
             return fallback;
@@ -1562,12 +1561,18 @@
         const projects = getProjects();
         projects.push(project);
 
-        try {
-            localStorage.setItem(
-                "projects",
-                JSON.stringify(projects)
-            );
-        } catch (error) {
+        const saveResult = ideaCore && ideaCore.legacy
+            ? ideaCore.legacy.write("projects", projects)
+            : (() => {
+                try {
+                    localStorage.setItem("projects", JSON.stringify(projects));
+                    return { ok: true };
+                } catch (error) {
+                    return { ok: false, error };
+                }
+            })();
+
+        if (!saveResult.ok) {
             message.className = "form-message error";
             message.textContent =
                 "Ma’lumotni saqlash imkoni bo‘lmadi. Brauzer xotirasini tekshiring.";
