@@ -36,12 +36,12 @@
    '<a class="il-brand" href="index.html" aria-label="IDEA LAB bosh sahifasi"><span class="il-brand-mark" aria-hidden="true">✦</span><span>IDEA <b>LAB</b></span></a>'+
    '<nav class="il-links" aria-label="Asosiy yo‘nalishlar">'+
     primary.map(([name,url])=>link(name,url)).join("")+
-    '<details class="il-all-menu"><summary aria-label="Barcha bo‘limlar menyusini ochish">Barcha bo‘limlar</summary><div class="il-menu-panel" aria-label="Barcha platforma bo‘limlari">'+
-     groups.map(([heading,items])=>'<section class="il-menu-group" aria-label="'+heading+'"><strong>'+heading+'</strong>'+items.map(([name,url])=>link(name,url)).join("")+'</section>').join("")+
-    '</div></details>'+
    '</nav>'+
    '<div class="il-actions"><a class="il-quick-action" href="exchange.html">+ E’lon joylash</a><span class="il-status"><i class="il-dot" aria-hidden="true"></i> Demo rejim</span><a class="il-profile-link" id="il-profile-link" href="profile.html" aria-label="Shaxsiy kabinet"><span class="il-profile-avatar" id="il-profile-avatar" aria-hidden="true">IL</span><span class="il-profile-name" id="il-profile-name">Kabinet</span></a></div>'+
-  '</div>';
+  '</div>'+
+  '<nav class="il-section-nav" aria-label="Barcha bo‘limlar">'+
+   groups.map(([heading,items])=>'<section class="il-section-group"><span>'+heading+'</span>'+items.map(([name,url])=>link(name,url)).join("")+'</section>').join("")+
+  '</nav>';
 
  const main=document.querySelector("main")||document.querySelector(".container, .wrap, .d-wrap, .oc-wrap");
  if(main&&!main.id) main.id="il-main-content";
