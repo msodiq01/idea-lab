@@ -919,6 +919,16 @@ function showInvestmentApplications() {
             currentApplications[applicationIndex].updatedAt = new Date().toISOString();
 
             if (saveData("investmentApplications", currentApplications)) {
+                if (ideaCore.activity) {
+                    const logged = ideaCore.activity.recordApplication(currentApplications[applicationIndex], {
+                        source: "investmentApplications",
+                        title: currentApplications[applicationIndex].projectName || "Investitsiya arizasi",
+                        fromStatus: previousStatus,
+                        toStatus: statusSelect.value,
+                        recipientId: currentApplications[applicationIndex].applicantId || ""
+                    });
+                    if (!logged.ok) console.warn("Ariza tarixi saqlanmadi:", logged.error);
+                }
                 if (ideaCore) {
                     ideaCore.emit("investment:application-status-changed", {
                         applicationId: application.id,
