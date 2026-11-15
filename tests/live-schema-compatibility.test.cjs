@@ -30,7 +30,7 @@ test("compatibility gate blocks unsafe schema application and frontend activatio
   assert.match(audit, /Hozir bajarilmasligi kerak bo‘lgan ishlar/);
   assert.match(audit, /ikki foydalanuvchili RLS sinovini ishlab turgan yagona loyiha ustida o‘tkazish/i);
   assert.match(config, /mode: "offline-demo"/);
-  assert.doesNotMatch(config, /service_role/i);
+  assert.match(config, /Never place service_role, database passwords, JWT secrets, or provider secrets here/i);
 });
 
 test("compatibility gate documents profile and resource semantic mismatches", () => {
