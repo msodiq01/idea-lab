@@ -9,7 +9,7 @@ const migration = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrat
 test('Edge Function authenticates callers and keeps service credentials server-side', () => {
   assert.match(fn, /SUPABASE_SERVICE_ROLE_KEY/);
   assert.match(fn, /admin\.auth\.getUser\(tokenMatch\[1\]\)/);
-  assert.match(fn, /Bearer\s+/);
+  assert.match(fn, /Bearer\\s\+/);
   assert.doesNotMatch(fn, /localStorage|document\.cookie/);
 });
 
@@ -44,7 +44,7 @@ test('download links require owner or active reviewer with an exact active case 
 test('link issuance is audited and API response is not cacheable', () => {
   assert.match(fn, /supplier_verification_evidence_access_events/);
   assert.match(fn, /download_link_issued/);
-  assert.match(fn, /cache-control", "no-store"/);
+  assert.match(fn, /cache-control": "no-store"/);
   assert.match(migration, /revoke all on public\.supplier_verification_evidence_access_events from public, anon, authenticated/i);
   assert.match(migration, /grant all on public\.supplier_verification_evidence_access_events to service_role/i);
 });
