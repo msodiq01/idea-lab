@@ -40,7 +40,7 @@ test("4. A'zolar uchun email, telefon yoki parol yig'ilmaydi", () => {
 });
 
 test("5. A'zoni o'chirish o'rniga nofaol holatga o'tkazish qo'llanadi", () => {
-  assert.match(page, /m\.status="removed"/);
+  assert.match(page, /member\.status==="removed"/);
   assert.match(page, /Faol emas/);
 });
 
