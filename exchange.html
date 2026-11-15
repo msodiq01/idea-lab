@@ -60,6 +60,10 @@
 <section class="section-head"><div><h2>Mos kelishi mumkin bo‘lgan e’lonlar</h2><p>Bir xil yo‘nalishdagi qarama-qarshi talab va takliflar.</p></div></section>
 <div class="matches" id="matchCards"></div>
 <p class="notice">Moslik hozircha yo‘nalish bo‘yicha oddiy tavsiya hisoblanadi. Bu buyurtma, shartnoma yoki hamkorlik tasdiqlanganini anglatmaydi.</p>
+<section class="section-head"><div><h2>Boshqa bo‘limlardagi imkoniyatlar</h2><p>Loyihalar va avvalgi Takliflar markazidagi yozuvlar shu yerda ko‘rinadi.</p></div></section>
+<div class="matches" id="linkedOpportunities"></div>
+<p class="notice">Bu bo‘lim mavjud brauzer ma’lumotlarini faqat o‘qiydi. Yozuvlar ko‘chirilmaydi yoki o‘zgartirilmaydi.</p>
+
 </main>
 <script>
 (function(){
@@ -90,7 +94,19 @@ const contact=document.createElement("p");contact.textContent="Aloqa: "+item.con
 card.append(type,title,desc,meta,owner,contact);box.append(card);
 });
 renderMatches(all);
+renderLinkedOpportunities();
 }
+function renderLinkedOpportunities(){
+const box=$("linkedOpportunities");box.replaceChildren();
+const projects=safeReadKey("projects"),legacy=safeReadKey("offers");
+const entries=[
+...projects.slice(-4).reverse().map(p=>({kind:"LOYIHA",title:p.name||p.projectName||p.title||"Nomsiz loyiha",desc:p.description||p.direction||"Loyiha tafsilotlari",meta:p.direction||p.category||"Loyiha",href:"projects.html"})),
+...legacy.slice(0,4).map(o=>({kind:"TAKLIF",title:o.title||"Nomsiz taklif",desc:o.description||"Taklif tafsilotlari",meta:[o.category,o.location].filter(Boolean).join(" · "),href:"offers.html"}))
+];
+if(!entries.length){const e=document.createElement("div");e.className="empty";e.textContent="Hozircha boshqa bo‘limlarda ko‘rinadigan loyiha yoki taklif yo‘q.";box.append(e);return}
+entries.forEach(item=>{const c=document.createElement("article");c.className="match";const tag=document.createElement("div");tag.className="tag";tag.textContent=item.kind;const title=document.createElement("strong");title.textContent=item.title;const desc=document.createElement("p");desc.textContent=item.desc;const meta=document.createElement("p");meta.textContent=item.meta;const link=document.createElement("a");link.className="btn";link.href=item.href;link.textContent="Bo‘limni ochish →";c.append(tag,title,desc,meta,link);box.append(c)});
+}
+function safeReadKey(key){try{const value=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(value)?value:[]}catch(_){return[]}}
 function renderMatches(all){
 const box=$("matchCards");box.replaceChildren();
 const pairs=[];
