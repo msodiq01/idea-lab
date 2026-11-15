@@ -35,7 +35,7 @@ Jonli migration tarixida 4 ta yozuv bor:
 
 ## 3. Repository ilova sxemasi
 
-Repository'dagi `supabase/schema.sql` esa 18 ta ilova jadvalini belgilaydi:
+Repository'dagi `supabase/schema.sql` esa 19 ta ilova jadvalini belgilaydi:
 
 `profiles`, `projects`, `teams`, `job_posts`, `specialist_profiles`, `offers`, `investors`, `resources`, `project_investment_applications`, `team_applications`, `job_applications`, `offer_applications`, `offer_messages`, `resource_orders`, `project_members`, `project_tasks`, `project_updates`, `events`, `event_registrations`.
 
