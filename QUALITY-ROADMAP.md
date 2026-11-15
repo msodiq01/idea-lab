@@ -90,3 +90,37 @@ Bu testlar markaziy core funksiyalarini Node VM ichida tekshiradi; brauzer UI, m
 10. Oqimlar uchun brauzer test ssenariylari va regressiya ro'yxati.
 
 Hech qanday HTML, SQL, localStorage yozuvi yoki server sozlamasi ushbu hujjatlashtirish bosqichida o'zgartirilmadi.
+
+
+## 2026-11-15 — Organization Center offline prototype
+
+### Bajarilgan ishlar
+1. `organizations.html` yangi tashkilotlar markazi yaratildi.
+2. Tashkilot yaratish formasi: nom, turi, joylashuv, sayt va tavsif.
+3. Tashkilotlar ro'yxati va tanlangan tashkilot tafsilotlari.
+4. Demo a'zolarni ism va rol bilan qo'shish.
+5. A'zolikni o'chirmasdan nofaol holatga o'tkazish.
+6. Mavjud loyihalarni ID orqali tashkilotga bog'lash; asl loyiha yozuvlari o'zgarmaydi.
+7. Tashkilotlar ma'lumoti markaziy `IDEALAB.store` orqali `ideaLab.core.organizations` kalitida saqlanadi.
+8. Global navigatsiyaga "Tashkilotlar" bo'limi qo'shildi.
+9. Dashboard tezkor amallariga Organization Center havolasi qo'shildi.
+10. Offline demo, maxfiylik va haqiqiy vakolatlar serverga bog'liqligi interfeysda ochiq ko'rsatildi.
+
+### Cheklovlar
+- Bu bitta brauzerdagi prototip; foydalanuvchilararo ulashish yoki haqiqiy jamoaviy login yo'q.
+- A'zo yozuvlari faqat demo ismlardan iborat; telefon, email va hujjat talab qilinmaydi.
+- Tashkilot verifikatsiyasi va haqiqiy ruxsatlar mavjud emas.
+- Eski localStorage ma'lumotlari ko'chirilmadi, o'chirilmadi va qayta yozilmadi.
+
+### Keyingi 10 ish
+1. Tashkilot profilini tahrirlash UX.
+2. Tashkilot avatar/logo uchun xavfsiz preview prototipi.
+3. A'zolarni qidirish va rol bo'yicha filtrlash.
+4. A'zolik taklifi holatlari (demo).
+5. Tashkilot loyihalari uchun alohida ko'rinish.
+6. Loyiha bog'lanishlarini tekshirish va bekor qilish UX.
+7. Mobil qurilmalarda barcha formalarni sinash.
+8. Klaviatura bilan boshqarish va accessibility tekshiruvi.
+9. Saqlash xatolari va noto'g'ri ma'lumotlar uchun testlar.
+10. Tashkilot markazi uchun regressiya checklist.
+
