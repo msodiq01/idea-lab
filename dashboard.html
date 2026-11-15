@@ -35,6 +35,7 @@
 <article class="d-card"><span class="d-stat-icon">↗</span><div class="d-stat-label">Yuborilgan arizalar</div><div class="d-stat-value" id="applicationCount">0</div><div class="d-stat-foot">Mavjud mahalliy ariza yozuvlari</div></article>
 <article class="d-card"><span class="d-stat-icon">◎</span><div class="d-stat-label">Hamkorlik so‘rovlari</div><div class="d-stat-value" id="collaborationCount">0</div><div class="d-stat-foot">Jamoa va resurs murojaatlari</div></article>
 <article class="d-card"><span class="d-stat-icon">⌁</span><div class="d-stat-label">IoT qurilmalar</div><div class="d-stat-value">0</div><div class="d-stat-foot">Hozircha qurilmalar ulanmagan</div></article>
+<article class="d-card"><span class="d-stat-icon">⇄</span><div class="d-stat-label">Talab va takliflar</div><div class="d-stat-value" id="exchangeCount">0</div><div class="d-stat-foot">Mahalliy e’lonlar</div></article>
 </section>
 <section class="d-section">
 <div class="d-section-head"><div><h2>Tezkor amallar</h2><p>Kerakli bo‘limga bir qadamda o‘ting.</p></div></div>
@@ -72,9 +73,12 @@ const investment=read("investmentApplications");
 const jobs=read("jobApplications");
 const teams=read("teamApplications");
 const resources=read("resourceOrders");
+const exchange=read("ideaLabExchangeItems");
+const legacyOffers=read("offers");
 document.getElementById("projectCount").textContent=projects.length;
 document.getElementById("applicationCount").textContent=investment.length+jobs.length+teams.length+resources.length;
 document.getElementById("collaborationCount").textContent=teams.length+resources.length;
+document.getElementById("exchangeCount").textContent=exchange.length+legacyOffers.length;
 document.getElementById("todayLabel").textContent=new Intl.DateTimeFormat("uz-UZ",{dateStyle:"full"}).format(new Date());
 const list=document.getElementById("recentProjects");
 if(projects.length){
