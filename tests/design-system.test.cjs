@@ -34,7 +34,7 @@ test("Global design system contains responsive SaaS tokens and mobile layouts", 
 });
 
 test("Core pages load the shared design system and shell", () => {
-  for (const page of ["index.html","dashboard.html","profile.html","projects.html","marketplace.html","teams.html","investors.html","specialists.html","organizations.html","offers.html","exchange.html","roadmap.html","management.html","finance.html","portfolio.html"]) {
+  for (const page of ["index.html","dashboard.html","profile.html","projects.html","marketplace.html","teams.html","investors.html","specialists.html","organizations.html","offers.html","exchange.html","roadmap.html","management.html","finance.html","portfolio.html","analytics.html"]) {
     const html = read(page);
     assert.match(html, /assets\/idea-shell\.css/, page + " should load global CSS");
     assert.match(html, /assets\/idea-shell\.js/, page + " should load global shell");
@@ -122,4 +122,16 @@ test("Future project portfolio stores structured roadmap records locally", () =>
   assert.match(page, /Tashabbuslar portfeli/);
   assert.match(page, /Mahalliy demo — jamoaga sinxron emas/);
   assert.match(page, /Number\.isSafeInteger/);
+});
+
+
+test("Analytics center aggregates local finance, management and portfolio records", () => {
+  const page = read("analytics.html");
+  assert.match(page, /ideaLabFinanceTransactions/);
+  assert.match(page, /ideaLabManagementTasks/);
+  assert.match(page, /ideaLabFutureProjects/);
+  assert.match(page, /Chiqimlar tarkibi/);
+  assert.match(page, /Vazifalar holati/);
+  assert.match(page, /Hisobotni CSV formatida olish/);
+  assert.match(page, /Mahalliy ma’lumotlar — demo/);
 });
