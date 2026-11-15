@@ -2,7 +2,7 @@
 
 Versiya: 1.0.0  
 Sana: 2026-11-15  
-Holat: frontend yadro; sakkizta sahifada pilot integratsiya mavjud.
+Holat: frontend yadro; to‘qqizta sahifada pilot integratsiya mavjud.
 
 ## Yaratilgan fayl
 
