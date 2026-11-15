@@ -126,6 +126,6 @@ test("Live Supabase audit documents the read-only state and remaining Auth setup
 
 test("Security review states what remains unverified", () => {
   assert.match(review, /statik kod ko'rigi \+ jonli read-only audit/);
-  assert.match(review, /jonli audit faqat metadata\/read-only so'rovlar bilan cheklangan/);
+  assert.match(review, /jonli audit faqat metadata\/read-only so'rovlar bilan cheklangan/i);
   assert.match(review, /penetration test emas/);
 });
