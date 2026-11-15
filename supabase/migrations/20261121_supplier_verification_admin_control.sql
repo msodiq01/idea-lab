@@ -120,6 +120,14 @@ begin
   if p_note is not null and length(p_note) > 240 then
     raise exception 'Note is too long' using errcode = '22023';
   end if;
+  perform 1
+  from public.supplier_verification_reviewers r
+  where r.user_id = p_reviewer_user_id and r.is_active = true
+  for update;
+  if not found then
+    raise exception 'Active reviewer required' using errcode = '42501';
+  end if;
+
   select a.status into v_application_status
   from public.supplier_verification_applications a
   where a.id = p_application_id
@@ -129,14 +137,6 @@ begin
   end if;
   if v_application_status not in ('submitted','under_review','needs_more_info') then
     raise exception 'Only open verification cases can be assigned' using errcode = '22023';
-  end if;
-
-  perform 1
-  from public.supplier_verification_reviewers r
-  where r.user_id = p_reviewer_user_id and r.is_active = true
-  for update;
-  if not found then
-    raise exception 'Active reviewer required' using errcode = '42501';
   end if;
   if exists (
     select 1 from public.supplier_verification_review_assignments a
