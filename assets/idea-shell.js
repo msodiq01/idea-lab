@@ -40,13 +40,37 @@
      groups.map(([heading,items])=>'<section class="il-menu-group" aria-label="'+heading+'"><strong>'+heading+'</strong>'+items.map(([name,url])=>link(name,url)).join("")+'</section>').join("")+
     '</div></details>'+
    '</nav>'+
-   '<div class="il-actions"><span class="il-status"><i class="il-dot" aria-hidden="true"></i> Demo rejim</span>'+
+   '<div class="il-actions"><a class="il-profile-link" id="il-profile-link" href="profile.html" aria-label="Shaxsiy kabinet"><span class="il-profile-avatar" id="il-profile-avatar" aria-hidden="true">IL</span><span class="il-profile-name" id="il-profile-name">Kabinet</span></a><span class="il-status"><i class="il-dot" aria-hidden="true"></i> Demo rejim</span>'+
     '<a class="il-quick-action" href="exchange.html">+ E’lon joylash</a></div>'+
   '</div>';
 
  const main=document.querySelector("main")||document.querySelector(".container, .wrap, .d-wrap, .oc-wrap");
  if(main&&!main.id) main.id="il-main-content";
  document.body.insertBefore(root,skip.nextSibling);
+
+ /* Profil identifikatori va rasmi barcha sahifalarda bir xil ko‘rinadi. */
+ const profileLink=root.querySelector("#il-profile-link");
+ const profileAvatar=root.querySelector("#il-profile-avatar");
+ const profileName=root.querySelector("#il-profile-name");
+ const renderProfile=()=>{
+  let profile=null;
+  try{profile=JSON.parse(localStorage.getItem("userProfile")||"null")}catch(_){}
+  const name=profile&&typeof profile.fullName==="string"?profile.fullName.trim():"";
+  const initials=name.split(/\\s+/).filter(Boolean).slice(0,2).map(part=>part[0].toLocaleUpperCase("uz-UZ")).join("")||"IL";
+  const photo=profile&&typeof profile.avatarData==="string"&&/^data:image\\/(jpeg|png|webp);base64,/i.test(profile.avatarData)?profile.avatarData:"";
+  profileAvatar.replaceChildren();
+  if(photo){
+   const image=document.createElement("img");
+   image.src=photo;image.alt="";image.width=36;image.height=36;
+   profileAvatar.appendChild(image);
+  }else{profileAvatar.textContent=initials}
+  profileName.textContent=name||"Kabinet";
+  profileLink.setAttribute("aria-label",name?"Shaxsiy kabinet: "+name:"Shaxsiy kabinet");
+  profileLink.title=name||"Shaxsiy kabinet";
+ };
+ renderProfile();
+ window.addEventListener("storage",event=>{if(event.key==="userProfile")renderProfile()});
+ window.addEventListener("ideaLab:profile-updated",renderProfile);
 
  /* Eski navigatsiya yashiriladi; sahifa mazmuni va formalar saqlanadi. */
  document.querySelectorAll("body > header.navbar, body > header.header").forEach(node=>node.classList.add("il-legacy-nav-shell"));
