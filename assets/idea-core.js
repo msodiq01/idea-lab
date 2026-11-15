@@ -129,7 +129,7 @@
   const LEGACY_KEYS = Object.freeze([
     "projects", "investmentApplications", "investmentOffers", "investorRequests",
     "jobApplications", "teamApplications", "resourceOrders", "ideaLabExchangeItems",
-    "offers", "ideaLabSpecialists", "ideaLabProfile", "ideaLabCurrentUser",
+    "offers", "userProfile", "ideaLabSpecialists", "ideaLabProfile", "ideaLabCurrentUser",
     "teams", "teamApplications", "jobs", "jobApplications", "specialists", "profile", "investors", "offerApplications", "offerMessages"
   ]);
 
