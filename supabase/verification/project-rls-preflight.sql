@@ -20,7 +20,7 @@ select n.nspname as schema_name, p.proname as function_name,
 from pg_proc p
 join pg_namespace n on n.oid = p.pronamespace
 where n.nspname = 'idea_private'
-  and p.proname in ('is_project_owner', 'has_active_project_role', 'is_organization_owner')
+  and p.proname in ('is_project_owner', 'has_active_project_role', 'is_organization_owner', 'is_active_project_member', 'enforce_project_member_transition', 'validate_project_task_assignee')
 order by p.proname;
 
 select has_schema_privilege('anon', 'idea_app', 'USAGE') as anon_app_schema_usage,
