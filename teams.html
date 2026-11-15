@@ -778,72 +778,16 @@ const teamForm = document.getElementById("teamForm");
 const teamList = document.getElementById("teamList");
 
 function showTeams() {
-    const teams = readData("teams");
-
-    const search = document.getElementById("teamSearch")
-        .value.trim().toLowerCase();
-
-    const filter = document.getElementById("teamFilter").value;
-
-    const filtered = teams.filter(team => {
-        const text = [
-            team.name,
-            team.direction,
-            team.description,
-            team.roles,
-            team.project
-        ].join(" ").toLowerCase();
-
-        return text.includes(search) &&
-            (!filter || team.direction === filter);
-    });
-
-    document.getElementById("teamCount").textContent = teams.length;
-
-   if (!filtered.length) {
-    teamList.innerHTML = 
-        <div class="empty">
-            <h3>Hozircha jamoalar topilmadi</h3>
-            <p>Yangi jamoa yarating yoki qidiruvni o'zgartiring.</p>
-        </div>
-    ;
-    return;
-}
-   teamList.innerHTML = filtered.map(team => 
-    <article class="card">
-        <div class="card-top">
-            <span class="tag">${escapeHTML(team.direction || "Yo‘nalish yo‘q")}</span>
-            <span class="tag">JAMOA</span>
-        </div>
-
-        <h3>${escapeHTML(team.name || "Nomsiz jamoa")}</h3>
-
-        <p><strong>Rahbar:</strong>
-            ${escapeHTML(team.leader || "Belgilanmagan")}
-        </p>
-
-        <p><strong>Kerakli mutaxassislar:</strong>
-            ${escapeHTML(team.roles || "Aniqlashtiriladi")}
-        </p>
-
-        <p><strong>Loyiha:</strong>
-            ${escapeHTML(team.project || "Mustaqil jamoa")}
-        </p>
-
-        <p>${escapeHTML(team.description || "")}</p>
-
-        <div class="card-actions">
-            <button class="btn"
-                onclick="joinTeam('${escapeHTML(team.id)}')">
-                Jamoaga qo'shilish
-            </button>
-
-            <a class="btn btn-secondary" href="projects.html">
-                Loyihalarni ko'rish
-            </a>
-        </div>
-    </article>
-).join("");
+ const teams=readData("teams"),search=document.getElementById("teamSearch").value.trim().toLowerCase(),filter=document.getElementById("teamFilter").value;
+ const filtered=teams.filter(x=>[x.name,x.direction,x.description,x.roles,x.project].join(" ").toLowerCase().includes(search)&&(!filter||x.direction===filter));
+ document.getElementById("teamCount").textContent=teams.length;teamList.replaceChildren();
+ if(!filtered.length){const e=document.createElement("div");e.className="empty";const h=document.createElement("h3"),p=document.createElement("p");h.textContent="Hozircha jamoalar topilmadi";p.textContent="Yangi jamoa yarating yoki qidiruvni o‘zgartiring.";e.append(h,p);teamList.append(e);return}
+ filtered.forEach(x=>{const card=document.createElement("article");card.className="card";const top=document.createElement("div");top.className="card-top";
+ const tag=document.createElement("span");tag.className="tag";tag.textContent=x.direction||"Yo‘nalish yo‘q";const kind=document.createElement("span");kind.className="tag";kind.textContent="JAMOA";top.append(tag,kind);
+ const h=document.createElement("h3");h.textContent=x.name||"Nomsiz jamoa";card.append(top,h);
+ [["Rahbar: ",x.leader||"Belgilanmagan"],["Kerakli mutaxassislar: ",x.roles||"Aniqlashtiriladi"],["Loyiha: ",x.project||"Mustaqil jamoa"],["",x.description||""]].forEach(([k,v])=>{const p=document.createElement("p");p.textContent=k+v;card.append(p)});
+ const actions=document.createElement("div");actions.className="card-actions";const join=document.createElement("button");join.className="btn";join.type="button";join.textContent="Jamoaga qo‘shilish";join.addEventListener("click",()=>joinTeam(String(x.id)));
+ const link=document.createElement("a");link.className="btn btn-secondary";link.href="projects.html";link.textContent="Loyihalarni ko‘rish";actions.append(join,link);card.append(actions);teamList.append(card)});
 }
 
 if (teamForm) {
@@ -936,68 +880,15 @@ const jobForm = document.getElementById("jobForm");
 const jobList = document.getElementById("jobList");
 
 function showJobs() {
-    const jobs = readData("jobs");
-
-    const search = document.getElementById("jobSearch")
-        .value.trim().toLowerCase();
-
-    const filter = document.getElementById("jobFilter").value;
-
-    const filtered = jobs.filter(job => {
-        const text = [
-            job.jobTitle,
-            job.companyName,
-            job.location,
-            job.description,
-            job.jobType
-        ].join(" ").toLowerCase();
-
-        return text.includes(search) &&
-            (!filter  (job.jobType || "To'liq ish kuni") === filter);
-    });
-
-    document.getElementById("jobCount").textContent = jobs.length;
-
-    if (!filtered.length) {
-        jobList.innerHTML = 
-            <div class="empty">
-                <h3>Vakansiyalar topilmadi</h3>
-                <p>Hozircha yangi vakansiya joylashtirilmagan.</p>
-            </div>
-        ;
-        return;
-    }
-
-    jobList.innerHTML = filtered.map(job => 
-        <article class="card">
-            <div class="card-top">
-                <span class="tag">
-                    ${escapeHTML(job.jobType || "To'liq ish kuni")}
-                </span>
-                <span class="tag">VAKANSIYA</span>
-            </div>
-
-            <h3>${escapeHTML(job.jobTitle)}</h3>
-
-            <p><strong>Ish beruvchi:</strong>
-                ${escapeHTML(job.companyName)}</p>
-
-            <p><strong>Maosh:</strong>
-                ${escapeHTML(job.salary || "Kelishiladi")}</p>
-
-            <p><strong>Manzil:</strong>
-                ${escapeHTML(job.location)}</p>
-
-            <p>${escapeHTML(job.description)}</p>
-
-            <div class="card-actions">
-                <button class="btn btn-green"
-                    onclick="applyForJob('${escapeHTML(job.id)}')">
-                    Ariza yuborish
-                </button>
-            </div>
-        </article>
-    ).join("");
+ const jobs=readData("jobs"),search=document.getElementById("jobSearch").value.trim().toLowerCase(),filter=document.getElementById("jobFilter").value;
+ const filtered=jobs.filter(x=>[x.jobTitle,x.companyName,x.location,x.description,x.jobType].join(" ").toLowerCase().includes(search)&&(!filter||(x.jobType||"To‘liq ish kuni")===filter));
+ document.getElementById("jobCount").textContent=jobs.length;jobList.replaceChildren();
+ if(!filtered.length){const e=document.createElement("div");e.className="empty";const h=document.createElement("h3"),p=document.createElement("p");h.textContent="Vakansiyalar topilmadi";p.textContent="Hozircha yangi vakansiya joylashtirilmagan.";e.append(h,p);jobList.append(e);return}
+ filtered.forEach(x=>{const card=document.createElement("article");card.className="card";const top=document.createElement("div");top.className="card-top";
+ const tag=document.createElement("span");tag.className="tag";tag.textContent=x.jobType||"To‘liq ish kuni";const kind=document.createElement("span");kind.className="tag";kind.textContent="VAKANSIYA";top.append(tag,kind);
+ const h=document.createElement("h3");h.textContent=x.jobTitle||"Nomsiz vakansiya";card.append(top,h);
+ [["Ish beruvchi: ",x.companyName],["Maosh: ",x.salary||"Kelishiladi"],["Manzil: ",x.location],["",x.description]].forEach(([k,v])=>{const p=document.createElement("p");p.textContent=k+(v||"");card.append(p)});
+ const btn=document.createElement("button");btn.className="btn btn-green";btn.type="button";btn.textContent="Ariza yuborish";btn.addEventListener("click",()=>applyForJob(String(x.id)));card.append(btn);jobList.append(card)});
 }
 
 /* 6. VAKANSIYA JOYLASHTIRISH */
@@ -1089,50 +980,11 @@ function applyForJob(id) {
 /* 8. MENING ARIZALARIM */
 
 function showMyApplications() {
-    const teamApplications = readData("teamApplications");
-    const jobApplications = readData("jobApplications");
-
-    const all = [
-        ...teamApplications.map(item => ({
-            ...item,
-            category: "Jamoa",
-            title: item.teamName
-        })),
-
-        ...jobApplications.map(item => ({
-            ...item,
-            category: "Ish",
-            title: item.jobTitle
-        }))
-    ];
-
-    const container = document.getElementById("myApplications");
-
-    if (!all.length) {
-        container.innerHTML = 
-            <div class="empty">
-                Hozircha arizalaringiz mavjud emas.
-            </div>
-        ;
-        return;
-    }
-
-    container.innerHTML = all.map(item => 
-        <article class="card">
-            <span class="tag">${escapeHTML(item.category)}</span>
-
-            <h3>${escapeHTML(item.title)}</h3>
-
-            <p><strong>Ism:</strong>
-                ${escapeHTML(item.applicantName)}</p>
-
-            <p><strong>Holati:</strong>
-                ${escapeHTML(item.status || "Yangi")}</p>
-
-            <p><strong>Sana:</strong>
-                ${escapeHTML(item.date || "")}</p>
-        </article>
-    ).join("");
+ const all=[...readData("teamApplications").map(x=>({...x,category:"Jamoa",title:x.teamName})),...readData("jobApplications").map(x=>({...x,category:"Ish",title:x.jobTitle}))];
+ const container=document.getElementById("myApplications");container.replaceChildren();
+ if(!all.length){const e=document.createElement("div");e.className="empty";e.textContent="Hozircha arizalaringiz mavjud emas.";container.append(e);return}
+ all.forEach(x=>{const card=document.createElement("article");card.className="card";const tag=document.createElement("span");tag.className="tag";tag.textContent=x.category;const h=document.createElement("h3");h.textContent=x.title||"Murojaat";card.append(tag,h);
+ [["Ism: ",x.applicantName],["Holati: ",x.status||"Yangi"],["Sana: ",x.date||""]].forEach(([k,v])=>{const p=document.createElement("p");p.textContent=k+(v||"");card.append(p)});container.append(card)});
 }
 
 /* 9. STATISTIKA */
