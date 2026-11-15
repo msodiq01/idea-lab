@@ -703,6 +703,35 @@ button, input, textarea, select {
         <div class="cards" id="myApplications"></div>
     </section>
 
+    <section class="section">
+        <div class="section-heading">
+            <div>
+                <h2>Ish beruvchi paneli — kelgan arizalar</h2>
+                <p>Vakansiyalaringizga kelgan nomzodlarni ko‘ring va ariza holatini yangilang.</p>
+            </div>
+            <span class="tag" id="employerApplicationCount">0 ta ariza</span>
+        </div>
+        <div class="search-row">
+            <input class="search-input" id="employerApplicationSearch" type="search"
+                placeholder="Nomzod, vakansiya yoki telefon bo‘yicha qidirish...">
+            <select class="search-input" id="employerApplicationStatus" aria-label="Ariza holati">
+                <option value="">Barcha holatlar</option>
+                <option value="Yangi">Yangi</option>
+                <option value="Ko‘rib chiqilmoqda">Ko‘rib chiqilmoqda</option>
+                <option value="Suhbat belgilandi">Suhbat belgilandi</option>
+                <option value="Qabul qilindi">Qabul qilindi</option>
+                <option value="Rad etildi">Rad etildi</option>
+            </select>
+            <select class="search-input" id="employerApplicationSort" aria-label="Arizalarni saralash">
+                <option value="newest">Eng yangi</option>
+                <option value="oldest">Eng eski</option>
+            </select>
+        </div>
+        <p id="employerApplicationResultCount" aria-live="polite"></p>
+        <div class="cards" id="employerApplications"></div>
+        <p class="notice">Sinov rejimi: arizalar faqat ushbu brauzerda saqlanadi. Vakansiya egasi va nomzodlar o‘rtasida hali server orqali almashilmaydi.</p>
+    </section>
+
 </main>
 
 <footer class="footer">
@@ -987,6 +1016,115 @@ function showMyApplications() {
  [["Ism: ",x.applicantName],["Holati: ",x.status||"Yangi"],["Sana: ",x.date||""]].forEach(([k,v])=>{const p=document.createElement("p");p.textContent=k+(v||"");card.append(p)});container.append(card)});
 }
 
+/* 8A. ISH BERUVCHI UCHUN KELGAN ARIZALAR */
+
+function showEmployerApplications() {
+    const applications = readData("jobApplications");
+    const search = document.getElementById("employerApplicationSearch").value.trim().toLocaleLowerCase("uz-UZ");
+    const selectedStatus = document.getElementById("employerApplicationStatus").value;
+    const sortMode = document.getElementById("employerApplicationSort").value;
+    const container = document.getElementById("employerApplications");
+
+    const filtered = applications.filter(function(application) {
+        const text = [
+            application.applicantName,
+            application.jobTitle,
+            application.companyName,
+            application.applicantPhone
+        ].join(" ").toLocaleLowerCase("uz-UZ");
+        return text.includes(search) && (!selectedStatus || (application.status || "Yangi") === selectedStatus);
+    });
+
+    filtered.sort(function(a, b) {
+        const aDate = Date.parse(a.date || "") || 0;
+        const bDate = Date.parse(b.date || "") || 0;
+        return sortMode === "oldest" ? aDate - bDate : bDate - aDate;
+    });
+
+    document.getElementById("employerApplicationCount").textContent = applications.length + " ta ariza";
+    document.getElementById("employerApplicationResultCount").textContent =
+        "Ko‘rsatilmoqda: " + filtered.length + " / " + applications.length + " ta ariza";
+    container.replaceChildren();
+
+    if (!filtered.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        const title = document.createElement("h3");
+        const message = document.createElement("p");
+        title.textContent = applications.length ? "Mos ariza topilmadi" : "Hozircha vakansiya arizalari yo‘q";
+        message.textContent = applications.length
+            ? "Qidiruv yoki holat filtrini o‘zgartirib ko‘ring."
+            : "Vakansiyalaringizga yuborilgan arizalar shu yerda ko‘rinadi.";
+        empty.append(title, message);
+        container.append(empty);
+        return;
+    }
+
+    filtered.forEach(function(application) {
+        const card = document.createElement("article");
+        card.className = "card";
+        const heading = document.createElement("div");
+        heading.className = "card-top";
+        const title = document.createElement("h3");
+        title.textContent = application.applicantName || "Nomsiz nomzod";
+        const badge = document.createElement("span");
+        badge.className = "tag";
+        badge.textContent = application.status || "Yangi";
+        heading.append(title, badge);
+
+        const details = [
+            "Vakansiya: " + (application.jobTitle || "Ko‘rsatilmagan"),
+            "Korxona: " + (application.companyName || "Ko‘rsatilmagan"),
+            "Telefon: " + (application.applicantPhone || "Ko‘rsatilmagan"),
+            "Yuborilgan vaqt: " + (application.date ? new Date(application.date).toLocaleString("uz-UZ") : "Ko‘rsatilmagan")
+        ];
+        card.append(heading);
+        details.forEach(function(value) {
+            const paragraph = document.createElement("p");
+            paragraph.textContent = value;
+            card.append(paragraph);
+        });
+
+        const label = document.createElement("label");
+        label.textContent = "Ariza holatini boshqarish";
+        label.style.display = "block";
+        label.style.marginTop = "12px";
+        const select = document.createElement("select");
+        select.className = "search-input";
+        select.setAttribute("aria-label", "Nomzod arizasi holati");
+        ["Yangi", "Ko‘rib chiqilmoqda", "Suhbat belgilandi", "Qabul qilindi", "Rad etildi"].forEach(function(status) {
+            const option = document.createElement("option");
+            option.value = status;
+            option.textContent = status;
+            select.append(option);
+        });
+        select.value = ["Yangi", "Ko‘rib chiqilmoqda", "Suhbat belgilandi", "Qabul qilindi", "Rad etildi"].includes(application.status)
+            ? application.status
+            : "Yangi";
+        select.addEventListener("change", function() {
+            const current = readData("jobApplications");
+            const index = current.findIndex(function(item) {
+                return String(item.id) === String(application.id);
+            });
+            if (index < 0) {
+                alert("Ariza topilmadi. Sahifani yangilang.");
+                showEmployerApplications();
+                return;
+            }
+            current[index].status = select.value;
+            current[index].updatedAt = new Date().toISOString();
+            if (saveData("jobApplications", current)) {
+                showEmployerApplications();
+                showMyApplications();
+            } else {
+                select.value = application.status || "Yangi";
+            }
+        });
+        card.append(label, select);
+        container.append(card);
+    });
+}
+
 /* 9. STATISTIKA */
 
 function updateStats() {
@@ -1016,12 +1154,22 @@ document.getElementById("jobSearch")
 document.getElementById("jobFilter")
     .addEventListener("change", showJobs);
 
+document.getElementById("employerApplicationSearch")
+    .addEventListener("input", showEmployerApplications);
+
+document.getElementById("employerApplicationStatus")
+    .addEventListener("change", showEmployerApplications);
+
+document.getElementById("employerApplicationSort")
+    .addEventListener("change", showEmployerApplications);
+
 /* 11. SAHIFANI ISHGA TUSHIRISH */
 
 function initializePage() {
     showTeams();
     showJobs();
     showMyApplications();
+    showEmployerApplications();
     updateStats();
 }
 
