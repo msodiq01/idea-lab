@@ -83,6 +83,13 @@ test("Two-account RLS plan and legacy mapping cover unresolved ownership", () =>
   assert.match(mapping, /avtomatik birlashtirish mumkin emas/);
   assert.match(mapping, /karantin/i);
 });
+test("Live Supabase audit records the empty public view set and restricted trigger functions", () => {
+  assert.match(review, /public.*SQL view topilmadi/);
+  assert.match(review, /faqat `auth\.users` insert triggeriga biriktirilgan/);
+  assert.match(review, /anon` va `authenticated` uchun EXECUTE huquqi yo‘q/);
+  assert.match(review, /search_path/);
+});
+
 test("Live Supabase audit documents the read-only state and remaining Auth setup", () => {
   assert.match(review, /ACTIVE_HEALTHY/);
   assert.match(review, /9 ta jadval/);
