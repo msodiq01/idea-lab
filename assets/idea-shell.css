@@ -249,3 +249,59 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .il-back-link:hover,.il-home-link:hover{background:#f0efff;border-color:#dcd8ff;color:var(--il-primary);transform:translateY(-1px)}
 .il-back-link span{font-size:17px;line-height:1}
 @media(max-width:640px){.il-page-tools{width:calc(100% - 24px);margin-top:12px}.il-back-link,.il-home-link{min-height:42px}}
+
+
+/* Stage 13 — refined, consistent global navigation */
+body>header#il-global{
+ position:sticky;top:0;z-index:1100;
+ background:rgba(255,255,255,.94);
+ border:0;border-bottom:1px solid rgba(221,227,239,.9);
+ border-radius:0;padding:0;margin:0;width:100%;
+ box-shadow:0 8px 28px rgba(28,42,74,.065);
+}
+#il-global .il-top{
+ width:min(1320px,calc(100% - 56px));min-height:74px;gap:18px;
+}
+#il-global .il-brand{font-size:18px;letter-spacing:-.7px;gap:9px}
+#il-global .il-brand-mark{width:35px;height:35px;border-radius:12px}
+#il-global .il-links{gap:3px}
+#il-global .il-links>a,#il-global .il-all-menu>summary{
+ min-height:40px;padding:8px 10px;font-size:11px;font-weight:700;
+}
+#il-global .il-links>a[aria-current="page"]{
+ background:#f0efff;border-color:#e3e0ff;color:var(--il-primary);
+}
+#il-global .il-actions{gap:9px}
+#il-global .il-quick-action{white-space:nowrap}
+#il-global .il-profile-link{
+ min-height:44px;padding:3px 12px 3px 4px;gap:9px;
+ border-color:#e1e6f0;background:#fff;max-width:205px;
+}
+#il-global .il-profile-avatar{width:36px;height:36px;flex-basis:36px}
+#il-global .il-profile-name{max-width:132px;font-size:11px}
+#il-global .il-menu-panel{top:calc(100% + 8px)}
+@media(max-width:1120px){
+ #il-global .il-top{width:calc(100% - 32px);gap:12px}
+ #il-global .il-links{order:3;flex-basis:100%;overflow-x:auto;scrollbar-width:none}
+ #il-global .il-links::-webkit-scrollbar{display:none}
+ #il-global .il-actions{margin-left:auto}
+ #il-global .il-status{display:none}
+}
+@media(max-width:640px){
+ #il-global .il-top{width:calc(100% - 24px);min-height:0;padding:10px 0 7px;gap:7px}
+ #il-global .il-brand{font-size:16px;gap:7px}
+ #il-global .il-brand-mark{width:30px;height:30px;border-radius:10px}
+ #il-global .il-actions{gap:6px}
+ #il-global .il-quick-action{min-height:35px;padding:0 9px;font-size:10px}
+ #il-global .il-profile-link{min-height:36px;max-width:145px;padding:2px 7px 2px 3px;gap:5px}
+ #il-global .il-profile-avatar{width:30px;height:30px;flex-basis:30px}
+ #il-global .il-profile-name{max-width:82px;font-size:10px}
+ #il-global .il-links{gap:3px;padding:4px 0 2px}
+ #il-global .il-links>a,#il-global .il-all-menu>summary{min-height:40px;padding:7px 9px;font-size:10px}
+ #il-global .il-menu-panel{top:102px;left:12px;right:12px}
+}
+@media(max-width:380px){
+ #il-global .il-quick-action{font-size:0;width:36px;padding:0}
+ #il-global .il-quick-action::first-letter{font-size:16px}
+ #il-global .il-profile-name{max-width:66px}
+}
