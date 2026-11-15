@@ -25,10 +25,13 @@ test('finalization checks stored object metadata before inserting evidence metad
   assert.match(fn, /MIME_TYPES\.has\(contentType\)/);
   assert.match(fn, /size > MAX_BYTES/);
   assert.match(fn, /from\("supplier_verification_evidence"\)[\s\S]*\.insert\(/);
+  assert.match(fn, /UUID_RE\.test\(filename\)/);
 });
 
 test('download links require owner or active reviewer and expire quickly', () => {
-  assert.match(fn, /from\("supplier_verification_reviewers"\)/);\n  assert.match(fn, /\.eq\("user_id", actor\.id\)/);\n  assert.match(fn, /\.eq\("is_active", true\)/);
+  assert.match(fn, /from\("supplier_verification_reviewers"\)/);
+  assert.match(fn, /\.eq\("user_id", actor\.id\)/);
+  assert.match(fn, /\.eq\("is_active", true\)/);
   assert.match(fn, /if \(!isOwner && !isActiveReviewer\)/);
   assert.match(fn, /DOWNLOAD_TTL_SECONDS = 60/);
   assert.match(fn, /createSignedUrl\(evidence\.private_storage_path, DOWNLOAD_TTL_SECONDS\)/);
@@ -42,7 +45,7 @@ test('link issuance is audited and API response is not cacheable', () => {
   assert.match(migration, /grant all on public\.supplier_verification_evidence_access_events to service_role/i);
 });
 
-test('API uses explicit CORS allowlist and never enables public bucket access', () => {
+test('API uses explicit CORS allowlist and rejects unsupported methods', () => {
   assert.match(fn, /ALLOWED_ORIGINS/);
   assert.match(fn, /origins\.has\(origin\)/);
   assert.match(fn, /Method not allowed/);
