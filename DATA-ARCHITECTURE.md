@@ -207,3 +207,17 @@ RLS jadval darajasida, ustun maxfiyligi esa alohida ko'rinish/jadval/grant orqal
 ## 11. O'zgartirilmagan narsalar
 
 Bu hujjat arxitektura taklifidir. SQL schema, migration, HTML, CSS, JavaScript yoki Supabase loyihasi o'zgartirilmadi. Hozircha real foydalanuvchi akkauntlari, server ma'lumotlari yoki to'lovlar mavjud deb hisoblanmaydi.
+
+
+## 11. Yagona Account/Profile/Organization qarori
+
+Batafsil talablar `IDENTITY-MODEL.md` hujjatida. Asosiy qarorlar:
+- Account va Profile 1:1; autentifikatsiya ma'lumotlari profildan alohida.
+- Profil faoliyat yo'nalishlari xavfsizlik rollari emas.
+- OrganizationMembership va ProjectMembership alohida; birining a'zoligi ikkinchisiga avtomatik o'tmaydi.
+- Project egasi shaxs yoki tashkilot bo'ladi, ikkalasi bir vaqtda emas.
+- SpecialistProfile — Profile kengaytmasi.
+- Email orqali egalikni aniqlash vaqtinchalik demo usuli; kelajakda barqaror account ID ishlatiladi.
+- Tashkilot vakilligi va investor maqomi faqat checkbox bilan tasdiqlanmaydi.
+
+Bu qarorlar maqsadli modeldir; SQL yoki frontendga qo'llanmagan.
