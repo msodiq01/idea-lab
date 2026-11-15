@@ -15,6 +15,14 @@ const audit = read("supabase/verification/security_audit.sql");
 const rlsPlan = read("supabase/verification/rls-test-plan.md");
 const mapping = read("LEGACY-DATA-MAPPING.md");
 const env = read(".env.example");
+const supabaseReadme = read("supabase/README.md");
+
+test("Supabase README distinguishes the connected finance project from unapplied application schema", () => {
+  assert.match(supabaseReadme, /Ulangan Supabase loyiha read-only audit uchun mavjud: ha/);
+  assert.match(supabaseReadme, /schema\.sql jonli loyihaga qo‘llangan: yo‘q/);
+  assert.match(supabaseReadme, /9 jadvali alohida resurs\/investitsiya poydevori/);
+  assert.match(supabaseReadme, /BACKEND-SECURITY-REVIEW\.md/);
+});
 
 test("Backend remains explicitly disabled until credentials and project are confirmed", () => {
   assert.match(contract, /backend ulanmagan/);
