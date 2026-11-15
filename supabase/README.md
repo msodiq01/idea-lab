@@ -1,6 +1,6 @@
 # Supabase tayyorlash
 
-Bu papkadagi SQL — IDEA LAB backendini tayyorlash uchun. Hozir frontend Supabase'ga ulanmagan.
+Bu papkadagi SQL — IDEA LAB umumiy backendini tayyorlash uchun. Ulangan Supabase loyihasi mavjud, ammo hozirgi frontend hali offline-demo rejimida va ushbu papkadagi keng schema/migrationlar jonli bazaga qo‘llanmagan.
 
 ## Fayllar tartibi
 
@@ -32,8 +32,10 @@ Faqat frontend uchun mo'ljallangan publishable/anon key ishlatilishi mumkin. Ser
 
 - Schema tayyorlangan: ha.
 - Security migration tayyorlangan: ha.
-- Jonli loyiha bilan bog'langan: yo'q.
-- SQL staging'da bajarilgan: tasdiqlanmagan.
+- Ulangan Supabase loyiha read-only audit uchun mavjud: ha.
+- Ushbu repository schema.sql jonli loyihaga qo‘llangan: yo‘q / tasdiqlanmagan.
+- Repository migrationlari staging yoki productionga qo‘llangan: yo‘q / tasdiqlanmagan.
+- Jonli loyihaning hozirgi 9 jadvali alohida resurs/investitsiya poydevori; bu papkadagi keng loyiha/jamoa/vakansiya sxemasi bilan bir xil emas. Tafsilot: BACKEND-SECURITY-REVIEW.md.
 - Auth va server API ishlayapti: yo'q.
 - LocalStorage import qilingan: yo'q.
 

@@ -15,6 +15,14 @@ const audit = read("supabase/verification/security_audit.sql");
 const rlsPlan = read("supabase/verification/rls-test-plan.md");
 const mapping = read("LEGACY-DATA-MAPPING.md");
 const env = read(".env.example");
+const supabaseReadme = read("supabase/README.md");
+
+test("Supabase README distinguishes the connected finance project from unapplied application schema", () => {
+  assert.match(supabaseReadme, /Ulangan Supabase loyiha read-only audit uchun mavjud: ha/);
+  assert.match(supabaseReadme, /schema\.sql jonli loyihaga qo‘llangan: yo‘q/);
+  assert.match(supabaseReadme, /9 jadvali alohida resurs\/investitsiya poydevori/);
+  assert.match(supabaseReadme, /BACKEND-SECURITY-REVIEW\.md/);
+});
 
 test("Backend remains explicitly disabled until credentials and project are confirmed", () => {
   assert.match(contract, /backend ulanmagan/);
@@ -90,6 +98,22 @@ test("Live Supabase audit records the empty public view set and restricted trigg
   assert.match(review, /search_path/);
 });
 
+test("Live Supabase audit distinguishes the finance schema from repository application migrations", () => {
+  assert.match(review, /profiles.*user_roles.*resource_types.*resources.*resource_accounts.*investments.*money_transfers.*transfer_allocations.*audit_logs/);
+  assert.match(review, /client INSERT\/UPDATE\/DELETE grantlari berilmagan/);
+  assert.match(review, /faqat o‘z foydalanuvchisiga SELECT bilan ochiq/);
+  assert.match(review, /20261116.*20261122/s);
+  assert.match(review, /kengroq loyiha\/jamoa\/vakansiya modeli jonli 9-jadval moliyaviy-resurs sxemasiga hali qo‘shilmagan/);
+});
+
+test("Finance audit flags investor destination-account visibility as an unresolved RLS gap", () => {
+  assert.match(review, /Investorning o‘z investments yozuvini o‘qish policy'si mavjud/);
+  assert.match(review, /Investor o‘z investitsiyasiga tegishli manzil hisobini hozir bevosita o‘qiy olmaydi/);
+  assert.match(review, /faqat o‘z investitsiyasiga bog‘langan, faol va aynan tanlangan destination account/);
+  assert.match(review, /masked_identifier\/display_label/);
+  assert.match(review, /Hozir bu ruxsat qo‘shilmagan/);
+});
+
 test("Live Supabase audit documents the read-only state and remaining Auth setup", () => {
   assert.match(review, /ACTIVE_HEALTHY/);
   assert.match(review, /9 ta jadval/);
@@ -101,7 +125,7 @@ test("Live Supabase audit documents the read-only state and remaining Auth setup
 });
 
 test("Security review states what remains unverified", () => {
-  assert.match(review, /statik kod ko'rigi/);
-  assert.match(review, /jonli Supabase loyihasida bajarilmagan/);
+  assert.match(review, /statik kod ko'rigi \+ jonli read-only audit/);
+  assert.match(review, /jonli audit faqat metadata\/read-only so'rovlar bilan cheklangan/i);
   assert.match(review, /penetration test emas/);
 });

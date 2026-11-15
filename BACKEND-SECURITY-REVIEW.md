@@ -1,8 +1,8 @@
 # IDEA LAB — Supabase xavfsizlik ko'rigi
 
 Sana: 2026-11-15  
-Ko'rilgan fayllar: `supabase/schema.sql`, `supabase/migrations/20261115_security_hardening.sql`.  
-Holat: statik kod ko'rigi; jonli Supabase loyihasida bajarilmagan.
+Ko'rilgan manbalar: repository SQL fayllari va ulangan Supabase loyihasining jonli read-only metadata auditi.  
+Holat: statik kod ko'rigi + jonli read-only audit; hech qanday migration yoki ma'lumot o'zgartirilmagan.
 
 ## Ijobiy himoyalar
 
@@ -36,7 +36,7 @@ Holat: statik kod ko'rigi; jonli Supabase loyihasida bajarilmagan.
 
 ## Cheklov
 
-Bu ko'rik penetration test emas, jonli DB audit emas va migration'ni bajarishga ruxsat bermaydi. Supabase project ref va backup hali tasdiqlanmagan.
+Bu ko'rik penetration test emas va migration'ni bajarishga ruxsat bermaydi. Jonli audit faqat metadata/read-only so'rovlar bilan cheklangan; haqiqiy ikki akkauntli RLS va Storage sinovlari bajarilmagan.
 
 
 ## 2026-11-15 — ulangan Supabase loyihasida jonli read-only tekshiruv
@@ -54,6 +54,23 @@ Ushbu tekshiruv Supabase MCP orqali loyiha holati, public schema, migration tari
 - Edge Functions ro‘yxati bo‘sh.
 - Supabase Auth provayderlari, SMTP va SMS provider sozlamalari ushbu ulangan boshqaruv vositalari orqali o‘qilmadi; ular sozlangan deb hisoblanmaydi.
 
+
+
+### Jonli sxema va ruxsatlarning aniq chegarasi
+- Jonli bazadagi 9 jadval aynan resurs/investitsiya yo‘nalishining poydevori: profiles, user_roles, resource_types, resources, resource_accounts, investments, money_transfers, transfer_allocations, audit_logs.
+- Faqat resource_types jadvalida 5 ta boshlang‘ich tur yozuvi bor; qolgan jadvallar audit paytida bo‘sh edi.
+- Ushbu 9 jadvalning hammasida RLS yoqilgan. public sxemasida 13 ta policy topildi; audit_logs uchun client policy yo‘q.
+- anon uchun faqat faol resource_types va e'lon qilingan/public resources SELECT huquqi bor. authenticated uchun ko‘rilgan jadval grantlari SELECT bilan cheklangan.
+- Ba'zi jadvallarda INSERT/UPDATE policy mavjud bo‘lsa ham, jadval darajasida client INSERT/UPDATE/DELETE grantlari berilmagan. Shu sababli policy'larning o‘zi client yozuvini yoqmaydi. Hozirgi xavfsiz holat — read-only.
+- resources faqat published va platform/public ko‘rinishidagi yozuvlarni anon/authenticated foydalanuvchilarga ko‘rsatadi; egasi o‘z yozuvini ko‘ra oladi.
+- resource_accounts egasi yoki tegishli resurs egasiga ko‘rinadi. investments investor va resurs egasiga, money_transfers esa jo‘natuvchi/qabul qiluvchi hamda resurs egasiga, transfer_allocations esa tegishli tomonlarga cheklangan.
+- user_roles faqat o‘z foydalanuvchisiga SELECT bilan ochiq; client uchun rol yozish granti yo‘q. Bu brauzerdan o‘zini admin qilish yo‘lini bermaydi.
+- Investorning o‘z investments yozuvini o‘qish policy'si mavjud, ammo resource_accounts SELECT policy'si faqat account_owner_id yoki resource egasiga ruxsat beradi. Investor o‘z investitsiyasiga tegishli manzil hisobini hozir bevosita o‘qiy olmaydi. Bu mahsulot talabidagi pul qaysi resurs va qaysi qabul qiluvchi hisobiga yo‘naltirilayotganini tekshirish oqimiga to‘sqinlik qiladi.
+- Keyingi staging migrationida investor faqat o‘z investitsiyasiga bog‘langan, faol va aynan tanlangan destination account yozuvini ko‘ra olishi kerak. Buning uchun investment payment instruction yoki aniq destination_account_id bog‘lanishi, resource_id mosligi va account is_active tekshirilishi lozim. Ko‘rinadigan hisob ma’lumoti masked_identifier/display_label bilan cheklansin; to‘liq karta/bank rekvizitlari brauzerga chiqarilmasin.
+- Qabul sinovi: Investor A o‘z investitsiyasining tanlangan hisobini ko‘radi; boshqa investor va aloqasiz foydalanuvchi ko‘rmaydi; resurs egasi va hisob egasining mavjud ruxsatlari saqlanadi. Hozir bu ruxsat qo‘shilmagan.
+
+- Repo ichidagi 20261116–20261122 supplier verification va application activity migratsiyalari jonli bazada qo‘llanmagan. Jonli migration tarixida faqat 4 ta foundation migration bor; nomlari repository migration fayllaridan farq qiladi.
+- Repository supabase/schema.sql dagi kengroq loyiha/jamoa/vakansiya modeli jonli 9-jadval moliyaviy-resurs sxemasiga hali qo‘shilmagan. Ularni bitta bazaga birlashtirish alohida migration va staging sinovini talab qiladi.
 
 ### Qo‘shimcha DB obyektlari tekshiruvi
 - `public` sxemasida SQL view topilmadi. Demak, hozircha maxsus public katalog view'lari yaratilmagan.
