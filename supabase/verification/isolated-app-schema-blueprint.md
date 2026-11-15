@@ -58,6 +58,7 @@ Birinchi iteratsiyada ilova jadvallari quyidagi nomlash va mas'uliyat bo'yicha l
 | `idea_app.project_members` | Loyiha jamoasi | project + user |
 | `idea_app.project_tasks` | Vazifalar | project + creator + assignee |
 | `idea_app.project_updates` | Loyiha yangiliklari | project + author |
+| `idea_app.listings` | Ish, taklif, talab, resurs, mahsulot/xizmat e'lonlari | owner + optional organization |
 | `idea_app.project_listings` | Loyiha katalogidagi e'lon metadata'si | project |
 | `idea_app.applications` | Loyihaga qo'shilish arizasi | applicant + project |
 | `idea_app.listing_details` | Listing turiga xos xavfsiz metadata | listing |
