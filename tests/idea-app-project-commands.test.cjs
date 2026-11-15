@@ -75,7 +75,8 @@ test("only the private membership lookup is SECURITY DEFINER; command triggers a
   assert.match(sql, /function idea_private\.validate_project_task_assignee\(\)[\s\S]*?security invoker/i);
 });
 
-test("no Data API table exposure or table-wide grants are added", () => {
+test("schema usage is separate from Data API exposure and table privileges", () => {
+  assert.match(sql, /grant usage on schema idea_app to authenticated/i);
   assert.doesNotMatch(executableSql, /grant\s+(select|insert|delete|all)\s+on\s+idea_app\./i);
   assert.doesNotMatch(executableSql, /alter\s+publication|pgrst\.db_schemas/i);
 });
