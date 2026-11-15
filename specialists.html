@@ -348,40 +348,18 @@ function escapeHTML(value) {
 }
 
 function renderSpecialists() {
-
-    const list = document.getElementById("specialistList");
-    const specialists = getSpecialists();
-
-    if (!specialists.length) {
-        list.innerHTML = 
-            <div class="card">
-                <h3>Hozircha mutaxassislar yo'q</h3>
-                <p>Birinchi bo'lib o'z profilingizni yarating.</p>
-            </div>
-        ;
-        return;
-    }
-
-    list.innerHTML = specialists.map(person => `
-        <div class="card profile">
-            <h3>${escapeHTML(person.name)}</h3>
-            <p>${escapeHTML(person.profession)}</p>
-            <p>${escapeHTML(person.about)}</p>
-            <div>
-                ${person.skills.map(skill =>
-                    <span class="tag">${escapeHTML(skill)}</span>
-                ).join("")}
-            </div>
-            <p><strong>Tajriba:</strong> ${escapeHTML(person.experience)}</p>
-            <p><strong>Ta'lim:</strong> ${escapeHTML(person.education)}</p>
-            <p><strong>Portfolio:</strong> ${
-                person.portfolio
-                    ? <a href="${escapeHTML(person.portfolio)}" target="_blank" rel="noopener noreferrer">Ko'rish</a>
-                    : "Kiritilmagan"
-            }</p>
-            <p><strong>Ish qidiryapti:</strong> ${person.jobSearch ? "Ha" : "Yo'q"}</p>
-        </div>
-    `).join("");
+ const list=document.getElementById("specialistList"),specialists=getSpecialists();list.replaceChildren();
+ if(!specialists.length){const card=document.createElement("div");card.className="card";const h=document.createElement("h3"),p=document.createElement("p");h.textContent="Hozircha mutaxassislar yo‘q";p.textContent="Birinchi bo‘lib o‘z profilingizni yarating.";card.append(h,p);list.append(card);return}
+ specialists.forEach(person=>{
+  const card=document.createElement("div");card.className="card profile";
+  const h=document.createElement("h3");h.textContent=person.name||"Ism ko‘rsatilmagan";card.append(h);
+  [["",person.profession],["",person.about],["Tajriba: ",person.experience],["Ta’lim: ",person.education],["Ish qidiryapti: ",person.jobSearch?"Ha":"Yo‘q"]].forEach(([k,v])=>{const p=document.createElement("p");p.textContent=k+(v||"Ko‘rsatilmagan");card.append(p)});
+  const skills=document.createElement("div");(Array.isArray(person.skills)?person.skills:[]).forEach(skill=>{const tag=document.createElement("span");tag.className="tag";tag.textContent=skill;skills.append(tag)});card.append(skills);
+  const portfolio=document.createElement("p");portfolio.append(document.createTextNode("Portfolio: "));
+  let safeUrl="";try{const u=new URL(person.portfolio);if(u.protocol==="https:"||u.protocol==="http:")safeUrl=u.href}catch(_){}
+  if(safeUrl){const link=document.createElement("a");link.href=safeUrl;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Ko‘rish";portfolio.append(link)}else portfolio.append(document.createTextNode("Kiritilmagan"));
+  card.append(portfolio);list.append(card);
+ });
 }
 
 document.getElementById("profileForm").addEventListener("submit", function(event) {
