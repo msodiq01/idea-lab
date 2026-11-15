@@ -96,7 +96,9 @@ Shaxsiy kabinet barcha modullarni o‘ziga ko‘chirib olmaydi. Harakat tegishli
 - Yangi jamoa va vakansiya e’lonlariga profil egasi IDsi va emaili biriktiriladi (profil oldindan saqlangan bo‘lsa).
 - Yangi jamoa/ishga arizalarga arizachi IDsi/emaili va e’lon egasining IDsi biriktiriladi.
 - Yangi investitsiya arizalariga arizachi identifikatori va loyiha egasi IDsi biriktiriladi.
-- Kabinetga kiruvchi va yuborilgan investitsiya, ish va jamoa arizalarini ko‘rsatadigan umumiy markaz qo‘shildi.
+- Yangi taklif e’lonlariga egasi IDsi/emaili, taklif arizalariga esa arizachi IDsi va taklif egasi identifikatori qo‘shiladi.
+- Talab-taklif e’lonlarining yangi yozuvlariga profil egasi IDsi/emaili qo‘shiladi; eski yozuvlar o‘zgarmaydi.
+- Kabinetning yagona markaziga taklif arizalari ham qo‘shildi (faqat aniq ID/email mosligida).
 - Eski yozuvlar avtomatik ravishda foydalanuvchiga biriktirilmaydi; eski ma’lumotlar o‘zgartirilmagan.
 
 ### Tekshiruv
@@ -104,6 +106,13 @@ Shaxsiy kabinet barcha modullarni o‘ziga ko‘chirib olmaydi. Harakat tegishli
 - `teams.html`, `project-detail.html`, `profile.html` ichki JavaScript sintaksisi tekshirildi.
 - Umumiy CSS qavslar balansi tekshirildi.
 - Brauzerda to‘liq funksional, mobil va ikki foydalanuvchili testlar hali bajarilishi kerak.
+
+### 2-bosqich — davomiy integratsiya (2026-11-15)
+- `offers.html`: yangi taklif egasiga profil IDsi/emaili biriktiriladi; yangi arizaga arizachi va taklif egasi identifikatorlari yoziladi.
+- Taklifga takroriy ariza tekshiruvi profil IDsi mavjud bo‘lsa ID orqali ishlaydi; profilsiz eski demo oqimi ism orqali saqlanadi.
+- `exchange.html`: yangi talab/taklif yozuvlariga egasining profil identifikatorlari qo‘shiladi.
+- `profile.html`: yagona arizalar markaziga taklif arizalari qo‘shildi; eski identifikatorsiz yozuvlar avtomatik egaga biriktirilmaydi.
+- Eski `offers`, `offerApplications`, `offerMessages` va `ideaLabExchangeItems` yozuvlari migratsiya qilinmadi yoki o‘zgartirilmadi.
 
 ### Keyingi ish
 - Vakansiya va jamoa e’lonlarini yaratishdan oldin profil saqlanganini tushuntiruvchi, foydalanuvchini majburlamaydigan UX qo‘shish.
