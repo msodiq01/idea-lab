@@ -105,7 +105,7 @@ Then run:
 node scripts/supplier-verification-staging-smoke.mjs
 ```
 
-The script verifies the project-ref/HTTPS guard, exact CORS origin and required headers, unapproved-origin rejection, unsupported-method rejection, unauthenticated denial, and (when optional synthetic tokens are supplied) ordinary-user denial and administrator read-only access. It prints HTTP statuses only, not credentials or response payloads.
+The script verifies the project-ref/HTTPS guard, exact CORS origin and required headers, unapproved-origin rejection, and unauthenticated denial. With a synthetic ordinary-user token, it also verifies unsupported-method rejection and ordinary-user denial; with a synthetic administrator token, it checks administrator read-only access. It prints HTTP statuses only, not credentials or response payloads.
 
 A skipped optional check is not a pass. Do not paste access tokens into chat or GitHub. Do not use production credentials or real user accounts. The smoke runner supplements, but does not replace, the full acceptance matrix below.
 
