@@ -806,7 +806,7 @@ function addDetail(title, value) {
     projectDetails.appendChild(item);
 }
 
-function renderInvestmentPassport(){
+function formatPassportMoney(value){\n const amount=Number(value)||0;\n return new Intl.NumberFormat("uz-UZ",{maximumFractionDigits:0}).format(amount)+" UZS";\n}\n\nfunction renderInvestmentPassport(){
  if(!project)return;
  const applications=readData("investmentApplications").filter(item=>item&&String(item.projectId)===String(project.id));
  const summary=window.IDEALABProjectFinance?window.IDEALABProjectFinance.summarize(project,applications):{applicationCount:applications.length,requestedAmount:0,acceptedOfferAmount:0,reviewOfferAmount:0};
@@ -814,9 +814,9 @@ function renderInvestmentPassport(){
  const target=Number(project.fundingTarget||project.investment||project.amount||0);
  document.getElementById("passportValuation").textContent=valuation>0?formatMoney(valuation):"Ko‘rsatilmagan";
  document.getElementById("passportTarget").textContent=target>0?formatMoney(target):"Ko‘rsatilmagan";
- document.getElementById("passportRequested").textContent=formatMoney(summary.requestedAmount);
- document.getElementById("passportAccepted").textContent=formatMoney(summary.acceptedOfferAmount);
- document.getElementById("passportReview").textContent=formatMoney(summary.reviewOfferAmount);
+ document.getElementById("passportRequested").textContent=formatPassportMoney(summary.requestedAmount);
+ document.getElementById("passportAccepted").textContent=formatPassportMoney(summary.acceptedOfferAmount);
+ document.getElementById("passportReview").textContent=formatPassportMoney(summary.reviewOfferAmount);
  document.getElementById("passportCount").textContent=String(summary.applicationCount);
  const percent=target>0?Math.min(100,summary.acceptedOfferAmount/target*100):0;
  document.getElementById("passportProgressFill").style.width=percent+"%";
