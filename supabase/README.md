@@ -74,3 +74,5 @@ Deploy va sozlash bo‘yicha batafsil ko‘rsatma `functions/supplier-verificati
 - [Staging preflight SQL](verification/supplier-verification-staging-preflight.sql) — migrationlardan keyingi read-only metadata tekshiruvlari.
 
 Bu hujjatlar deploy bajarmaydi. Staging loyihasi tanlanmagan, migrationlar qo'llanmagan va Edge Function'lar deploy qilinmagan. Avval alohida staging loyihasida qabul sinovlari o'tishi shart.
+
+- [Read-only staging smoke runner](../scripts/supplier-verification-staging-smoke.mjs) — deploydan keyin staging endpointlarini xavfsiz, yozuv kiritmasdan tekshiradi.
