@@ -1,6 +1,6 @@
 # IDEA LAB — Ta’minotchini tekshirish jarayoni
 
-Versiya: 1.3 · Sana: 2026-11-18  
+Versiya: 1.4 · Sana: 2026-11-19  
 Holat: backend migration tayyorlandi; jonli Supabase loyihasiga qo‘llangani tasdiqlanmagan.
 
 ## 1. Maqsad
@@ -19,7 +19,7 @@ Frontend demo faqat submitted holatini yaratadi. Brauzerda reviewer action yoki 
 
 ## 3. Ma’lumotlarni minimallashtirish
 - Demo/localStorage ichida pasport, STIR, bank hisob raqami, karta raqami yoki to‘liq hujjat nusxasi saqlanmaydi.
-- Backend evidence jadvali private storage yo‘li va minimal metadata uchun; migration Storage bucket yoki upload endpoint yaratmaydi.
+- Backend evidence jadvali private storage yo‘li va minimal metadata uchun; Storage va API faqat alohida migration/Edge Function orqali boshqariladi.
 - Hujjatlar keyinchalik alohida private bucket, qisqa muddatli signed URL, ruxsatli backend va retention/deletion siyosati bilan ulanadi.
 - Rozilik versiyasi va server vaqti ariza bilan qayd etiladi.
 
@@ -61,12 +61,24 @@ Fayl: supabase/migrations/20261118_supplier_verification_private_storage.sql
 - Ta’minotchi o‘z hujjatini, faol reviewer esa tekshiruv uchun hujjatni o‘qiy oladi.
 - Client uchun object update/delete siyosati yo‘q; o‘chirish yoki almashtirish keyinchalik alohida server-side auditli jarayon bo‘lishi kerak.
 
-Bu faqat bucket va Storage RLS poydevori. Hozircha upload UI, signed URL backend endpoint, antivirus/content inspection, evidence metadata yozuvchi ishonchli backend yoki retention cleanup job yo‘q. MIME header fayl mazmunining xavfsizligini isbotlamaydi. Real hujjatlarni bu bosqichda yuklamang.
+Bu bo‘lim private bucket va Storage RLS poydevorining o‘sha paytdagi holatini qayd etadi. Keyingi 2026-11-19 bo‘limida Edge Function poydevori qo‘shilgan. MIME header fayl mazmunining xavfsizligini isbotlamaydi. Real hujjatlarni hali yuklamang.
 
-## 7. Sinov holati
-`tests/supplier-verification-migration.test.cjs` va `tests/supplier-verification-reviewers.test.cjs` migration matnining xavfsizlik shartlarini statik tekshiradi. Bu SQL parser, Postgres integratsion test yoki jonli RLS sinovi emas. Migration faqat alohida staging loyihasida qo‘llanib, ikki akkauntli testdan o‘tkazilgandan keyin foydalanishga yaroqli deb baholanadi.
+## 7. Hujjat API poydevori — 2026-11-19
+Fayllar: `supabase/functions/supplier-verification-evidence/` va `supabase/migrations/20261119_supplier_verification_evidence_access_audit.sql`.
 
-## 8. Qabul mezonlari
+Edge Function uchta amalni qo‘llab-quvvatlaydi:
+- `upload_ticket`: JWT tekshiriladi, ariza egasi va holati tekshiriladi, server tasodifiy object path va vaqtinchalik upload token beradi.
+- `finalize_upload`: object mavjudligi, papkasi, Storage metadata MIME turi va hajmi tekshiriladi; keyin evidence metadata server orqali yoziladi.
+- `download_ticket`: faqat ariza egasi yoki active reviewer uchun 60 soniyalik signed URL beradi va link berilganini auditga yozadi.
+
+Service-role kaliti faqat Edge Function secret bo‘lishi shart. Brauzerga hech qachon berilmaydi. CORS aniq `ALLOWED_ORIGINS` ro‘yxatiga bog‘langan. API javoblari `no-store`.
+
+Cheklovlar: fayl mazmuni antivirus yoki haqiqiylik tekshiruvidan o‘tmaydi; MIME metadata yetarli xavfsizlik isboti emas. Audit faqat link berilganini qayd etadi, yuklab olish sodir bo‘lganini emas. Reviewer vakolati hozir global allowlist — case-level assignment yo‘q. Rate limit, retention cleanup va o‘chirish jarayoni yo‘q. Function deploy qilinmagan, migration staging'da bajarilmagan. Haqiqiy hujjatlar bilan ishlash hali boshlanmasin.
+
+## 8. Sinov holati
+`tests/supplier-verification-migration.test.cjs`, `tests/supplier-verification-reviewers.test.cjs`, `tests/supplier-verification-storage.test.cjs` va `tests/supplier-verification-evidence-api.test.cjs` migration/API matnining xavfsizlik shartlarini statik tekshiradi. Bu SQL parser, Deno runtime testi, Postgres integratsion test yoki jonli Storage RLS sinovi emas. Migration faqat alohida staging loyihasida qo‘llanib, ikki akkauntli testdan o‘tkazilgandan keyin foydalanishga yaroqli deb baholanadi.
+
+## 9. Qabul mezonlari
 - [ ] Test Supabase loyihasi va egasi tasdiqlangan.
 - [ ] Backup va restore sinovi bajarilgan.
 - [ ] Migration staging'da qo‘llangan.
