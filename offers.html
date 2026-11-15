@@ -764,92 +764,66 @@ let currentApplicationTab = "received";
 
 function showOffers() {
     const offers = readData("offers");
-
-    const search = document.getElementById("offerSearch")
-        .value.trim().toLowerCase();
-
+    const search = document.getElementById("offerSearch").value.trim().toLowerCase();
     const category = document.getElementById("categoryFilter").value;
     const type = document.getElementById("typeFilter").value;
-
     const filtered = offers.filter(offer => {
-        const text = [
-            offer.title,
-            offer.author,
-            offer.location,
-            offer.description,
-            offer.category
-        ].join(" ").toLowerCase();
-
-        return text.includes(search) &&
-            (!category || offer.category === category) &&
-            (!type || offer.type === type);
+        const haystack = [offer.title, offer.author, offer.location, offer.description, offer.category].join(" ").toLowerCase();
+        return haystack.includes(search) && (!category || offer.category === category) && (!type || offer.type === type);
     });
-
     const list = document.getElementById("offerList");
-
+    list.replaceChildren();
     if (!filtered.length) {
-        list.innerHTML = 
-            <div class="empty">
-                <h3>Takliflar topilmadi</h3>
-                <p>Hozircha taklif joylashtirilmagan yoki qidiruv natija bermadi.</p>
-            </div>
-        ;
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        const title = document.createElement("h3");
+        title.textContent = "Takliflar topilmadi";
+        const desc = document.createElement("p");
+        desc.textContent = "Hozircha taklif joylashtirilmagan yoki qidiruv natija bermadi.";
+        empty.append(title, desc);
+        list.append(empty);
     } else {
-        list.innerHTML = filtered.map(offer => 
-            <article class="offer-card">
-                <div class="card-top">
-                    <span class="tag">${escapeHTML(offer.type)}</span>
-                    <span class="tag">${escapeHTML(offer.status)}</span>
-                </div>
-
-                <h3>${escapeHTML(offer.title)}</h3>
-
-                <p>${escapeHTML(offer.description)}</p>
-
-                <div class="offer-info">
-                    <div>
-                        <span>Muallif</span>
-                        <span>${escapeHTML(offer.author)}</span>
-                    </div>
-                    <div>
-                        <span>Yo‘nalish</span>
-                        <span>${escapeHTML(offer.category)}</span>
-                    </div>
-                    <div>
-                        <span>Hudud</span>
-                        <span>${escapeHTML(offer.location)}</span>
-                    </div>
-                    <div>
-                        <span>Muddati</span>
-                        <span>${escapeHTML(formatDate(offer.deadline))}</span>
-                    </div>
-                </div>
-
-                <p class="muted">
-                    Joylashtirilgan: ${escapeHTML(formatDate(offer.date))}
-                </p>
-
-                <div class="card-actions">
-                    ${
-                        offer.author === currentUser
-                        ? <span class="tag">Sizning taklifingiz</span>
-                        : <button class="btn btn-primary btn-small"
-                            onclick="applyToOffer('${escapeHTML(offer.id)}')">
-                            Ariza yuborish
-                          </button>
-                    }
-                </div>
-            </article>
-        ).join("");
+        filtered.forEach(offer => {
+            const card = document.createElement("article");
+            card.className = "offer-card";
+            const top = document.createElement("div");
+            top.className = "card-top";
+            [offer.type, offer.status].forEach(value => {
+                const tag = document.createElement("span");
+                tag.className = "tag";
+                tag.textContent = value || "Ko‘rsatilmagan";
+                top.append(tag);
+            });
+            const title = document.createElement("h3");
+            title.textContent = offer.title || "Nomsiz taklif";
+            const desc = document.createElement("p");
+            desc.textContent = offer.description || "";
+            const info = document.createElement("div");
+            info.className = "offer-info";
+            [["Muallif",offer.author],["Yo‘nalish",offer.category],["Hudud",offer.location],["Muddati",formatDate(offer.deadline)]].forEach(([label,value]) => {
+                const line = document.createElement("div");
+                const left = document.createElement("span"); left.textContent = label;
+                const right = document.createElement("span"); right.textContent = value || "Ko‘rsatilmagan";
+                line.append(left,right); info.append(line);
+            });
+            const date = document.createElement("p");
+            date.className = "muted";
+            date.textContent = "Joylashtirilgan: " + formatDate(offer.date);
+            const actions = document.createElement("div");
+            actions.className = "card-actions";
+            if (offer.author === currentUser) {
+                const own = document.createElement("span"); own.className = "tag"; own.textContent = "Sizning taklifingiz"; actions.append(own);
+            } else {
+                const apply = document.createElement("button"); apply.className = "btn btn-primary btn-small"; apply.type = "button"; apply.textContent = "Ariza yuborish";
+                apply.addEventListener("click", () => applyToOffer(String(offer.id)));
+                actions.append(apply);
+            }
+            card.append(top,title,desc,info,date,actions);
+            list.append(card);
+        });
     }
-
     updateStats();
 }
-
-
-/* ==================================
-   4. TAKLIF JOYLASHTIRISH
-================================== */
 
 function toggleOfferForm() {
     document.getElementById("offerFormPanel")
@@ -1008,100 +982,44 @@ function switchApplicationTab(tab) {
 function showApplications() {
     const applications = readData("offerApplications");
     const offers = readData("offers");
-
     const list = document.getElementById("applicationList");
-
-    let filtered = [];
-
-    if (currentApplicationTab === "received") {
-        filtered = applications.filter(application =>
-            application.offerOwner === currentUser
-        );
-    } else {
-        filtered = applications.filter(application =>
-            application.applicant === currentUser
-        );
-    }
-    document.getElementById("applicationBadge").textContent =
-        applications.length + " ta ariza";
-
+    const filtered = applications.filter(application => currentApplicationTab === "received"
+        ? application.offerOwner === currentUser
+        : application.applicant === currentUser);
+    document.getElementById("applicationBadge").textContent = applications.length + " ta ariza";
+    list.replaceChildren();
     if (!filtered.length) {
-        list.innerHTML = 
-            <div class="empty">
-                <h3>Hozircha arizalar yo‘q</h3>
-                <p>
-                    ${
-                        currentApplicationTab === "received"
-                        ? "Takliflaringizga arizalar kelganda shu yerda ko‘rinadi."
-                        : "Siz yuborgan arizalar shu yerda ko‘rinadi."
-                    }
-                </p>
-            </div>
-        ;
-        return;
+        const empty = document.createElement("div"); empty.className = "empty";
+        const title = document.createElement("h3"); title.textContent = "Hozircha arizalar yo‘q";
+        const desc = document.createElement("p"); desc.textContent = currentApplicationTab === "received"
+            ? "Takliflaringizga arizalar kelganda shu yerda ko‘rinadi."
+            : "Siz yuborgan arizalar shu yerda ko‘rinadi.";
+        empty.append(title,desc); list.append(empty); return;
     }
-
-    list.innerHTML = filtered.map(application => {
-        const offer = offers.find(item =>
-            item.id === application.offerId
-        );
-
-        const otherPerson = currentApplicationTab === "received"
-            ? application.applicant
-            : application.offerOwner;
-
-        return 
-            <article class="application-card">
-                <div class="card-top">
-                    <span class="tag">${escapeHTML(application.status)}</span>
-                    <span class="muted">${escapeHTML(formatDate(application.date))}</span>
-                </div>
-
-                <h3>${escapeHTML(application.offerTitle)}</h3>
-
-                <p>
-                    ${
-                        currentApplicationTab === "received"
-                        ? "Arizachi: "
-                        : "Taklif egasi: "
-                    }
-                    <strong>${escapeHTML(otherPerson)}</strong>
-                </p>
-
-                <p>${escapeHTML(application.message)}</p>
-
-                ${
-                    offer && currentApplicationTab === "received"
-                    ? <p>Aloqa: ${escapeHTML(offer.contact)}</p>
-                    : ""
-                }
-
-              let actionButtons = "";
-
-let actionButtons = "";
-
-actionButtons +=
-    '<button class="btn btn-primary btn-small" onclick="openChat(\'' +
-    application.id +
-    '\')">Chatni ochish</button>';
-if (currentApplicationTab === "received") {
-    actionButtons +=
-        '<button class="btn btn-secondary btn-small" onclick="changeApplicationStatus(\'' +
-        application.id +
-        '\', \'Ko‘rib chiqilmoqda\')">Ko‘rib chiqilmoqda</button>';
-
-    actionButtons +=
-        '<button class="btn btn-green btn-small" onclick="changeApplicationStatus(\'' +
-        application.id +
-        '\', \'Qabul qilindi\')">Qabul qilish</button>';
+    filtered.forEach(application => {
+        const offer = offers.find(item => String(item.id) === String(application.offerId));
+        const otherPerson = currentApplicationTab === "received" ? application.applicant : application.offerOwner;
+        const card = document.createElement("article"); card.className = "application-card";
+        const title = document.createElement("h3"); title.textContent = application.offerTitle || "Taklif";
+        const status = document.createElement("p"); status.textContent = "Holati: " + (application.status || "Yangi") + " · " + formatDate(application.date);
+        const person = document.createElement("p"); person.textContent = (currentApplicationTab === "received" ? "Arizachi: " : "Taklif egasi: ") + (otherPerson || "Noma’lum");
+        const message = document.createElement("p"); message.textContent = application.message || "";
+        card.append(title,status,person,message);
+        if (offer && currentApplicationTab === "received") {
+            const contact = document.createElement("p"); contact.textContent = "Aloqa: " + (offer.contact || "Ko‘rsatilmagan"); card.append(contact);
+        }
+        const actions = document.createElement("div"); actions.className = "application-actions";
+        const chat = document.createElement("button"); chat.className = "btn btn-primary btn-small"; chat.type = "button"; chat.textContent = "Chatni ochish";
+        chat.addEventListener("click", () => openChat(application.id)); actions.append(chat);
+        if (currentApplicationTab === "received") {
+            [["Ko‘rib chiqilmoqda","Ko‘rib chiqilmoqda","btn btn-secondary btn-small"],["Qabul qilish","Qabul qilindi","btn btn-green btn-small"]].forEach(([label,value,cls]) => {
+                const button = document.createElement("button"); button.className = cls; button.type = "button"; button.textContent = label;
+                button.addEventListener("click", () => changeApplicationStatus(application.id,value)); actions.append(button);
+            });
+        }
+        card.append(actions); list.append(card);
+    });
 }
-return '<div class="application-actions">' +
-    actionButtons +
-    '</div>' +
-    '</article>
-/* ==================================
-   7. ARIZA HOLATINI O‘ZGARTIRISH
-================================== */
 
 function changeApplicationStatus(applicationId, status) {
     const applications = readData("offerApplications");
