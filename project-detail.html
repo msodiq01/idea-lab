@@ -682,8 +682,11 @@ button, input, textarea {
     IDEA LAB — Ideas. People. Resources. Opportunities.
 </footer>
 
+<script src="assets/idea-core.js"></script>
 <script>
 "use strict";
+
+const ideaCore = window.IDEALAB || null;
 
 // ========================================
 // 1. MA'LUMOTLARNI O'QISH
@@ -897,9 +900,17 @@ investmentForm.addEventListener("submit", function(event) {
         .getElementById("offerMessage")
         .value.trim();
 
-    if (!investorName || !investorEmail ||  !offerMessage) {
+    if (!investorName || !investorEmail || !offerMessage) {
         showMessage(
             "Barcha maydonlarni to'ldiring.",
+            "error-message"
+        );
+        return;
+    }
+
+    if (ideaCore && !ideaCore.isValidEmail(investorEmail)) {
+        showMessage(
+            "Email manzilini to'g'ri kiriting.",
             "error-message"
         );
         return;
@@ -960,6 +971,14 @@ investmentForm.addEventListener("submit", function(event) {
         return;
     }
 
+    if (ideaCore) {
+        ideaCore.emit("investment:application-created", {
+            applicationId: application.id,
+            projectId: application.projectId,
+            createdAt: application.createdAt
+        });
+    }
+
     investmentForm.reset();
 
     showMessage(
@@ -978,6 +997,7 @@ showProject();
 
 </script>
 
-    <script src="assets/idea-shell.js" defer></script>\n</body>
+    <script src="assets/idea-shell.js" defer></script>
+</body>
 </html>
         
