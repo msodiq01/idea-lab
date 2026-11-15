@@ -119,3 +119,8 @@ A module is not marked complete until:
 ## 8. Immediate next implementation task
 
 After this map is reviewed, make the home page a true ecosystem hub: group the modules by user journey and role, show what is available now versus planned, and link every card to an existing route. Do not claim unavailable integrations are live.
+
+
+## 8. Identity model hujjati
+
+Yagona Account/Profile/Organization/OrganizationMembership/ProjectMembership modeli `IDENTITY-MODEL.md` hujjatida belgilangan. Profil faoliyat yo'nalishlari platforma yoki tashkilot ruxsatlari emas. Bu maqsadli arxitektura bo'lib, joriy frontend yoki Supabase'ga hali qo'llanmagan.
