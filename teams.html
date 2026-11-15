@@ -745,10 +745,17 @@ button, input, textarea, select {
                 placeholder="Nomzod, jamoa yoki telefon bo‘yicha qidirish...">
             <select class="search-input" id="teamManagerApplicationStatus" aria-label="A’zolik arizasi holati">
                 <option value="">Barcha holatlar</option>
-                <option value="Yangi">Yangi</option>
-                <option value="Ko‘rib chiqilmoqda">Ko‘rib chiqilmoqda</option>
-                <option value="Qabul qilindi">Qabul qilindi</option>
-                <option value="Rad etildi">Rad etildi</option>
+                <option value="submitted">Yuborildi</option>
+                <option value="reviewing">Ko‘rib chiqilmoqda</option>
+                <option value="interview">Suhbat belgilandi</option>
+                <option value="accepted">Qabul qilindi</option>
+                <option value="negotiating">Muzokara olib borilmoqda</option>
+                <option value="agreed">Kelishuvga erishildi</option>
+                <option value="in_progress">Amalga oshirilmoqda</option>
+                <option value="completed">Yakunlandi</option>
+                <option value="rejected">Rad etildi</option>
+                <option value="withdrawn">Ariza qaytarib olindi</option>
+                <option value="cancelled">Bitim bekor qilindi</option>
             </select>
             <select class="search-input" id="teamManagerApplicationSort" aria-label="A’zolik arizalarini saralash">
                 <option value="newest">Eng yangi</option>
@@ -1097,7 +1104,8 @@ function showEmployerApplications() {
             application.companyName,
             application.applicantPhone
         ].join(" ").toLocaleLowerCase("uz-UZ");
-        return text.includes(search) && (!selectedStatus || (application.status || "Yangi") === selectedStatus);
+        const status = ideaCore.applications.normalizeStatus(application.status);
+        return text.includes(search) && (!selectedStatus || status === selectedStatus);
     });
 
     filtered.sort(function(a, b) {
@@ -1134,7 +1142,7 @@ function showEmployerApplications() {
         title.textContent = application.applicantName || "Nomsiz nomzod";
         const badge = document.createElement("span");
         badge.className = "tag";
-        badge.textContent = application.status || "Yangi";
+        badge.textContent = ideaCore.applications.statusLabel(application.status);
         heading.append(title, badge);
 
         const details = [
@@ -1176,7 +1184,12 @@ function showEmployerApplications() {
                 showEmployerApplications();
                 return;
             }
-            const previousStatus = current[index].status || "Yangi";
+            const previousStatus = ideaCore.applications.normalizeStatus(current[index].status);
+            if (!ideaCore.applications.nextStatuses(previousStatus, "owner").includes(select.value)) {
+                alert("Bu holatga o‘tish ruxsat etilmagan.");
+                showTeamManagerApplications();
+                return;
+            }
             current[index].status = select.value;
             current[index].updatedAt = new Date().toISOString();
             if (saveData("jobApplications", current)) {
@@ -1192,7 +1205,7 @@ function showEmployerApplications() {
                 showEmployerApplications();
                 showMyApplications();
             } else {
-                select.value = application.status || "Yangi";
+                select.value = ideaCore.applications.normalizeStatus(application.status);
             }
         });
         card.append(label, select);
@@ -1274,15 +1287,17 @@ function showTeamManagerApplications() {
         const select = document.createElement("select");
         select.className = "search-input";
         select.setAttribute("aria-label", "Jamoaga a’zolik arizasi holati");
-        ["Yangi", "Ko‘rib chiqilmoqda", "Qabul qilindi", "Rad etildi"].forEach(function(status) {
+        const currentStatus = ideaCore.applications.normalizeStatus(application.status);
+        const allowedStatuses = [currentStatus].concat(
+            ideaCore.applications.nextStatuses(currentStatus, "owner")
+        );
+        allowedStatuses.forEach(function(status) {
             const option = document.createElement("option");
             option.value = status;
-            option.textContent = status;
+            option.textContent = ideaCore.applications.statusLabel(status);
             select.append(option);
         });
-        select.value = ["Yangi", "Ko‘rib chiqilmoqda", "Qabul qilindi", "Rad etildi"].includes(application.status)
-            ? application.status
-            : "Yangi";
+        select.value = currentStatus;
         select.addEventListener("change", function() {
             const current = readData("teamApplications");
             const index = current.findIndex(function(item) {
