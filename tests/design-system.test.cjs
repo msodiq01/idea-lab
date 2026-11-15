@@ -12,6 +12,7 @@ test("Global shell has one responsive primary navigation and no repeated metric 
   assert.match(shell, /class="il-links"/);
   assert.match(shell, /Barcha bo‘limlar/);
   assert.match(shell, /Demo rejim/);
+  assert.match(shell, /Yo‘l xaritasi/);
   assert.doesNotMatch(shell, /il-metrics/);
 });
 
@@ -31,9 +32,24 @@ test("Global design system contains responsive SaaS tokens and mobile layouts", 
 });
 
 test("Core pages load the shared design system and shell", () => {
-  for (const page of ["index.html","dashboard.html","profile.html","projects.html","marketplace.html","teams.html","investors.html","specialists.html","organizations.html","offers.html","exchange.html"]) {
+  for (const page of ["index.html","dashboard.html","profile.html","projects.html","marketplace.html","teams.html","investors.html","specialists.html","organizations.html","offers.html","exchange.html","roadmap.html"]) {
     const html = read(page);
     assert.match(html, /assets\/idea-shell\.css/, page + " should load global CSS");
     assert.match(html, /assets\/idea-shell\.js/, page + " should load global shell");
   }
+});
+
+test("Future roadmap is reachable and clearly separates current demo from planned work", () => {
+  const home = read("index.html");
+  const roadmap = read("roadmap.html");
+  assert.match(home, /href="roadmap\\.html"/);
+  assert.match(home, /class="module-card planned"/);
+  assert.match(roadmap, /Mavjud platforma yo‘nalishlari/);
+  assert.match(roadmap, /Yagona ekotizim poydevori/);
+  assert.match(roadmap, /Iqtisodiyot, savdo va infratuzilma/);
+  assert.match(roadmap, /Ta’lim, jamiyat va hamkorlik/);
+  assert.match(roadmap, /Aqlli texnologiyalar va global kengayish/);
+  assert.match(roadmap, /status-plan/);
+  assert.match(roadmap, /Demo \\/ cheklangan/);
+  assert.match(roadmap, /aniq muddat va ishga tushirish sanasi tasdiqlanmagan/);
 });
