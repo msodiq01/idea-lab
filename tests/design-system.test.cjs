@@ -45,8 +45,9 @@ test("Future roadmap is reachable and clearly separates current demo from planne
   const home = read("index.html");
   const roadmap = read("roadmap.html");
   assert.ok(home.includes("href=\"roadmap.html\""));
-  assert.equal((home.match(/class="feature-card module-card planned"/g) || []).length, 15);
-  assert.equal((home.match(/href="roadmap.html"/g) || []).length, 16);
+  assert.equal((home.match(/class="workflow-step"/g) || []).length, 6);
+  assert.equal((home.match(/class="feature-card module-card planned"/g) || []).length, 0);
+  assert.equal((home.match(/href="roadmap.html"/g) || []).length, 1);
   assert.match(roadmap, /Mavjud platforma yo‘nalishlari/);
   assert.match(roadmap, /Yagona ekotizim poydevori/);
   assert.match(roadmap, /Iqtisodiyot, savdo va infratuzilma/);
