@@ -1112,6 +1112,30 @@ function changeApplicationStatus(applicationId, status) {
    8. CHAT RO‘YXATI
 ================================== */
 
+function getUnreadCount(applicationId) {
+    const application = readData("offerApplications").find(item => String(item.id) === String(applicationId));
+    if (!application) return 0;
+    const lastRead = application.lastReadBy && application.lastReadBy[currentUser]
+        ? Date.parse(application.lastReadBy[currentUser]) || 0
+        : 0;
+    return readData("offerMessages").filter(message =>
+        String(message.applicationId) === String(applicationId) &&
+        message.sender !== currentUser &&
+        (Date.parse(message.date) || 0) > lastRead
+    ).length;
+}
+
+function markConversationRead(applicationId) {
+    const applications = readData("offerApplications");
+    const index = applications.findIndex(item => String(item.id) === String(applicationId));
+    if (index < 0) return false;
+    const application = applications[index];
+    application.lastReadBy = application.lastReadBy && typeof application.lastReadBy === "object"
+        ? application.lastReadBy : {};
+    application.lastReadBy[currentUser] = new Date().toISOString();
+    return saveData("offerApplications", applications);
+}
+
 function showChats() {
     const applications = readData("offerApplications");
 
@@ -1144,9 +1168,12 @@ function showChats() {
             ? "active"
             : "";
 
+        const unread = getUnreadCount(application.id);
         return '<button class="chat-list-item ' + activeClass + '" ' +
             'onclick="openChat(\'' + escapeHTML(application.id) + '\')">' +
-            '<strong>' + escapeHTML(otherPerson || "") + '</strong>' +
+            '<strong>' + escapeHTML(otherPerson || "") +
+            (unread ? ' <span class="tag" aria-label="' + unread + ' ta o‘qilmagan xabar">' + unread + ' yangi</span>' : '') +
+            '</strong>' +
             '<small>' + escapeHTML(application.offerTitle || "") + '</small>' +
             '<small>' + escapeHTML(application.status || "") + '</small>' +
             '</button>';
@@ -1179,6 +1206,10 @@ function openChat(applicationId) {
     }
 
     activeApplicationId = applicationId;
+    if (!markConversationRead(applicationId)) {
+        alert("O‘qilgan holatini saqlab bo‘lmadi. Qayta urinib ko‘ring.");
+        return;
+    }
 
     const otherPerson = application.applicant === currentUser
         ? application.offerOwner
