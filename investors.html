@@ -493,9 +493,13 @@ const ideaCore = window.IDEALAB || null;
 
 function readData(key) {
     try {
-        const data = localStorage.getItem(key);
-        const parsed = data ? JSON.parse(data) : [];
-        return Array.isArray(parsed) ? parsed : [];
+        const data = ideaCore && ideaCore.legacy
+            ? ideaCore.legacy.read(key, [])
+            : (() => {
+                const raw = localStorage.getItem(key);
+                return raw ? JSON.parse(raw) : [];
+            })();
+        return Array.isArray(data) ? data : [];
     } catch (error) {
         console.error("Ma'lumotni o‘qishda xato:", error);
         return [];
@@ -504,11 +508,19 @@ function readData(key) {
 
 function saveData(key, data) {
     try {
+        if (ideaCore && ideaCore.legacy) {
+            const result = ideaCore.legacy.write(key, data);
+            if (!result || !result.ok) {
+                alert("Ma'lumot saqlanmadi. Brauzer xotirasini tekshiring.");
+                return false;
+            }
+            return true;
+        }
         localStorage.setItem(key, JSON.stringify(data));
         return true;
     } catch (error) {
         console.error("Ma'lumotni saqlashda xato:", error);
-        alert("Ma'lumot saqlanmadi. Brauzer xotirasini tekshiring.");
+        alert("Saqlashda xatolik yuz berdi.");
         return false;
     }
 }
