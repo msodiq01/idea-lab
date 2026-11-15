@@ -114,6 +114,14 @@ Shaxsiy kabinet barcha modullarni o‘ziga ko‘chirib olmaydi. Harakat tegishli
 - `profile.html`: yagona arizalar markaziga taklif arizalari qo‘shildi; eski identifikatorsiz yozuvlar avtomatik egaga biriktirilmaydi.
 - Eski `offers`, `offerApplications`, `offerMessages` va `ideaLabExchangeItems` yozuvlari migratsiya qilinmadi yoki o‘zgartirilmadi.
 
+### Vizual dizayn — yagona SaaS ish maydoni (2026-11-15)
+- Umumiy dizayn tizimi premium SaaS ko‘rinishida qayta ishlanmoqda: och rangli sirtlar, aniq tipografika, indigo asosiy rang, yumshoq chegaralar va chuqurlik.
+- Barcha sahifalarda bitta ixcham navigatsiya, faol bo‘lim belgisi, guruhlangan bo‘limlar menyusi va mobilga mos menyu qo‘llanadi.
+- Takroriy eski menyular yashiriladi; sahifa kontenti, formalar va modullar saqlanadi.
+- Hero, kartalar, statistik bloklar, tugmalar, formalar, filtrlar va mobil gridlar uchun umumiy stil qo‘llanadi.
+- Demo rejimi ochiq ko‘rsatiladi; haqiqiy server ulanishi bor deb ko‘rsatilmaydi.
+- CSS/JS sintaksisi va vizual regresiya tekshiruvlari qo‘shildi; haqiqiy brauzer screenshot/interaction testi hali bajarilishi kerak.
+
 ### Keyingi ish
 - Vakansiya va jamoa e’lonlarini yaratishdan oldin profil saqlanganini tushuntiruvchi, foydalanuvchini majburlamaydigan UX qo‘shish.
 - Ariza statusini kabinetdan o‘zgartirish uchun tegishli moduldagi mavjud xavfsiz status funksiyalariga yo‘naltirish yoki umumiy API yaratish.
