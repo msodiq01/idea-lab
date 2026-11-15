@@ -11,7 +11,7 @@
   ["Kabinet","profile.html"]
  ];
  const groups=[
-  ["Boshqaruv",[["Dashboard","dashboard.html"],["Boshqaruv markazi","management.html"],["Shaxsiy kabinet","profile.html"],["Arizalar markazi","applications.html"],["Tashkilotlar","organizations.html"],["Mening to‘plamim","collection.html"]]],
+  ["Boshqaruv",[["Dashboard","dashboard.html"],["Boshqaruv markazi","management.html"],["Moliya markazi","finance.html"],["Shaxsiy kabinet","profile.html"],["Arizalar markazi","applications.html"],["Tashkilotlar","organizations.html"],["Mening to‘plamim","collection.html"]]],
   ["G‘oya va rivojlanish",[["Loyihalar","projects.html"],["Talab va taklif","exchange.html"]]],
   ["Biznes va bozor",[["Global bozor","marketplace.html"],["Investorlar","investors.html"],["Takliflar markazi","offers.html"]]],
   ["Jamoa va imkoniyatlar",[["Jamoalar","teams.html"],["Vakansiyalar","teams.html#career-section"],["Mutaxassislar","specialists.html"]]],
