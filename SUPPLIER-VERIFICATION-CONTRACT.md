@@ -73,7 +73,7 @@ Edge Function uchta amalni qo‘llab-quvvatlaydi:
 
 Service-role kaliti faqat Edge Function secret bo‘lishi shart. Brauzerga hech qachon berilmaydi. CORS aniq `ALLOWED_ORIGINS` ro‘yxatiga bog‘langan. API javoblari `no-store`.
 
-Cheklovlar: fayl mazmuni antivirus yoki haqiqiylik tekshiruvidan o‘tmaydi; MIME metadata yetarli xavfsizlik isboti emas. Audit faqat link berilganini qayd etadi, yuklab olish sodir bo‘lganini emas. Reviewer vakolati hozir global allowlist — case-level assignment yo‘q. Rate limit, retention cleanup va o‘chirish jarayoni yo‘q. Function deploy qilinmagan, migration staging'da bajarilmagan. Haqiqiy hujjatlar bilan ishlash hali boshlanmasin.
+Cheklovlar: fayl mazmuni antivirus yoki haqiqiylik tekshiruvidan o‘tmaydi; MIME metadata yetarli xavfsizlik isboti emas. Audit faqat link berilganini qayd etadi, yuklab olish sodir bo‘lganini emas. Bu 2026-11-19 dagi dastlabki holat edi; 2026-11-20 migration'i reviewer hujjatlarni faqat faol case-level assignment bo‘lsa ko‘rishini chekladi. Rate limit, retention cleanup va o‘chirish jarayoni hanuz yo‘q. Function deploy qilinmagan, migration staging'da bajarilmagan. Haqiqiy hujjatlar bilan ishlash hali boshlanmasin.
 
 ## 8. Sinov holati
 `tests/supplier-verification-migration.test.cjs`, `tests/supplier-verification-reviewers.test.cjs`, `tests/supplier-verification-storage.test.cjs` va `tests/supplier-verification-evidence-api.test.cjs` migration/API matnining xavfsizlik shartlarini statik tekshiradi. Bu SQL parser, Deno runtime testi, Postgres integratsion test yoki jonli Storage RLS sinovi emas. Migration faqat alohida staging loyihasida qo‘llanib, ikki akkauntli testdan o‘tkazilgandan keyin foydalanishga yaroqli deb baholanadi.
