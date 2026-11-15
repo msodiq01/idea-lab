@@ -1,6 +1,6 @@
 # IDEA LAB — Ta’minotchini tekshirish jarayoni
 
-Versiya: 1.2 · Sana: 2026-11-17  
+Versiya: 1.3 · Sana: 2026-11-18  
 Holat: backend migration tayyorlandi; jonli Supabase loyihasiga qo‘llangani tasdiqlanmagan.
 
 ## 1. Maqsad
@@ -51,10 +51,22 @@ Fayl: supabase/migrations/20261117_supplier_verification_reviewers.sql
 
 Bu migration reviewer tayinlash interfeysi, MFA sozlamasi, hujjat Storage bucket'i yoki upload API yaratmaydi. Reviewerlar faqat tashkilot vakolati va mas’ul kattalar tomonidan tekshirilganidan keyin tayinlanishi kerak. Real shaxsiy hujjatlarni test muhitiga yuklamang.
 
-## 6. Sinov holati
+## 6. Maxfiy hujjatlar saqlash arxitekturasi — 2026-11-18
+Fayl: supabase/migrations/20261118_supplier_verification_private_storage.sql
+
+- supplier-verification-private nomli private bucket; public URL orqali o‘qish o‘chirilgan.
+- Fayl hajmi 10 MiB bilan cheklangan; ruxsat etilgan MIME turlari PDF, JPEG va PNG.
+- Fayl yo‘li {application_id}/{document_type}/{opaque_filename} shaklida bo‘lishi shart.
+- Ta’minotchi faqat o‘zining submitted yoki needs_more_info arizasi ichiga yuklashi mumkin.
+- Ta’minotchi o‘z hujjatini, faol reviewer esa tekshiruv uchun hujjatni o‘qiy oladi.
+- Client uchun object update/delete siyosati yo‘q; o‘chirish yoki almashtirish keyinchalik alohida server-side auditli jarayon bo‘lishi kerak.
+
+Bu faqat bucket va Storage RLS poydevori. Hozircha upload UI, signed URL backend endpoint, antivirus/content inspection, evidence metadata yozuvchi ishonchli backend yoki retention cleanup job yo‘q. MIME header fayl mazmunining xavfsizligini isbotlamaydi. Real hujjatlarni bu bosqichda yuklamang.
+
+## 7. Sinov holati
 `tests/supplier-verification-migration.test.cjs` va `tests/supplier-verification-reviewers.test.cjs` migration matnining xavfsizlik shartlarini statik tekshiradi. Bu SQL parser, Postgres integratsion test yoki jonli RLS sinovi emas. Migration faqat alohida staging loyihasida qo‘llanib, ikki akkauntli testdan o‘tkazilgandan keyin foydalanishga yaroqli deb baholanadi.
 
-## 7. Qabul mezonlari
+## 8. Qabul mezonlari
 - [ ] Test Supabase loyihasi va egasi tasdiqlangan.
 - [ ] Backup va restore sinovi bajarilgan.
 - [ ] Migration staging'da qo‘llangan.
