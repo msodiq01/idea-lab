@@ -939,8 +939,10 @@ investmentForm.addEventListener("submit", function(event) {
     const date = new Date().toISOString();
 
     const application = {
+        ...(ideaCore && ideaCore.identity ? ideaCore.identity.stamp({ applicantName: investorName }, "applicant") : {}),
         id: applicationId,
 
+        projectOwnerId: project.ownerId || "",
         projectId: String(project.id),
         projectName: project.name || "",
 
