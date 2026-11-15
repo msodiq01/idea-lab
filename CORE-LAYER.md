@@ -13,6 +13,7 @@ Holat: alohida tayyorlangan frontend yadro; sahifalarga hali ulanmagan.
 - `window.IDEALAB.version` — yadro versiyasi.
 - `window.IDEALAB.environment` — hozirgi holat `offline-demo`; backend va autentifikatsiya yo'q.
 - `window.IDEALAB.store` — xavfsiz JSON localStorage get/set/remove interfeysi.
+- `window.IDEALAB.legacy.read(key, fallback)` / `write(key, value)` — ruxsat etilgan eski localStorage kalitlarini yagona qatlam orqali o‘qiydi/yozadi; eski kalit nomi va JSON shaklini o‘zgartirmaydi.
 - `window.IDEALAB.legacy.inspect(keys)` — ruxsat etilgan eski kalitlarni faqat metadata darajasida tekshiradi; qiymatlarni ko‘rsatmaydi.
 - `window.IDEALAB.legacy.createBackup(keys)` — faqat aniq uzatilgan kalitlar uchun, chaqiruvchi tomonidan ishga tushiriladigan zaxira nusxa yaratadi. Xom qiymatlar nusxalanadi; shu sababli maxfiy ma’lumotlar ham zaxiraga kirishi mumkin.
 - `window.IDEALAB.legacy.readBackup(id)` — shu brauzerda saqlangan zaxirani tekshirish uchun o‘qiydi.
@@ -41,12 +42,13 @@ const unsubscribe = IDEALAB.subscribe(IDEALAB.events.storageChanged, (event) => 
 
 ## Muhim cheklovlar
 
-1. Yadro hozircha hech bir sahifaga avtomatik ulanmagan; mavjud funksiyalar o'zgarmaydi.
+1. Yadro `index.html` va `projects.html` sahifalarida loyiha ma’lumotini o‘qish/yozish uchun pilot sifatida ishlatiladi. Qolgan sahifalar hali eski to‘g‘ridan-to‘g‘ri localStorage chaqiruvlaridan foydalanadi.
 2. Yangi store kalitlari `ideaLab.core.` prefiksi bilan saqlanadi va eski localStorage kalitlariga tegmaydi.
 3. Bu brauzer ichidagi demo saqlash. Ma'lumotlar boshqa foydalanuvchilarga ko'rinmaydi va autentifikatsiya o'rnini bosmaydi.
 4. Email/telefon tekshiruvi faqat qulaylik uchun; server tekshiruvini almashtirmaydi.
 5. Status lug'ati keyinchalik barcha sahifalardagi hozirgi turli statuslar bilan alohida mapping sinovidan o'tkaziladi.
-6. Faylni sahifalarga ulashdan oldin skript tartibi, konfliktlar va har bir oqim brauzerda tekshirilishi shart.
+6. Keyingi sahifalarni ulashdan oldin skript tartibi, konfliktlar va har bir oqim brauzerda tekshirilishi shart.
+7. `legacy.write()` faqat allowlistdagi kalitlarga yozadi va `legacy:changed` hodisasida qiymatni emas, faqat kalit va amal turini yuboradi.
 
 ## Tekshiruv
 
@@ -69,6 +71,6 @@ Bu amallar ma’lumotni yangi formatga ko‘chirmaydi va eski kalitlarni o‘chi
 
 ## Ataylab qilinmagan ishlar
 
-- Hech qanday mavjud HTML sahifa o'zgartirilmadi.
+- `index.html` va `projects.html` markaziy legacy adapterga pilot sifatida ulandi; loyiha yozuvlarining eski JSON shakli saqlanadi.
 - Hech qanday mavjud localStorage ma'lumoti ko'chirilmadi yoki o'chirilmadi.
 - Supabase yoki boshqa backendga ulanish qilinmadi.
