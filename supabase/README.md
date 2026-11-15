@@ -79,4 +79,4 @@ Bu hujjatlar deploy bajarmaydi. Staging loyihasi tanlanmagan, migrationlar qo'll
 
 ## Edge Function gateway JWT talabi
 
-``supabase/config.toml`` faylida ta’minotchi hujjatlari va admin Edge Function'lari uchun `verify_jwt = true` aniq belgilangan. Deploy vaqtida bu himoyani o‘chirmang (`--no-verify-jwt` ishlatmang). Buyruqlar staging project ref bilan runbook'da berilgan.
+`supabase/config.toml` faylida ta’minotchi hujjatlari va admin Edge Function'lari uchun `verify_jwt = true` aniq belgilangan. Deploy vaqtida bu himoyani o‘chirmang (`--no-verify-jwt` ishlatmang). Buyruqlar staging project ref bilan runbook'da berilgan.
