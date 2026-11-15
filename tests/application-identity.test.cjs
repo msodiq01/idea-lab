@@ -42,3 +42,13 @@ test("Legacy saqlash kalitlari o'chirilmagan", () => {
   assert.match(offers, /readData\("offerMessages"\)/);
   assert.match(exchange, /ideaLabExchangeItems/);
 });
+
+test("Investor hamkorlik so‘rovi profil identifikatoriga biriktiriladi va shaxsiy ro‘yxat filtrlanadi",()=>{
+ const investors=read("investors.html");
+ const profile=read("profile.html");
+ assert.match(investors,/identity\.stamp\(request, "applicant"\)/);
+ assert.match(investors,/applicantId/);
+ assert.match(investors,/profilingizga bog‘langan yuborilgan so‘rov yo‘q/);
+ assert.match(profile,/key:"investorRequests"/);
+ assert.match(profile,/Investorlar bilan hamkorlik so‘rovlarim/);
+});
