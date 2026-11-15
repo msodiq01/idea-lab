@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#07111f">
+<title>IDEA LAB | Organization Center</title>
+<link rel="stylesheet" href="assets/idea-shell.css">
+<style>
+.oc-wrap{width:min(1180px,calc(100% - 32px));margin:34px auto 72px}
+.oc-hero{position:relative;overflow:hidden;padding:28px;border:1px solid rgba(39,215,232,.2);border-radius:24px;background:radial-gradient(ellipse at 85% 0%,rgba(39,215,232,.16),transparent 42%),linear-gradient(125deg,#102943,#0b1b2e 72%);box-shadow:0 20px 55px #0003}
+.oc-kicker{color:#70e6ef;font-size:11px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase}
+.oc-hero h1{font-size:clamp(27px,4vw,42px);letter-spacing:-1.3px;margin:8px 0}
+.oc-hero p{max-width:720px;color:#afc2d8;margin:0}
+.oc-badges{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+.oc-badge{font-size:11px;padding:6px 10px;border:1px solid rgba(255,255,255,.13);border-radius:999px;background:#ffffff0b;color:#c8d8e9}
+.oc-layout{display:grid;grid-template-columns: minmax(270px,.78fr) minmax(0,1.7fr);gap:18px;margin-top:20px;align-items:start}
+.oc-panel{background:linear-gradient(145deg,rgba(16,34,57,.98),rgba(9,24,41,.98));border:1px solid rgba(148,183,220,.16);border-radius:18px;padding:20px;box-shadow:0 14px 40px #0002;min-width:0}
+.oc-panel h2{font-size:17px;margin:0 0 5px}
+.oc-muted{color:#91a5bd;font-size:12px;margin:0 0 17px}
+.oc-field{display:grid;gap:6px;margin:12px 0}
+.oc-field label{font-size:12px;color:#b7c8dc;font-weight:650}
+.oc-field input,.oc-field select,.oc-field textarea{width:100%;padding:11px 12px;background:#091729;color:#f1f6ff;border:1px solid #29415f;border-radius:10px;outline:none}
+.oc-field textarea{min-height:90px;resize:vertical}
+.oc-field input:focus,.oc-field select:focus,.oc-field textarea:focus{border-color:#27d7e8;box-shadow:0 0 0 3px #27d7e81c}
+.oc-btn{display:inline-flex;justify-content:center;align-items:center;gap:7px;border:1px solid #278ecb;border-radius:10px;padding:10px 14px;color:#fff;background:linear-gradient(110deg,#087eaf,#2463eb);font:inherit;font-size:12px;font-weight:750;cursor:pointer}
+.oc-btn.secondary{background:#172b43;border-color:#304965}
+.oc-btn:disabled{opacity:.45;cursor:not-allowed}
+.oc-list{display:grid;gap:9px}
+.oc-org{width:100%;text-align:left;border:1px solid rgba(148,183,220,.14);border-radius:13px;background:#0a192b;color:#f1f6ff;padding:13px;cursor:pointer}
+.oc-org[aria-pressed=true]{border-color:#27d7e8;background:linear-gradient(110deg,#12314a,#10243a)}
+.oc-org strong{display:block;font-size:13px}
+.oc-org span{display:block;color:#91a5bd;font-size:11px;margin-top:3px}
+.oc-empty{border:1px dashed rgba(148,183,220,.25);border-radius:13px;padding:22px;text-align:center;color:#91a5bd;font-size:12px}
+.oc-content{display:grid;gap:16px}
+.oc-org-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.oc-org-head h2{font-size:22px;margin:2px 0}
+.oc-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.oc-chip{font-size:10px;padding:5px 9px;border-radius:999px;background:#14344a;color:#8cecf3;border:1px solid #22536b}
+.oc-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:16px}
+.oc-stat{padding:12px;border-radius:12px;background:#091a2d;border:1px solid rgba(148,183,220,.12)}
+.oc-stat small{display:block;color:#91a5bd;font-size:10px}
+.oc-stat strong{display:block;font-size:20px;margin-top:2px}
+.oc-two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.oc-member{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid rgba(148,183,220,.12)}
+.oc-member:last-child{border:0}
+.oc-member strong{display:block;font-size:12px}
+.oc-member small{display:block;color:#91a5bd;font-size:10px}
+.oc-project{padding:10px 0;border-bottom:1px solid rgba(148,183,220,.12);font-size:12px}
+.oc-project:last-child{border:0}
+.oc-status{font-size:10px;color:#f1c77b}
+.oc-message{min-height:18px;color:#8cecf3;font-size:11px;margin-top:10px}
+.oc-foot{font-size:11px;color:#8198b2;line-height:1.6;margin-top:16px}
+.oc-hidden{display:none!important}
+@media(max-width:800px){.oc-layout{grid-template-columns:1fr}.oc-two{grid-template-columns:1fr}}
+@media(max-width:520px){.oc-wrap{width:calc(100% - 22px);margin-top:20px}.oc-hero{padding:21px}.oc-panel{padding:16px}.oc-stats{grid-template-columns:repeat(3,minmax(0,1fr))}.oc-stat{padding:9px}.oc-stat strong{font-size:17px}}
+</style>
+</head>
+<body>
+<main class="oc-wrap">
+<section class="oc-hero">
+<div class="oc-kicker">IDEA LAB / ORGANIZATION CENTER</div>
+<h1>Tashkilotlar markazi</h1>
+<p>Kompaniya, muassasa yoki jamoangizni bir joyda boshqaring. Tashkilot profili, a’zolar, vazifalar va loyihalar uchun yagona ish maydoni.</p>
+<div class="oc-badges"><span class="oc-badge">Offline demo</span><span class="oc-badge">Mahalliy saqlash</span><span class="oc-badge">Server ulanmagan</span></div>
+</section>
+<div class="oc-layout">
+<aside class="oc-panel">
+<h2>Mening tashkilotlarim</h2>
+<p class="oc-muted">Ushbu brauzerda yaratilgan tashkilotlar ro‘yxati.</p>
+<div id="organizationList" class="oc-list" aria-live="polite"></div>
+<div style="height:1px;background:rgba(148,183,220,.14);margin:18px 0"></div>
+<h2>Yangi tashkilot</h2>
+<p class="oc-muted">Tashkilot haqida asosiy ma’lumotlarni kiriting.</p>
+<form id="organizationForm">
+<div class="oc-field"><label for="orgName">Tashkilot nomi *</label><input id="orgName" maxlength="90" required placeholder="Masalan: IDEA LAB Samarqand"></div>
+<div class="oc-field"><label for="orgType">Tashkilot turi *</label><select id="orgType" required><option value="company">Kompaniya</option><option value="ngo">NNT / jamoat birlashmasi</option><option value="institution">Muassasa</option><option value="team">Mustaqil jamoa</option><option value="other">Boshqa</option></select></div>
+<div class="oc-field"><label for="orgLocation">Joylashuv</label><input id="orgLocation" maxlength="100" placeholder="Shahar, mamlakat"></div>
+<div class="oc-field"><label for="orgWebsite">Veb-sayt (ixtiyoriy)</label><input id="orgWebsite" maxlength="180" type="url" placeholder="https://example.com"></div>
+<div class="oc-field"><label for="orgDescription">Qisqacha tavsif</label><textarea id="orgDescription" maxlength="600" placeholder="Tashkilot faoliyati va maqsadi..."></textarea></div>
+<button class="oc-btn" type="submit">＋ Tashkilot yaratish</button>
+<div id="formMessage" class="oc-message" role="status" aria-live="polite"></div>
+</form>
+</aside>
+<section class="oc-content">
+<div id="emptyState" class="oc-panel oc-empty">Hozircha tashkilot tanlanmagan. Chap tomondan yangi tashkilot yarating yoki mavjudini tanlang.</div>
+<div id="organizationDetail" class="oc-hidden">
+<section class="oc-panel">
+<div class="oc-org-head"><div><div class="oc-kicker" id="detailType">TASHKILOT</div><h2 id="detailName">—</h2><div class="oc-muted" id="detailDescription"></div><div class="oc-meta"><span class="oc-chip" id="detailLocation">Joylashuv kiritilmagan</span><span class="oc-chip">Demo tashkilot</span></div></div><a id="detailWebsite" class="oc-btn secondary oc-hidden" href="#" target="_blank" rel="noopener noreferrer">Saytni ochish ↗</a></div>
+<div class="oc-stats"><div class="oc-stat"><small>A’zolar</small><strong id="memberCount">0</strong></div><div class="oc-stat"><small>Bog‘langan loyihalar</small><strong id="projectCount">0</strong></div><div class="oc-stat"><small>Tashkilot holati</small><strong style="font-size:13px" id="orgStatus">Demo</strong></div></div>
+</section>
+<div class="oc-two">
+<section class="oc-panel">
+<h2>A’zolar va vakolatlar</h2><p class="oc-muted">Bu rollar faqat demo interfeys uchun. Haqiqiy ruxsat bermaydi.</p>
+<div id="memberList"></div>
+<form id="memberForm" style="margin-top:14px">
+<div class="oc-field"><label for="memberName">A’zo ismi</label><input id="memberName" maxlength="70" required placeholder="Ism va familiya"></div>
+<div class="oc-field"><label for="memberRole">Lavozim / rol</label><select id="memberRole"><option value="admin">Administrator</option><option value="manager">Menejer</option><option value="member" selected>A’zo</option><option value="viewer">Kuzatuvchi</option></select></div>
+<button class="oc-btn secondary" type="submit">A’zo qo‘shish</button>
+<div id="memberMessage" class="oc-message" role="status"></div>
+</form>
+</section>
+<section class="oc-panel">
+<h2>Loyihalar bilan bog‘lash</h2><p class="oc-muted">Mavjud demo loyihalar ro‘yxatidan tanlang. Asl loyiha yozuvlari o‘zgartirilmaydi.</p>
+<div id="projectList"></div>
+<div id="projectMessage" class="oc-message" role="status"></div>
+</section>
+</div>
+<section class="oc-panel">
+<h2>Tashkilot boshqaruvi</h2><p class="oc-muted">Hozirgi demo rejimida tashkilot yaratilgan brauzerda ko‘rinadi. Tasdiqlash, rasmiy maqom va haqiqiy jamoaviy kirish server bosqichida amalga oshiriladi.</p>
+<div class="oc-status">● Tasdiqlash holati: hali tekshirilmagan</div>
+<p class="oc-foot">Maxfiylik: bu prototipga shaxsiy telefon, email, parol yoki hujjat kiritmang. A’zolar ro‘yxati faqat mahalliy demo yozuvdir.</p>
+</section>
+</div>
+</section>
+</div>
+</main>
+<script src="assets/idea-core.js"></script>
+<script>
+"use strict";
+(function(){
+const core=window.IDEALAB||null;
+const STORAGE_KEY="organizations";
+const $=id=>document.getElementById(id);
+const TYPES={company:"KOMPANIYA",ngo:"NNT / JAMOAT BIRLASHMASI",institution:"MUASSASA",team:"MUSTAQIL JAMOA",other:"TASHKILOT"};
+const readOrganizations=()=>{const value=core?core.store.get(STORAGE_KEY,[]):[];return Array.isArray(value)?value:[]};
+const saveOrganizations=value=>{if(!core)return false;const result=core.store.set(STORAGE_KEY,value);return Boolean(result&&result.ok)};
+const readProjects=()=>{try{const value=core?core.legacy.read("projects",[]):JSON.parse(localStorage.getItem("projects")||"[]");return Array.isArray(value)?value:[]}catch(_){return[]}};
+let selectedId=null;
+const node=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt!==undefined)el.textContent=String(txt);return el};
+const getSelected=()=>readOrganizations().find(org=>org.id===selectedId)||null;
+function renderList(){
+ const list=$("organizationList");list.replaceChildren();const items=readOrganizations();
+ if(!items.length){list.append(node("div","oc-empty","Tashkilotlar hali yaratilmagan."));return}
+ items.forEach(org=>{const button=node("button","oc-org");button.type="button";button.setAttribute("aria-pressed",String(org.id===selectedId));button.append(node("strong","",org.name));button.append(node("span","",(TYPES[org.type]||"TASHKILOT")+" · "+(org.location||"Joylashuv yo‘q")));button.addEventListener("click",()=>{selectedId=org.id;render()});list.append(button)});
+}
+function renderMembers(org){
+ const box=$("memberList");box.replaceChildren();const members=Array.isArray(org.members)?org.members:[];
+ if(!members.length){box.append(node("div","oc-empty","Hozircha a’zolar kiritilmagan."));return}
+ members.forEach(member=>{const row=node("div","oc-member");const info=node("div");info.append(node("strong","",member.name));info.append(node("small","",({owner:"Tashkilot egasi",admin:"Administrator",manager:"Menejer",member:"A’zo",viewer:"Kuzatuvchi"}[member.role]||"A’zo")+" · "+(member.status==="removed"?"Faol emas":"Demo a’zo")));row.append(info);if(member.role!=="owner"&&member.status!=="removed"){const button=node("button","oc-btn secondary","Faol emas");button.type="button";button.addEventListener("click",()=>{const all=readOrganizations();const target=all.find(x=>x.id===org.id);const m=target.members.find(x=>x.id===member.id);if(m){m.status="removed";saveOrganizations(all);render()}});row.append(button)}box.append(row)});
+}
+function renderProjects(org){
+ const box=$("projectList");box.replaceChildren();const projects=readProjects();const linked=Array.isArray(org.projectIds)?org.projectIds:[];
+ if(!projects.length){box.append(node("div","oc-empty","Brauzerda mavjud demo loyihalar topilmadi."));return}
+ projects.forEach(project=>{const id=String(project.id??"");if(!id)return;const label=node("label","oc-project");const check=node("input");check.type="checkbox";check.checked=linked.includes(id);check.style.marginRight="8px";check.addEventListener("change",()=>{const all=readOrganizations();const target=all.find(x=>x.id===org.id);if(!target)return;const ids=new Set(Array.isArray(target.projectIds)?target.projectIds:[]);if(check.checked)ids.add(id);else ids.delete(id);target.projectIds=Array.from(ids);if(!saveOrganizations(all)){$("projectMessage").textContent="Saqlashda xatolik.";check.checked=!check.checked;return}$("projectMessage").textContent="Bog‘lanish saqlandi. Asl loyiha yozuvi o‘zgarmadi.";renderList();$("projectCount").textContent=target.projectIds.length});label.append(check,node("span","",project.name||project.projectName||"Nomsiz loyiha"));box.append(label)});
+}
+function render(){
+ renderList();const org=getSelected();$("emptyState").classList.toggle("oc-hidden",Boolean(org));$("organizationDetail").classList.toggle("oc-hidden",!org);if(!org)return;
+ $("detailType").textContent=TYPES[org.type]||"TASHKILOT";$("detailName").textContent=org.name;$("detailDescription").textContent=org.description||"Tashkilot tavsifi kiritilmagan.";$("detailLocation").textContent=org.location||"Joylashuv kiritilmagan";$("memberCount").textContent=(org.members||[]).filter(m=>m.status!=="removed").length;$("projectCount").textContent=(org.projectIds||[]).length;$("orgStatus").textContent="Demo";
+ const site=$("detailWebsite");let safe="";try{const u=new URL(org.website);if(["http:","https:"].includes(u.protocol))safe=u.href}catch(_){}site.classList.toggle("oc-hidden",!safe);if(safe)site.href=safe;
+ renderMembers(org);renderProjects(org);
+}
+$("organizationForm").addEventListener("submit",event=>{
+ event.preventDefault();const name=$("orgName").value.trim();if(!name){$("formMessage").textContent="Tashkilot nomini kiriting.";return}
+ const website=$("orgWebsite").value.trim();if(website){try{const url=new URL(website);if(!["http:","https:"].includes(url.protocol))throw new Error("protocol")}catch(_){$("formMessage").textContent="Veb-sayt manzili noto‘g‘ri.";return}}
+ const all=readOrganizations();const now=new Date().toISOString();const org={id:core?core.createId():"org-"+Date.now(),name,type:$("orgType").value,location:$("orgLocation").value.trim(),website,description:$("orgDescription").value.trim(),verificationStatus:"unverified",members:[{id:"owner-"+Date.now(),name:"Tashkilot egasi",role:"owner",status:"active",createdAt:now}],projectIds:[],createdAt:now,updatedAt:now};
+ all.push(org);if(!saveOrganizations(all)){$("formMessage").textContent="Saqlash imkoni bo‘lmadi. Brauzer xotirasini tekshiring.";return}selectedId=org.id;$("organizationForm").reset();$("formMessage").textContent="Tashkilot ushbu brauzerda yaratildi.";render();
+ if(core)core.emit("organization:created",{organizationId:org.id,type:org.type,createdAt:now});
+});
+$("memberForm").addEventListener("submit",event=>{
+ event.preventDefault();const org=getSelected();if(!org)return;const name=$("memberName").value.trim();if(!name)return;const all=readOrganizations();const target=all.find(x=>x.id===org.id);if(!target)return;target.members=Array.isArray(target.members)?target.members:[];target.members.push({id:core?core.createId():"member-"+Date.now(),name,role:$("memberRole").value,status:"active",createdAt:new Date().toISOString()});target.updatedAt=new Date().toISOString();if(!saveOrganizations(all)){$("memberMessage").textContent="Saqlashda xatolik.";return}$("memberForm").reset();$("memberMessage").textContent="Demo a’zo qo‘shildi.";render();
+});
+if(core)core.subscribe("storage:changed",detail=>{if(detail&&detail.key===STORAGE_KEY)render()});
+window.addEventListener("storage",event=>{if(event.key==="ideaLab.core."+STORAGE_KEY||event.key==="projects")render()});
+render();
+})();
+</script>
+<script src="assets/idea-shell.js" defer></script>
+</body>
+</html>
