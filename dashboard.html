@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="IDEA LAB — yagona boshqaruv paneli">
+<title>IDEA LAB | Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/idea-shell.css">
+<style>
+:root{--d-bg:#07111f;--d-panel:#0d1b2d;--d-card:#102239;--d-line:rgba(151,184,220,.14);--d-text:#f3f7ff;--d-muted:#91a5bd;--d-cyan:#27d7e8;--d-blue:#3985ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0%,rgba(39,215,232,.08),transparent 35%),var(--d-bg);color:var(--d-text);font-family:Inter,Arial,sans-serif}
+.d-wrap{width:min(1200px,calc(100% - 36px));margin:34px auto 70px}.d-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:26px}.d-kicker{color:var(--d-cyan);font-size:11px;font-weight:800;letter-spacing:2px}.d-heading h1{font-size:clamp(30px,5vw,46px);letter-spacing:-1.8px;margin:9px 0}.d-heading p{margin:0;color:var(--d-muted);max-width:650px;line-height:1.7}.d-date{color:var(--d-muted);font-size:12px;white-space:nowrap}
+.d-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.d-card{background:linear-gradient(145deg,rgba(17,39,62,.96),rgba(11,27,45,.96));border:1px solid var(--d-line);border-radius:17px;padding:19px;min-width:0}.d-stat-label{font-size:12px;color:var(--d-muted)}.d-stat-value{font-size:31px;font-weight:800;letter-spacing:-1px;margin:12px 0 4px}.d-stat-foot{font-size:11px;color:var(--d-muted)}.d-stat-icon{float:right;width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:rgba(39,215,232,.1);color:var(--d-cyan);font-size:17px}
+.d-section{margin-top:30px}.d-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.d-section h2{font-size:19px;margin:0;letter-spacing:-.4px}.d-section-head p{font-size:12px;color:var(--d-muted);margin:5px 0 0}.d-link{color:var(--d-cyan);font-size:12px;text-decoration:none;font-weight:700}
+.d-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.d-action{display:block;text-decoration:none;color:var(--d-text);background:#0c1b2d;border:1px solid var(--d-line);border-radius:15px;padding:17px;transition:.2s}.d-action:hover{transform:translateY(-3px);border-color:rgba(39,215,232,.45)}.d-action .ico{font-size:22px;margin-bottom:13px}.d-action strong{display:block;font-size:13px;margin-bottom:5px}.d-action span{display:block;color:var(--d-muted);font-size:11px;line-height:1.5}
+.d-lower{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}.d-panel{background:#0c1b2d;border:1px solid var(--d-line);border-radius:17px;padding:20px;min-width:0}.d-empty{padding:26px 10px;text-align:center;color:var(--d-muted);font-size:12px;line-height:1.7}.d-empty b{display:block;color:var(--d-text);font-size:14px;margin-bottom:5px}
+.d-device{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--d-line)}.d-device:last-child{border:0}.d-device strong{font-size:12px;display:block}.d-device small{color:var(--d-muted);font-size:10px}.d-state{font-size:10px;color:#f2c36b;background:rgba(242,195,107,.1);padding:6px 9px;border-radius:30px;white-space:nowrap}
+.d-modules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.d-module{border:1px solid var(--d-line);border-radius:13px;padding:15px;background:rgba(16,34,57,.65)}.d-module b{font-size:12px;display:block;margin-bottom:5px}.d-module span{font-size:10px;color:var(--d-muted);line-height:1.5}
+.d-footnote{color:#8399b3;font-size:10px;line-height:1.6;margin-top:12px}
+@media(max-width:850px){.d-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.d-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.d-lower{grid-template-columns:1fr}}
+@media(max-width:560px){.d-wrap{width:calc(100% - 24px);margin-top:25px}.d-heading{display:block}.d-date{display:block;margin-top:12px}.d-modules{grid-template-columns:repeat(2,minmax(0,1fr))}.d-card{padding:15px}.d-stat-value{font-size:27px}}
+</style>
+</head>
+<body>
+<main class="d-wrap">
+<section class="d-heading">
+<div><div class="d-kicker">IDEA LAB / BOSHQARUV MARKAZI</div><h1>Dashboard</h1><p>G‘oyalar, loyihalar, jamoalar, resurslar va hamkorlik jarayonlarini yagona joydan boshqaring.</p></div>
+<div class="d-date" id="todayLabel">Bugungi sana</div>
+</section>
+<section class="d-grid" aria-label="Asosiy ko‘rsatkichlar">
+<article class="d-card"><span class="d-stat-icon">◈</span><div class="d-stat-label">Mening loyihalarim</div><div class="d-stat-value" id="projectCount">0</div><div class="d-stat-foot">Ushbu brauzerda saqlangan loyihalar</div></article>
+<article class="d-card"><span class="d-stat-icon">↗</span><div class="d-stat-label">Yuborilgan arizalar</div><div class="d-stat-value" id="applicationCount">0</div><div class="d-stat-foot">Mavjud mahalliy ariza yozuvlari</div></article>
+<article class="d-card"><span class="d-stat-icon">◎</span><div class="d-stat-label">Hamkorlik so‘rovlari</div><div class="d-stat-value" id="collaborationCount">0</div><div class="d-stat-foot">Jamoa va resurs murojaatlari</div></article>
+<article class="d-card"><span class="d-stat-icon">⌁</span><div class="d-stat-label">IoT qurilmalar</div><div class="d-stat-value">0</div><div class="d-stat-foot">Hozircha qurilmalar ulanmagan</div></article>
+</section>
+<section class="d-section">
+<div class="d-section-head"><div><h2>Tezkor amallar</h2><p>Kerakli bo‘limga bir qadamda o‘ting.</p></div></div>
+<div class="d-actions">
+<a class="d-action" href="index.html#createProject"><div class="ico">✦</div><strong>Yangi loyiha</strong><span>G‘oyani loyiha sifatida kiriting va rivojlantirishni boshlang.</span></a>
+<a class="d-action" href="projects.html"><div class="ico">▦</div><strong>Loyihalarni ko‘rish</strong><span>Platformadagi mavjud loyihalarni o‘rganing.</span></a>
+<a class="d-action" href="offers.html"><div class="ico">⇄</div><strong>Takliflar markazi</strong><span>Kerakli resurs yoki xizmat bo‘yicha murojaat qiling.</span></a>
+<a class="d-action" href="profile.html"><div class="ico">◉</div><strong>Shaxsiy kabinet</strong><span>Profil va shaxsiy ma’lumotlaringizni boshqaring.</span></a>
+</div>
+</section>
+<section class="d-section">
+<div class="d-section-head"><div><h2>Faoliyat va qurilmalar</h2><p>Mahalliy ma’lumotlar va IoT holati.</p></div><a class="d-link" href="profile.html">Kabinetga o‘tish →</a></div>
+<div class="d-lower">
+<div class="d-panel"><h2 style="font-size:15px;margin:0">So‘nggi loyihalar</h2><div id="recentProjects" class="d-empty"><b>Hozircha loyiha topilmadi</b>Yangi loyiha yaratganingizdan keyin shu yerda ko‘rinadi.</div></div>
+<div class="d-panel"><h2 style="font-size:15px;margin:0 0 5px">IoT monitoring</h2><div class="d-device"><div><strong>Sensor tarmog‘i</strong><small>Qurilma aloqasi</small></div><span class="d-state">Ulanmagan</span></div><div class="d-device"><div><strong>Real vaqt ma’lumotlari</strong><small>Telemetriya oqimi</small></div><span class="d-state">Kutilmoqda</span></div><div class="d-device"><div><strong>Ogohlantirishlar</strong><small>Chegara va hodisalar</small></div><span class="d-state">Faol emas</span></div><p class="d-footnote">Bu panel hozircha monitoring interfeysi. Haqiqiy sensorlar uchun qurilma, xavfsiz autentifikatsiya, server/API va real vaqt kanali ulanishi kerak.</p></div>
+</div>
+</section>
+<section class="d-section">
+<div class="d-section-head"><div><h2>IDEA LAB ekotizimi</h2><p>Platformaning asosiy yo‘nalishlari.</p></div></div>
+<div class="d-modules">
+<div class="d-module"><b>Investorlar</b><span>Loyihalar va moliyaviy hamkorlik imkoniyatlari.</span></div>
+<div class="d-module"><b>Jamoalar</b><span>Mutaxassislar, ish o‘rinlari va jamoa tuzish.</span></div>
+<div class="d-module"><b>Mutaxassislar</b><span>Ko‘nikmalar va professional profillar.</span></div>
+<div class="d-module"><b>Global bozor</b><span>Mahsulotlar, xizmatlar va resurslar.</span></div>
+<div class="d-module"><b>Takliflar markazi</b><span>Talab va takliflarni o‘zaro bog‘lash.</span></div>
+<div class="d-module"><b>Loyiha tafsilotlari</b><span>Har bir tashabbusning alohida sahifasi.</span></div>
+</div>
+</section>
+</main>
+<script>
+(function(){
+const read=(key)=>{try{const value=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(value)?value:[]}catch(_){return[]}};
+const projects=read("projects");
+const investment=read("investmentApplications");
+const jobs=read("jobApplications");
+const teams=read("teamApplications");
+const resources=read("resourceOrders");
+document.getElementById("projectCount").textContent=projects.length;
+document.getElementById("applicationCount").textContent=investment.length+jobs.length+teams.length+resources.length;
+document.getElementById("collaborationCount").textContent=teams.length+resources.length;
+document.getElementById("todayLabel").textContent=new Intl.DateTimeFormat("uz-UZ",{dateStyle:"full"}).format(new Date());
+const list=document.getElementById("recentProjects");
+if(projects.length){
+ list.className="";list.style.marginTop="12px";
+ const recent=projects.slice(-4).reverse();
+ list.innerHTML=recent.map(p=>{const title=String(p.title||p.name||p.projectName||"Nomsiz loyiha");const desc=String(p.description||p.direction||"Loyiha tafsilotlari");return '<div class="d-device"><div><strong></strong><small></small></div><a class="d-link" href="projects.html">Ko‘rish</a></div>'}).join("");
+ [...list.querySelectorAll(".d-device")].forEach((el,i)=>{el.querySelector("strong").textContent=String(recent[i].title||recent[i].name||recent[i].projectName||"Nomsiz loyiha");el.querySelector("small").textContent=String(recent[i].direction||recent[i].description||"Loyiha")});
+}
+window.addEventListener("storage",()=>location.reload());
+})();
+</script>
+<script src="assets/idea-shell.js" defer></script>
+</body>
+</html>
