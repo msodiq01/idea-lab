@@ -694,16 +694,25 @@ const ideaCore = window.IDEALAB || null;
 
 function readData(key) {
     try {
-        const data = JSON.parse(localStorage.getItem(key) || "[]");
+        const data = ideaCore && ideaCore.legacy
+            ? ideaCore.legacy.read(key, [])
+            : (() => {
+                const raw = localStorage.getItem(key);
+                return raw ? JSON.parse(raw) : [];
+            })();
         return Array.isArray(data) ? data : [];
     } catch (error) {
-        console.error("Ma'lumotni o'qishda xato:", error);
+        console.error("Ma'lumotni o‘qishda xato:", error);
         return [];
     }
 }
 
 function saveData(key, data) {
     try {
+        if (ideaCore && ideaCore.legacy) {
+            const result = ideaCore.legacy.write(key, data);
+            return Boolean(result && result.ok);
+        }
         localStorage.setItem(key, JSON.stringify(data));
         return true;
     } catch (error) {
