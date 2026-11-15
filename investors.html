@@ -562,98 +562,31 @@ function initializeInvestors() {
 ================================== */
 
 function showInvestors() {
-    const investors = readData("investors");
-
-    const search = document.getElementById("investorSearch")
-        .value.trim().toLowerCase();
-
-    const direction = document.getElementById("directionFilter").value;
-    const type = document.getElementById("typeFilter").value;
-
-    const filtered = investors.filter(investor => {
-        const searchableText = [
-            investor.name,
-            investor.location,
-            investor.description,
-            investor.direction
-        ].join(" ").toLowerCase();
-
-        return searchableText.includes(search) &&
-            (!direction || investor.direction === direction) &&
-            (!type || investor.type === type);
-    });
-
-    document.getElementById("investorCount").textContent =
-        investors.length;
-
-    const directions = new Set(
-        investors.map(item => item.direction).filter(Boolean)
-    );
-
-    document.getElementById("directionCount").textContent =
-        directions.size;
-
-    document.getElementById("activeCount").textContent =
-        investors.filter(item => item.status === "Faol").length;
-
-    const list = document.getElementById("investorList");
-
-    if (!filtered.length) {
-        list.innerHTML = 
-            <div class="empty">
-                <h3>Investorlar topilmadi</h3>
-                <p>Qidiruv yoki filtr shartlarini o‘zgartirib ko‘ring.</p>
-            </div>
-        ;
-        return;
-    }
-
-    list.innerHTML = filtered.map(investor => `
-        <article class="investor-card">
-            <div class="card-top">
-                <div class="avatar">
-                    ${escapeHTML((investor.name || "I").charAt(0).toUpperCase())}
-                </div>
-                <span class="tag">
-                    ${escapeHTML(investor.status || "Faol")}
-                </span>
-            </div>
-
-            <h3>${escapeHTML(investor.name)}</h3>
-            <p>${escapeHTML(investor.type)}</p>
-
-            <div class="card-top">
-                <span class="tag">
-                    ${escapeHTML(investor.direction)}
-                </span>
-            </div>
-
-            <p>${escapeHTML(investor.description)}</p>
-
-            <div class="investor-info">
-                <div>
-                    <span>Investitsiya</span>
-                    <span>${escapeHTML(investor.amount || "Kelishiladi")}</span>
-                </div>
-                <div>
-                    <span>Hudud</span>
-                    <span>${escapeHTML(investor.location)}</span>
-                </div>
-            </div>
-
-            <div class="card-actions">
-                <button class="btn btn-primary btn-small"
-                    onclick="sendRequest('${escapeHTML(investor.id)}')">
-                    Hamkorlik taklifi
-                </button>
-            </div>
-            ${investor.demo ? 
-                <p class="notice">Namuna profil — haqiqiy investor emas.</p>
-             : ""}
-        </article>
-    ).join("");
+ const investors=readData("investors"), search=document.getElementById("investorSearch").value.trim().toLowerCase();
+ const direction=document.getElementById("directionFilter").value,type=document.getElementById("typeFilter").value;
+ const filtered=investors.filter(x=>[x.name,x.location,x.description,x.direction].join(" ").toLowerCase().includes(search)&&(!direction||x.direction===direction)&&(!type||x.type===type));
+ document.getElementById("investorCount").textContent=investors.length;
+ document.getElementById("directionCount").textContent=new Set(investors.map(x=>x.direction).filter(Boolean)).size;
+ document.getElementById("activeCount").textContent=investors.filter(x=>x.status==="Faol").length;
+ const list=document.getElementById("investorList");list.replaceChildren();
+ if(!filtered.length){const e=document.createElement("div");e.className="empty";const h=document.createElement("h3"),p=document.createElement("p");h.textContent="Investorlar topilmadi";p.textContent="Qidiruv yoki filtr shartlarini o‘zgartirib ko‘ring.";e.append(h,p);list.append(e);return}
+ filtered.forEach(x=>{
+  const card=document.createElement("article");card.className="investor-card";
+  const top=document.createElement("div");top.className="card-top";
+  const avatar=document.createElement("div");avatar.className="avatar";avatar.textContent=(x.name||"I").charAt(0).toUpperCase();
+  const tag=document.createElement("span");tag.className="tag";tag.textContent=x.status||"Faol";top.append(avatar,tag);
+  const h=document.createElement("h3");h.textContent=x.name||"Nomsiz investor";
+  const type=document.createElement("p");type.textContent=x.type||"Turi ko‘rsatilmagan";
+  const dir=document.createElement("span");dir.className="tag";dir.textContent=x.direction||"Yo‘nalish ko‘rsatilmagan";
+  const desc=document.createElement("p");desc.textContent=x.description||"";
+  const info=document.createElement("div");info.className="investor-info";
+  [["Investitsiya",x.amount||"Kelishiladi"],["Hudud",x.location||"Ko‘rsatilmagan"]].forEach(([k,v])=>{const row=document.createElement("div"),a=document.createElement("span"),b=document.createElement("span");a.textContent=k;b.textContent=v;row.append(a,b);info.append(row)});
+  const actions=document.createElement("div");actions.className="card-actions";const btn=document.createElement("button");btn.className="btn btn-primary btn-small";btn.type="button";btn.textContent="Hamkorlik taklifi";btn.addEventListener("click",()=>sendRequest(String(x.id)));actions.append(btn);
+  card.append(top,h,type,dir,desc,info,actions);
+  if(x.demo){const note=document.createElement("p");note.className="notice";note.textContent="Namuna profil — haqiqiy investor emas.";card.append(note)}
+  list.append(card);
+ });
 }
-
 
 /* ==================================
    4. INVESTOR QO‘SHISH
@@ -781,33 +714,13 @@ function sendRequest(investorId) {
 ================================== */
 
 function showMyRequests() {
-    const requests = readData("investorRequests");
-    const container = document.getElementById("myRequests");
-
-    document.getElementById("myRequestCount").textContent =
-        requests.length + " ta so‘rov";
-
-    if (!requests.length) {
-    container.innerHTML = 
-        DIL0
-    ;
-    return;
-}
-    }
-    container.innerHTML = requests.map(request => 
-        <div class="investor-card" style="margin-bottom:12px;">
-            <div class="card-top">
-                <strong>${escapeHTML(request.projectName)}</strong>
-                <span class="tag">${escapeHTML(request.status)}</span>
-            </div>
-            <p>Investor: ${escapeHTML(request.investorName)}</p>
-            <p>${escapeHTML(request.description)}</p>
-            <p>Aloqa: ${escapeHTML(request.contact)}</p>
-            <p class="notice">
-                ${new Date(request.date).toLocaleString("uz-UZ")}
-            </p>
-        </div>
-    ).join("");
+ const requests=readData("investorRequests"),container=document.getElementById("myRequests");
+ document.getElementById("myRequestCount").textContent=requests.length+" ta so‘rov";container.replaceChildren();
+ if(!requests.length){const e=document.createElement("div");e.className="empty";e.textContent="Hozircha yuborilgan so‘rovlaringiz mavjud emas.";container.append(e);return}
+ requests.forEach(x=>{const card=document.createElement("div");card.className="investor-card";card.style.marginBottom="12px";
+ const top=document.createElement("div");top.className="card-top";const title=document.createElement("strong");title.textContent=x.projectName||"Nomsiz loyiha";const tag=document.createElement("span");tag.className="tag";tag.textContent=x.status||"Yuborildi";top.append(title,tag);
+ const fields=[["Investor: ",x.investorName],["",x.description],["Aloqa: ",x.contact],["",x.date?new Date(x.date).toLocaleString("uz-UZ"):""]];
+ card.append(top);fields.forEach(([k,v],i)=>{const p=document.createElement("p");if(i===3)p.className="notice";p.textContent=k+(v||"");card.append(p)});container.append(card)});
 }
 
 function updateRequestStats() {
