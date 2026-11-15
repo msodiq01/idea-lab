@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="IDEA LAB — Menga kerak va Menda bor imkoniyatlarini bog‘lash markazi">
+<title>IDEA LAB | Talab va taklif markazi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/idea-shell.css">
+<style>
+:root{--bg:#07111f;--panel:#0d1b2d;--card:#102239;--line:rgba(151,184,220,.15);--txt:#f3f7ff;--muted:#91a5bd;--cyan:#27d7e8;--blue:#3985ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0%,rgba(39,215,232,.08),transparent 34%),var(--bg);color:var(--txt);font-family:Inter,Arial,sans-serif}
+.wrap{width:min(1180px,calc(100% - 32px));margin:36px auto 70px}.hero{padding:32px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(125deg,rgba(17,44,70,.96),rgba(10,25,43,.96));position:relative;overflow:hidden}.eyebrow{font-size:11px;letter-spacing:2px;font-weight:800;color:var(--cyan)}h1{font-size:clamp(30px,5vw,48px);line-height:1.12;letter-spacing:-1.7px;margin:13px 0}.hero p{color:var(--muted);max-width:700px;line-height:1.7;font-size:14px}.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.btn{border:1px solid var(--line);border-radius:10px;padding:12px 16px;background:#132b44;color:var(--txt);font-weight:700;font-size:12px;cursor:pointer;text-decoration:none}.btn.primary{background:linear-gradient(110deg,var(--blue),var(--cyan));color:#061321;border:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:17px 0 28px}.stat,.panel,.listing{background:rgba(13,27,45,.9);border:1px solid var(--line);border-radius:16px;padding:18px}.stat small{color:var(--muted);font-size:11px}.stat strong{display:block;font-size:27px;margin-top:8px}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:30px 0 14px}.section-head h2{font-size:20px;margin:0}.section-head p{font-size:11px;color:var(--muted);margin:5px 0 0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tab{border:1px solid var(--line);border-radius:9px;padding:10px 14px;background:#0c1b2d;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer}.tab.active{background:rgba(39,215,232,.12);color:var(--cyan);border-color:rgba(39,215,232,.4)}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:11px;color:#c5d3e3;font-weight:600}.field input,.field select,.field textarea,.filters input,.filters select{width:100%;border:1px solid var(--line);border-radius:9px;background:#081625;color:var(--txt);padding:12px;font:inherit;font-size:12px;outline:none}.field textarea{min-height:90px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus,.filters input:focus,.filters select:focus{border-color:var(--cyan)}.form-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:14px}.notice{font-size:10px;color:var(--muted);line-height:1.6;margin-top:12px}
+.filters{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:9px;margin:15px 0}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.listing{padding:17px;display:flex;flex-direction:column;gap:11px}.listing .type{font-size:10px;font-weight:800;letter-spacing:.7px;color:var(--cyan)}.listing h3{font-size:15px;margin:0;line-height:1.4}.listing p{font-size:11px;color:var(--muted);line-height:1.6;margin:0;white-space:pre-wrap;overflow-wrap:anywhere}.meta{display:flex;flex-wrap:wrap;gap:6px}.meta span{font-size:10px;color:#b8c9dc;border:1px solid var(--line);border-radius:20px;padding:5px 8px}.listing .owner{font-size:10px;color:var(--muted);margin-top:auto}.empty{grid-column:1/-1;text-align:center;padding:34px 12px;color:var(--muted);font-size:12px;border:1px dashed var(--line);border-radius:14px}
+.matches{display:grid;grid-template-columns:1fr 1fr;gap:12px}.match{padding:16px;border-radius:13px;background:#0b1b2d;border:1px solid var(--line)}.match strong{font-size:12px}.match p{font-size:11px;color:var(--muted);line-height:1.6}.tag{font-size:10px;color:var(--cyan)}
+@media(max-width:800px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.matches{grid-template-columns:1fr}}
+@media(max-width:560px){.wrap{width:calc(100% - 22px);margin-top:22px}.hero{padding:22px}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:22px}.form-grid,.filters,.cards{grid-template-columns:1fr}.field.full{grid-column:auto}.section-head{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section class="hero">
+<div class="eyebrow">IDEA LAB • NEED & OFFER EXCHANGE</div>
+<h1>Kerakli imkoniyatni toping.<br><span style="color:var(--cyan)">Bor imkoniyatingizni ulashing.</span></h1>
+<p>Resurs, mahsulot, xizmat, mutaxassis yoki hamkorlik kerakmi? Yoki sizda boshqalarga kerak bo‘lishi mumkin bo‘lgan imkoniyat bormi? Talab va takliflarni bir markazda joylashtiring.</p>
+<div class="hero-actions"><button class="btn primary" id="needButton" type="button">+ Menga kerak</button><button class="btn" id="offerButton" type="button">+ Menda bor</button><a class="btn" href="#catalog">E’lonlarni ko‘rish ↓</a></div>
+</section>
+<section class="stats">
+<div class="stat"><small>Jami e’lonlar</small><strong id="totalCount">0</strong></div>
+<div class="stat"><small>Talablar</small><strong id="needCount">0</strong></div>
+<div class="stat"><small>Takliflar</small><strong id="offerCount">0</strong></div>
+</section>
+<section class="panel" id="createPanel" hidden>
+<div class="section-head" style="margin-top:0"><div><h2 id="formHeading">Yangi e’lon</h2><p>Kerakli ma’lumotlarni kiriting.</p></div><button class="btn" id="closeForm" type="button">Yopish</button></div>
+<form id="exchangeForm">
+<div class="form-grid">
+<div class="field"><label for="itemType">E’lon turi *</label><select id="itemType" required><option value="need">Menga kerak</option><option value="offer">Menda bor</option></select></div>
+<div class="field"><label for="itemCategory">Yo‘nalish *</label><select id="itemCategory" required><option value="">Tanlang</option><option>Mahsulot va xomashyo</option><option>Uskuna va texnika</option><option>Xizmat</option><option>Mutaxassis va ishchi</option><option>Hamkorlik</option><option>Joy va bino</option><option>Transport va logistika</option><option>Ta’lim va mentorlik</option><option>Boshqa</option></select></div>
+<div class="field full"><label for="itemTitle">Sarlavha *</label><input id="itemTitle" required maxlength="100" placeholder="Masalan: kichik ishlab chiqarish uchun qadoqlash uskunasi kerak"></div>
+<div class="field full"><label for="itemDescription">Tavsif *</label><textarea id="itemDescription" required maxlength="1200" placeholder="Nima kerak yoki nimani taklif qilyapsiz? Miqdor, holat va muhim talablarni yozing."></textarea></div>
+<div class="field"><label for="itemLocation">Hudud *</label><input id="itemLocation" required maxlength="80" placeholder="Masalan: Samarqand"></div>
+<div class="field"><label for="itemAuthor">Ism yoki tashkilot *</label><input id="itemAuthor" required maxlength="80" placeholder="Ism yoki korxona nomi"></div>
+<div class="field full"><label for="itemContact">Aloqa usuli *</label><input id="itemContact" required maxlength="100" placeholder="Telefon yoki Telegram username"></div>
+</div>
+<div class="form-actions"><button class="btn primary" type="submit">E’lonni saqlash</button><button class="btn" id="cancelForm" type="button">Bekor qilish</button></div>
+<p class="notice">Sinov versiyasi: e’lonlar hozircha faqat shu brauzer xotirasida saqlanadi. Maxfiy ma’lumot, parol yoki to‘lov ma’lumotlarini kiritmang.</p>
+</form>
+</section>
+<section class="section-head" id="catalog"><div><h2>Talab va takliflar katalogi</h2><p>Yo‘nalish, e’lon turi yoki kalit so‘z orqali qidiring.</p></div></section>
+<div class="tabs"><button class="tab active" data-filter="all">Barchasi</button><button class="tab" data-filter="need">Menga kerak</button><button class="tab" data-filter="offer">Menda bor</button></div>
+<div class="filters"><input id="searchBox" placeholder="Nomi, tavsifi yoki hudud bo‘yicha qidirish"><select id="categoryFilter"><option value="">Barcha yo‘nalishlar</option><option>Mahsulot va xomashyo</option><option>Uskuna va texnika</option><option>Xizmat</option><option>Mutaxassis va ishchi</option><option>Hamkorlik</option><option>Joy va bino</option><option>Transport va logistika</option><option>Ta’lim va mentorlik</option><option>Boshqa</option></select><select id="sortFilter"><option value="new">Avval yangilari</option><option value="old">Avval eskilari</option></select></div>
+<div class="cards" id="listingCards"></div>
+<section class="section-head"><div><h2>Mos kelishi mumkin bo‘lgan e’lonlar</h2><p>Bir xil yo‘nalishdagi qarama-qarshi talab va takliflar.</p></div></section>
+<div class="matches" id="matchCards"></div>
+<p class="notice">Moslik hozircha yo‘nalish bo‘yicha oddiy tavsiya hisoblanadi. Bu buyurtma, shartnoma yoki hamkorlik tasdiqlanganini anglatmaydi.</p>
+</main>
+<script>
+(function(){
+"use strict";
+const KEY="ideaLabExchangeItems";
+const $=id=>document.getElementById(id);
+const safeRead=()=>{try{const a=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(a)?a:[]}catch(_){return[]}};
+const save=items=>{try{localStorage.setItem(KEY,JSON.stringify(items));return true}catch(_){alert("Brauzer xotirasiga saqlab bo‘lmadi.");return false}};
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let activeFilter="all";
+function openForm(type){$("itemType").value=type;$("formHeading").textContent=type==="need"?"Menga kerak — yangi talab":"Menda bor — yangi taklif";$("createPanel").hidden=false;$("createPanel").scrollIntoView({behavior:"smooth",block:"start"});}
+function closeForm(){$("createPanel").hidden=true;$("exchangeForm").reset();}
+function render(){
+const all=safeRead();$("totalCount").textContent=all.length;$("needCount").textContent=all.filter(x=>x.type==="need").length;$("offerCount").textContent=all.filter(x=>x.type==="offer").length;
+const q=$("searchBox").value.trim().toLowerCase(),cat=$("categoryFilter").value;
+let shown=all.filter(x=>(activeFilter==="all"||x.type===activeFilter)&&(!cat||x.category===cat)&&(!q||[x.title,x.description,x.location,x.author,x.category].some(v=>String(v||"").toLowerCase().includes(q))));
+shown.sort((a,b)=>$("sortFilter").value==="old"?a.createdAt-b.createdAt:b.createdAt-a.createdAt);
+const box=$("listingCards");box.replaceChildren();
+if(!shown.length){const e=document.createElement("div");e.className="empty";e.textContent=all.length?"Mos e’lon topilmadi. Qidiruv yoki filtrni o‘zgartiring.":"Hozircha e’lon yo‘q. Birinchi talab yoki taklifni joylashtiring.";box.append(e)}
+shown.forEach(item=>{
+const card=document.createElement("article");card.className="listing";
+const type=document.createElement("div");type.className="type";type.textContent=item.type==="need"?"● TALAB":"● TAKLIF";
+const title=document.createElement("h3");title.textContent=item.title;
+const desc=document.createElement("p");desc.textContent=item.description;
+const meta=document.createElement("div");meta.className="meta";[item.category,item.location].forEach(v=>{const chip=document.createElement("span");chip.textContent=v;meta.append(chip)});
+const owner=document.createElement("div");owner.className="owner";owner.textContent="Joylashtirdi: "+item.author+" · "+new Date(item.createdAt).toLocaleDateString("uz-UZ");
+const contact=document.createElement("p");contact.textContent="Aloqa: "+item.contact;
+card.append(type,title,desc,meta,owner,contact);box.append(card);
+});
+renderMatches(all);
+}
+function renderMatches(all){
+const box=$("matchCards");box.replaceChildren();
+const pairs=[];
+all.filter(x=>x.type==="need").forEach(n=>all.filter(o=>o.type==="offer"&&o.category===n.category).forEach(o=>pairs.push([n,o])));
+if(!pairs.length){const e=document.createElement("div");e.className="empty";e.textContent="Hozircha mos juftlik yo‘q. Bir yo‘nalishda ham talab, ham taklif joylashtirilsa, shu yerda ko‘rinadi.";box.append(e);return}
+pairs.slice(0,6).forEach(([n,o])=>{const c=document.createElement("article");c.className="match";const t=document.createElement("div");t.className="tag";t.textContent="MOS YO‘NALISH: "+n.category;const a=document.createElement("strong");a.textContent="Kerak: "+n.title;const ap=document.createElement("p");ap.textContent=n.location+" · "+n.author;const b=document.createElement("strong");b.textContent="Taklif: "+o.title;const bp=document.createElement("p");bp.textContent=o.location+" · "+o.author;c.append(t,a,ap,b,bp);box.append(c)});
+}
+$("needButton").addEventListener("click",()=>openForm("need"));
+$("offerButton").addEventListener("click",()=>openForm("offer"));
+$("closeForm").addEventListener("click",closeForm);$("cancelForm").addEventListener("click",closeForm);
+$("itemType").addEventListener("change",()=>{$("formHeading").textContent=$("itemType").value==="need"?"Menga kerak — yangi talab":"Menda bor — yangi taklif"});
+$("exchangeForm").addEventListener("submit",e=>{
+e.preventDefault();const item={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),type:$("itemType").value,category:$("itemCategory").value,title:$("itemTitle").value.trim(),description:$("itemDescription").value.trim(),location:$("itemLocation").value.trim(),author:$("itemAuthor").value.trim(),contact:$("itemContact").value.trim(),createdAt:Date.now()};
+const all=safeRead();all.push(item);if(save(all)){closeForm();render();$("catalog").scrollIntoView({behavior:"smooth"});}
+});
+document.querySelectorAll("[data-filter]").forEach(btn=>btn.addEventListener("click",()=>{activeFilter=btn.dataset.filter;document.querySelectorAll("[data-filter]").forEach(b=>b.classList.toggle("active",b===btn));render()}));
+["searchBox","categoryFilter","sortFilter"].forEach(id=>$(id).addEventListener(id==="searchBox"?"input":"change",render));
+window.addEventListener("storage",e=>{if(e.key===KEY)render()});
+render();
+})();
+</script>
+<script src="assets/idea-shell.js" defer></script>
+</body>
+</html>
