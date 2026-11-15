@@ -13,7 +13,7 @@ function load(entries = {}) {
     setItem() { writes++; throw new Error("write must not occur"); },
     removeItem() { writes++; throw new Error("remove must not occur"); }
   };
-  const context = { TextEncoder, encodeURIComponent, unescape, Object, Array, Set, Map, String, Number, JSON, Math };
+  const context = { TextEncoder, encodeURIComponent, unescape, Object, Array, Set, Map, String, Number, JSON, Math, localStorage: storage };
   context.window = context;
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../assets/idea-data-audit.js"), "utf8"), context);
   return { api: context.IDEALAB_DATA_AUDIT, storage, writes: () => writes };
