@@ -1170,7 +1170,7 @@ function showChats() {
 
         const unread = getUnreadCount(application.id);
         return '<button class="chat-list-item ' + activeClass + '" ' +
-            'onclick="openChat(\\'' + escapeHTML(application.id) + '\\')">' +
+            'onclick="openChat(\'' + escapeHTML(application.id) + '\')">' +
             '<strong>' + escapeHTML(otherPerson || "") +
             (unread ? ' <span class="tag" aria-label="' + unread + ' ta o‘qilmagan xabar">' + unread + ' yangi</span>' : '') +
             '</strong>' +
