@@ -11,7 +11,7 @@
   ["Kabinet","profile.html"]
  ];
  const groups=[
-  ["Boshqaruv",[["Dashboard","dashboard.html"],["Shaxsiy kabinet","profile.html"],["Arizalar markazi","applications.html"],["Tashkilotlar","organizations.html"],["Mening to‘plamim","collection.html"]]],
+  ["Boshqaruv",[["Dashboard","dashboard.html"],["Boshqaruv markazi","management.html"],["Shaxsiy kabinet","profile.html"],["Arizalar markazi","applications.html"],["Tashkilotlar","organizations.html"],["Mening to‘plamim","collection.html"]]],
   ["G‘oya va rivojlanish",[["Loyihalar","projects.html"],["Talab va taklif","exchange.html"]]],
   ["Biznes va bozor",[["Global bozor","marketplace.html"],["Investorlar","investors.html"],["Takliflar markazi","offers.html"]]],
   ["Jamoa va imkoniyatlar",[["Jamoalar","teams.html"],["Vakansiyalar","teams.html#career-section"],["Mutaxassislar","specialists.html"]]],
@@ -94,17 +94,19 @@
  });
 
  const menu=root.querySelector(".il-all-menu");
- const summary=menu.querySelector("summary");
- document.addEventListener("click",event=>{
-  if(menu.open&&!menu.contains(event.target)) menu.open=false;
- });
- menu.addEventListener("click",event=>{
-  if(event.target.closest("a")) menu.open=false;
- });
- document.addEventListener("keydown",event=>{
-  if(event.key==="Escape"&&menu.open){
-   menu.open=false;
-   summary.focus();
-  }
- });
+ if(menu){
+  const summary=menu.querySelector("summary");
+  document.addEventListener("click",event=>{
+   if(menu.open&&!menu.contains(event.target)) menu.open=false;
+  });
+  menu.addEventListener("click",event=>{
+   if(event.target.closest("a")) menu.open=false;
+  });
+  document.addEventListener("keydown",event=>{
+   if(event.key==="Escape"&&menu.open){
+    menu.open=false;
+    summary.focus();
+   }
+  });
+ }
 })();
