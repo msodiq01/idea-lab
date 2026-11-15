@@ -124,3 +124,39 @@ After this map is reviewed, make the home page a true ecosystem hub: group the m
 ## 8. Identity model hujjati
 
 Yagona Account/Profile/Organization/OrganizationMembership/ProjectMembership modeli `IDENTITY-MODEL.md` hujjatida belgilangan. Profil faoliyat yo'nalishlari platforma yoki tashkilot ruxsatlari emas. Bu maqsadli arxitektura bo'lib, joriy frontend yoki Supabase'ga hali qo'llanmagan.
+
+
+## 9. Unified Global Ecosystem — 2.0
+
+The existing Global Market is retained and becomes the discovery layer of one ecosystem. The personal cabinet becomes the signed-in operating center. Existing pages are not deleted during integration.
+
+| Unified layer | Existing components retained | New connection |
+|---|---|---|
+| Identity & personal cabinet | `profile.html`, `dashboard.html`, `organizations.html` | One account, one profile, multiple activity capabilities, contextual home |
+| Idea & project lifecycle | `index.html`, `projects.html`, `project-detail.html` | Project needs, people, resources, funding and applications linked to one project |
+| Global Market | `marketplace.html`, `exchange.html`, `offers.html` | Unified listings for products, services, resources, needs and offers |
+| Talent & employment | `teams.html`, `specialists.html` | Worker profiles, vacancies, specialist offers and applications |
+| Capital & partnerships | `investors.html`, project investment requests | Funding requests and partnership proposals surfaced in the project owner's cabinet |
+| Matching & applications | Existing application stores | One inbox, shared status vocabulary, recipient-specific notifications |
+| Conversations & collaboration | Existing offer messages and project/team flows | Conversations and agreements tied to a specific application or project |
+
+### Experience rule
+
+The user chooses a primary direction and goal. The cabinet prioritizes only the relevant work. A business user sees business projects, offers, product demand, suppliers, team and funding requests first; a job seeker sees their skills, matching vacancies, applications and messages first. Other capabilities remain available on demand and can be added without a second account.
+
+### Core data flow
+
+`Account/Profile → Capability → Project or Listing → Need/Offer → Matching → Application → Notification → Conversation → Agreement/Order/Project work → Outcome`
+
+A match is a suggestion, not consent or a contract. Users explicitly submit, accept, decline and negotiate. Private contact details remain protected.
+
+### Delivery order
+
+1. Preserve and audit current pages, legacy keys and data formats.
+2. Make the personal cabinet the single signed-in home and reduce top-level navigation.
+3. Connect existing Global Market, Exchange, Projects, Jobs, Specialists, Offers and Investors using stable IDs and compatibility adapters.
+4. Add unified incoming/outgoing applications and browser-local demo notifications.
+5. Connect project resources, team, investment and tasks to one project workspace.
+6. Only after frontend flows are tested, implement real authentication, server persistence, access policies, matching and live notifications.
+
+See `ECOSYSTEM-ARCHITECTURE.md` for the detailed data contract, user journeys, privacy rules and acceptance criteria.
