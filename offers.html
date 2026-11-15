@@ -1106,6 +1106,21 @@ function changeApplicationStatus(applicationId, status) {
         return;
     }
 
+    if (ideaCore.activity) {
+        const record = applications[index];
+        const recipientId = actor === "owner"
+            ? (record.applicantId || "")
+            : (record.offerOwnerId || record.ownerId || "");
+        const logged = ideaCore.activity.recordApplication(record, {
+            source: "offerApplications",
+            title: record.offerTitle || record.title || "Taklif arizasi",
+            fromStatus: previousStatus,
+            toStatus: nextStatus,
+            recipientId: recipientId
+        });
+        if (!logged.ok) console.warn("Ariza tarixi saqlanmadi:", logged.error);
+    }
+
     if (ideaCore) {
         ideaCore.emit("offer:application-status-changed", {
             applicationId: applicationId,
