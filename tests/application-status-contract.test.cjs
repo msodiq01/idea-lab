@@ -41,3 +41,15 @@ test("Investor and team application controls use the shared canonical lifecycle"
   assert.match(html,/value="negotiating"/);
  }
 });
+
+
+test("Offer applications use the shared lifecycle for owners and applicants",()=>{
+ const offers=fs.readFileSync(path.join(__dirname,"..","offers.html"),"utf8");
+ assert.match(offers,/status: "submitted"/);
+ assert.match(offers,/ideaCore\.applications\.normalizeStatus/);
+ assert.match(offers,/ideaCore\.applications\.statusLabel/);
+ assert.match(offers,/ideaCore\.applications\.nextStatuses\(currentStatus, actor\)/);
+ assert.match(offers,/Arizani qaytarib olish/);
+ assert.match(offers,/Bu holatga o‘tish ruxsat etilmagan/);
+ assert.match(offers,/applications\[index\]\.status = nextStatus/);
+});
