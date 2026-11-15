@@ -123,3 +123,18 @@ Noto‘g‘ri yoki egasiz yozuvlar avtomatik o‘chirilmaydi; alohida hisobot/ka
 ## 10. Chegaralar
 
 Ushbu hujjat faqat tahlil va ma’lumotlar xaritasi. HTML sahifalar, mavjud localStorage, SQL schema yoki Supabase loyihasi o‘zgartirilmadi. Hech qanday ma’lumot ko‘chirilmadi. Real auth, server sinxronlash, to‘lov yoki foydalanuvchilararo maxfiy chat mavjud deb hisoblanmaydi.
+
+
+## 12. Identity mapping — aniqlangan farqlar
+
+| Joriy maydon/oqim | Muammo | Maqsadli mapping |
+|---|---|---|
+| userProfile.id | Brauzer demo identifikatori | Keyinchalik Account/Profile UUID bilan bog'lash |
+| userProfile.roles | Faoliyat va vakolatni chalkashtirish xavfi | ProfileCapability; platform role emas |
+| projects.ownerEmail | Email o'zgarishi va dublikat xavfi | owner_account_id yoki owner_organization_id |
+| teams va companyName | Jamoa, tashkilot va ish beruvchi farqi aniq emas | Organization va ProjectMembershipni ajratish |
+| ideaLabSpecialists | Asosiy profildan alohida saqlanadi | specialist_profiles.profile_id |
+| investors | Shaxs/tashkilot turi noaniq | ProfileCapability yoki Organization |
+| Vakansiya egasi | Kompaniya nomi matn sifatida | owner_account_id yoki organization_id |
+
+Hozirgi localStorage yozuvlari o'zgartirilmagan. Bu mapping migratsiya tayyorgarligi, import yoki o'chirish amali emas.
