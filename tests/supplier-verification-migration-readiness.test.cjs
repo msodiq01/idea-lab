@@ -29,7 +29,7 @@ const expectedMigrations = [
 
 test("staging migration directory contains the reviewed ordered migration set", () => {
   const actual = fs.readdirSync(migrationDir)
-    .filter((name) => /^\\d{8}_.+\\.sql$/.test(name))
+    .filter((name) => /^\d{8}_.+\.sql$/.test(name))
     .sort();
   assert.deepEqual(actual, expectedMigrations);
 });
@@ -41,7 +41,7 @@ test("runbook applies schema and every migration in exact dependency order", () 
   ];
   let previous = -1;
   for (const file of orderedFiles) {
-    const position = runbook.indexOf("`" + file + "`");
+    const position = runbook.indexOf(file);
     assert.notEqual(position, -1, "Runbook is missing " + file);
     assert.ok(position > previous, file + " is documented out of order");
     previous = position;
@@ -49,10 +49,10 @@ test("runbook applies schema and every migration in exact dependency order", () 
 });
 
 test("base schema defines the updated-at helper required by supplier migrations", () => {
-  assert.match(schema, /create\\s+or\\s+replace\\s+function\\s+public\\.set_updated_at\\s*\\(/i);
+  assert.match(schema, /create\s+or\s+replace\s+function\s+public\.set_updated_at\s*\(/i);
   assert.match(
     fs.readFileSync(path.join(migrationDir, "20261116_supplier_verification.sql"), "utf8"),
-    /execute\\s+procedure\\s+public\\.set_updated_at\\s*\\(/i
+    /execute\s+procedure\s+public\.set_updated_at\s*\(/i
   );
 });
 
@@ -83,12 +83,12 @@ test("read-only preflight covers all supplier verification tables and critical c
 
 test("preflight SQL contains only read-only query statements", () => {
   const withoutComments = preflight
-    .replace(/--[^\\n]*/g, "")
+    .replace(/--[^\n]*/g, "")
     .trim();
   const statements = withoutComments.split(";").map((part) => part.trim()).filter(Boolean);
   assert.ok(statements.length >= 5, "Expected multiple independent preflight result sets");
   for (const statement of statements) {
-    assert.match(statement, /^(with\\b[\\s\\S]*?\\bselect\\b|select\\b)/i);
-    assert.doesNotMatch(statement, /\\b(insert|update|delete|merge|alter|create|drop|truncate|grant|revoke)\\b/i);
+    assert.match(statement, /^(with\b[\s\S]*?\bselect\b|select\b)/i);
+    assert.doesNotMatch(statement, /\b(insert|update|delete|merge|alter|create|drop|truncate|grant|revoke)\b/i);
   }
 });
