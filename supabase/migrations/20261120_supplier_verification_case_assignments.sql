@@ -16,7 +16,7 @@ create table if not exists public.supplier_verification_review_assignments (
   constraint supplier_verification_assignment_note_check
     check (assignment_note is null or length(assignment_note) <= 240),
   constraint supplier_verification_assignment_revoked_check
-    check ((is_active = true and revoked_at is null) or (is_active = false))
+    check ((is_active = true and revoked_at is null) or (is_active = false and revoked_at is not null))
 );
 
 create unique index if not exists supplier_verification_one_active_case_reviewer_idx
