@@ -15,6 +15,11 @@ test("Auth entry page keeps credential controls disabled in offline mode", () =>
   assert.match(html, /id="resetSubmit"[^>]*disabled/);
 });
 
+test("password reset redirect preserves the repository subpath on project hosting", () => {
+  assert.match(html, /new URL\("auth\.html",window\.location\.href\)\.toString\(\)/);
+  assert.doesNotMatch(html, /window\.location\.origin\+"\/auth\.html"/);
+});
+
 test("Auth entry page requires both public config and SDK before enabling actions", () => {
   assert.match(html, /window\.IDEALAB_CONFIG&&window\.supabase&&auth\.configure/);
   assert.match(html, /setEnabled\(false\)/);
