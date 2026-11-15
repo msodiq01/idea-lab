@@ -95,3 +95,82 @@ test("auth state callback receives session and updates authentication status", (
   assert.equal(eventName, "SIGNED_IN");
   assert.equal(auth.getStatus().authenticated, true);
 });
+
+
+test("password reset validates email before calling provider", async () => {
+  let calls = 0;
+  const sdk = { createClient: () => ({ auth: {
+    resetPasswordForEmail: async () => { calls++; return { data: {}, error: null }; }
+  } }) };
+  const auth = loadAuth(sdk);
+  auth.configure(config, sdk);
+  const bad = await auth.resetPassword("not-an-email");
+  assert.equal(bad.error.code, "INVALID_EMAIL");
+  assert.equal(calls, 0);
+  const good = await auth.resetPassword("person@example.com");
+  assert.equal(good.ok, true);
+  assert.equal(calls, 1);
+});
+
+test("password reset accepts only secure redirect destinations", async () => {
+  let received;
+  const sdk = { createClient: () => ({ auth: {
+    resetPasswordForEmail: async (email, options) => {
+      received = { email, options };
+      return { data: {}, error: null };
+    }
+  } }) };
+  const auth = loadAuth(sdk);
+  auth.configure(config, sdk);
+  const bad = await auth.resetPassword("person@example.com", "http://example.com/reset");
+  assert.equal(bad.error.code, "INVALID_REDIRECT");
+  const good = await auth.resetPassword("person@example.com", "https://app.example.com/reset");
+  assert.equal(good.ok, true);
+  assert.equal(received.options.redirectTo, "https://app.example.com/reset");
+});
+
+test("password update requires an authenticated session and a strong-enough length", async () => {
+  let calls = 0;
+  const sdk = { createClient: () => ({ auth: {
+    updateUser: async () => { calls++; return { data: {}, error: null }; },
+    onAuthStateChange: callback => {
+      callback("SIGNED_IN", { user: { id: "auth-uid" } });
+      return { data: { subscription: { unsubscribe() {} } } };
+    }
+  } }) };
+  const auth = loadAuth(sdk);
+  auth.configure(config, sdk);
+  assert.equal((await auth.updatePassword("newpass123")).error.code, "AUTH_REQUIRED");
+  auth.onAuthStateChange(() => {});
+  assert.equal((await auth.updatePassword("short")).error.code, "INVALID_CREDENTIALS");
+  assert.equal((await auth.updatePassword("newpass123")).ok, true);
+  assert.equal(calls, 1);
+});
+
+test("sign out clears local adapter authentication status after provider success", async () => {
+  const sdk = { createClient: () => ({ auth: {
+    signOut: async () => ({ data: {}, error: null }),
+    onAuthStateChange: callback => {
+      callback("SIGNED_IN", { user: { id: "auth-uid" } });
+      return { data: { subscription: { unsubscribe() {} } } };
+    }
+  } }) };
+  const auth = loadAuth(sdk);
+  auth.configure(config, sdk);
+  auth.onAuthStateChange(() => {});
+  assert.equal(auth.getStatus().authenticated, true);
+  assert.equal((await auth.signOut()).ok, true);
+  assert.equal(auth.getStatus().authenticated, false);
+});
+
+test("auth state subscription exposes a safe unsubscribe helper", () => {
+  let unsubscribed = false;
+  const sdk = { createClient: () => ({ auth: {
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe() { unsubscribed = true; } } } })
+  } }) };
+  const auth = loadAuth(sdk);
+  auth.configure(config, sdk);
+  const listener = auth.onAuthStateChange(() => {});
+  listener.unsubscribe();
+  assert.equal(unsubscribed, true);
+});
