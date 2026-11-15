@@ -102,8 +102,8 @@
       return invoke("signInWithPassword", { email: email.trim(), password });
     },
     async sendPhoneOtp(phone, purpose) {
-      const normalizedPhone = typeof phone === "string" ? phone.replace(/[\\s()-]/g, "") : "";
-      if (!/^\\+[1-9]\\d{7,14}$/.test(normalizedPhone)) {
+      const normalizedPhone = typeof phone === "string" ? phone.replace(/[\s()-]/g, "") : "";
+      if (!/^\+[1-9]\d{7,14}$/.test(normalizedPhone)) {
         return resultError("INVALID_PHONE", "Telefon raqamini xalqaro formatda kiriting. Masalan: +998901234567.");
       }
       if (purpose !== "signup" && purpose !== "login") {
@@ -115,18 +115,18 @@
       });
     },
     sendPhoneSignupOtp(phone) {
-      return this.sendPhoneOtp(phone, "signup");
+      return api.sendPhoneOtp(phone, "signup");
     },
     sendPhoneLoginOtp(phone) {
-      return this.sendPhoneOtp(phone, "login");
+      return api.sendPhoneOtp(phone, "login");
     },
     async verifyPhoneOtp(phone, token) {
-      const normalizedPhone = typeof phone === "string" ? phone.replace(/[\\s()-]/g, "") : "";
-      const normalizedToken = typeof token === "string" ? token.replace(/\\s/g, "") : "";
-      if (!/^\\+[1-9]\\d{7,14}$/.test(normalizedPhone)) {
+      const normalizedPhone = typeof phone === "string" ? phone.replace(/[\s()-]/g, "") : "";
+      const normalizedToken = typeof token === "string" ? token.replace(/\s/g, "") : "";
+      if (!/^\+[1-9]\d{7,14}$/.test(normalizedPhone)) {
         return resultError("INVALID_PHONE", "Telefon raqamini xalqaro formatda kiriting.");
       }
-      if (!/^\\d{6}$/.test(normalizedToken)) {
+      if (!/^\d{6}$/.test(normalizedToken)) {
         return resultError("INVALID_OTP", "SMS orqali kelgan 6 xonali kodni kiriting.");
       }
       const result = await invoke("verifyOtp", {
