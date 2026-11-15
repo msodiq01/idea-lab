@@ -421,7 +421,8 @@ button, input, textarea {
     font-size: 12px;
 }
 
-.investment-passport{background:linear-gradient(145deg,rgba(37,99,235,.13),rgba(16,26,48,.98));border:1px solid rgba(67,136,255,.28)}.passport-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.passport-stat{padding:15px;background:rgba(20,33,61,.8);border:1px solid var(--border);border-radius:12px;min-width:0}.passport-stat span{display:block;color:var(--muted);font-size:11px;line-height:1.5}.passport-stat strong{display:block;margin-top:8px;font-size:clamp(16px,2vw,21px);overflow-wrap:anywhere}.passport-progress{height:9px;margin-top:10px;background:#091326;border-radius:20px;overflow:hidden}.passport-progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:20px;transition:width .25s}.passport-caption{font-size:11px;color:var(--muted);line-height:1.7;margin-top:12px}.equity-preview{padding:13px 14px;margin:0 0 18px;border-radius:11px;border:1px solid rgba(40,217,208,.2);background:rgba(40,217,208,.06);color:#a5d9dc;font-size:12px;line-height:1.7}.equity-preview strong{color:#fff;font-size:18px}@media(max-width:550px){.passport-grid{grid-template-columns:1fr 1fr}.passport-stat{padding:12px}}\n@media (max-width: 850px) {
+.investment-passport{background:linear-gradient(145deg,rgba(37,99,235,.13),rgba(16,26,48,.98));border:1px solid rgba(67,136,255,.28)}.passport-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.passport-stat{padding:15px;background:rgba(20,33,61,.8);border:1px solid var(--border);border-radius:12px;min-width:0}.passport-stat span{display:block;color:var(--muted);font-size:11px;line-height:1.5}.passport-stat strong{display:block;margin-top:8px;font-size:clamp(16px,2vw,21px);overflow-wrap:anywhere}.passport-progress{height:9px;margin-top:10px;background:#091326;border-radius:20px;overflow:hidden}.passport-progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:20px;transition:width .25s}.passport-caption{font-size:11px;color:var(--muted);line-height:1.7;margin-top:12px}.equity-preview{padding:13px 14px;margin:0 0 18px;border-radius:11px;border:1px solid rgba(40,217,208,.2);background:rgba(40,217,208,.06);color:#a5d9dc;font-size:12px;line-height:1.7}.equity-preview strong{color:#fff;font-size:18px}@media(max-width:550px){.passport-grid{grid-template-columns:1fr 1fr}.passport-stat{padding:12px}}
+@media (max-width: 850px) {
     .layout {
         grid-template-columns: 1fr;
     }
@@ -460,7 +461,8 @@ button, input, textarea {
     }
 }
 </style>
-    <link rel="stylesheet" href="assets/idea-shell.css">\n</head>
+    <link rel="stylesheet" href="assets/idea-shell.css">
+</head>
 
 <body>
 
@@ -806,7 +808,12 @@ function addDetail(title, value) {
     projectDetails.appendChild(item);
 }
 
-function formatPassportMoney(value){\n const amount=Number(value)||0;\n return new Intl.NumberFormat("uz-UZ",{maximumFractionDigits:0}).format(amount)+" UZS";\n}\n\nfunction renderInvestmentPassport(){
+function formatPassportMoney(value){
+ const amount=Number(value)||0;
+ return new Intl.NumberFormat("uz-UZ",{maximumFractionDigits:0}).format(amount)+" UZS";
+}
+
+function renderInvestmentPassport(){
  if(!project)return;
  const applications=readData("investmentApplications").filter(item=>item&&String(item.projectId)===String(project.id));
  const summary=window.IDEALABProjectFinance?window.IDEALABProjectFinance.summarize(project,applications):{applicationCount:applications.length,requestedAmount:0,acceptedOfferAmount:0,reviewOfferAmount:0};
