@@ -19,7 +19,7 @@ function loadCore() {
 }
 
 test("01 safe JSON parser returns parsed object", () => {
-  assert.deepEqual(loadCore().validation.safeJsonParse('{"ok":true}', null), { ok: true });
+  assert.equal(JSON.stringify(loadCore().validation.safeJsonParse('{"ok":true}', null)), '{"ok":true}');
 });
 test("02 safe JSON parser uses fallback for malformed and non-string input", () => {
   const v = loadCore().validation;
