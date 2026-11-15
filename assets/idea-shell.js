@@ -23,12 +23,12 @@
  root.innerHTML=
   '<div class="il-top">'+
    '<a class="il-brand" href="index.html"><span class="il-brand-mark">✦</span><span>IDEA <b>LAB</b></span></a>'+
-   '<nav class="il-links" aria-label="Asosiy yo‘nalishlar">'+
+   '<div class="il-links" role="navigation" aria-label="Asosiy yo‘nalishlar">'+
     primary.map(([name,url])=>link(name,url)).join("")+
     '<details class="il-all-menu"><summary>Barcha bo‘limlar</summary><div class="il-menu-panel">'+
      groups.map(([heading,items])=>'<section class="il-menu-group"><strong>'+heading+'</strong>'+items.map(([name,url])=>link(name,url)).join("")+'</section>').join("")+
     '</div></details>'+
-   '</nav>'+
+   '</div>'+
    '<div class="il-actions"><span class="il-status"><i class="il-dot"></i> Demo rejim</span>'+
     '<a class="il-quick-action" href="exchange.html">+ E’lon joylash</a></div>'+
   '</div>';
