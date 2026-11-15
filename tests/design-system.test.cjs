@@ -34,7 +34,7 @@ test("Global design system contains responsive SaaS tokens and mobile layouts", 
 });
 
 test("Core pages load the shared design system and shell", () => {
-  for (const page of ["index.html","dashboard.html","profile.html","projects.html","marketplace.html","teams.html","investors.html","specialists.html","organizations.html","offers.html","exchange.html","roadmap.html","management.html"]) {
+  for (const page of ["index.html","dashboard.html","profile.html","projects.html","marketplace.html","teams.html","investors.html","specialists.html","organizations.html","offers.html","exchange.html","roadmap.html","management.html","finance.html"]) {
     const html = read(page);
     assert.match(html, /assets\/idea-shell\.css/, page + " should load global CSS");
     assert.match(html, /assets\/idea-shell\.js/, page + " should load global shell");
@@ -95,4 +95,18 @@ test("Management workspace supports local task and goal records without touching
   assert.match(page, /Mahalliy demo — serverga ulanmagan/);
   assert.match(page, /textContent=task\.title/);
   assert.match(page, /if\(!confirm\(/);
+});
+
+
+test("Finance workspace keeps local demo records separate by workspace", () => {
+  const page = read("finance.html");
+  assert.match(page, /ideaLabFinanceTransactions/);
+  assert.match(page, /ideaLabFinanceBudgets/);
+  assert.match(page, /value="personal"/);
+  assert.match(page, /value="business"/);
+  assert.match(page, /value="project"/);
+  assert.match(page, /value="organization"/);
+  assert.match(page, /Mahalliy demo — haqiqiy bank hisobi emas/);
+  assert.match(page, /CSV hisobotni yuklash/);
+  assert.match(page, /Number\.isSafeInteger/);
 });
