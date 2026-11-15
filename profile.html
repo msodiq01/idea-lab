@@ -143,6 +143,8 @@ button{cursor:pointer}
           <div class="auth-session-head"><h3 id="authSessionTitle">Yagona akkaunt holati</h3><span class="pill" id="authSessionBadge">DEMO REJIM</span></div>
           <p id="authSessionDescription" role="status" aria-live="polite">Auth serveri ulanmagan. Hozircha profil ma’lumotlari ushbu brauzerda saqlanadi.</p>
           <p class="auth-session-meta" id="authSessionIdentity">Faol akkaunt aniqlanmadi.</p>
+          <p class="auth-session-meta" id="profileBridgeStatus">Legacy profil va Auth identifikatsiyasi tekshirilmagan.</p>
+          <p class="auth-session-meta" id="profileBridgeDetail">Hech qanday profil avtomatik bog‘lanmaydi.</p>
           <div class="auth-session-actions">
             <button class="btn btn-secondary" type="button" id="refreshAuthSession">Sessiyani yangilash</button>
             <button class="btn btn-danger" type="button" id="profileSignOut" disabled>Akkauntdan chiqish</button>
@@ -217,6 +219,7 @@ button{cursor:pointer}
 <footer class="footer"><div class="container footer-inner"><span>© 2026 IDEA LAB. Barcha huquqlar himoyalangan.</span><span>G‘oya — Jamoa — Harakat — Natija</span></div></footer>
 <script src="assets/idea-core.js"></script>
 <script src="assets/idea-auth.js"></script>
+<script src="assets/idea-profile-bridge.js"></script>
 <script>
 "use strict";
 const ideaCore = window.IDEALAB || null;
@@ -228,6 +231,16 @@ const authSessionMessage = document.getElementById("authSessionMessage");
 const refreshAuthSessionButton = document.getElementById("refreshAuthSession");
 const profileSignOutButton = document.getElementById("profileSignOut");
 let activeAuthSession = null;
+function renderIdentityBridge() {
+  const statusNode = document.getElementById("profileBridgeStatus");
+  const detailNode = document.getElementById("profileBridgeDetail");
+  if (!statusNode || !detailNode) return;
+  const bridge = window.IDEALAB_PROFILE_BRIDGE;
+  if (!bridge) { statusNode.textContent = "Identifikatsiya tekshiruvi yuklanmadi."; return; }
+  const result = bridge.inspect(getProfile(), activeAuthSession, authAdapter ? authAdapter.getStatus() : null);
+  statusNode.textContent = "Profil bog‘lanishi: " + result.state.replaceAll("_", " ");
+  detailNode.textContent = result.message;
+}
 function renderAuthSession(session) {
   activeAuthSession = session && session.user && session.user.id ? session : null;
   const active = Boolean(activeAuthSession);
@@ -241,6 +254,7 @@ function renderAuthSession(session) {
     ? "Email: " + (user.email || "ko‘rsatilmagan") + " · Akkaunt ID: " + String(user.id).slice(0, 8) + "…"
     : "Faol akkaunt aniqlanmadi.";
   profileSignOutButton.disabled = !configured || !active;
+  renderIdentityBridge();
 }
 async function refreshAuthSession(showMessage) {
   if (!authAdapter || !authAdapter.getStatus().configured) {
@@ -283,6 +297,7 @@ if (authAdapter && authAdapter.getStatus().configured) {
 const profileForm=document.getElementById("profileForm");
 function readData(key){try{const parsed=ideaCore&&ideaCore.legacy?ideaCore.legacy.read(key,[]):JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(parsed)?parsed:[]}catch(error){console.error("Ma’lumotni o‘qishda xatolik:",key,error);return[]}}
 function getProfile(){try{const value=ideaCore&&ideaCore.legacy?ideaCore.legacy.read("userProfile",null):JSON.parse(localStorage.getItem("userProfile")||"null");return value&&typeof value==="object"?value:null}catch(error){return null}}
+renderIdentityBridge();
 let avatarData="";
 const avatarInput=document.getElementById("avatarInput");
 const avatarPreview=document.getElementById("avatarPreview");
