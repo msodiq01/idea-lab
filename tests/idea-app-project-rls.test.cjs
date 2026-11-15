@@ -22,7 +22,7 @@ test("RLS migration is additive and targets only idea_app", () => {
 
 test("cross-row helpers use SECURITY DEFINER with fixed search_path and auth.uid", () => {
   for (const fn of ["is_project_owner", "has_active_project_role", "is_organization_owner"]) {
-    const start = sql.indexOf("create or replace function idea_app." + fn);
+    const start = sql.indexOf("create or replace function idea_private." + fn);
     assert.notEqual(start, -1, fn + " exists");
     const bodyEnd = sql.indexOf("$function$;", sql.indexOf("as $function$", start));
     const body = sql.slice(start, bodyEnd + 11);
@@ -66,6 +66,8 @@ test("self-service membership creates only pending contributor/viewer requests",
   assert.match(statement, /membership_status = 'pending'/i);
   assert.match(statement, /invited_by is null/i);
   assert.doesNotMatch(statement, /membership_status = 'active'/i);
+  assert.match(statement, /p\.visibility = 'public'/i);
+  assert.match(statement, /p\.status = 'recruiting'/i);
 });
 
 test("membership transitions are not client-updatable", () => {
@@ -90,7 +92,13 @@ test("public updates require published state and a public parent project", () =>
   assert.match(statement, /p\.status in \('recruiting', 'active', 'completed'\)/i);
 });
 
+test("privileged helpers stay in a separate non-exposed schema", () => {
+  assert.match(sql, /create schema idea_private/i);
+  assert.match(sql, /revoke all on schema idea_private from public, anon, authenticated/i);
+  assert.match(sql, /grant usage on schema idea_private to authenticated/i);
+});
+
 test("migration does not grant browser table privileges", () => {
-  assert.match(sql, /grant usage on schema idea_app to authenticated/i);
+  assert.match(sql, /grant usage on schema idea_private to authenticated/i);
   assert.doesNotMatch(executableSql, /grant\s+(select|insert|update|delete|all)\s+on\s+(all\s+tables|idea_app\.)/i);
 });
