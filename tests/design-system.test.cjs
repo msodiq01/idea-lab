@@ -66,3 +66,13 @@ test("Global navigation displays the saved profile avatar and name on every page
   assert.match(css, /\.il-profile-avatar img/);
   assert.match(css, /\.il-profile-link/);
 });
+
+
+test("Personal cabinet summarizes incoming and outgoing applications from verified profile matches", () => {
+  const profile = read("profile.html");
+  assert.match(profile, /id="applicationCount"/);
+  assert.match(profile, /id="applicationCountNote"/);
+  assert.match(profile, /return \{incoming:incomingItems\.length,outgoing:outgoingItems\.length\}/);
+  assert.match(profile, /applications\.incoming\+applications\.outgoing/);
+  assert.match(profile, /applications\.incoming\+" kiruvchi · "\+applications\.outgoing\+" yuborilgan"/);
+});
