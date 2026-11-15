@@ -127,3 +127,13 @@ Shaxsiy kabinet barcha modullarni o‘ziga ko‘chirib olmaydi. Harakat tegishli
 - Ariza statusini kabinetdan o‘zgartirish uchun tegishli moduldagi mavjud xavfsiz status funksiyalariga yo‘naltirish yoki umumiy API yaratish.
 - Takliflar va resurs buyurtmalarini profil IDsi bilan bog‘lash.
 - So‘ng test brauzerida to‘liq oqimni tekshirish.
+
+
+## Kelajak imkoniyatlari katalogi — 2026-11-15
+
+- roadmap.html qo‘shildi: mavjud modullar, demo cheklovlari va rejalashtirilgan imkoniyatlar besh rivojlanish bosqichida ko‘rsatiladi.
+- Bosh sahifadagi platforma xaritasiga kelajak modullari qo‘shildi; har bir karta batafsil yo‘l xaritasiga olib boradi.
+- Umumiy navigatsiyadagi “Barcha bo‘limlar” menyusiga “Yo‘l xaritasi” kiritildi.
+- Kelajak yo‘nalishlari: yagona akkaunt va ko‘p rolli profil; shaxsiy ish maydoni; yagona e’lonlar; arizalar, bildirishnomalar va xabarlar; ishonch/xavfsizlik; mahsulot-xizmat savdosi; moliya; logistika; mulk va infratuzilma; raqamli hujjatlar; ishlab chiqarish; ta’lim, ilm-fan, tadbirlar, ko‘ngillilik, tashkilot boshqaruvi; aqlli moslashtirish, analitika, AI avtomatlashtirish, xalqaro imkoniyatlar, API va mobil/IoT.
+- “Kelajak rejasi” kartalari ishga tushgan xizmat sifatida ko‘rsatilmaydi. Rejalarga muddat yoki va’da berilmagan.
+- tests/design-system.test.cjs bosh sahifa havolasi, navigatsiya, roadmap sahifasi va holat belgilarini tekshiradi.
