@@ -2,88 +2,38 @@
 
 Bu papkadagi SQL — IDEA LAB umumiy backendini tayyorlash uchun. Ulangan Supabase loyihasi mavjud, ammo hozirgi frontend hali offline-demo rejimida va ushbu papkadagi keng schema/migrationlar jonli bazaga qo‘llanmagan.
 
-## Fayllar tartibi
+## Migrationlar tartibi va holati
 
-1. `schema.sql` — boshlang'ich jadvallar, indekslar, RLS va triggerlar.
-2. `migrations/20261115_security_hardening.sql` — katalog view'lari va qo'shimcha xavfsizlik cheklovlari.
-3. `migrations/20261116_supplier_verification.sql` — ta’minotchi tekshiruvi uchun qo‘shimcha jadvallar va cheklangan RLS.
-4. `migrations/20261117_supplier_verification_reviewers.sql` — server tomonidan boshqariladigan reviewer allowlist va atomik qaror RPC.
-5. `migrations/20261118_supplier_verification_private_storage.sql` — private hujjat bucket'i va Storage RLS siyosatlari.
-6. `migrations/20261119_supplier_verification_evidence_access_audit.sql` — vaqtinchalik yuklab olish havolasi berilganini qayd etuvchi audit jadvali.
-7. `migrations/20261120_supplier_verification_case_assignments.sql` — reviewerlarni alohida arizalarga biriktirish va o‘qish/qaror ruxsatlarini shu biriktirish bilan cheklash.
-8. `migrations/20261121_supplier_verification_admin_control.sql` — administrator allowlist, reviewer vakolatlarini boshqarish, ariza assignment va audit tarixi.
-9. `migrations/20261122_application_activity_notifications.sql` — to‘rt turdagi ariza uchun server audit tarixi va ishtirokchi bildirishnomalari.
-10. `verification/security_audit.sql` — read-only tekshiruv so'rovlari.
+- `migrations/20261116120000_idea_app_identity_organizations.sql` — IDEA LAB uchun alohida `idea_app` sxemasida profil, maxfiy kontakt, tashkilot va tashkilot a'zoligi poydevori. **Repository draft; Supabase'ga qo'llanmagan.** RLS yoqilgan, browser rollariga grant va policy berilmagan.
+- `schema.sql` — avvalgi umumiy schema loyihasi; jonli `public` sxemaga qo'llash taqiqlanadi.
+- `migrations/20261115_security_hardening.sql` va keyingi supplier/application migrationlari — alohida arxitektura va staging tekshiruvini talab qiladi; ularni ushbu yangi migration bilan avtomatik qo'llangan deb hisoblamang.
+
+## Birinchi migration qarorlari
+
+- Mavjud `public` jadvallariga tegilmaydi; barcha yangi obyektlar `idea_app` ichida.
+- `profiles.user_id` va tashkilot a'zolari `auth.users(id)` ga bog'lanadi.
+- Profil roli yoki admin vakolati profil maydonlarida saqlanmaydi.
+- Aloqa ma'lumotlari alohida `profile_contacts` jadvalida.
+- Tashkilot egasi `organizations.owner_id`; a'zolik rollari faqat `admin`, `editor`, `member`.
+- Barcha to'rt jadvalda RLS yoqilgan. Policy va browser grantlari ataylab yo'q: hozircha browser/Data API orqali hech kim kira olmaydi.
+- `idea_app` Data API exposed schema ro'yxatiga qo'shilmagan va qo'shilmasligi kerak, toki keyingi RLS va ikki foydalanuvchili sinovlar tugamaguncha.
 
 ## Ishga tushirishdan oldin
 
 - To'g'ri Supabase project ref va uning egasi tasdiqlansin.
-- Yangi test project yarating; production bazada sinamang.
-- Mavjud baza bo'lsa, to'liq backup va restore sinovini bajaring.
-- SQL fayllarini staging'da birma-bir qo'llang.
-- `BACKEND-SECURITY-REVIEW.md` va `supabase/verification/rls-test-plan.md` bo'yicha tekshiring.
+- Mavjud baza bo'lsa, backup va restore imkoniyati tasdiqlansin.
 - Migration SQL'ni ko'rmasdan production'da Run bosmang.
+- Avval alohida staging muhitida qo'llab, metadata, RLS va ikki foydalanuvchi testlarini bajaring.
+- Ushbu migration hozircha jonli `idea-lab` loyihasiga qo'llanmaydi.
 
 ## Kalitlar
 
-Faqat frontend uchun mo'ljallangan publishable/anon key ishlatilishi mumkin. Service-role key, database password va access token hech qachon HTML, JS, GitHub repository yoki brauzerga kiritilmaydi. `.env.example` faqat nomlar shabloni; real credential emas.
+Faqat frontend uchun mo'ljallangan publishable/anon key ishlatilishi mumkin. Service-role key, database password va access token hech qachon HTML, JS, GitHub repository yoki brauzerga kiritilmaydi.
 
 ## Hozirgi holat
 
-- Schema tayyorlangan: ha.
-- Security migration tayyorlangan: ha.
-- Ulangan Supabase loyiha read-only audit uchun mavjud: ha.
-- Ushbu repository schema.sql jonli loyihaga qo‘llangan: yo‘q / tasdiqlanmagan.
-- Repository migrationlari staging yoki productionga qo‘llangan: yo‘q / tasdiqlanmagan.
-- Jonli loyihaning hozirgi 9 jadvali alohida resurs/investitsiya poydevori; bu papkadagi keng loyiha/jamoa/vakansiya sxemasi bilan bir xil emas. Tafsilot: BACKEND-SECURITY-REVIEW.md.
-- Auth va server API ishlayapti: yo'q.
-- LocalStorage import qilingan: yo'q.
-
-## Ta’minotchi hujjatlari Edge Function
-
-`functions/supplier-verification-evidence/` ichida autentifikatsiyalangan upload-ticket, upload-finalization va download-ticket API poydevori bor. Sozlash, client protokoli, maxfiy kalitlar va staging qabul mezonlari shu papkadagi README'da. Function deploy qilinmagan va real hujjat qabul qilishga hali ruxsat berilmaydi.
-
-## Reviewer case-level assignment
-
-`migrations/20261120_supplier_verification_case_assignments.sql` migration'i reviewerning umumiy allowlist vakolatini har bir arizaga alohida biriktirish bilan cheklaydi. Assignment jadvaliga faqat trusted service-role operatsiyasi kira oladi. Ariza, audit event va Storage evidence o‘qishlari hamda qaror RPC faol assignment talab qiladi.
-
-Bu migration hali qo‘llanmagan. Assignment berish/bekor qilish API'si, MFA va jonli RLS testlari alohida ishlab chiqilishi kerak. Production'da qo‘llamang; avval staging va ikki reviewer/two supplier sinovidan o'tkazing.
-
-## Tekshiruv boshqaruv markazi
-
-- Sahifa: `supplier-verification-admin.html`.
-- Edge Function: `functions/supplier-verification-admin/`.
-- Migration: `20261121_supplier_verification_admin_control.sql`.
-
-Birinchi administrator `supplier_verification_admins` jadvaliga faqat ishonchli database owner sessiyasi orqali qo‘shiladi. Haqiqiy UUID yoki credential'larni GitHub'ga yozmang. Keyingi reviewer faollashtirish, arizaga biriktirish, bekor qilish va tarixni ko‘rish amallari Edge Function orqali bajariladi. Har bir so‘rovda JWT tekshiriladi va admin allowlist qayta tekshiriladi. Service-role kaliti faqat Edge Function secret bo‘lib qoladi.
-
-Reviewer faolsizlantirilganda uning faol case assignment'lari ham bekor qilinadi va audit tarixiga yoziladi. Qayta faollashtirish eski assignment'larni tiklamaydi; admin qayta biriktirishi kerak.
-
-Deploy qilishdan oldin migration'larni tartib bilan staging'da qo‘llang, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ALLOWED_ORIGINS` secretlarini sozlang va Edge Function'ni deploy qiling. Frontend'da faqat publishable/anon konfiguratsiya bo‘lishi mumkin. Hozirgi repository demo holatida bo‘lsa, boshqaruv oynasi avtomatik bloklangan qoladi.
-
-## Tekshiruv boshqaruv markazi
-
-- UI: `supplier-verification-admin.html`.
-- Edge Function: `functions/supplier-verification-admin/`.
-- Migration: `migrations/20261121_supplier_verification_admin_control.sql`.
-
-Birinchi administratorni faqat ishonchli database owner sessiyasi orqali allowlist'ga kiriting. Reviewer vakolatini boshqarish, arizalar ro‘yxati, assignment berish/bekor qilish va tarix Edge Function orqali bajariladi. Reviewer deaktivatsiyasi barcha faol assignment'larni ham bekor qiladi. Hujjat download endpoint'i ham case assignment talab qiladi.
-
-Deploy va sozlash bo‘yicha batafsil ko‘rsatma `functions/supplier-verification-admin/README.md` ichida. Migration va function hali deploy qilinmagan; admin UI backend konfiguratsiyasi bo‘lmaganda yopiq turadi.
-
-## Staging tayyorgarligi va qabul sinovlari
-
-- [Staging deployment runbook](verification/supplier-verification-staging-runbook.md) — migration tartibi, secret chegaralari, birinchi admin bootstrap, testlar va rollback.
-- [Staging preflight SQL](verification/supplier-verification-staging-preflight.sql) — migrationlardan keyingi read-only metadata tekshiruvlari.
-
-Bu hujjatlar deploy bajarmaydi. Staging loyihasi tanlanmagan, migrationlar qo'llanmagan va Edge Function'lar deploy qilinmagan. Avval alohida staging loyihasida qabul sinovlari o'tishi shart.
-
-- [Read-only staging smoke runner](../scripts/supplier-verification-staging-smoke.mjs) — deploydan keyin staging endpointlarini xavfsiz, yozuv kiritmasdan tekshiradi.
-
-## Edge Function gateway JWT talabi
-
-`supabase/config.toml` faylida ta’minotchi hujjatlari va admin Edge Function'lari uchun `verify_jwt = true` aniq belgilangan. Deploy vaqtida bu himoyani o‘chirmang (`--no-verify-jwt` ishlatmang). Buyruqlar staging project ref bilan runbook'da berilgan.
-
-## Arizalar tarixi va bildirishnomalar
-
-`migrations/20261122_application_activity_notifications.sql` ariza yuborilishi va status o‘zgarishini DB triggerlari orqali qayd etadi. Faqat ariza ishtirokchilari tarixni o‘qiydi; brauzerga audit yozuvlarini kiritish yoki o‘zgartirish huquqi berilmaydi. Migration hali qo‘llanmagan. Staging'da qo‘llashdan oldin schema va oldingi migrationlar to‘liq tekshirilsin.
+- Jonli Supabase loyiha read-only audit uchun mavjud.
+- Jonli loyihaning avvalgi 9 ta `public` jadvali alohida resurs/investitsiya poydevori; ushbu yangi ilova sxemasi ulardan ajratilgan.
+- Frontend `offline-demo` rejimida qoladi.
+- Auth provider, SMTP, SMS, Data API exposure va frontend ulanish sozlamalari o'zgartirilmagan.
+- LocalStorage import qilinmagan.
