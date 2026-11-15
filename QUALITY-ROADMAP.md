@@ -58,3 +58,35 @@ Yangi `tests/core.test.cjs` fayli Node.js built-in test runner bilan 11 ta testn
 Ishga tushirish: `node --test tests/core.test.cjs`.
 
 Bu testlar markaziy core funksiyalarini Node VM ichida tekshiradi; brauzer UI, mobil ko‘rinish, sahifalararo to‘liq oqim yoki backendni tekshirmaydi.
+
+
+## 2026-11-15 — yagona akkaunt va tashkilot modeli
+
+### 10 ta bajarilgan tahlil ishi
+1. Account va Profile tushunchalari ajratildi.
+2. Faoliyat yo'nalishlari va xavfsizlik rollari farqi belgilandi.
+3. Organization mustaqil obyekt sifatida ta'riflandi.
+4. OrganizationMembership rollari va holatlari belgilandi.
+5. ProjectMembership tashkilot a'zoligidan ajratildi.
+6. Project egasining shaxs yoki tashkilot bo'lish qoidasi belgilandi.
+7. SpecialistProfile asosiy Profile kengaytmasi sifatida belgilandi.
+8. Employer, Investor va Supplier faoliyat yo'nalishlari sifatida tasniflandi.
+9. Hozirgi profil, email-based ownership, team, vacancy va specialist oqimlaridagi farqlar qayd etildi.
+10. Maxfiy/public maydonlar hamda serverda tekshirilishi shart bo'lgan ruxsatlar hujjatlashtirildi.
+
+### Yangi hujjat
+- `IDENTITY-MODEL.md` — yagona akkaunt, profil, tashkilot, a'zolik, loyiha rollari va maxfiylik qoidalari.
+
+### Keyingi 10 ish
+1. Profil UI atamalarini faoliyat yo'nalishlariga moslashtirish.
+2. Profil formasining mobil va desktop UX tekshiruvi.
+3. Tashkilot yaratish uchun serverga ulanmagan UI prototipi.
+4. Tashkilot profilining public/private ko'rinishlari.
+5. Tashkilot a'zolarini boshqarish prototipi.
+6. Loyiha a'zoligi va tashkilot a'zoligini alohida ko'rsatish.
+7. Loyiha egasini email emas, ID bilan bog'lash uchun demo model rejasini tuzish.
+8. Vakansiya egasi va tashkilot bog'lanishi prototipi.
+9. Mutaxassis profilini asosiy profil bilan bog'lash rejasi.
+10. Oqimlar uchun brauzer test ssenariylari va regressiya ro'yxati.
+
+Hech qanday HTML, SQL, localStorage yozuvi yoki server sozlamasi ushbu hujjatlashtirish bosqichida o'zgartirilmadi.
