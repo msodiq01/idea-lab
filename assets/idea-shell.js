@@ -71,8 +71,8 @@
   let profile=null;
   try{profile=JSON.parse(localStorage.getItem("userProfile")||"null")}catch(_){}
   const name=profile&&typeof profile.fullName==="string"?profile.fullName.trim():"";
-  const initials=name.split(/\\s+/).filter(Boolean).slice(0,2).map(part=>part[0].toLocaleUpperCase("uz-UZ")).join("")||"IL";
-  const photo=profile&&typeof profile.avatarData==="string"&&/^data:image\\/(jpeg|png|webp);base64,/i.test(profile.avatarData)?profile.avatarData:"";
+  const initials=name.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0].toLocaleUpperCase("uz-UZ")).join("")||"IL";
+  const photo=profile&&typeof profile.avatarData==="string"&&/^data:image\/(jpeg|png|webp);base64,/i.test(profile.avatarData)?profile.avatarData:"";
   profileAvatar.replaceChildren();
   if(photo){
    const image=document.createElement("img");
