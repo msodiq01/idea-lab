@@ -32,9 +32,9 @@ test("profile page never automatically links local profile data to Auth", () => 
 
 test("profile page displays read-only legacy identity review", () => {
   assert.match(profile, /id="profileIdentityReview"/);
-  assert.match(profile, /assets\\/idea-profile-bridge\\.js/);
+  assert.match(profile, /assets\/idea-profile-bridge\.js/);
   assert.match(profile, /renderProfileIdentityReview/);
   assert.match(profile, /readLegacyProfile: getProfile/);
-  assert.match(profile, /readSession: \\(\\) => activeAuthSession/);
+  assert.match(profile, /readSession: \(\) => activeAuthSession/);
   assert.match(profile, /Avtomatik bog‘lash, ma’lumot ko‘chirish yoki rol berish amalga oshirilmaydi/);
 });
