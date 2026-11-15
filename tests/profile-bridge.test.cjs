@@ -51,6 +51,10 @@ test("proposal uses Auth UID and legacy ID without email-based matching", () => 
   assert.equal(result.proposal.requiresExplicitConfirmation, true);
   assert.equal(result.proposal.rolesTransferred, false);
   assert.equal(result.proposal.profileDataTransferred, false);
+  assert.equal(result.proposal.identityEvidence, "authenticated-session-only");
+  assert.equal(result.proposal.legacyOwnershipVerified, false);
+  assert.equal(result.proposal.requiresLegacyOwnershipProof, true);
+  assert.equal("ownershipVerifiedBy" in result.proposal, false);
   assert.equal("email" in result.proposal, false);
 });
 
