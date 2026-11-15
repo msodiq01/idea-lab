@@ -304,3 +304,33 @@ body>header#il-global{
  #il-global .il-quick-action{font-size:9px;max-width:94px;padding:0 7px;overflow:hidden}
  #il-global .il-profile-name{max-width:66px}
 }
+
+
+/* Stage 14 — every platform section stays visible in the top navigation */
+.il-section-nav{
+ width:min(1320px,calc(100% - 56px));margin:0 auto;padding:0 0 12px;
+ display:flex;align-items:flex-start;gap:22px;overflow-x:auto;
+ scrollbar-width:thin;scrollbar-color:#d8dcef transparent;
+}
+.il-section-group{display:flex;align-items:center;gap:5px;flex:none;white-space:nowrap}
+.il-section-group>span{
+ color:#929bb0;font-size:9px;font-weight:850;letter-spacing:.65px;
+ text-transform:uppercase;margin-right:3px
+}
+.il-section-group>a{
+ display:inline-flex;align-items:center;min-height:30px;padding:5px 8px;
+ border:1px solid transparent;border-radius:8px;color:#58657c;
+ text-decoration:none;font-size:10px;font-weight:700;white-space:nowrap
+}
+.il-section-group>a:hover,.il-section-group>a[aria-current="page"]{
+ color:var(--il-primary);background:#f0efff;border-color:#e5e2ff
+}
+@media(max-width:1120px){
+ .il-section-nav{width:calc(100% - 32px);gap:16px;padding-bottom:10px}
+}
+@media(max-width:640px){
+ .il-section-nav{width:calc(100% - 24px);gap:14px;padding:0 0 10px}
+ .il-section-group{gap:3px}
+ .il-section-group>span{font-size:8px}
+ .il-section-group>a{font-size:10px;min-height:34px;padding:6px 8px}
+}
