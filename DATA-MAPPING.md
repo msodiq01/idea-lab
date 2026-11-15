@@ -138,3 +138,20 @@ Ushbu hujjat faqat tahlil va ma’lumotlar xaritasi. HTML sahifalar, mavjud loca
 | Vakansiya egasi | Kompaniya nomi matn sifatida | owner_account_id yoki organization_id |
 
 Hozirgi localStorage yozuvlari o'zgartirilmagan. Bu mapping migratsiya tayyorgarligi, import yoki o'chirish amali emas.
+
+
+## 13. Qo‘shimcha tasdiqlangan frontend kalitlari
+
+2026-11-15 kuni main branchdagi sahifa manbalari bevosita ko‘rib chiqildi. Quyidagi kalitlar aniq literal qiymat sifatida topildi:
+
+| Kalit | Manba sahifa | Vazifasi |
+|---|---|---|
+| `ideaLabResourceRegistry` | `resources.html` | Resurslar reyestri |
+| `ideaLabEvents` | `events.html` | Tadbirlar |
+| `ideaLabDismissedNotices` | `notifications.html` | Yopilgan eslatmalar |
+| `ideaLabManagementTasks` | `notifications.html` | Boshqaruv vazifalari asosidagi eslatmalar |
+| `ideaLabFutureProjects` | `notifications.html` | Kelajak loyihalari asosidagi eslatmalar |
+| `ideaLabFinanceTransactions` | `finance.html` | Moliyaviy tranzaksiya demo yozuvlari |
+| `ideaLabFinanceBudgets` | `finance.html` | Budjet demo yozuvlari |
+
+Ushbu kalitlar read-only diagnostika allowlistiga qo‘shildi. Bu faqat kalitlar inventarini kengaytiradi; sahifalarning saqlash usuli, foydalanuvchi ma’lumotlari yoki Supabase sxemasi o‘zgarmaydi. Boshqa sahifalarda parametr orqali uzatiladigan kalitlar ham bor; ularning barcha chaqiruv joylari tekshirilmaguncha ushbu ro‘yxat yakuniy/to‘liq deb hisoblanmaydi.
