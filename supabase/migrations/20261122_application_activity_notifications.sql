@@ -158,4 +158,7 @@ create trigger log_offer_application_activity
   after insert or update of status on public.offer_applications
   for each row execute function public.log_application_activity('offer', 'applicant_id', 'offers', 'offer_id');
 
+-- Trigger-only SECURITY DEFINER function: prevent direct client execution.
+revoke all on function public.log_application_activity() from public, anon, authenticated;
+
 commit;

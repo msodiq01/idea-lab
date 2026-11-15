@@ -142,6 +142,22 @@ where p.oid is null or n.oid is not null
 group by e.function_name
 order by e.function_name;
 
+-- 2c) Trigger-only privileged functions must not be directly executable by client roles.
+with expected(function_name) as (
+  values
+    ('record_supplier_verification_submission'),
+    ('log_application_activity')
+)
+select e.function_name,
+       coalesce(bool_or(has_function_privilege('anon', p.oid, 'EXECUTE')), false) as anon_can_execute,
+       coalesce(bool_or(has_function_privilege('authenticated', p.oid, 'EXECUTE')), false) as authenticated_can_execute
+from expected e
+left join pg_proc p on p.proname = e.function_name
+left join pg_namespace n on n.oid = p.pronamespace and n.nspname = 'public'
+where p.oid is null or n.oid is not null
+group by e.function_name
+order by e.function_name;
+
 -- 3) Storage bucket must exist and remain private.
 select id, name, public, file_size_limit, allowed_mime_types
 from storage.buckets

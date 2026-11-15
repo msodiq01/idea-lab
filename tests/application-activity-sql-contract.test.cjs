@@ -13,6 +13,10 @@ test("Application activity security-definer trigger pins pg_catalog first", () =
   assert.match(migration, /security\s+definer\s+set\s+search_path\s*=\s*pg_catalog,\s*public/i);
 });
 
+test("Trigger-only activity function cannot be executed directly by client roles", () => {
+  assert.match(migration, /revoke all on function public\.log_application_activity\(\) from public, anon, authenticated/i);
+});
+
 test("Server application activity is participant-scoped and append-only", () => {
   assert.match(migration, /create table if not exists public\.application_activity/);
   assert.match(migration, /actor_id = auth\.uid\(\) or recipient_id = auth\.uid\(\)/);
