@@ -445,6 +445,18 @@ footer {
         <div id="myRequests"></div>
     </section>
 
+    <section class="panel">
+        <div class="section-heading">
+            <div>
+                <h2>Loyihalarga kelgan investitsiya arizalari</h2>
+                <p class="muted">Loyiha tafsilotlari sahifasidan yuborilgan arizalar shu yerda ko‘rinadi.</p>
+            </div>
+            <span class="tag" id="investmentApplicationCount">0 ta ariza</span>
+        </div>
+        <div id="investmentApplicationList"></div>
+        <p class="notice">Sinov rejimi: arizalar faqat ushbu brauzerda saqlanadi. Boshqa foydalanuvchilarga yoki loyiha egasiga avtomatik yuborilmaydi.</p>
+    </section>
+
 </main>
 
 <footer>
@@ -728,6 +740,76 @@ function updateRequestStats() {
         readData("investorRequests").length;
 }
 
+/* ==================================
+   6A. LOYIHA INVESTITSIYA ARIZALARI
+================================== */
+
+function showInvestmentApplications() {
+    const applications = readData("investmentApplications");
+    const projects = readData("projects");
+    const list = document.getElementById("investmentApplicationList");
+    const count = document.getElementById("investmentApplicationCount");
+
+    count.textContent = applications.length + " ta ariza";
+    list.replaceChildren();
+
+    if (!applications.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "Hozircha loyihalarga investitsiya arizalari kelmagan.";
+        list.append(empty);
+        return;
+    }
+
+    applications.slice().reverse().forEach(function(application) {
+        const project = projects.find(function(item) {
+            return String(item.id) === String(application.projectId);
+        });
+
+        const card = document.createElement("article");
+        card.className = "investor-card";
+        card.style.marginBottom = "12px";
+
+        const heading = document.createElement("div");
+        heading.className = "card-top";
+
+        const title = document.createElement("strong");
+        title.textContent = application.projectName || (project && project.name) || "Nomsiz loyiha";
+
+        const status = document.createElement("span");
+        status.className = "tag";
+        status.textContent = application.status || "Yangi";
+        heading.append(title, status);
+
+        const details = [
+            "Investor: " + (application.investorName || "Ko‘rsatilmagan"),
+            "Taklif etilgan summa: " + Number(application.offerAmount || application.amount || 0).toLocaleString("uz-UZ") + " so‘m",
+            "Xabar: " + (application.offerMessage || application.message || "Xabar kiritilmagan"),
+            "Sana: " + (application.date ? new Date(application.date).toLocaleString("uz-UZ") : "Ko‘rsatilmagan"),
+            "Ariza raqami: " + (application.id || "—")
+        ];
+
+        card.append(heading);
+        details.forEach(function(value) {
+            const paragraph = document.createElement("p");
+            paragraph.textContent = value;
+            card.append(paragraph);
+        });
+
+        if (application.projectId) {
+            const link = document.createElement("a");
+            link.className = "btn btn-secondary btn-small";
+            link.href = "project-detail.html?id=" + encodeURIComponent(String(application.projectId));
+            link.textContent = "Loyiha sahifasini ochish →";
+            link.style.display = "inline-flex";
+            link.style.marginTop = "10px";
+            card.append(link);
+        }
+
+        list.append(card);
+    });
+}
+
 
 /* ==================================
    7. QIDIRUV VA FILTRLAR
@@ -751,6 +833,7 @@ function initializePage() {
     initializeInvestors();
     showInvestors();
     showMyRequests();
+    showInvestmentApplications();
     updateRequestStats();
 }
 
