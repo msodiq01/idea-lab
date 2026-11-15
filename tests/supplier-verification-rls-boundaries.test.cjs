@@ -80,7 +80,7 @@ test("reviewer reads and decisions require active reviewer plus exact case assig
 
 test("private evidence upload and reads are owner- or assignment-scoped", () => {
   assert.match(storage, /values\s*\([\s\S]{0,160}'supplier-verification-private'[\s\S]{0,120}false/i);
-  assert.match(storage, /file_size_limit[\s\S]{0,100}10485760/i);
+  assert.match(storage, /insert\\s+into\\s+storage\\.buckets\\s*\\([^)]*file_size_limit[^)]*\\)\\s*values\\s*\\([\\s\\S]{0,200}10485760/i);
   assert.match(storage, /application\/pdf[\s\S]{0,100}image\/jpeg[\s\S]{0,100}image\/png/i);
   assert.match(storage, /a\.supplier_user_id\s*=\s*auth\.uid\(\)/i);
   assert.match(storage, /a\.status\s+in\s*\(\s*'submitted'\s*,\s*'needs_more_info'\s*\)/i);
