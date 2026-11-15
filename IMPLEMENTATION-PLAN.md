@@ -2,7 +2,7 @@
 
 Sana: 2026-11-15  
 Repository: `msodiq01/idea-lab`  
-Ishchi branch: `feature/unified-ecosystem`  
+Ishchi branch: `feature/unified-applications-stage-2`  
 Holat: auditdan keyingi rejalashtirish; frontend va Supabase hali demo/draft rejimida.
 
 ## Asosiy qaror
