@@ -25,6 +25,8 @@ body>#il-global{font-family:Inter,Arial,sans-serif;background:linear-gradient(11
 .il-note{font-size:10px;color:#8399b3;margin-top:7px}
 /* Yagona umumiy sahifa maydoni va tipografiya */
 main{color:var(--il-text)}
+.container{width:min(1200px,calc(100% - 36px))!important;max-width:1200px!important;margin-left:auto!important;margin-right:auto!important}
+.tag{background:rgba(39,215,232,.12)!important;color:#8cecf3!important;border:1px solid rgba(39,215,232,.2)!important}
 h1,h2,h3,h4{color:var(--il-text)}
 p,small,label{overflow-wrap:anywhere}
 a{transition:color .18s ease,border-color .18s ease,background .18s ease}
