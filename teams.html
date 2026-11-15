@@ -866,6 +866,7 @@ if (teamForm) {
 
         const team = {
             id: createId(),
+            ...(ideaCore && ideaCore.identity ? ideaCore.identity.stamp({}, "owner") : {}),
             name: document.getElementById("teamName").value.trim(),
             direction: document.getElementById("teamDirection").value,
             leader: document.getElementById("teamLeader").value.trim(),
@@ -927,7 +928,10 @@ function joinTeam(id) {
     const applications = readData("teamApplications");
 
     applications.unshift({
+        ...(ideaCore && ideaCore.identity ? ideaCore.identity.stamp({ applicantName: name.trim(), applicantPhone: phone.trim() }, "applicant") : { applicantName: name.trim(), applicantPhone: phone.trim() }),
         id: createId(),
+        listingOwnerId: team.ownerId || "",
+        listingOwnerEmail: team.ownerEmail || "",
         teamId: team.id,
         teamName: team.name,
         applicantName: name.trim(),
@@ -976,6 +980,7 @@ if (jobForm) {
 
         const job = {
             id: createId(),
+            ...(ideaCore && ideaCore.identity ? ideaCore.identity.stamp({}, "owner") : {}),
             companyName: document.getElementById("companyName").value.trim(),
             jobTitle: document.getElementById("jobTitle").value.trim(),
             description: document.getElementById("jobDescription").value.trim(),
@@ -1037,7 +1042,10 @@ function applyForJob(id) {
     const applications = readData("jobApplications");
 
     applications.unshift({
+        ...(ideaCore && ideaCore.identity ? ideaCore.identity.stamp({ applicantName: name.trim(), applicantPhone: phone.trim() }, "applicant") : { applicantName: name.trim(), applicantPhone: phone.trim() }),
         id: createId(),
+        listingOwnerId: job.ownerId || "",
+        listingOwnerEmail: job.ownerEmail || "",
         jobId: job.id,
         jobTitle: job.jobTitle,
         companyName: job.companyName,
