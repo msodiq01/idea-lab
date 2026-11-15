@@ -1,5 +1,5 @@
 -- IDEA LAB supplier verification staging preflight
--- READ ONLY. Run only after applying schema.sql and migrations through 20261121
+-- READ ONLY. Run only after applying schema.sql and migrations through 20261122
 -- in a disposable staging project. This script does not mutate database state.
 
 -- 1) Expected tables and RLS state. Every listed table should be present with RLS enabled.
@@ -12,7 +12,8 @@ with expected(table_name) as (
     ('supplier_verification_review_assignments'),
     ('supplier_verification_assignment_events'),
     ('supplier_verification_admins'),
-    ('supplier_verification_evidence_access_events')
+    ('supplier_verification_evidence_access_events'),
+    ('application_activity')
 )
 select e.table_name,
        (c.oid is not null) as exists,
@@ -67,7 +68,16 @@ with expected(table_name, column_name) as (
     ('supplier_verification_evidence_access_events', 'evidence_id'),
     ('supplier_verification_evidence_access_events', 'application_id'),
     ('supplier_verification_evidence_access_events', 'actor_user_id'),
-    ('supplier_verification_evidence_access_events', 'action')
+    ('supplier_verification_evidence_access_events', 'action'),
+    ('application_activity', 'id'),
+    ('application_activity', 'application_type'),
+    ('application_activity', 'application_id'),
+    ('application_activity', 'actor_id'),
+    ('application_activity', 'recipient_id'),
+    ('application_activity', 'event_type'),
+    ('application_activity', 'from_status'),
+    ('application_activity', 'to_status'),
+    ('application_activity', 'created_at')
 )
 select e.table_name,
        e.column_name,
@@ -90,7 +100,9 @@ with expected(function_name) as (
     ('can_review_supplier_verification_application'),
     ('admin_set_supplier_verification_reviewer'),
     ('admin_assign_supplier_verification_case'),
-    ('admin_revoke_supplier_verification_case')
+    ('admin_revoke_supplier_verification_case'),
+    ('normalize_application_activity_status'),
+    ('log_application_activity')
 )
 select e.function_name,
        exists (
@@ -110,7 +122,8 @@ with expected(function_name) as (
     ('admin_set_supplier_verification_reviewer'),
     ('admin_assign_supplier_verification_case'),
     ('admin_revoke_supplier_verification_case'),
-    ('record_supplier_verification_submission')
+    ('record_supplier_verification_submission'),
+    ('log_application_activity')
 )
 select e.function_name,
        coalesce(bool_or(p.prosecdef), false) as security_definer,
@@ -167,3 +180,38 @@ order by policyname;
 -- Review all result sets manually. A missing column/function, false RLS flag,
 -- unpinned privileged function, public bucket, or unexpected client grant is a
 -- stop condition. This metadata preflight does not prove runtime RLS behavior.
+
+-- 7) Application activity must have RLS and participant-only read access.
+select c.relname as table_name,
+       c.relrowsecurity as rls_enabled,
+       c.relforcerowsecurity as rls_forced
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public' and c.relname = 'application_activity';
+
+select policyname, roles, cmd, qual, with_check
+from pg_policies
+where schemaname = 'public' and tablename = 'application_activity'
+order by policyname;
+
+-- 8) Expected client privileges: authenticated SELECT only; no anon access and
+-- no client INSERT/UPDATE/DELETE. Any extra row is a stop condition.
+select table_name, grantee, privilege_type
+from information_schema.role_table_grants
+where table_schema = 'public'
+  and table_name = 'application_activity'
+  and grantee in ('anon', 'authenticated')
+order by grantee, privilege_type;
+
+-- 9) All four application triggers must exist and call the trusted function.
+select event_object_table as table_name, trigger_name, action_timing,
+       event_manipulation, action_statement
+from information_schema.triggers
+where trigger_schema = 'public'
+  and trigger_name in (
+    'log_investment_application_activity',
+    'log_team_application_activity',
+    'log_job_application_activity',
+    'log_offer_application_activity'
+  )
+order by event_object_table, trigger_name;
