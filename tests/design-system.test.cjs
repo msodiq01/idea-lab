@@ -34,7 +34,7 @@ test("Global design system contains responsive SaaS tokens and mobile layouts", 
 });
 
 test("Core pages load the shared design system and shell", () => {
-  for (const page of ["index.html","dashboard.html","profile.html","projects.html","marketplace.html","teams.html","investors.html","specialists.html","organizations.html","offers.html","exchange.html","roadmap.html","management.html","finance.html","portfolio.html","analytics.html"]) {
+  for (const page of ["index.html","dashboard.html","profile.html","projects.html","marketplace.html","teams.html","investors.html","specialists.html","organizations.html","offers.html","exchange.html","roadmap.html","management.html","finance.html","portfolio.html","analytics.html","notifications.html","activity.html","access.html","backup.html","resources.html","events.html","search.html"]) {
     const html = read(page);
     assert.match(html, /assets\/idea-shell\.css/, page + " should load global CSS");
     assert.match(html, /assets\/idea-shell\.js/, page + " should load global shell");
@@ -134,4 +134,32 @@ test("Analytics center aggregates local finance, management and portfolio record
   assert.match(page, /Vazifalar holati/);
   assert.match(page, /Hisobotni CSV formatida olish/);
   assert.match(page, /Mahalliy ma’lumotlar — demo/);
+});
+
+
+test("Platform operations suite exposes notification, activity, access and backup boundaries", () => {
+  const notices = read("notifications.html");
+  const activity = read("activity.html");
+  const access = read("access.html");
+  const backup = read("backup.html");
+  assert.match(notices, /ideaLabDismissedNotices/);
+  assert.match(notices, /ideaLabManagementTasks/);
+  assert.match(activity, /ideaLabManualActivityLog/);
+  assert.match(activity, /shaxsiy jurnal/);
+  assert.match(access, /server ruxsati/);
+  assert.match(access, /RLS siyosatlari/);
+  assert.match(backup, /IDEA_LAB_LOCAL_BACKUP/);
+  assert.match(backup, /5\*1024\*1024/);
+  assert.match(backup, /confirm\(/);
+});
+
+test("Resource, event and search workspaces use separate local records and safe text rendering", () => {
+  const resources = read("resources.html");
+  const events = read("events.html");
+  const search = read("search.html");
+  assert.match(resources, /ideaLabResourceRegistry/);
+  assert.match(events, /ideaLabEvents/);
+  assert.match(search, /ideaLabFutureProjects/);
+  assert.match(search, /textContent/);
+  assert.match(search, /localStorage/);
 });
