@@ -27,7 +27,7 @@ test("Qidiruv, tur va holat filtrlari mavjud",()=>{
 });
 test("Kiruvchi ariza holatini yangilash va yuborilgan arizani bekor qilish mavjud",()=>{
  assert.match(html,/update\(r,next\)/);
- assert.match(html,/Arizani bekor qilish/);
+ assert.match(html,/Arizani qaytarib olish/);
  assert.match(html,/Qabul qilish/);
  assert.match(html,/Rad etish/);
 });
@@ -45,11 +45,10 @@ test("Foydalanuvchi matni HTML sifatida kiritilmaydi",()=>{
  assert.match(html,/replaceChildren/);
 });
 
-test("Ariza holatlari faqat ruxsat etilgan yo‘nalishda o‘zgaradi",()=>{
- assert.match(html,/const transitions=\{submitted:\["reviewing","accepted","rejected","withdrawn"\],reviewing:\["accepted","rejected","withdrawn"\],accepted:\[\],rejected:\[\],withdrawn:\[\]\}/);
- assert.match(html,/function canTransition\(from,to,direction\)/);
- assert.match(html,/canTransition\(r\.status,key,"incoming"\)/);
- assert.match(html,/canTransition\(r\.status,"withdrawn","outgoing"\)/);
+test("Ariza holatlari markaziy yadrodagi ruxsat etilgan yo‘nalish bilan boshqariladi",()=>{
+ assert.match(html,/const transitions=IDEALAB\.applications\.transitions/);
+ assert.match(html,/IDEALAB\.applications\.nextStatuses\(r\.status,"owner"\)/);
+ assert.match(html,/IDEALAB\.applications\.nextStatuses\(r\.status,"applicant"\)/);
 });
 test("Ariza yozuvi identifikatorsiz bo‘lsa noto‘g‘ri birinchi yozuv yangilanmaydi",()=>{
  assert.match(html,/else if\(all\[r\.index\]===r\.item\)current=r\.index/);
