@@ -39,3 +39,11 @@ test("reviewer evidence signed links are denied without case-level assignment",(
  assert.match(block,/eq\("reviewer_user_id", actor\.id\)/);
  assert.ok(block.indexOf("if (!isOwner && !isAssignedReviewer)")<block.indexOf("createSignedUrl"));
 });
+
+test("case assignment only targets open cases and serializes reviewer deactivation",()=>{
+ assert.match(migration,/Only open verification cases can be assigned/i);
+ assert.match(migration,/from public\.supplier_verification_reviewers r[\s\S]*for update/i);
+ const assignmentMigration=fs.readFileSync(path.join(root,"supabase/migrations/20261120_supplier_verification_case_assignments.sql"),"utf8");
+ assert.match(assignmentMigration,/from public\.supplier_verification_reviewers r[\s\S]*for share/i);
+ assert.match(assignmentMigration,/from public\.supplier_verification_review_assignments a[\s\S]*for update/i);
+});
