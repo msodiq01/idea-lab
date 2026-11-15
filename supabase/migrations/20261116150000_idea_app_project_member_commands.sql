@@ -19,6 +19,7 @@ security definer
 set search_path = ''
 as $function$
   select (select auth.uid()) is not null
+    and pg_catalog.pg_trigger_depth() > 0
     and p_project_id is not null
     and p_user_id is not null
     and exists (
