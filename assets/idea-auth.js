@@ -77,7 +77,18 @@
   const api = Object.freeze({
     configure,
     getStatus() { return status; },
-    getSession() { return invoke("getSession"); },
+    async getSession() {
+      const result = await invoke("getSession");
+      if (result.ok) {
+        const session = result.data && result.data.session;
+        status = Object.freeze({
+          mode: status.mode, configured: true,
+          authenticated: Boolean(session && session.user && session.user.id),
+          reason: null
+        });
+      }
+      return result;
+    },
     signUp(email, password, options) {
       if (typeof email !== "string" || !email.trim() || typeof password !== "string" || password.length < 8) {
         return Promise.resolve(resultError("INVALID_CREDENTIALS", "Email va kamida 8 belgili parol kiriting."));
@@ -90,7 +101,40 @@
       }
       return invoke("signInWithPassword", { email: email.trim(), password });
     },
-    signOut() { return invoke("signOut"); },
+    async resetPassword(email, redirectTo) {
+      if (typeof email !== "string" || !email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+        return resultError("INVALID_EMAIL", "Parolni tiklash uchun to'g'ri email kiriting.");
+      }
+      const options = {};
+      if (redirectTo !== undefined && redirectTo !== null && redirectTo !== "") {
+        try {
+          const target = new URL(redirectTo);
+          if (target.protocol !== "https:" && target.hostname !== "localhost") {
+            return resultError("INVALID_REDIRECT", "Tiklash havolasi uchun xavfsiz HTTPS manzil kerak.");
+          }
+          options.redirectTo = target.toString();
+        } catch (_) {
+          return resultError("INVALID_REDIRECT", "Tiklash manzili noto'g'ri.");
+        }
+      }
+      return invoke("resetPasswordForEmail", email.trim(), options);
+    },
+    async updatePassword(password) {
+      if (typeof password !== "string" || password.length < 8) {
+        return resultError("INVALID_CREDENTIALS", "Yangi parol kamida 8 belgidan iborat bo'lishi kerak.");
+      }
+      if (!status.authenticated) {
+        return resultError("AUTH_REQUIRED", "Parolni yangilash uchun akkauntga kirilgan bo'lishi kerak.");
+      }
+      return invoke("updateUser", { password });
+    },
+    async signOut() {
+      const result = await invoke("signOut");
+      if (result.ok) {
+        status = Object.freeze({ mode: status.mode, configured: true, authenticated: false, reason: null });
+      }
+      return result;
+    },
     onAuthStateChange(callback) {
       if (typeof callback !== "function") {
         return { ok: false, error: { code: "INVALID_CALLBACK", message: "Callback funksiyasi kerak." } };
@@ -106,7 +150,10 @@
         });
         callback({ event, session });
       });
-      return { ok: true, subscription: subscription && subscription.data ? subscription.data.subscription : null };
+      const handle = subscription && subscription.data ? subscription.data.subscription : null;
+      return { ok: true, subscription: handle, unsubscribe() {
+        if (handle && typeof handle.unsubscribe === "function") handle.unsubscribe();
+      } };
     }
   });
 
