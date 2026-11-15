@@ -237,10 +237,11 @@ body{background:var(--f-bg);color:var(--f-ink);font-family:Inter,Arial,sans-seri
    });
    if(!writeWorkspaceArray("projects",updated)){projectFinanceMessage.textContent="Saqlash amalga oshmadi. Brauzer xotirasini tekshiring.";return}
    projectRecords=updated;
-   $("projectValuation").value=project.projectValuation||project.valuation||"";
-   $("fundingTarget").value=project.fundingTarget??project.investment??project.amount??"";
-   $("totalShareUnits").value=project.totalShareUnits||"";
-   $("valuationBasis").value=project.valuationBasis||"pre-money";
+   const savedProject=selectedProject();
+   $("projectValuation").value=savedProject.projectValuation||savedProject.valuation||"";
+   $("fundingTarget").value=savedProject.fundingTarget??savedProject.investment??savedProject.amount??"";
+   $("totalShareUnits").value=savedProject.totalShareUnits||"";
+   $("valuationBasis").value=savedProject.valuationBasis||"pre-money";
    projectFinanceMessage.textContent="Loyiha moliya ma’lumotlari ushbu brauzerda saqlandi.";
    renderProjectFinance();renderInvestment();
   }catch(error){projectFinanceMessage.textContent=error.message}
