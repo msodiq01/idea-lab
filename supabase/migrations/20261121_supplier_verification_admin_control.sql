@@ -76,6 +76,22 @@ begin
   ) values (
     p_reviewer_user_id, p_actor_user_id, v_action, nullif(btrim(p_note), '')
   );
+
+  if not p_is_active then
+    with revoked as (
+      update public.supplier_verification_review_assignments
+      set is_active = false, revoked_at = now()
+      where reviewer_user_id = p_reviewer_user_id and is_active = true
+      returning id, application_id, reviewer_user_id
+    )
+    insert into public.supplier_verification_assignment_events(
+      application_id, assignment_id, reviewer_user_id, actor_user_id, action, note
+    )
+    select application_id, id, reviewer_user_id, p_actor_user_id,
+      'case_assignment_revoked',
+      coalesce(nullif(btrim(p_note), ''), 'Reviewer deaktivatsiya qilindi; biriktirish bekor qilindi.')
+    from revoked;
+  end if;
   return p_reviewer_user_id;
 end;
 $$;
