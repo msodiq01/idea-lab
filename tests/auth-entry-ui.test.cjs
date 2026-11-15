@@ -23,7 +23,17 @@ test("Auth entry page requires both public config and SDK before enabling action
 
 test("all credential submissions are guarded by configured Auth state", () => {
   const guarded = (html.match(/if\(!configured\)return;/g) || []).length;
-  assert.equal(guarded, 3);
+  assert.equal(guarded, 4);
+});
+
+test("phone SMS signup and login controls are present and use the guarded adapter", () => {
+  assert.match(html, /data-channel="phone"/);
+  assert.match(html, /id="phoneNumber"/);
+  assert.match(html, /id="phoneCode"/);
+  assert.match(html, /auth\.sendPhoneSignupOtp\(phone\)/);
+  assert.match(html, /auth\.sendPhoneLoginOtp\(phone\)/);
+  assert.match(html, /auth\.verifyPhoneOtp\(phone/);
+  assert.match(html, /if\(!configured\)return;/);
 });
 
 test("inline Auth UI JavaScript parses without syntax errors", () => {
