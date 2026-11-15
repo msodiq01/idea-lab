@@ -13,7 +13,7 @@ test("new app schema is isolated from existing public finance/resource tables", 
   assert.match(blueprint, /alohida `idea_app` PostgreSQL sxemasida/);
   assert.match(blueprint, /public\.profiles/);
   assert.match(blueprint, /public\.resources/);
-  assert.match(blueprint, /public sxemadagi 9 jadval o'z holicha saqlanadi/);
+  assert.match(blueprint, /Hozirgi `public` sxemadagi 9 jadval o'z holicha saqlanadi/);
 });
 
 test("blueprint defines app entities in a dedicated namespace", () => {
