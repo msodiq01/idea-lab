@@ -1193,6 +1193,16 @@ function showEmployerApplications() {
             current[index].status = select.value;
             current[index].updatedAt = new Date().toISOString();
             if (saveData("jobApplications", current)) {
+                if (ideaCore.activity) {
+                    const logged = ideaCore.activity.recordApplication(current[index], {
+                        source: "jobApplications",
+                        title: current[index].jobTitle || "Ish arizasi",
+                        fromStatus: previousStatus,
+                        toStatus: select.value,
+                        recipientId: current[index].applicantId || ""
+                    });
+                    if (!logged.ok) console.warn("Ariza tarixi saqlanmadi:", logged.error);
+                }
                 if (ideaCore) {
                     ideaCore.emit("job:application-status-changed", {
                         applicationId: application.id,
@@ -1308,10 +1318,25 @@ function showTeamManagerApplications() {
                 showTeamManagerApplications();
                 return;
             }
-            const previousStatus = current[index].status || "Yangi";
+            const previousStatus = ideaCore.applications.normalizeStatus(current[index].status);
+            if (!ideaCore.applications.nextStatuses(previousStatus, "owner").includes(select.value)) {
+                alert("Bu holatga o‘tish ruxsat etilmagan.");
+                showTeamManagerApplications();
+                return;
+            }
             current[index].status = select.value;
             current[index].updatedAt = new Date().toISOString();
             if (saveData("teamApplications", current)) {
+                if (ideaCore.activity) {
+                    const logged = ideaCore.activity.recordApplication(current[index], {
+                        source: "teamApplications",
+                        title: current[index].teamName || "Jamoa arizasi",
+                        fromStatus: previousStatus,
+                        toStatus: select.value,
+                        recipientId: current[index].applicantId || ""
+                    });
+                    if (!logged.ok) console.warn("Ariza tarixi saqlanmadi:", logged.error);
+                }
                 if (ideaCore) {
                     ideaCore.emit("membership:application-status-changed", {
                         applicationId: application.id,
