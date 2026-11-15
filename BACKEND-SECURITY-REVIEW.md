@@ -37,3 +37,27 @@ Holat: statik kod ko'rigi; jonli Supabase loyihasida bajarilmagan.
 ## Cheklov
 
 Bu ko'rik penetration test emas, jonli DB audit emas va migration'ni bajarishga ruxsat bermaydi. Supabase project ref va backup hali tasdiqlanmagan.
+
+
+## 2026-11-15 — ulangan Supabase loyihasida jonli read-only tekshiruv
+
+Ushbu tekshiruv Supabase MCP orqali loyiha holati, public schema, migration tarixi, RLS policy'lari, API grantlari va advisor natijalarini o‘qish bilan bajarildi. Hech qanday SQL o‘zgartirish, migration, foydalanuvchi yaratish yoki Auth sozlamasini almashtirish bajarilmadi.
+
+### Tasdiqlangan holat
+- Supabase loyiha holati: `ACTIVE_HEALTHY`; PostgreSQL 17.11.
+- `public` sxemasida 9 ta jadval bor: `profiles`, `user_roles`, `resource_types`, `resources`, `resource_accounts`, `investments`, `money_transfers`, `transfer_allocations`, `audit_logs`.
+- Ushbu 9 jadvalning barchasida RLS yoqilgan.
+- Database migration tarixida 4 ta migration qo‘llangan: foundation schema, foundation hardening, internal function restriction va RLS/grants.
+- `anon` va `authenticated` rollariga berilgan jadval grantlari faqat SELECT bo‘ldi. Hozircha client orqali INSERT/UPDATE/DELETE huquqi yo‘q; shu sababli real yozish oqimlari ataylab ishga tushmagan.
+- `audit_logs` jadvalida RLS yoqilgan, lekin client policy yo‘q. Bu client uchun barcha qatorlarni yopiq qoldiradi; advisor buni INFO sifatida ko‘rsatadi.
+- Security advisor boshqa topilma qaytarmadi. Performance advisor 18 ta ishlatilmagan indeksni qayd etdi; jadvallar hozir bo‘sh/traffic yo‘qligi sababli ularni shoshilinch o‘chirish kerak emas.
+- Edge Functions ro‘yxati bo‘sh.
+- Supabase Auth provayderlari, SMTP va SMS provider sozlamalari ushbu ulangan boshqaruv vositalari orqali o‘qilmadi; ular sozlangan deb hisoblanmaydi.
+
+### Keyingi xavfsiz qadamlar
+1. Email confirmation, password reset uchun Site URL va aniq redirect allowlist sozlamalarini Supabase Auth dashboardida tekshirish.
+2. Telefon OTP uchun Auth Phone provider va SMS gateway sozlamalarini alohida tasdiqlash.
+3. Staging akkauntlar bilan ikki foydalanuvchili RLS testlarini bajarish.
+4. Har bir jadval uchun ustun darajasidagi ruxsat va server-side status transition qoidalarini tasdiqlashdan oldin frontendga backend write imkoniyatini bermaslik.
+
+**Xulosa:** Supabase loyihasi mavjud va sog‘lom, lekin IDEA LAB hozircha xavfsiz read-only/backend-draft holatida. Bu jonli foydalanuvchilar uchun tayyor ishlab chiqarish tizimi degani emas.
