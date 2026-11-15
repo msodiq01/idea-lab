@@ -65,13 +65,14 @@
 <p class="notice">Bu bo‘lim mavjud brauzer ma’lumotlarini faqat o‘qiydi. Yozuvlar ko‘chirilmaydi yoki o‘zgartirilmaydi.</p>
 
 </main>
+<script src="assets/idea-core.js"></script>
 <script>
 (function(){
 "use strict";
 const KEY="ideaLabExchangeItems";
 const $=id=>document.getElementById(id);
-const safeRead=()=>{try{const a=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(a)?a:[]}catch(_){return[]}};
-const save=items=>{try{localStorage.setItem(KEY,JSON.stringify(items));return true}catch(_){alert("Brauzer xotirasiga saqlab bo‘lmadi.");return false}};
+const safeRead=()=>{try{const a=window.IDEALAB?IDEALAB.legacy.read(KEY,[]):JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(a)?a:[]}catch(_){return[]}};
+const save=items=>{try{if(window.IDEALAB){const result=IDEALAB.legacy.write(KEY,items);if(!result.ok)throw new Error(result.error?.message||"Saqlash amalga oshmadi.");return true}localStorage.setItem(KEY,JSON.stringify(items));return true}catch(_){alert("Brauzer xotirasiga saqlab bo‘lmadi.");return false}};
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let activeFilter="all";
 function openForm(type){$("itemType").value=type;$("formHeading").textContent=type==="need"?"Menga kerak — yangi talab":"Menda bor — yangi taklif";$("createPanel").hidden=false;$("createPanel").scrollIntoView({behavior:"smooth",block:"start"});}
@@ -106,7 +107,7 @@ const entries=[
 if(!entries.length){const e=document.createElement("div");e.className="empty";e.textContent="Hozircha boshqa bo‘limlarda ko‘rinadigan loyiha yoki taklif yo‘q.";box.append(e);return}
 entries.forEach(item=>{const c=document.createElement("article");c.className="match";const tag=document.createElement("div");tag.className="tag";tag.textContent=item.kind;const title=document.createElement("strong");title.textContent=item.title;const desc=document.createElement("p");desc.textContent=item.desc;const meta=document.createElement("p");meta.textContent=item.meta;const link=document.createElement("a");link.className="btn";link.href=item.href;link.textContent="Bo‘limni ochish →";c.append(tag,title,desc,meta,link);box.append(c)});
 }
-function safeReadKey(key){try{const value=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(value)?value:[]}catch(_){return[]}}
+function safeReadKey(key){try{const value=window.IDEALAB?IDEALAB.legacy.read(key,[]):JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(value)?value:[]}catch(_){return[]}}
 function renderMatches(all){
 const box=$("matchCards");box.replaceChildren();
 const pairs=[];
