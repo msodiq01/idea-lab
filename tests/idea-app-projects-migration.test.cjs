@@ -16,16 +16,16 @@ test("project module creates only the four intended idea_app tables", () => {
   for (const table of ["projects", "project_members", "project_tasks", "project_updates"]) {
     assert.match(sql, new RegExp("create table idea_app\\." + table, "i"));
   }
-  assert.doesNotMatch(sql, /create\\s+table\\s+(if\\s+not\\s+exists\\s+)?public\\./i);
-  assert.doesNotMatch(sql, /alter\\s+table\\s+public\\./i);
-  assert.doesNotMatch(sql, /drop\\s+(table|schema|function)/i);
+  assert.doesNotMatch(sql, /create\s+table\s+(if\s+not\s+exists\s+)?public\./i);
+  assert.doesNotMatch(sql, /alter\s+table\s+public\./i);
+  assert.doesNotMatch(sql, /drop\s+(table|schema|function)/i);
 });
 
 test("project and team relationships use trusted auth identities and isolated foreign keys", () => {
-  assert.match(sql, /references idea_app\\.organizations\\(id\\) on delete set null/i);
-  assert.match(sql, /references idea_app\\.projects\\(id\\) on delete cascade/i);
-  assert.ok((sql.match(/references auth\\.users\\(id\\)/gi) || []).length >= 4);
-  assert.match(sql, /unique \\(project_id, user_id\\)/i);
+  assert.match(sql, /references idea_app\.organizations\(id\) on delete set null/i);
+  assert.match(sql, /references idea_app\.projects\(id\) on delete cascade/i);
+  assert.ok((sql.match(/references auth\.users\(id\)/gi) || []).length >= 4);
+  assert.match(sql, /unique \(project_id, user_id\)/i);
 });
 
 test("all project module tables have RLS enabled", () => {
@@ -36,8 +36,8 @@ test("all project module tables have RLS enabled", () => {
 
 test("browser roles receive no grants or client policies", () => {
   assert.match(sql, /revoke all on all tables in schema idea_app from public, anon, authenticated/i);
-  assert.doesNotMatch(executableSql, /\\bgrant\\b/i);
-  assert.doesNotMatch(sql, /create\\s+policy/i);
+  assert.doesNotMatch(executableSql, /\bgrant\b/i);
+  assert.doesNotMatch(sql, /create\s+policy/i);
 });
 
 test("project lifecycle, visibility, team roles, and membership states are constrained", () => {
