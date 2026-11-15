@@ -6,6 +6,35 @@
 
 begin;
 
+-- The trigger needs to validate another user's membership without exposing
+-- the roster to contributors. This narrow lookup is private and caller-bound.
+create or replace function idea_private.is_active_project_member(
+  p_project_id uuid,
+  p_user_id uuid
+)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select (select auth.uid()) is not null
+    and p_project_id is not null
+    and p_user_id is not null
+    and exists (
+      select 1
+      from idea_app.project_members pm
+      where pm.project_id = p_project_id
+        and pm.user_id = p_user_id
+        and pm.membership_status = 'active'
+    );
+$function$;
+
+revoke all on function idea_private.is_active_project_member(uuid, uuid)
+  from public, anon, authenticated;
+grant execute on function idea_private.is_active_project_member(uuid, uuid)
+  to authenticated;
+
 -- A trigger is used instead of an exposed SECURITY DEFINER RPC. This keeps
 -- privileged mutations out of the Data API while column grants + RLS + the
 -- invoker trigger constrain the permitted state transitions.
@@ -119,21 +148,12 @@ begin
   end if;
 
   if new.assignee_id is not null
-     and not (
-       (select idea_private.is_project_owner(new.project_id))
-       and new.assignee_id = (
-         select p.created_by
-         from idea_app.projects p
-         where p.id = new.project_id
-       )
+     and new.assignee_id is distinct from (
+       select p.created_by
+       from idea_app.projects p
+       where p.id = new.project_id
      )
-     and not exists (
-       select 1
-       from idea_app.project_members pm
-       where pm.project_id = new.project_id
-         and pm.user_id = new.assignee_id
-         and pm.membership_status = 'active'
-     ) then
+     and not (select idea_private.is_active_project_member(new.project_id, new.assignee_id)) then
     raise exception 'Task assignee must be the project owner or an active project member'
       using errcode = '42501';
   end if;
