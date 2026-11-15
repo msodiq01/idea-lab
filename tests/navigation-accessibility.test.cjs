@@ -118,7 +118,7 @@ test("Stage 14 renders all grouped platform sections visibly in the top navigati
  const css=read("assets/idea-shell.css");
  assert.match(shell,/il-all-menu/);
  assert.match(shell,/aria-label="Barcha bo‘limlarni ochish"/);
- assert.doesNotMatch(shell,/<details class="il-all-menu"/);
+ assert.match(shell,/<details class="il-all-menu">/);
  assert.match(css,/Stage 15 — reduce navigation noise/);
  assert.match(css,/\.il-section-group/);
 });
