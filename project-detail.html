@@ -880,6 +880,7 @@ function showProject() {
     }
 
     heroTitle.textContent = getValue(project.name, "Nomsiz loyiha");
+    document.getElementById("projectExpensesLink").href = "project-expenses.html?id=" + encodeURIComponent(String(project.id));
 
     heroDescription.textContent = getValue(
         project.description,
