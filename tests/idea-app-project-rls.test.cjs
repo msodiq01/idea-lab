@@ -34,12 +34,12 @@ test("cross-row helpers use SECURITY DEFINER with fixed search_path and auth.uid
 });
 
 test("helper functions are not executable by PUBLIC or anon", () => {
-  assert.match(sql, /revoke all on function idea_app\.is_project_owner\(uuid\) from public, anon, authenticated/i);
-  assert.match(sql, /revoke all on function idea_app\.has_active_project_role\(uuid, text\[\]\) from public, anon, authenticated/i);
-  assert.match(sql, /revoke all on function idea_app\.is_organization_owner\(uuid\) from public, anon, authenticated/i);
-  assert.match(sql, /grant execute on function idea_app\.is_project_owner\(uuid\) to authenticated/i);
-  assert.match(sql, /grant execute on function idea_app\.has_active_project_role\(uuid, text\[\]\) to authenticated/i);
-  assert.match(sql, /grant execute on function idea_app\.is_organization_owner\(uuid\) to authenticated/i);
+  assert.match(sql, /revoke all on function idea_private\.is_project_owner\(uuid\) from public, anon, authenticated/i);
+  assert.match(sql, /revoke all on function idea_private\.has_active_project_role\(uuid, text\[\]\) from public, anon, authenticated/i);
+  assert.match(sql, /revoke all on function idea_private\.is_organization_owner\(uuid\) from public, anon, authenticated/i);
+  assert.match(sql, /grant execute on function idea_private\.is_project_owner\(uuid\) to authenticated/i);
+  assert.match(sql, /grant execute on function idea_private\.has_active_project_role\(uuid, text\[\]\) to authenticated/i);
+  assert.match(sql, /grant execute on function idea_private\.is_organization_owner\(uuid\) to authenticated/i);
 });
 
 test("each project table policy explicitly targets authenticated", () => {
@@ -71,7 +71,7 @@ test("self-service membership creates only pending contributor/viewer requests",
 });
 
 test("membership transitions are not client-updatable", () => {
-  assert.doesNotMatch(executableSql, /create policy\s+\S+\s+on idea_app\.project_members\s+for update/i);
+  assert.doesNotMatch(executableSql, /create policy\s+\S+\s+on idea_private\.project_members\s+for update/i);
 });
 
 test("task writes bind creator and assignee to the current user", () => {
@@ -100,5 +100,5 @@ test("privileged helpers stay in a separate non-exposed schema", () => {
 
 test("migration does not grant browser table privileges", () => {
   assert.match(sql, /grant usage on schema idea_private to authenticated/i);
-  assert.doesNotMatch(executableSql, /grant\s+(select|insert|update|delete|all)\s+on\s+(all\s+tables|idea_app\.)/i);
+  assert.doesNotMatch(executableSql, /grant\s+(select|insert|update|delete|all)\s+on\s+(all\s+tables|idea_private\.)/i);
 });
