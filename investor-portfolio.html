@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07111f">
+<title>IDEA LAB — Mening investitsiyalarim</title>
+<link rel="stylesheet" href="assets/idea-shell.css">
+<style>
+:root{--bg:#07111f;--surface:#0d1b2d;--surface2:#12243a;--line:rgba(148,183,220,.14);--text:#f1f6ff;--muted:#91a5bd;--blue:#3985ff;--cyan:#27d7e8;--green:#3dd6a0;--amber:#ffc66d;--red:#ff7185}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 85% 0%,rgba(39,215,232,.08),transparent 34%),var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}a{color:inherit;text-decoration:none}button,input,select{font:inherit}
+.wrap{width:min(1180px,calc(100% - 36px));margin:34px auto 70px}
+.hero{padding:34px;border:1px solid var(--line);border-radius:22px;background:radial-gradient(circle at 90% 8%,rgba(57,133,255,.2),transparent 36%),linear-gradient(135deg,#142541,#0d1b2d)}
+.kicker{color:var(--cyan);font-size:10px;font-weight:800;letter-spacing:1.6px}.hero h1{font-size:clamp(28px,4vw,43px);letter-spacing:-1.5px;margin:12px 0}.hero p{max-width:730px;color:var(--muted);font-size:13px;line-height:1.8;margin:0}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 15px;border-radius:10px;font-size:11px;font-weight:800;border:1px solid var(--line);background:rgba(255,255,255,.05)}.btn.primary{background:linear-gradient(135deg,var(--blue),#2863d4);border:0;color:white}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}.stat,.panel{background:var(--surface);border:1px solid var(--line);border-radius:15px}.stat{padding:18px}.stat span{display:block;color:var(--muted);font-size:10px}.stat strong{display:block;font-size:clamp(19px,2.7vw,26px);margin-top:8px;overflow-wrap:anywhere}
+.panel{padding:20px;margin-top:17px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}.panel h2{font-size:17px;margin:0}.sub{font-size:11px;color:var(--muted);line-height:1.7;margin:6px 0 0}
+.toolbar{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:10px;margin:16px 0}.field{width:100%;min-height:42px;padding:10px 12px;color:var(--text);background:#091526;border:1px solid var(--line);border-radius:9px;outline:none;font-size:12px}.field:focus{border-color:var(--blue)}.field option{background:#0d1b2d}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.offer{min-width:0;padding:17px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,rgba(18,36,58,.95),rgba(11,25,43,.95))}
+.offer-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.offer h3{font-size:15px;margin:0 0 5px;overflow-wrap:anywhere}.offer-meta{color:var(--muted);font-size:10px;line-height:1.6}.status{display:inline-flex;align-items:center;padding:6px 9px;border-radius:30px;background:rgba(255,255,255,.07);font-size:10px;font-weight:800;white-space:nowrap}.status.accepted{background:rgba(61,214,160,.12);color:#73e4b8}.status.review{background:rgba(255,198,109,.12);color:#ffd18b}.status.rejected{background:rgba(255,113,133,.12);color:#ff9aa9}.status.new{background:rgba(57,133,255,.13);color:#8cb8ff}
+.offer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:15px 0}.metric{padding:11px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.025);min-width:0}.metric span{display:block;color:var(--muted);font-size:9px;line-height:1.5}.metric strong{display:block;margin-top:5px;font-size:13px;overflow-wrap:anywhere}
+.estimate{padding:11px 12px;border:1px solid rgba(39,215,232,.18);background:rgba(39,215,232,.05);border-radius:10px;color:#a9dbe3;font-size:10px;line-height:1.65}.estimate strong{font-size:15px;color:white}
+.offer-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.offer-actions a{font-size:10px;color:#9cc3ff;font-weight:800}
+.empty{padding:32px 15px;text-align:center;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:12px;line-height:1.8}.empty strong{display:block;color:var(--text);font-size:14px;margin-bottom:5px}
+.note{padding:13px 14px;background:rgba(255,198,109,.06);border:1px solid rgba(255,198,109,.16);border-radius:11px;color:#c6b58f;font-size:10px;line-height:1.7;margin-top:16px}
+footer{padding:25px;text-align:center;color:#7188a3;font-size:10px;border-top:1px solid var(--line)}
+@media(max-width:800px){.cards{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.wrap{width:calc(100% - 24px);margin-top:20px}.hero{padding:23px 19px}.panel{padding:15px}.toolbar{grid-template-columns:1fr}.offer-grid{gap:7px}.offer{padding:13px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section class="hero">
+ <div class="kicker">IDEA LAB / INVESTOR WORKSPACE</div>
+ <h1>Mening investitsiyalarim</h1>
+ <p>Yuborgan investitsiya takliflaringiz, ularning ko‘rib chiqilish holati va loyihalar bahosiga asoslangan taxminiy ulush hisoblarini bitta joyda kuzating.</p>
+ <div class="actions"><a class="btn primary" href="investors.html">Investorlar markazi</a><a class="btn" href="profile.html">Shaxsiy kabinet</a></div>
+</section>
+<section class="stats" aria-label="Investitsiya portfeli ko‘rsatkichlari">
+ <article class="stat"><span>Jami yuborilgan takliflar</span><strong id="totalCount">0</strong></article>
+ <article class="stat"><span>Takliflar jami summasi</span><strong id="totalAmount">0 so‘m</strong></article>
+ <article class="stat"><span>Qabul qilingan takliflar</span><strong id="acceptedAmount">0 so‘m</strong></article>
+ <article class="stat"><span>Ko‘rib chiqilmoqda</span><strong id="reviewCount">0</strong></article>
+</section>
+<section class="panel">
+ <div class="panel-head"><div><h2>Takliflarim</h2><p class="sub" id="portfolioCaption">Shaxsiy profilingizga bog‘langan takliflar ro‘yxati.</p></div><span class="status" id="visibleCount">0 ta</span></div>
+ <div class="toolbar">
+  <input class="field" id="searchOffers" type="search" placeholder="Loyiha nomi yoki ariza raqami bo‘yicha qidirish" aria-label="Takliflarni qidirish">
+  <select class="field" id="statusFilter" aria-label="Holat bo‘yicha saralash"><option value="">Barcha holatlar</option><option value="new">Yangi</option><option value="review">Ko‘rib chiqilmoqda</option><option value="accepted">Qabul qilindi</option><option value="rejected">Rad etildi</option></select>
+ </div>
+ <div class="cards" id="offerList" aria-live="polite"></div>
+ <div class="note">Muhim: bu sahifa hozircha shu brauzerda saqlangan demo yozuvlarni ko‘rsatadi. Profil ID mavjud bo‘lsa, takliflar aynan shu ID bilan moslashtiriladi; eski ID-siz yozuvlar email orqali moslashtiriladi. Bu usul haqiqiy shaxsni serverda tasdiqlash yoki boshqa foydalanuvchilar bilan sinxronlash degani emas. Qabul qilingan taklif real pul tushumini tasdiqlamaydi; ulush foizi esa faqat taxminiy hisob.</div>
+</section>
+</main>
+<footer>IDEA LAB — G‘oya, jamoa, investitsiya va natija.</footer>
+<script src="assets/idea-core.js"></script>
+<script src="assets/idea-investment-calculator.js"></script>
+<script src="assets/idea-investor-portfolio.js"></script>
+<script>
+"use strict";
+const core=window.IDEALAB||null;
+function readValue(key,fallback){
+ try{
+  const value=core&&core.legacy?core.legacy.read(key,fallback):JSON.parse(localStorage.getItem(key)||"null");
+  return value===null||value===undefined?fallback:value;
+ }catch(error){return fallback}
+}
+const profile=readValue("userProfile",null);
+const applications=readValue("investmentApplications",[]);
+const projects=readValue("projects",[]);
+const model=window.IDEALABInvestorPortfolio;
+const rows=model&&model.ownApplications(profile,applications)||[];
+const list=document.getElementById("offerList");
+const money=value=>new Intl.NumberFormat("uz-UZ",{maximumFractionDigits:0}).format(Number(value)||0)+" so‘m";
+const statusLabels={new:"Yangi",review:"Ko‘rib chiqilmoqda",accepted:"Qabul qilindi",rejected:"Rad etildi"};
+function element(tag,className,text){
+ const node=document.createElement(tag);
+ if(className)node.className=className;
+ if(text!==undefined)node.textContent=String(text);
+ return node;
+}
+function dateLabel(value){
+ if(!value)return "Sana ko‘rsatilmagan";
+ const date=new Date(value);
+ return Number.isNaN(date.getTime())?"Sana ko‘rsatilmagan":new Intl.DateTimeFormat("uz-UZ",{year:"numeric",month:"short",day:"numeric"}).format(date);
+}
+function render(){
+ const summary=model.summarize(rows);
+ document.getElementById("totalCount").textContent=String(summary.count);
+ document.getElementById("totalAmount").textContent=money(summary.totalAmount);
+ document.getElementById("acceptedAmount").textContent=money(summary.acceptedAmount);
+ document.getElementById("reviewCount").textContent=String(summary.reviewCount);
+ const query=document.getElementById("searchOffers").value.trim().toLowerCase();
+ const filter=document.getElementById("statusFilter").value;
+ const visible=rows.filter(item=>{
+  const app=item.application;
+  const projectName=String(app.projectName||"").toLowerCase();
+  const id=String(app.id||"").toLowerCase();
+  return (!query||projectName.includes(query)||id.includes(query))&&(!filter||model.statusOf(app)===filter);
+ }).sort((a,b)=>new Date(b.application.createdAt||b.application.date||0)-new Date(a.application.createdAt||a.application.date||0));
+ document.getElementById("visibleCount").textContent=visible.length+" ta";
+ list.replaceChildren();
+ if(!profile||(!profile.id&&!profile.email)){
+  const empty=element("div","empty");empty.append(element("strong","","Profil ma’lumoti topilmadi"),document.createTextNode("Avval shaxsiy kabinetingizda ism va email ma’lumotlarini saqlang."));list.append(empty);return;
+ }
+ if(!rows.length){
+  const empty=element("div","empty");empty.append(element("strong","","Hozircha investitsiya taklifingiz yo‘q"),document.createTextNode("Loyiha sahifasiga o‘tib, investitsiya taklifini yuborganingizdan so‘ng u shu yerda ko‘rinadi."));list.append(empty);return;
+ }
+ if(!visible.length){const empty=element("div","empty");empty.append(element("strong","","Mos taklif topilmadi"),document.createTextNode("Qidiruv yoki holat filtrini o‘zgartirib ko‘ring."));list.append(empty);return}
+ visible.forEach(item=>{
+  const app=item.application,status=model.statusOf(app),card=element("article","offer");
+  const top=element("div","offer-top"),heading=element("div");
+  heading.append(element("h3","",app.projectName||"Nomsiz loyiha"),element("div","offer-meta","Ariza: "+(app.id||"—")+" · "+dateLabel(app.createdAt||app.date)));
+  top.append(heading,element("span","status "+status,statusLabels[status]));card.append(top);
+  const grid=element("div","offer-grid");
+  const values=[["Taklif summasi",money(model.amountOf(app))],["Taklif holati",statusLabels[status]],["Loyiha qiymati",(model.estimate(item,projects,window.IDEALABInvestmentCalculator)||{}).available?money(model.estimate(item,projects,window.IDEALABInvestmentCalculator).valuation):"Kiritilmagan"],["Moslashtirish",item.matchMethod==="profile-id"?"Profil ID":"Eski email yozuvi"]];
+  values.forEach(([label,value])=>{const metric=element("div","metric");metric.append(element("span","",label),element("strong","",value));grid.append(metric)});
+  card.append(grid);
+  const estimate=model.estimate(item,projects,window.IDEALABInvestmentCalculator);
+  const estimateBox=element("div","estimate");
+  if(estimate&&estimate.available){estimateBox.append(document.createTextNode("Loyiha bahosiga asoslangan taxminiy investor ulushi: "),element("strong","",new Intl.NumberFormat("uz-UZ",{minimumFractionDigits:2,maximumFractionDigits:2}).format(estimate.equityPercent)+"%"),document.createTextNode(" · "+(estimate.basis==="post-money"?"Post-money":"Pre-money")+" hisob."))}
+  else estimateBox.textContent="Taxminiy ulush hisoblanmadi: loyiha bahosi kiritilmagan yoki hisoblash uchun ma’lumot yetarli emas.";
+  card.append(estimateBox);
+  const actions=element("div","offer-actions");
+  if(app.projectId){const link=element("a","","Loyiha tafsilotlari →");link.href="project-detail.html?id="+encodeURIComponent(String(app.projectId));actions.append(link)}
+  card.append(actions);list.append(card);
+ });
+}
+document.getElementById("searchOffers").addEventListener("input",render);
+document.getElementById("statusFilter").addEventListener("change",render);
+window.addEventListener("storage",()=>window.location.reload());
+render();
+</script>
+<script src="assets/idea-shell.js" defer></script>
+</body>
+</html>
