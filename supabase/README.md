@@ -7,7 +7,8 @@ Bu papkadagi SQL — IDEA LAB backendini tayyorlash uchun. Hozir frontend Supaba
 1. `schema.sql` — boshlang'ich jadvallar, indekslar, RLS va triggerlar.
 2. `migrations/20261115_security_hardening.sql` — katalog view'lari va qo'shimcha xavfsizlik cheklovlari.
 3. `migrations/20261116_supplier_verification.sql` — ta’minotchi tekshiruvi uchun qo‘shimcha jadvallar va cheklangan RLS.
-4. `verification/security_audit.sql` — read-only tekshiruv so'rovlari.
+4. `migrations/20261117_supplier_verification_reviewers.sql` — server tomonidan boshqariladigan reviewer allowlist va atomik qaror RPC.
+5. `verification/security_audit.sql` — read-only tekshiruv so'rovlari.
 
 ## Ishga tushirishdan oldin
 

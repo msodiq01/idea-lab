@@ -1,6 +1,6 @@
 # IDEA LAB — Ta’minotchini tekshirish jarayoni
 
-Versiya: 1.1 · Sana: 2026-11-16  
+Versiya: 1.2 · Sana: 2026-11-17  
 Holat: backend migration tayyorlandi; jonli Supabase loyihasiga qo‘llangani tasdiqlanmagan.
 
 ## 1. Maqsad
@@ -38,13 +38,21 @@ Xavfsizlik chegaralari:
 4. Evidence jadvaliga client uchun hech qanday ruxsat berilmaydi.
 5. Har bir supplier uchun bitta faol ariza partial unique index bilan cheklanadi.
 6. Ariza yuborilishi avtomatik ravishda boshlang‘ich audit event yozadi.
-7. Reviewer qarori uchun server-side permission, atomik status transition va audit event yozadigan alohida backend operatsiyasi keyingi bosqichda ishlab chiqiladi.
+7. Reviewer qarorlari keyingi migration'dagi server-side allowlist va atomik RPC orqali bajariladi.
 
-## 5. Reviewer va hujjat yuklash
-Reviewer identifikatori faqat tasdiqlangan server sessiondan olinadi. Profil roles maydoni yoki UI flag vakolat bermaydi. Approved holati uchun tekshiruv turi, reviewer, vaqt, dalil manbasi va amal qilish/review muddati talab qilinadi. Ushbu migration reviewer API/RPC, MFA, Storage bucket yoki hujjat uploadni yoqmaydi.
+## 5. Reviewer vakolati va qarorlar — 2026-11-17
+Fayl: supabase/migrations/20261117_supplier_verification_reviewers.sql
+
+- `supplier_verification_reviewers` — reviewer allowlist. Jadvalga client huquqi berilmagan; reviewer tayinlash/faolsizlantirish faqat ishonchli server/service-role operatsiyasi bilan bajariladi.
+- `is_supplier_verification_reviewer()` — active reviewer ekanini serverdagi allowlist orqali tekshiradi.
+- `review_supplier_verification_application(...)` — `auth.uid()` bilan reviewer identifikatsiyasi, application row lock, ruxsat etilgan status o'tishlari va audit eventni bitta transactionda bajaradi.
+- `approved` uchun dalil metama’lumoti va verification type talab qilinadi. `needs_more_info` va `rejected` uchun izoh talab qilinadi.
+- Reviewer bekor qilinsa, u arizalar navbatini ko‘ra olmaydi va qaror qabul qila olmaydi.
+
+Bu migration reviewer tayinlash interfeysi, MFA sozlamasi, hujjat Storage bucket'i yoki upload API yaratmaydi. Reviewerlar faqat tashkilot vakolati va mas’ul kattalar tomonidan tekshirilganidan keyin tayinlanishi kerak. Real shaxsiy hujjatlarni test muhitiga yuklamang.
 
 ## 6. Sinov holati
-tests/supplier-verification-migration.test.cjs migration matnining xavfsizlik shartlarini statik tekshiradi. Bu SQL parser, Postgres integratsion test yoki jonli RLS sinovi emas. Migration faqat alohida staging loyihasida qo‘llanib, ikki akkauntli testdan o‘tkazilgandan keyin foydalanishga yaroqli deb baholanadi.
+`tests/supplier-verification-migration.test.cjs` va `tests/supplier-verification-reviewers.test.cjs` migration matnining xavfsizlik shartlarini statik tekshiradi. Bu SQL parser, Postgres integratsion test yoki jonli RLS sinovi emas. Migration faqat alohida staging loyihasida qo‘llanib, ikki akkauntli testdan o‘tkazilgandan keyin foydalanishga yaroqli deb baholanadi.
 
 ## 7. Qabul mezonlari
 - [ ] Test Supabase loyihasi va egasi tasdiqlangan.
