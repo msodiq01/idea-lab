@@ -16,7 +16,7 @@ input:not([type=checkbox]),textarea,select{display:block;width:100%;padding:13px
 .tag{display:inline-block;background:rgba(39,215,232,.1);color:var(--cyan);border:1px solid rgba(39,215,232,.18);padding:7px 10px;border-radius:20px;margin:5px 3px 0 0;font-size:11px}
 footer{background:#091727;color:var(--muted);text-align:center;padding:25px;border-top:1px solid var(--line);margin-top:60px;font-size:12px}.hidden{display:none}
 @media(max-width:600px){.hero{padding:38px 18px}.container{width:calc(100% - 22px);margin-top:24px}.card{padding:17px}.section-title{font-size:20px}}
-</style>
+.form-note{color:var(--muted);font-size:11px;line-height:1.6;margin:-8px 0 16px}</style>
     <link rel="stylesheet" href="assets/idea-shell.css">\n</head>
 
 <body>
@@ -121,7 +121,8 @@ footer{background:#091727;color:var(--muted);text-align:center;padding:25px;bord
                 placeholder="O'zingiz va maqsadlaringiz haqida yozing..."></textarea>
 
             <label>Rezyume (PDF)</label>
-            <input type="file" id="resume" accept=".pdf">
+            <input type="file" id="resume" accept=".pdf" disabled>
+            <p class="form-note">PDF rezyume yuklash server xotirasi ulangandan keyin faollashadi. Hozircha profil ma’lumotlari faqat ushbu brauzerda saqlanadi.</p>
 
             <label>Portfolio havolasi</label>
             <input type="url" id="portfolio"
@@ -172,7 +173,13 @@ function getSpecialists() {
 }
 
 function saveSpecialists(data) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        return true;
+    } catch (error) {
+        alert("Profilni brauzer xotirasiga saqlab bo‘lmadi. Xotira joyini tekshiring.");
+        return false;
+    }
 }
 
 function escapeHTML(value) {
@@ -204,18 +211,6 @@ document.getElementById("profileForm").addEventListener("submit", function(event
 
     event.preventDefault();
 
-    const file = document.getElementById("resume").files[0];
-
-    if (file && file.type !== "application/pdf") {
-        alert("Faqat PDF rezyume yuklash mumkin.");
-        return;
-    }
-
-    if (file && file.size > 2 * 1024 * 1024) {
-        alert("Rezyume hajmi 2 MB dan oshmasligi kerak.");
-        return;
-    }
-
     const person = {
         id: Date.now(),
         name: document.getElementById("name").value.trim(),
@@ -230,7 +225,6 @@ document.getElementById("profileForm").addEventListener("submit", function(event
         education: document.getElementById("education").value.trim(),
         about: document.getElementById("about").value.trim(),
         portfolio: document.getElementById("portfolio").value.trim(),
-        resumeName: file ? file.name : "",
         jobSearch: document.getElementById("jobSearch").checked,
         createdAt: new Date().toISOString()
     };
@@ -239,9 +233,9 @@ document.getElementById("profileForm").addEventListener("submit", function(event
 
     specialists.push(person);
 
-    saveSpecialists(specialists);
+    if (!saveSpecialists(specialists)) return;
 
-    alert("Profil muvaffaqiyatli saqlandi!");
+    alert("Profil ushbu brauzerda saqlandi. Boshqa foydalanuvchilarga hozircha ko‘rinmaydi.");
 
     this.reset();
 
