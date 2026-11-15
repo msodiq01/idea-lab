@@ -4,5 +4,5 @@ for(const x of ["accountId","verificationStatus","documentReference","recordedOr
 assert.ok(model.includes('verificationStatus:"Tekshirilmagan"'),"Default status must remain unverified in the model");
 assert.ok(orders.includes('href="suppliers.html?id="+encodeURIComponent(String(o.supplierId))'));
 assert.ok(shell.includes('["Resurschilar katalogi","suppliers.html"]'));
-assert.match(model,/createVerificationApplication/);assert.match(contract,/Brauzerda reviewer action/);assert.match(contract,/private_storage_path/);
+assert.match(model,/createVerificationApplication/);assert.match(contract,/Brauzerda reviewer action/);assert.match(contract,/private storage path/i);
 console.log("Supplier verification UI and contract tests passed.");
