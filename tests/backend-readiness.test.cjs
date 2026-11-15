@@ -83,6 +83,16 @@ test("Two-account RLS plan and legacy mapping cover unresolved ownership", () =>
   assert.match(mapping, /avtomatik birlashtirish mumkin emas/);
   assert.match(mapping, /karantin/i);
 });
+test("Live Supabase audit documents the read-only state and remaining Auth setup", () => {
+  assert.match(review, /ACTIVE_HEALTHY/);
+  assert.match(review, /9 ta jadval/);
+  assert.match(review, /barchasida RLS yoqilgan/);
+  assert.match(review, /faqat SELECT/);
+  assert.match(review, /Edge Functions ro‘yxati bo‘sh/);
+  assert.match(review, /SMTP va SMS provider sozlamalari/);
+  assert.match(review, /frontendga backend write imkoniyatini bermaslik/);
+});
+
 test("Security review states what remains unverified", () => {
   assert.match(review, /statik kod ko'rigi/);
   assert.match(review, /jonli Supabase loyihasida bajarilmagan/);
