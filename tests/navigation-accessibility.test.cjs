@@ -86,3 +86,17 @@ test("Every inner page gets a back control with a home fallback; home page does 
  assert.match(css,/\.il-page-tools/);
  assert.match(css,/\.il-back-link/);
 });
+
+test("Personal collection is reachable from the global menu and uses isolated local storage",()=>{
+ const shell=read("assets/idea-shell.js");
+ assert.match(shell,/Mening to‘plamim/);
+ assert.match(shell,/collection\.html/);
+ const page=read("collection.html");
+ assert.match(page,/ideaLabPersonalCollection/);
+ assert.match(page,/Mening to‘plamim/);
+ assert.match(page,/localStorage\.setItem\(KEY/);
+ assert.match(page,/noopener noreferrer/);
+ assert.match(page,/data-filter/);
+ assert.match(page,/Muhim deb belgilash/);
+ assert.match(page,/Brauzer ma’lumotlari tozalansa/);
+});
