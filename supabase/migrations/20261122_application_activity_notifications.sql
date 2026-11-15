@@ -89,8 +89,8 @@ declare
   v_to text;
   v_event text;
 begin
-  execute format('select ($1).%I', v_applicant_column) into v_applicant using new;
-  execute format('select ($1).%I', v_target_column) into v_target_id using new;
+  v_applicant := nullif(to_jsonb(new)->>v_applicant_column, '')::uuid;
+  v_target_id := nullif(to_jsonb(new)->>v_target_column, '')::uuid;
 
   execute format('select owner_id from public.%I where id = $1', v_target_table)
     into v_owner using v_target_id;
