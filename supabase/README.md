@@ -8,10 +8,13 @@ Bu papkadagi SQL — IDEA LAB umumiy backendini tayyorlash uchun. Ulangan Supaba
 - `migrations/20261116130000_idea_app_projects_teams.sql` — loyiha, jamoa a'zoligi, vazifalar va yangiliklar moduli; birinchi identity/organization migration'iga bog'liq.
 - `migrations/20261116140000_idea_app_projects_rls.sql` — loyiha, jamoa, vazifa va yangiliklar uchun RLS siyosatlari drafti. Faqat repository'da; jonli Supabase'ga qo'llanmagan.
 - `migrations/20261116150000_idea_app_project_member_commands.sql` — taklifni qabul/rad etish, qo'shilish so'rovini tasdiqlash/rad etish, ixtiyoriy chiqish, owner-only rol o'zgarishi va task tayinlash uchun himoyalangan triggerlar. Faqat repository draft.
+- `migrations/20261116160000_idea_app_listings_applications.sql` — loyiha e'lonlari, xavfsiz katalog/yangilik view'lari va ishtirokchi doirasidagi arizalar. SECURITY INVOKER trigger, duplicate cheklovi, owner/manager qarorlari; faqat repository draft.
 - Membership va task amallari ochiq SECURITY DEFINER RPC orqali emas, SECURITY INVOKER triggerlari + ustun darajasidagi UPDATE grantlari + RLS orqali bajariladi.
 - Bitta qo'shimcha private membership lookup SECURITY DEFINER: faqat authenticated uchun EXECUTE, `auth.uid()` talab qiladi, `search_path = ''`, `idea_private` ichida va Data API'ga expose qilinmaydi.
 - Taskni boshqa a'zoga faqat owner/manager tayinlaydi; maqsad foydalanuvchi loyiha owneri yoki active a'zo bo'lishi shart.
 - Qabul sinovlari: `verification/project-commands-acceptance.md`; read-only preflight endi command triggerlarini ham tekshiradi.
+- E'lon/ariza qabul sinovlari: `verification/listings-applications-acceptance.md`; metadata preflight: `verification/listings-applications-preflight.sql`.
+- Muhim exposure cheklovi: invoker view'lar uchun berilgan asosiy jadval ustun grantlari ichki join IDlarini ham o'z ichiga oladi. Shu sabab `idea_app` sxemasini Data API'ga hozircha expose qilish mumkin emas. Avval public view'larni alohida API sxemasi/route yoki ID saqlamaydigan projection jadvallariga ajratish kerak.
 
 - RLS yordamchi funksiyalari hech qachon Data API'ga expose qilinmasligi kerak bo'lgan alohida `idea_private` sxemasida. Ular `auth.uid()` bilan tekshiradi, qat'iy `search_path` ishlatadi va faqat `authenticated` uchun EXECUTE oladi.
 - Jadval grantlari berilmagan; `idea_app` Data API'ga expose qilinmagan. Shuning uchun policy drafti hozircha brauzerga kirish bermaydi.
@@ -23,6 +26,16 @@ Bu papkadagi SQL — IDEA LAB umumiy backendini tayyorlash uchun. Ulangan Supaba
 - Mavjud `public` jadvallariga tegmaydi. To'rt jadvalda RLS yoqilgan, browser rollariga grant/policy berilmagan.
 - `idea_app` Data API'ga expose qilinmagan. Frontend `offline-demo` rejimida qoladi.
 - Qo'llashdan oldin staging, backup/restore, metadata va ikki foydalanuvchili RLS sinovlari shart.
+
+## Yangi IDEA LAB app migration tartibi (faqat staging draft)
+
+1. `migrations/20261116120000_idea_app_identity_organizations.sql`
+2. `migrations/20261116130000_idea_app_projects_teams.sql`
+3. `migrations/20261116140000_idea_app_projects_rls.sql`
+4. `migrations/20261116150000_idea_app_project_member_commands.sql`
+5. `migrations/20261116160000_idea_app_listings_applications.sql`
+
+Bu ketma-ketlik jonli bazaga qo'llash uchun ruxsat emas. `idea_app` Data API exposure o'chirilgan holda qoladi; avval staging'da migration, RLS, grants va anon/authenticated two-user qabul sinovlari o'tishi shart.
 
 ## Fayllar tartibi
 
