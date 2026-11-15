@@ -42,7 +42,7 @@ Status: repository draft only. Migration `20261116160000_idea_app_listings_appli
 1. Apply only to a disposable staging database after checking migration dependencies and snapshot.
 2. Run SQL preflight and actual JWT-backed tests using at least two independent users plus anon.
 3. Verify views obey RLS, grants are column-limited, and no contact/private columns are exposed.
-4. Do not expose `idea_app` through the Data API until the full schema/grant/RLS review passes.
+4. Do not expose `idea_app` through the Data API yet. The invoker views need underlying column grants, including join identifiers; therefore exposing the whole schema would make base tables queryable too. First isolate the public projections behind a dedicated API schema/route or redesign them as separately populated public projection tables, then repeat the full schema/grant/RLS review.
 5. Keep frontend `offline-demo` until the Auth adapter and server integration have a separately approved pilot.
 6. Production rollout requires explicit approval, backup/restore plan, and rollback migration.
 
