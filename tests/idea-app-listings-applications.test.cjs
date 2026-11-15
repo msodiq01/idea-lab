@@ -69,3 +69,14 @@ test("Data API exposure remains disabled and grants are not table-wide", () => {
   assert.doesNotMatch(executableSql, /alter publication|pgrst[.]db_schemas/i);
   assert.doesNotMatch(executableSql, /grant all on all tables/i);
 });
+
+test("listings and applications preflight is read-only", () => {
+  const preflight = fs.readFileSync(
+    path.join(root, "supabase/verification/listings-applications-preflight.sql"),
+    "utf8"
+  );
+  assert.match(preflight, /^\s*--[\s\S]*select/i);
+  assert.doesNotMatch(preflight, /\b(insert|update|delete|alter|create|drop|grant|revoke)\b/i);
+  assert.ok(preflight.includes("applications"));
+  assert.ok(preflight.includes("public_project_directory"));
+});
