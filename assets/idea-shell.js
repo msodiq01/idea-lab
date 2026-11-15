@@ -10,6 +10,7 @@ const pages=[
  ["Takliflar","offers.html"],
  ["Global bozor","marketplace.html"],
  ["Jamoalar","teams.html"],
+ ["Vakansiyalar","teams.html#career-section"],
  ["Mutaxassislar","specialists.html"],
  ["Kabinet","profile.html"]
 ];
