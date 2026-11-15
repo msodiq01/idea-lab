@@ -27,3 +27,13 @@ test("Application activity staging preflight remains read-only", () => {
   assert.match(sql, /information_schema\.role_table_grants/);
   assert.match(sql, /pg_policies/);
 });
+
+test("Preflight checks client EXECUTE privileges on trigger-only functions", () => {
+  assert.match(sql, /record_supplier_verification_submission/);
+  assert.match(sql, /log_application_activity/);
+  assert.match(sql, /has_function_privilege\('anon'/);
+  assert.match(sql, /has_function_privilege\('authenticated'/);
+  assert.match(sql, /anon_can_execute/);
+  assert.match(sql, /authenticated_can_execute/);
+});
+
