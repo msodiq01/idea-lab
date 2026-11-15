@@ -29,7 +29,7 @@ test('finalization checks stored object metadata before inserting evidence metad
 
 test('download links require owner or active reviewer and expire quickly', () => {
   assert.match(fn, /from\("supplier_verification_reviewers"\)/);\n  assert.match(fn, /\.eq\("user_id", actor\.id\)/);\n  assert.match(fn, /\.eq\("is_active", true\)/);
-  assert.match(fn, /if \(!isOwner && reviewer !== true\)/);
+  assert.match(fn, /if \(!isOwner && !isActiveReviewer\)/);
   assert.match(fn, /DOWNLOAD_TTL_SECONDS = 60/);
   assert.match(fn, /createSignedUrl\(evidence\.private_storage_path, DOWNLOAD_TTL_SECONDS\)/);
 });
