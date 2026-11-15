@@ -28,7 +28,7 @@ test('finalization checks stored object metadata before inserting evidence metad
   assert.match(fn, /UUID_RE\.test\(filename\)/);
 });
 
-test('download links require owner or active reviewer and expire quickly', () => {
+test('download links require owner or active reviewer with an exact active case assignment and expire quickly', () => {
   assert.match(fn, /from\("supplier_verification_reviewers"\)/);
   assert.match(fn, /\.eq\("user_id", actor\.id\)/);
   assert.match(fn, /\.eq\("is_active", true\)/);
