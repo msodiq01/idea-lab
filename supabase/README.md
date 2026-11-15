@@ -12,7 +12,8 @@ Bu papkadagi SQL — IDEA LAB backendini tayyorlash uchun. Hozir frontend Supaba
 6. `migrations/20261119_supplier_verification_evidence_access_audit.sql` — vaqtinchalik yuklab olish havolasi berilganini qayd etuvchi audit jadvali.
 7. `migrations/20261120_supplier_verification_case_assignments.sql` — reviewerlarni alohida arizalarga biriktirish va o‘qish/qaror ruxsatlarini shu biriktirish bilan cheklash.
 8. `migrations/20261121_supplier_verification_admin_control.sql` — administrator allowlist, reviewer vakolatlarini boshqarish, ariza assignment va audit tarixi.
-9. `verification/security_audit.sql` — read-only tekshiruv so'rovlari.
+9. `migrations/20261122_application_activity_notifications.sql` — to‘rt turdagi ariza uchun server audit tarixi va ishtirokchi bildirishnomalari.
+10. `verification/security_audit.sql` — read-only tekshiruv so'rovlari.
 
 ## Ishga tushirishdan oldin
 
@@ -80,3 +81,7 @@ Bu hujjatlar deploy bajarmaydi. Staging loyihasi tanlanmagan, migrationlar qo'll
 ## Edge Function gateway JWT talabi
 
 `supabase/config.toml` faylida ta’minotchi hujjatlari va admin Edge Function'lari uchun `verify_jwt = true` aniq belgilangan. Deploy vaqtida bu himoyani o‘chirmang (`--no-verify-jwt` ishlatmang). Buyruqlar staging project ref bilan runbook'da berilgan.
+
+## Arizalar tarixi va bildirishnomalar
+
+`migrations/20261122_application_activity_notifications.sql` ariza yuborilishi va status o‘zgarishini DB triggerlari orqali qayd etadi. Faqat ariza ishtirokchilari tarixni o‘qiydi; brauzerga audit yozuvlarini kiritish yoki o‘zgartirish huquqi berilmaydi. Migration hali qo‘llanmagan. Staging'da qo‘llashdan oldin schema va oldingi migrationlar to‘liq tekshirilsin.

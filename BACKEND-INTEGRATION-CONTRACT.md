@@ -50,7 +50,11 @@ Machine qiymatlar inglizcha saqlanadi; UI o'zbekcha ko'rsatadi.
 - Status o'tishlari serverda ruxsat etilgan holatlar bilan cheklanadi.
 - Har bir muhim o'tish audit yozuviga ega bo'lishi kerak.
 
-## 5. Frontend data adapter talablari
+## 5. Server-side ariza tarixi va bildirishnomalar
+
+`supabase/migrations/20261122_application_activity_notifications.sql` arizalar uchun server audit jadvali va triggerlarini tayyorlaydi. U investitsiya, jamoa, ish va taklif arizalarida yuborish/status o‘zgarishini qayd etadi. Yozuvni brauzer emas, DB trigger yaratadi; foydalanuvchi faqat ishtirokchi bo‘lgan arizalar tarixini o‘qiydi. Jadvalga client INSERT/UPDATE/DELETE berilmagan. Ushbu migration repository'da tayyorlangan, lekin Supabase loyihasiga qo‘llanmagan. Frontend hali `offline-demo` rejimida; real-time subscription va server adapter alohida integratsiya bosqichidir.
+
+## 6. Frontend data adapter talablari
 
 1. UI localStorage yoki Supabase SDK'ni bevosita chaqirmaydi; adapter orqali ishlaydi.
 2. Adapter `list`, `get`, `create`, `updateStatus` amallarini aniq tip bilan taqdim etadi.
@@ -60,7 +64,7 @@ Machine qiymatlar inglizcha saqlanadi; UI o'zbekcha ko'rsatadi.
 6. Public va private ma'lumotlar alohida DTO sifatida uzatiladi.
 7. Hech qachon service-role key brauzerga joylanmaydi.
 
-## 6. Minimal endpoint/operatsiya shartnomasi
+## 7. Minimal endpoint/operatsiya shartnomasi
 
 | Operatsiya | Ruxsat | Natija |
 |---|---|---|
@@ -72,7 +76,7 @@ Machine qiymatlar inglizcha saqlanadi; UI o'zbekcha ko'rsatadi.
 | Application status update | Target owner | Ruxsatli status transition |
 | Application withdraw | Applicant | Faqat o'z arizasi |
 
-## 7. Qabul mezonlari
+## 8. Qabul mezonlari
 
 - [ ] Test Supabase loyihasi va egasi tasdiqlangan.
 - [ ] Zaxira nusxa va tiklash sinovi mavjud.

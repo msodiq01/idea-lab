@@ -25,6 +25,7 @@ const expectedMigrations = [
   "20261119_supplier_verification_evidence_access_audit.sql",
   "20261120_supplier_verification_case_assignments.sql",
   "20261121_supplier_verification_admin_control.sql",
+  "20261122_application_activity_notifications.sql",
 ];
 
 test("staging migration directory contains the reviewed ordered migration set", () => {
