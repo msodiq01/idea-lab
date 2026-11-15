@@ -7,7 +7,7 @@ const calculator=require("../assets/idea-investment-calculator.js");
  assert.ok(Math.abs(result.equityPercent-9.0909090909)<1e-8);
  assert.ok(Math.abs(result.founderPercent-90.9090909091)<1e-8);
  assert.equal(result.fundingRemaining,150000000);
- assert.equal(result.indicativeShares,1000*100/1100);
+ assert.equal(result.indicativeShares,1000*100/1000);
 }
 {
  const result=calculator.calculate({valuation:1000000000,investment:100000000,basis:"post-money"});
