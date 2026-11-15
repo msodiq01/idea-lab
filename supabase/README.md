@@ -76,3 +76,7 @@ Deploy va sozlash bo‘yicha batafsil ko‘rsatma `functions/supplier-verificati
 Bu hujjatlar deploy bajarmaydi. Staging loyihasi tanlanmagan, migrationlar qo'llanmagan va Edge Function'lar deploy qilinmagan. Avval alohida staging loyihasida qabul sinovlari o'tishi shart.
 
 - [Read-only staging smoke runner](../scripts/supplier-verification-staging-smoke.mjs) — deploydan keyin staging endpointlarini xavfsiz, yozuv kiritmasdan tekshiradi.
+
+## Edge Function gateway JWT talabi
+
+`supabase/config.toml` faylida ta’minotchi hujjatlari va admin Edge Function'lari uchun `verify_jwt = true` aniq belgilangan. Deploy vaqtida bu himoyani o‘chirmang (`--no-verify-jwt` ishlatmang). Buyruqlar staging project ref bilan runbook'da berilgan.
