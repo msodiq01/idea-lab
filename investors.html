@@ -781,6 +781,53 @@ function showInvestmentApplications() {
         status.textContent = application.status || "Yangi";
         heading.append(title, status);
 
+        const statusControl = document.createElement("div");
+        statusControl.className = "form-group";
+        statusControl.style.marginTop = "12px";
+
+        const statusLabel = document.createElement("label");
+        statusLabel.textContent = "Ariza holati";
+
+        const statusSelect = document.createElement("select");
+        statusSelect.className = "field";
+        statusSelect.setAttribute("aria-label", "Ariza holatini o‘zgartirish");
+
+        ["Yangi", "Ko‘rib chiqilmoqda", "Qabul qilindi", "Rad etildi"].forEach(function(value) {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = value;
+            statusSelect.append(option);
+        });
+
+        statusSelect.value = ["Yangi", "Ko‘rib chiqilmoqda", "Qabul qilindi", "Rad etildi"].includes(application.status)
+            ? application.status
+            : "Yangi";
+
+        statusSelect.addEventListener("change", function() {
+            const currentApplications = readData("investmentApplications");
+            const applicationIndex = currentApplications.findIndex(function(item) {
+                return String(item.id) === String(application.id);
+            });
+
+            if (applicationIndex < 0) {
+                alert("Ariza topilmadi. Sahifani yangilang.");
+                showInvestmentApplications();
+                return;
+            }
+
+            currentApplications[applicationIndex].status = statusSelect.value;
+            currentApplications[applicationIndex].updatedAt = new Date().toISOString();
+
+            if (saveData("investmentApplications", currentApplications)) {
+                showInvestmentApplications();
+            } else {
+                statusSelect.value = application.status || "Yangi";
+            }
+        });
+
+        statusControl.append(statusLabel, statusSelect);
+        card.append(statusControl);
+
         const details = [
             "Investor: " + (application.investorName || "Ko‘rsatilmagan"),
             "Taklif etilgan summa: " + Number(application.offerAmount || application.amount || 0).toLocaleString("uz-UZ") + " so‘m",
