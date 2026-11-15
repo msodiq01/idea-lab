@@ -100,3 +100,14 @@ test("Personal collection is reachable from the global menu and uses isolated lo
  assert.match(page,/Muhim deb belgilash/);
  assert.match(page,/Brauzer ma’lumotlari tozalansa/);
 });
+
+
+test("Stage 13 navigation has a compact shared header and responsive profile identity",()=>{
+ const css=read("assets/idea-shell.css");
+ assert.match(css,/Stage 13 — refined, consistent global navigation/);
+ assert.match(css,/#il-global \.il-profile-link/);
+ assert.match(css,/#il-global \.il-profile-avatar/);
+ assert.match(css,/@media\(max-width:1120px\)/);
+ assert.match(css,/@media\(max-width:640px\)/);
+ assert.match(css,/body>header#il-global/);
+});
