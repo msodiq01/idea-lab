@@ -69,7 +69,11 @@ test("inspection never writes or mutates legacy profile/session objects", () => 
 });
 
 test("malformed array profiles are rejected", () => {
-  const result = loadBridge().inspect([profile], session, configured);
-  assert.equal(result.state, "legacy_profile_missing");
-  assert.equal(result.canLink, false);
+  const result = loadBridge().inspect({
+    readLegacyProfile: () => [{ id: "legacy-1" }],
+    readSession: () => ({ user: { id: "auth-uid" } })
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.state, "no-legacy-profile");
+  assert.equal(result.proposal, null);
 });
