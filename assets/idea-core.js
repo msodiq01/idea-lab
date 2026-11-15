@@ -307,17 +307,20 @@
 
   function cleanText(value, maxLength = 5000) {
     if (typeof value !== "string") return "";
-    return value.replace(/[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F]/g, "").trim().slice(0, Math.max(0, maxLength));
+    return value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "").trim().slice(0, Math.max(0, maxLength));
   }
 
   function isValidMoney(value, options = {}) {
-    const amount = typeof value === "number" ? value : Number(String(value ?? "").replace(/\\s/g, "").replace(",", "."));
+    const amount = typeof value === "number" ? value : Number(String(value ?? "").replace(/\s/g, "").replace(",", "."));
     const maximum = Number.isFinite(options.maximum) ? options.maximum : 1e12;
     return Number.isFinite(amount) && amount >= 0 && amount <= maximum && Number.isSafeInteger(Math.round(amount * 100));
   }
 
   function isValidIsoDate(value) {
-    if (typeof value !== "string" || !/^\\d{4}-\\d{2}-\\d{2}(?:T\\d{2}:\\d{2}(?::\\d{2}(?:\\.\\d{1,3})?)?(?:Z|[+-]\\d{2}:\\d{2})?)?$/.test(value)) return false;
+    if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})?)?$/.test(value)) return false;
+    const parts = value.slice(0, 10).split("-").map(Number);
+    const check = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    if (check.getUTCFullYear() !== parts[0] || check.getUTCMonth() !== parts[1] - 1 || check.getUTCDate() !== parts[2]) return false;
     return !Number.isNaN(Date.parse(value));
   }
 
