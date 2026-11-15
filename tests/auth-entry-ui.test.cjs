@@ -39,3 +39,11 @@ test("Auth entry page links back to the platform and profile navigation exposes 
   assert.match(profile, /href="auth\.html">Kirish/);
   assert.match(index, /href="auth\.html">Kirish/);
 });
+
+test("Auth page loads the read-only identity bridge and never claims a completed link", () => {
+  assert.match(html, /assets\/idea-core\.js/);
+  assert.match(html, /assets\/idea-profile-bridge\.js/);
+  assert.match(html, /IDEALAB_PROFILE_BRIDGE\.inspect/);
+  assert.match(html, /Bog‘lash hali bajarilmagan/);
+  assert.match(html, /rol ko‘chirilmagan/);
+});
