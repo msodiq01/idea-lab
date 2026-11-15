@@ -26,3 +26,14 @@ Testlar frontend yadro va Organization Center uchun avtomatik tekshiruvlarni baj
 - Brauzer localStorage yozuvlari boshqa qurilmalar yoki foydalanuvchilar bilan ulashilmaydi.
 - To'lov, investitsiya, tashkilot verifikatsiyasi va maxfiy hujjatlar bilan bog'liq haqiqiy operatsiyalar mavjud emas.
 - Demo ma'lumotlariga shaxsiy maxfiy ma'lumotlarni kiritmang.
+
+
+## Navigatsiya va accessibility
+
+- Umumiy menyu barcha asosiy sahifalarda bitta navigatsiya sifatida ishlaydi.
+- Klaviatura foydalanuvchilari uchun “Asosiy kontentga o‘tish” havolasi mavjud.
+- Faol sahifa `aria-current` bilan belgilanadi; menyu Escape tugmasi va tashqi bosish bilan yopiladi.
+- Mobil menyudagi havolalar uchun kattaroq bosish maydonlari va ko‘rinadigan fokus holati qo‘llanadi.
+- Harakatni kamaytirish sozlamasi yoqilgan qurilmalarda animatsiyalar cheklanadi.
+
+Tekshiruv: `node --test tests/*.test.cjs`. Bu avtomatik strukturaviy/regressiya testi; haqiqiy ekran o‘lchamlarida brauzer sinovi alohida bajarilishi kerak.
