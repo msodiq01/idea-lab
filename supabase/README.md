@@ -2,6 +2,14 @@
 
 Bu papkadagi SQL — IDEA LAB umumiy backendini tayyorlash uchun. Ulangan Supabase loyihasi mavjud, ammo hozirgi frontend hali offline-demo rejimida va ushbu papkadagi keng schema/migrationlar jonli bazaga qo‘llanmagan.
 
+## Yangi IDEA LAB ilova sxemasi (draft)
+
+- `migrations/20261116120000_idea_app_identity_organizations.sql` — alohida `idea_app` sxemasida profil, maxfiy kontakt, tashkilot va tashkilot a'zoligi poydevori.
+- Bu migration faqat repository draft: **jonli Supabase loyihasiga qo'llanmagan**.
+- Mavjud `public` jadvallariga tegmaydi. To'rt jadvalda RLS yoqilgan, browser rollariga grant/policy berilmagan.
+- `idea_app` Data API'ga expose qilinmagan. Frontend `offline-demo` rejimida qoladi.
+- Qo'llashdan oldin staging, backup/restore, metadata va ikki foydalanuvchili RLS sinovlari shart.
+
 ## Fayllar tartibi
 
 1. `schema.sql` — boshlang'ich jadvallar, indekslar, RLS va triggerlar.
