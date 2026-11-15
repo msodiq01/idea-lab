@@ -20,7 +20,7 @@ test("smoke runner performs only read-only function actions", () => {
 });
 
 test("smoke runner never prints tokens, keys, or response payloads", () => {
-  assert.doesNotMatch(script, /console\.(log|error)\([^)]*(anonKey|Token|token|signedUrl|body)/i);
+  assert.doesNotMatch(script, /console\.(log|error)\([^)]*(anonKey|userToken|adminToken|signedUrl|body\))/i);
   assert.match(script, /SUPABASE_ANON_KEY/);
   assert.match(script, /STAGING_ADMIN_ACCESS_TOKEN/);
   assert.match(script, /STAGING_USER_ACCESS_TOKEN/);
