@@ -542,7 +542,8 @@ button, input, select {
     }
 }
 </style>
-    <link rel="stylesheet" href="assets/idea-shell.css">\n</head>
+    <link rel="stylesheet" href="assets/idea-shell.css">
+</head>
 
 <body>
 
@@ -680,6 +681,7 @@ button, input, select {
     </div>
 </footer>
 
+<script src="assets/idea-core.js"></script>
 <script>
 "use strict";
 
@@ -1041,19 +1043,73 @@ function renderProjects() {
     });
 }
 
+/* CENTRAL CORE — filter preferences */
+
+const ideaCore = window.IDEALAB || null;
+
+function readProjectFilterPreferences() {
+    if (!ideaCore || !ideaCore.store) return {};
+    const saved = ideaCore.store.get("projects.filters", {});
+    return saved && typeof saved === "object" && !Array.isArray(saved)
+        ? saved
+        : {};
+}
+
+function saveProjectFilterPreferences() {
+    if (!ideaCore || !ideaCore.store) return;
+    ideaCore.store.set("projects.filters", {
+        search: searchInput.value,
+        direction: directionFilter.value,
+        sort: sortSelect.value
+    });
+}
+
+function restoreProjectFilterPreferences() {
+    const preferences = readProjectFilterPreferences();
+
+    if (typeof preferences.search === "string") {
+        searchInput.value = preferences.search;
+    }
+
+    if (typeof preferences.direction === "string") {
+        const hasDirection = Array.from(directionFilter.options).some(function(option) {
+            return option.value === preferences.direction;
+        });
+        if (hasDirection) directionFilter.value = preferences.direction;
+    }
+
+    const validSorts = ["newest", "oldest", "investmentHigh", "investmentLow", "name"];
+    if (validSorts.includes(preferences.sort)) {
+        sortSelect.value = preferences.sort;
+    }
+}
+
 /* EVENTS */
 
-searchInput.addEventListener("input", renderProjects);
-directionFilter.addEventListener("change", renderProjects);
-sortSelect.addEventListener("change", renderProjects);
+searchInput.addEventListener("input", function() {
+    saveProjectFilterPreferences();
+    renderProjects();
+});
+
+directionFilter.addEventListener("change", function() {
+    saveProjectFilterPreferences();
+    renderProjects();
+});
+
+sortSelect.addEventListener("change", function() {
+    saveProjectFilterPreferences();
+    renderProjects();
+});
 
 /* INITIALIZE */
 
 updateStatistics();
 populateDirections();
+restoreProjectFilterPreferences();
 renderProjects();
 
 </script>
 
-    <script src="assets/idea-shell.js" defer></script>\n</body>
+    <script src="assets/idea-shell.js" defer></script>
+</body>
 </html>
