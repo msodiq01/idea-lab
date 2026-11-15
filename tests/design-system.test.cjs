@@ -50,6 +50,11 @@ test("Future roadmap is reachable and clearly separates current demo from planne
   assert.match(roadmap, /Iqtisodiyot, savdo va infratuzilma/);
   assert.match(roadmap, /Ta’lim, jamiyat va hamkorlik/);
   assert.match(roadmap, /Aqlli texnologiyalar va global kengayish/);
+  assert.match(roadmap, /To‘liq moliya va buxgalteriya/);
+  assert.match(roadmap, /Menejment va operatsion nazorat/);
+  assert.match(roadmap, /Strategik rejalashtirish va kelajak loyihalari/);
+  assert.match(roadmap, /Kelajak loyihalari portfeli/);
+  assert.match(roadmap, /Loyiha budjeti va resurslari/);
   assert.match(roadmap, /status-plan/);
   assert.ok(roadmap.includes("Demo / cheklangan"));
   assert.match(roadmap, /aniq muddat va ishga tushirish sanasi tasdiqlanmagan/);
