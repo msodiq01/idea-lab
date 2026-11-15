@@ -301,7 +301,6 @@ body>header#il-global{
  #il-global .il-menu-panel{top:102px;left:12px;right:12px}
 }
 @media(max-width:380px){
- #il-global .il-quick-action{font-size:0;width:36px;padding:0}
- #il-global .il-quick-action::first-letter{font-size:16px}
+ #il-global .il-quick-action{font-size:9px;max-width:94px;padding:0 7px;overflow:hidden}
  #il-global .il-profile-name{max-width:66px}
 }
