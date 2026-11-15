@@ -30,7 +30,6 @@ Use the Supabase SQL Editor while signed into the staging project's trusted owne
 6. `supabase/migrations/20261119_supplier_verification_evidence_access_audit.sql` — evidence access audit.
 7. `supabase/migrations/20261120_supplier_verification_case_assignments.sql` — per-case reviewer assignment and narrowed access.
 8. `supabase/migrations/20261121_supplier_verification_admin_control.sql` — administrator allowlist and audited admin operations.
-9. `supabase/migrations/20261122_application_activity_notifications.sql` — server-side application activity triggers and participant-only history.
 9. `supabase/migrations/20261122_application_activity_notifications.sql` — participant-scoped application activity and notification events.
 
 The first two files are prerequisites for the supplier verification migrations. In particular, the initial schema defines `public.set_updated_at()`, which the supplier application migration uses.

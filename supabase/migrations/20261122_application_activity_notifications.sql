@@ -38,7 +38,7 @@ create or replace function public.normalize_application_activity_status(p_status
 returns text
 language sql
 immutable
-set search_path = public
+set search_path = pg_catalog, public
 as $$
   select case lower(trim(coalesce(p_status, '')))
     when 'new' then 'submitted'
@@ -73,7 +73,7 @@ create or replace function public.log_application_activity()
 returns trigger
 language plpgsql
 security definer
-set search_path = public
+set search_path = pg_catalog, public
 as $$
 declare
   v_actor uuid := auth.uid();

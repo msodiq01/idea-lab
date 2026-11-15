@@ -66,7 +66,7 @@ create unique index if not exists supplier_verification_one_open_application_idx
 create or replace function public.guard_supplier_verification_submission()
 returns trigger
 language plpgsql
-set search_path = public
+set search_path = pg_catalog, public
 as $$
 begin
   if auth.uid() is null then raise exception 'A signed-in supplier is required'; end if;
@@ -94,7 +94,7 @@ create or replace function public.record_supplier_verification_submission()
 returns trigger
 language plpgsql
 security definer
-set search_path = public
+set search_path = pg_catalog, public
 as $$
 begin
   insert into public.supplier_verification_events (application_id, actor_user_id, from_status, to_status, reason_code)
