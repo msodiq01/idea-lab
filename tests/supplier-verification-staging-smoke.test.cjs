@@ -30,6 +30,7 @@ test("smoke runner verifies CORS, unauthenticated denial, and optional role boun
   for (const check of [
     "allows exact staging CORS preflight",
     "rejects an unapproved origin",
+    "rejects unsupported GET requests",
     "denies unauthenticated request",
     "ordinary synthetic user is denied administrator API",
     "synthetic staging administrator can list reviewer control records",
