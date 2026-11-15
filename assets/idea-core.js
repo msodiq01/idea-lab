@@ -135,6 +135,31 @@
 
   const legacy = Object.freeze({
     keys: LEGACY_KEYS,
+    read(key, fallback = null) {
+      if (!LEGACY_KEYS.includes(key)) {
+        return reportError("UNKNOWN_LEGACY_KEY", "Ruxsat etilmagan eski ma'lumot kaliti bor.");
+      }
+      try {
+        const raw = global.localStorage.getItem(key);
+        if (raw === null) return fallback;
+        return JSON.parse(raw);
+      } catch (error) {
+        reportError("LEGACY_READ_FAILED", "Eski ma'lumotni o'qib bo'lmadi.", { key, cause: error.message });
+        return fallback;
+      }
+    },
+    write(key, value) {
+      if (!LEGACY_KEYS.includes(key)) {
+        return reportError("UNKNOWN_LEGACY_KEY", "Ruxsat etilmagan eski ma'lumot kaliti bor.");
+      }
+      try {
+        global.localStorage.setItem(key, JSON.stringify(value));
+        emit("legacy:changed", { key, operation: "write", at: new Date().toISOString() });
+        return { ok: true };
+      } catch (error) {
+        return reportError("LEGACY_WRITE_FAILED", "Eski ma'lumot kalitiga saqlab bo'lmadi.", { key, cause: error.message });
+      }
+    },
     inspect(keys = LEGACY_KEYS) {
       if (!Array.isArray(keys)) return reportError("INVALID_LEGACY_KEYS", "Eski kalitlar ro'yxati noto'g'ri.");
       const selected = [...new Set(keys)];
