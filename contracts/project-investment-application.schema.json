@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://idea-lab.local/contracts/project-investment-application.schema.json",
+  "title": "IDEA LAB Project Investment Application API Contract",
+  "description": "Canonical server-facing investment application. This is a proposed contract, not a live database migration.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "project_id", "investor_user_id", "investor_name", "investor_email", "offer_amount", "message", "status", "created_at", "updated_at"],
+  "properties": {
+    "id": {"type": "string", "format": "uuid", "description": "Supabase-generated primary key."},
+    "project_id": {"type": "string", "format": "uuid", "description": "Must reference an active/published project."},
+    "investor_user_id": {"type": "string", "format": "uuid", "description": "Must equal auth.uid(); browser profile IDs are not interchangeable."},
+    "legacy_id": {"type": ["string", "null"], "maxLength": 160, "description": "Original APP-* ID; only for idempotent import mapping."},
+    "investor_name": {"type": "string", "minLength": 1, "maxLength": 160},
+    "investor_email": {"type": "string", "format": "email", "maxLength": 254, "writeOnly": true, "description": "Private applicant contact; only applicant and project owner may access it."},
+    "offer_amount": {"type": "number", "exclusiveMinimum": 0, "maximum": 99999999999999.99},
+    "message": {"type": "string", "minLength": 1, "maxLength": 8000},
+    "status": {"type": "string", "enum": ["new", "reviewing", "interview", "accepted", "rejected", "withdrawn", "negotiating", "agreed", "in_progress", "completed", "cancelled"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  }
+}

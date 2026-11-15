@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://idea-lab.local/contracts/project.schema.json",
+  "title": "IDEA LAB Project API Contract",
+  "description": "Canonical server-facing project record. This is a proposed contract, not a live database migration.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "owner_id", "name", "status", "created_at", "updated_at"],
+  "properties": {
+    "id": {"type": "string", "format": "uuid", "description": "Supabase-generated primary key."},
+    "owner_id": {"type": "string", "format": "uuid", "description": "Must equal auth.uid() for client-created records."},
+    "legacy_id": {"type": ["string", "null"], "maxLength": 160, "description": "Original browser-demo ID; never used as authorization identity."},
+    "name": {"type": "string", "minLength": 1, "maxLength": 180},
+    "direction": {"type": "string", "maxLength": 120},
+    "description": {"type": "string", "maxLength": 12000},
+    "investment": {"type": ["number", "null"], "minimum": 0, "maximum": 99999999999999.99},
+    "specialists": {"type": "string", "maxLength": 4000},
+    "resources": {"type": "string", "maxLength": 4000},
+    "owner_name": {"type": "string", "maxLength": 160, "description": "Display snapshot only; auth identity remains owner_id."},
+    "owner_email": {"type": "string", "format": "email", "maxLength": 254, "writeOnly": true, "description": "Private field; never include in directory responses."},
+    "owner_phone": {"type": "string", "maxLength": 40, "writeOnly": true, "description": "Private field; never include in directory responses."},
+    "status": {"type": "string", "enum": ["draft", "pending_review", "active", "published", "paused", "completed", "cancelled", "closed", "rejected", "archived"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  }
+}
