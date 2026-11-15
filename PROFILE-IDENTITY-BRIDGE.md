@@ -15,7 +15,9 @@ Prepare a safe review of the relationship between the existing browser-only `use
 - `sign-in-required`
 - `ready-for-explicit-review` with a minimal pair of IDs.
 
-The adapter does not persist, migrate, overwrite, delete, or transmit anything. It does not copy profile fields or roles. The returned proposal is not a completed link and must not be treated as authorization.
+The Auth session proves only that someone is signed in to that Auth account; it does not prove ownership of the legacy browser profile. The proposal explicitly sets `legacyOwnershipVerified: false` and `requiresLegacyOwnershipProof: true`. The adapter does not persist, migrate, overwrite, delete, or transmit anything. It does not copy profile fields or roles. The returned proposal is not a completed link and must not be treated as authorization.
+
+The profile cabinet now shows this state in a read-only review panel. The panel updates after Auth session changes and after the local profile is saved. It offers no linking action.
 
 ## Next gated stage
 Only after a Supabase staging project and tested RLS policies exist should a separate, explicitly confirmed server-side linking flow be designed. That flow must verify ownership and use the authenticated user's session; it must not trust a client-supplied Auth UID. No service-role key belongs in browser code.
