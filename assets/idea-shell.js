@@ -31,5 +31,5 @@ set("exchange",read("ideaLabExchangeItems").length+read("offers").length);
 };
 refreshMetrics();
 if(window.IDEALAB)IDEALAB.subscribe("legacy:changed",refreshMetrics);
-window.addEventListener("storage",event=>{if(!event.key||IDEALAB?.legacy.keys.includes(event.key))refreshMetrics()});
+window.addEventListener("storage",event=>{if(!event.key||window.IDEALAB?.legacy.keys.includes(event.key))refreshMetrics()});
 })();
