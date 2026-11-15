@@ -33,9 +33,9 @@ test("Investor and team application controls use the shared canonical lifecycle"
  const investors=fs.readFileSync(path.join(__dirname,"..","investors.html"),"utf8");
  const teams=fs.readFileSync(path.join(__dirname,"..","teams.html"),"utf8");
  for(const html of [investors,teams]){
-  assert.match(html,/IDEALAB\.applications\.normalizeStatus/);
-  assert.match(html,/IDEALAB\.applications\.statusLabel/);
-  assert.match(html,/IDEALAB\.applications\.nextStatuses\([^)]*,\s*"owner"\)/);
+  assert.match(html,/ideaCore\.applications\.normalizeStatus/);
+  assert.match(html,/ideaCore\.applications\.statusLabel/);
+  assert.match(html,/ideaCore\.applications\.nextStatuses\([^)]*,\s*"owner"\)/);
   assert.match(html,/Bu holatga o‘tish ruxsat etilmagan/);
   assert.match(html,/value="interview"/);
   assert.match(html,/value="negotiating"/);
