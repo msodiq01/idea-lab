@@ -101,6 +101,49 @@
       }
       return invoke("signInWithPassword", { email: email.trim(), password });
     },
+    async sendPhoneOtp(phone, purpose) {
+      const normalizedPhone = typeof phone === "string" ? phone.replace(/[\\s()-]/g, "") : "";
+      if (!/^\\+[1-9]\\d{7,14}$/.test(normalizedPhone)) {
+        return resultError("INVALID_PHONE", "Telefon raqamini xalqaro formatda kiriting. Masalan: +998901234567.");
+      }
+      if (purpose !== "signup" && purpose !== "login") {
+        return resultError("INVALID_PHONE_PURPOSE", "SMS so'rovi turi noto'g'ri.");
+      }
+      return invoke("signInWithOtp", {
+        phone: normalizedPhone,
+        options: { shouldCreateUser: purpose === "signup" }
+      });
+    },
+    sendPhoneSignupOtp(phone) {
+      return this.sendPhoneOtp(phone, "signup");
+    },
+    sendPhoneLoginOtp(phone) {
+      return this.sendPhoneOtp(phone, "login");
+    },
+    async verifyPhoneOtp(phone, token) {
+      const normalizedPhone = typeof phone === "string" ? phone.replace(/[\\s()-]/g, "") : "";
+      const normalizedToken = typeof token === "string" ? token.replace(/\\s/g, "") : "";
+      if (!/^\\+[1-9]\\d{7,14}$/.test(normalizedPhone)) {
+        return resultError("INVALID_PHONE", "Telefon raqamini xalqaro formatda kiriting.");
+      }
+      if (!/^\\d{6}$/.test(normalizedToken)) {
+        return resultError("INVALID_OTP", "SMS orqali kelgan 6 xonali kodni kiriting.");
+      }
+      const result = await invoke("verifyOtp", {
+        phone: normalizedPhone,
+        token: normalizedToken,
+        type: "sms"
+      });
+      if (result.ok) {
+        const session = result.data && result.data.session;
+        status = Object.freeze({
+          mode: "supabase", configured: true,
+          authenticated: Boolean(session && session.user && session.user.id),
+          reason: null
+        });
+      }
+      return result;
+    },
     async resetPassword(email, redirectTo) {
       if (typeof email !== "string" || !email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
         return resultError("INVALID_EMAIL", "Parolni tiklash uchun to'g'ri email kiriting.");
