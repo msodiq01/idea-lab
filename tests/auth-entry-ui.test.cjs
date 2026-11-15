@@ -45,5 +45,5 @@ test("Auth page loads the read-only identity bridge and never claims a completed
   assert.match(html, /assets\/idea-profile-bridge\.js/);
   assert.match(html, /IDEALAB_PROFILE_BRIDGE\.inspect/);
   assert.match(html, /Bog‘lash hali bajarilmagan/);
-  assert.match(html, /rolesTransferred/);
+  assert.match(html, /rol ko‘chirilmagan/);
 });
