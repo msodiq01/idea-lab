@@ -111,3 +111,14 @@ test("Stage 13 navigation has a compact shared header and responsive profile ide
  assert.match(css,/@media\(max-width:640px\)/);
  assert.match(css,/body>header#il-global/);
 });
+
+
+test("Stage 14 renders all grouped platform sections visibly in the top navigation",()=>{
+ const shell=read("assets/idea-shell.js");
+ const css=read("assets/idea-shell.css");
+ assert.match(shell,/il-section-nav/);
+ assert.match(shell,/aria-label="Barcha bo‘limlar"/);
+ assert.doesNotMatch(shell,/<details class="il-all-menu"/);
+ assert.match(css,/Stage 14 — every platform section stays visible/);
+ assert.match(css,/\.il-section-group/);
+});
