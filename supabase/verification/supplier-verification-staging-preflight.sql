@@ -130,9 +130,10 @@ select e.function_name,
        coalesce(bool_or(
          exists (
            select 1 from unnest(coalesce(p.proconfig, array[]::text[])) as cfg(setting)
-           where cfg.setting like 'search_path=%'
+           where cfg.setting = 'search_path=pg_catalog, public'
          )
-       ), false) as search_path_pinned
+       ), false) as search_path_pinned,
+       max(cfg.setting) filter (where cfg.setting like 'search_path=%') as search_path_setting
 from expected e
 left join pg_proc p on p.proname = e.function_name
 left join pg_namespace n on n.oid = p.pronamespace and n.nspname = 'public'
