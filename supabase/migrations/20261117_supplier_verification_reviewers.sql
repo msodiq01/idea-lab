@@ -75,7 +75,7 @@ begin
     raise exception 'Reviewer permission required' using errcode = '42501';
   end if;
 
-  if p_next_status not in ('under_review','needs_more_info','approved','rejected') then
+  if p_next_status is null or p_next_status not in ('under_review','needs_more_info','approved','rejected') then
     raise exception 'Unsupported review status' using errcode = '22023';
   end if;
   if p_reason_code is null or length(btrim(p_reason_code)) not between 1 and 80 then
@@ -147,7 +147,7 @@ $$;
 revoke all on function public.review_supplier_verification_application(uuid,text,text,text,text,timestamptz)
   from public, anon;
 grant execute on function public.review_supplier_verification_application(uuid,text,text,text,text,timestamptz)
-  to authenticated, service_role;
+  to authenticated;
 
 comment on table public.supplier_verification_reviewers is
   'Reviewer allowlist. Provisioned only by trusted server/service-role operations; never editable by clients.';
