@@ -3,306 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>IDEA LAB | Global Marketplace</title>
-
+<meta name="description" content="IDEA LAB global imkoniyatlar markazi — loyihalar, resurslar, investorlar va hamkorlik.">
+<title>IDEA LAB | Global imkoniyatlar markazi</title>
+<link rel="stylesheet" href="assets/idea-shell.css">
 <style>
-:root{--bg:#07111f;--panel:#0d1b2d;--card:#102239;--line:rgba(151,184,220,.15);--txt:#f3f7ff;--muted:#91a5bd;--cyan:#27d7e8;--blue:#3985ff}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,Arial,sans-serif;background:radial-gradient(ellipse at 82% 0%,rgba(39,215,232,.09),transparent 34%),var(--bg);color:var(--txt);min-height:100vh}
-header{padding:48px 20px 42px;text-align:center;background:linear-gradient(125deg,rgba(17,44,70,.94),rgba(10,25,43,.94));border-bottom:1px solid var(--line)}header h1{font-size:clamp(30px,5vw,46px);letter-spacing:-1.5px;margin:0 0 12px}header p{color:var(--muted);font-size:14px;line-height:1.7;max-width:720px;margin:auto}
-body>nav{display:none}.container{width:min(1150px,calc(100% - 32px));margin:30px auto 70px;padding:0}.intro{margin-bottom:22px}.intro h2{color:var(--cyan);font-size:22px;margin-bottom:9px}.intro p{color:var(--muted);line-height:1.7;font-size:13px}
-.search-panel,.stat-card,.product-card,.card,.item-card{background:linear-gradient(145deg,rgba(17,39,62,.94),rgba(11,27,45,.96));border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 34px rgba(0,0,0,.14)}.search-panel{padding:20px;margin-bottom:22px}.search-panel h2,.search-panel h3{margin:0 0 10px}.search-panel input,.search-panel select,input,select{width:100%;padding:13px 14px;margin-top:10px;border-radius:10px;border:1px solid var(--line);background:#081625;color:var(--txt);font:inherit;font-size:13px;outline:none}.search-panel input:focus,.search-panel select:focus,input:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(39,215,232,.08)}input::placeholder{color:#7188a3}select option{background:#0d1b2d;color:var(--txt)}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:13px;margin-bottom:24px}.stat-card{padding:19px}.stat-card h3,.stat-card h2{font-size:12px;color:var(--muted);font-weight:600;margin:0 0 10px}.stat-card strong,.stat-card .number{font-size:27px;font-weight:800}
-.products,.product-grid,.market-grid,.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:14px}.product-card,.item-card,.card{padding:20px;min-width:0}.product-card h3,.item-card h3,.card h3{font-size:15px;margin:0 0 9px}.product-card p,.item-card p,.card p{color:var(--muted);font-size:12px;line-height:1.7}.product-card img,.item-card img{max-width:100%;border-radius:11px}
-button,.btn,a.button{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:10px;padding:11px 16px;background:linear-gradient(110deg,var(--blue),var(--cyan));color:#061321;font-weight:800;font-size:12px;text-decoration:none;cursor:pointer;transition:.2s}button:hover,.btn:hover,a.button:hover{transform:translateY(-2px);filter:brightness(1.08)}
-footer{margin-top:55px;padding:24px;text-align:center;color:var(--muted);border-top:1px solid var(--line);font-size:12px}
-@media(max-width:600px){header{padding:36px 18px}.container{width:calc(100% - 22px);margin-top:22px}.search-panel,.product-card,.item-card,.card{padding:16px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+:root{--hub-bg:#07111f;--hub-panel:#0d1b2d;--hub-line:rgba(151,184,220,.16);--hub-text:#f3f7ff;--hub-muted:#91a5bd;--hub-cyan:#27d7e8;--hub-blue:#3985ff}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 82% 0%,rgba(39,215,232,.09),transparent 36%),var(--hub-bg);color:var(--hub-text);font-family:Inter,Arial,sans-serif}
+.hub-wrap{width:min(1120px,calc(100% - 32px));margin:34px auto 72px}
+.hub-hero{padding:clamp(24px,5vw,48px);border:1px solid var(--hub-line);border-radius:22px;background:linear-gradient(125deg,rgba(17,44,70,.96),rgba(10,25,43,.96))}
+.hub-kicker{color:var(--hub-cyan);font-size:11px;font-weight:800;letter-spacing:1.7px}
+.hub-hero h1{max-width:760px;margin:14px 0 12px;font-size:clamp(30px,5vw,48px);line-height:1.12;letter-spacing:-1.4px}
+.hub-hero p{max-width:720px;margin:0;color:var(--hub-muted);font-size:14px;line-height:1.75}
+.hub-note{margin:18px 0 0;padding:12px 14px;border:1px solid var(--hub-line);border-radius:12px;color:#c4d4e7;font-size:12px;line-height:1.6}
+.hub-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin:30px 0 14px}
+.hub-section-head h2{margin:0;font-size:21px}
+.hub-section-head p{margin:6px 0 0;color:var(--hub-muted);font-size:12px;line-height:1.6}
+.hub-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.hub-card{display:flex;flex-direction:column;min-height:205px;padding:22px;border:1px solid var(--hub-line);border-radius:17px;background:linear-gradient(145deg,rgba(17,39,62,.94),rgba(11,27,45,.96));text-decoration:none;color:inherit;transition:transform .18s ease,border-color .18s ease}
+.hub-card:hover{transform:translateY(-3px);border-color:rgba(39,215,232,.5)}
+.hub-card:focus-visible{outline:3px solid var(--hub-cyan);outline-offset:3px}
+.hub-card .hub-number{color:var(--hub-cyan);font-size:11px;font-weight:800;letter-spacing:1px}
+.hub-card h3{margin:12px 0 8px;font-size:18px}
+.hub-card p{margin:0;color:var(--hub-muted);font-size:12px;line-height:1.7}
+.hub-card .hub-link{margin-top:auto;padding-top:20px;color:var(--hub-cyan);font-size:12px;font-weight:800}
+.hub-footer{margin-top:18px;color:var(--hub-muted);font-size:11px;line-height:1.6}
+@media(max-width:640px){.hub-wrap{width:calc(100% - 22px);margin-top:22px}.hub-grid{grid-template-columns:1fr}.hub-card{min-height:175px}.hub-section-head{align-items:flex-start;flex-direction:column}}
 </style>
-    <link rel="stylesheet" href="assets/idea-shell.css">\n</head>
-
+</head>
 <body>
+<main class="hub-wrap">
+<section class="hub-hero" aria-labelledby="hubTitle">
+<div class="hub-kicker">IDEA LAB • GLOBAL IMKONIYATLAR</div>
+<h1 id="hubTitle">Kerakli imkoniyatni to‘g‘ri bo‘limdan toping.</h1>
+<p>Global bozor — alohida takroriy loyiha katalogi emas. Bu yerda IDEA LAB’ning asosiy bozor yo‘nalishlariga bir joydan o‘tasiz: loyihalar, resurslar, investorlar va hamkorlik takliflari.</p>
+<div class="hub-note">Qidirayotgan narsangizga mos bo‘limni tanlang. Har bir yo‘nalish o‘z katalogi, filtrlari va murojaat jarayoniga ega.</div>
+</section>
 
-<header>
-    <h1>IDEA LAB</h1>
-    <p>GLOBAL MARKETPLACE — G‘OYALAR VA IMKONIYATLAR BOZORI</p>
-</header>
-
-<nav>
-    <a href="index.html">Bosh sahifa</a>
-    <a href="projects.html">Loyihalar</a>
-    <a href="teams.html">Jamoalar</a>
-    <a href="investors.html">Investorlar</a>
-    <a href="offers.html">Investitsiya takliflari</a>
-    <a href="profile.html">Shaxsiy kabinet</a>
-    <a href="marketplace.html">Global bozor</a>
-</nav>
-
-<main class="container">
-
-    <section class="intro">
-        <h2>Global loyiha bozori</h2>
-        <p>
-            Yangi g‘oyalarni kashf eting, loyihalarni o‘rganing
-            va hamkorlik imkoniyatlarini toping.
-        </p>
-    </section>
-
-    <section class="stats">
-        <div class="stat-card">
-            <p>Jami loyihalar</p>
-            <h3 id="totalProjects">0</h3>
-        </div>
-
-        <div class="stat-card">
-            <p>Ko‘rsatilayotgan loyihalar</p>
-            <h3 id="shownProjects">0</h3>
-        </div>
-    </section>
-
-    <section class="search-panel">
-        <h3>Loyihalarni qidirish</h3>
-
-        <input
-            type="search"
-            id="searchInput"
-            placeholder="Loyiha nomi yoki tavsifini yozing..."
-        >
-
-        <select id="directionFilter">
-            <option value="">Barcha yo‘nalishlar</option>
-        </select>
-    </section>
-
-    <h2>Barcha loyihalar</h2>
-
-    <div id="projectList" class="project-grid"></div>
-
+<section aria-labelledby="hubSectionsTitle">
+<div class="hub-section-head">
+<div><h2 id="hubSectionsTitle">Bozor yo‘nalishlari</h2><p>Bir xil vazifalarni aralashtirmaslik uchun har bir imkoniyat alohida yo‘nalishga ajratilgan.</p></div>
+</div>
+<div class="hub-grid">
+<a class="hub-card" href="projects.html">
+<span class="hub-number">01 • LOYIHALAR</span>
+<h3>G‘oyalar va loyihalar</h3>
+<p>Yangi tashabbuslarni ko‘ring, yo‘nalishlar bo‘yicha qidiring va loyiha tafsilotlarini o‘rganing.</p>
+<span class="hub-link">Loyihalar katalogiga o‘tish →</span>
+</a>
+<a class="hub-card" href="exchange.html">
+<span class="hub-number">02 • RESURSLAR</span>
+<h3>Talab va takliflar</h3>
+<p>Kerakli mahsulot, uskuna, xizmat yoki mutaxassisni so‘rang yoxud o‘zingizdagi imkoniyatni taklif qiling.</p>
+<span class="hub-link">Resurslar bozoriga o‘tish →</span>
+</a>
+<a class="hub-card" href="investors.html">
+<span class="hub-number">03 • INVESTITSIYA</span>
+<h3>Investorlar</h3>
+<p>Investorlar katalogini o‘rganing, investitsiya yo‘nalishlari va hamkorlik imkoniyatlarini ko‘ring.</p>
+<span class="hub-link">Investorlar bo‘limiga o‘tish →</span>
+</a>
+<a class="hub-card" href="offers.html">
+<span class="hub-number">04 • HAMKORLIK</span>
+<h3>Takliflar markazi</h3>
+<p>Strategik hamkorlik takliflarini joylashtiring, kelib tushgan arizalar va muloqotlarni boshqaring.</p>
+<span class="hub-link">Takliflar markaziga o‘tish →</span>
+</a>
+</div>
+<p class="hub-footer">Eslatma: bu sahifa yo‘naltiruvchi markaz hisoblanadi. E’lon yoki loyiha yaratish tanlangan tegishli bo‘limning ichida amalga oshiriladi.</p>
+</section>
 </main>
-<footer>
-    IDEA LAB © 2026 — G‘oya, jamoa, harakat, natija.
-</footer>
-
-<script src="assets/idea-core.js"></script>
-<script>
-
-const ideaCore = window.IDEALAB || null;
-const marketplaceFilters = ideaCore ? (ideaCore.store.get("marketplace.filters", {}) || {}) : {};
-
-function saveMarketplaceFilters() {
-    if (!ideaCore) return;
-    const search = document.getElementById("searchInput").value.trim();
-    const direction = document.getElementById("directionFilter").value;
-    ideaCore.store.set("marketplace.filters", { search, direction });
-    ideaCore.emit("marketplace:filters-changed", {
-        hasSearch: Boolean(search),
-        direction: direction || null,
-        updatedAt: new Date().toISOString()
-    });
-}
-
-function getProjects() {
-    try {
-        const data = JSON.parse(
-            localStorage.getItem("projects") || "[]"
-        );
-
-        return Array.isArray(data) ? data : [];
-
-    } catch (error) {
-        console.error("Loyihalarni o‘qishda xato:", error);
-        return [];
-    }
-}
-
-
-function createProjectCard(item) {
-
-    const card = document.createElement("div");
-    card.className = "project-card";
-
-    const title = document.createElement("h3");
-    title.textContent = item.name || "Nomsiz loyiha";
-
-    const direction = document.createElement("p");
-    direction.textContent =
-        "Yo‘nalish: " + (item.direction || "Ko‘rsatilmagan");
-
-    const description = document.createElement("p");
-    description.textContent =
-        item.description || "Tavsif mavjud emas.";
-
-    const investment = document.createElement("p");
-    investment.className = "investment";
-    investment.textContent =
-        "Investitsiya: " +
-        (item.investment || "Ko‘rsatilmagan") + " UZS";
-
-    const specialists = document.createElement("p");
-    specialists.textContent =
-        "Mutaxassislar: " + (item.specialists || "Ko‘rsatilmagan");
-
-    const resources = document.createElement("p");
-    resources.textContent =
-        "Resurslar: " + (item.resources || "Ko‘rsatilmagan");
-
-    const button = document.createElement("button");
-    button.textContent = "Batafsil ko‘rish";
-
-    button.addEventListener("click", function() {
-
-        if (!item.id) {
-            alert("Bu loyihaning ID raqami mavjud emas.");
-            return;
-        }
-
-        if (ideaCore) {
-            ideaCore.emit("marketplace:project-opened", {
-                projectId: String(item.id),
-                openedAt: new Date().toISOString()
-            });
-        }
-
-        window.location.href =
-            "project-detail.html?id=" +
-            encodeURIComponent(item.id);
-
-    });
-
-    card.append(
-        title,
-        direction,
-        description,
-        investment,
-        specialists,
-        resources,
-        button
-    );
-
-    return card;
-}
-
-
-function loadDirections(projects) {
-
-    const filter = document.getElementById("directionFilter");
-
-    const previousValue = filter.value;
-
-    filter.innerHTML =
-        '<option value="">Barcha yo‘nalishlar</option>';
-
-    const directions = [
-        ...new Set(
-            projects
-                .map(item => item.direction)
-                .filter(Boolean)
-        )
-    ];
-
-    directions.forEach(direction => {
-
-        const option = document.createElement("option");
-
-        option.value = direction;
-        option.textContent = direction;
-
-        filter.appendChild(option);
-
-    });
-
-    const savedDirection = marketplaceFilters.direction || previousValue;
-    if (directions.includes(savedDirection)) {
-        filter.value = savedDirection;
-    }
-}
-
-
-function showProjects() {
-
-    const projects = getProjects();
-
-    const list = document.getElementById("projectList");
-
-    const search = document
-        .getElementById("searchInput")
-        .value.toLowerCase()
-        .trim();
-
-    const selectedDirection = document
-        .getElementById("directionFilter")
-        .value;
-
-    document.getElementById("totalProjects").textContent =
-        projects.length;
-
-    loadDirections(projects);
-
-    const filtered = projects.filter(item => {
-
-        const searchableText = [
-            item.name,
-            item.direction,
-            item.description,
-            item.specialists,
-            item.resources
-        ].join(" ").toLowerCase();
-
-        const matchesSearch = searchableText.includes(search);
-
-        const matchesDirection =
-            !selectedDirection ||
-            item.direction === selectedDirection;
-
-        return matchesSearch && matchesDirection;
-
-    });
-
-    list.innerHTML = "";
-
-    document.getElementById("shownProjects").textContent =
-        filtered.length;
-
-    if (filtered.length === 0) {
-
-        const empty = document.createElement("div");
-        empty.className = "empty";
-
-        empty.textContent = projects.length === 0
-            ? "Hozircha loyihalar mavjud emas. Birinchi loyihani joylashtiring!"
-            : "Qidiruv bo‘yicha loyihalar topilmadi.";
-
-        list.appendChild(empty);
-        return;
-    }
-
-    filtered.forEach(item => {
-    list.appendChild(createProjectCard(item));
-
-    });
-
-}
-
-
-document.getElementById("searchInput").value =
-    typeof marketplaceFilters.search === "string" ? marketplaceFilters.search : "";
-
-document
-    .getElementById("searchInput")
-    .addEventListener("input", function() {
-        saveMarketplaceFilters();
-        showProjects();
-    });
-
-document
-    .getElementById("directionFilter")
-    .addEventListener("change", function() {
-        saveMarketplaceFilters();
-        showProjects();
-    });
-
-showProjects();
-
-</script>
-
-    <script src="assets/idea-shell.js" defer></script>\n</body>
+<script src="assets/idea-shell.js" defer></script>
+</body>
 </html>
