@@ -669,8 +669,11 @@ footer{
     IDEA LAB — G‘oya • Jamoa • Hamkorlik • Natija
 </footer>
 
+<script src="assets/idea-core.js"></script>
 <script>
 "use strict";
+
+const ideaCore = window.IDEALAB || null;
 
 /* ==================================
    1. MA'LUMOTLAR BAZASI
@@ -869,6 +872,15 @@ offerForm.addEventListener("submit", function(event) {
         return;
     }
 
+    if (ideaCore) {
+        ideaCore.emit("offer:created", {
+            offerId: offer.id,
+            category: offer.category,
+            type: offer.type,
+            createdAt: offer.date
+        });
+    }
+
     offerForm.reset();
     toggleOfferForm();
     showOffers();
@@ -931,6 +943,14 @@ function applyToOffer(offerId) {
 
     if (!saveData("offerApplications", applications)) {
         return;
+    }
+
+    if (ideaCore) {
+        ideaCore.emit("offer:application-created", {
+            applicationId: application.id,
+            offerId: offer.id,
+            createdAt: application.date
+        });
     }
 
     // Ariza yuborilganda avtomatik suhbat ochiladi.
@@ -1038,10 +1058,22 @@ function changeApplicationStatus(applicationId, status) {
         return;
     }
 
+    const previousStatus = applications[index].status || "Yangi";
     applications[index].status = status;
+    applications[index].updatedAt = new Date().toISOString();
 
     if (!saveData("offerApplications", applications)) {
         return;
+    }
+
+    if (ideaCore) {
+        ideaCore.emit("offer:application-status-changed", {
+            applicationId: applicationId,
+            offerId: applications[index].offerId,
+            previousStatus: previousStatus,
+            status: status,
+            updatedAt: applications[index].updatedAt
+        });
     }
 
     showApplications();
@@ -1254,6 +1286,14 @@ if (chatForm) {
 
         if (!saveData("offerMessages", messages)) {
             return;
+        }
+
+        if (ideaCore) {
+            ideaCore.emit("offer:message-sent", {
+                applicationId: activeApplicationId,
+                messageId: messages[messages.length - 1].id,
+                sentAt: messages[messages.length - 1].date
+            });
         }
 
         input.value = "";
