@@ -453,6 +453,24 @@ footer {
             </div>
             <span class="tag" id="investmentApplicationCount">0 ta ariza</span>
         </div>
+        <div class="toolbar" aria-label="Investitsiya arizalarini boshqarish">
+            <input class="field" id="applicationSearch" type="search"
+                placeholder="Loyiha, investor, xabar yoki ariza raqami bo‘yicha qidirish...">
+            <select class="field" id="applicationStatusFilter" aria-label="Ariza holati bo‘yicha filter">
+                <option value="">Barcha holatlar</option>
+                <option value="Yangi">Yangi</option>
+                <option value="Ko‘rib chiqilmoqda">Ko‘rib chiqilmoqda</option>
+                <option value="Qabul qilindi">Qabul qilindi</option>
+                <option value="Rad etildi">Rad etildi</option>
+            </select>
+            <select class="field" id="applicationSort" aria-label="Arizalarni tartiblash">
+                <option value="newest">Eng yangi</option>
+                <option value="oldest">Eng eski</option>
+                <option value="amount-desc">Summa: yuqoridan pastga</option>
+                <option value="amount-asc">Summa: pastdan yuqoriga</option>
+            </select>
+        </div>
+        <p class="muted" id="applicationResultCount" aria-live="polite"></p>
         <div id="investmentApplicationList"></div>
         <p class="notice">Sinov rejimi: arizalar faqat ushbu brauzerda saqlanadi. Boshqa foydalanuvchilarga yoki loyiha egasiga avtomatik yuborilmaydi.</p>
     </section>
@@ -749,33 +767,74 @@ function showInvestmentApplications() {
     const projects = readData("projects");
     const list = document.getElementById("investmentApplicationList");
     const count = document.getElementById("investmentApplicationCount");
+    const resultCount = document.getElementById("applicationResultCount");
+    const search = document.getElementById("applicationSearch").value.trim().toLocaleLowerCase("uz-UZ");
+    const selectedStatus = document.getElementById("applicationStatusFilter").value;
+    const sortMode = document.getElementById("applicationSort").value;
+
+    const projectFor = function(application) {
+        return projects.find(function(item) {
+            return String(item.id) === String(application.projectId);
+        });
+    };
+    const amountFor = function(application) {
+        return Number(application.offerAmount || application.amount || 0) || 0;
+    };
+    const dateFor = function(application) {
+        const value = application.date || application.createdAt || "";
+        const parsed = Date.parse(value);
+        return Number.isFinite(parsed) ? parsed : 0;
+    };
+
+    const filtered = applications.filter(function(application) {
+        const project = projectFor(application);
+        const searchable = [
+            application.projectName,
+            project && project.name,
+            application.investorName,
+            application.offerMessage,
+            application.message,
+            application.id
+        ].join(" ").toLocaleLowerCase("uz-UZ");
+        const status = application.status || "Yangi";
+        return searchable.includes(search) && (!selectedStatus || status === selectedStatus);
+    });
+
+    filtered.sort(function(a, b) {
+        if (sortMode === "oldest") return dateFor(a) - dateFor(b);
+        if (sortMode === "amount-desc") return amountFor(b) - amountFor(a);
+        if (sortMode === "amount-asc") return amountFor(a) - amountFor(b);
+        return dateFor(b) - dateFor(a);
+    });
 
     count.textContent = applications.length + " ta ariza";
+    resultCount.textContent = "Ko‘rsatilmoqda: " + filtered.length + " / " + applications.length + " ta ariza";
     list.replaceChildren();
 
-    if (!applications.length) {
+    if (!filtered.length) {
         const empty = document.createElement("div");
         empty.className = "empty";
-        empty.textContent = "Hozircha loyihalarga investitsiya arizalari kelmagan.";
+        const title = document.createElement("h3");
+        const message = document.createElement("p");
+        title.textContent = applications.length ? "Mos ariza topilmadi" : "Hozircha arizalar yo‘q";
+        message.textContent = applications.length
+            ? "Qidiruv so‘zi yoki holat filtrini o‘zgartirib ko‘ring."
+            : "Loyihaga yuborilgan investitsiya arizalari shu yerda ko‘rinadi.";
+        empty.append(title, message);
         list.append(empty);
         return;
     }
 
-    applications.slice().reverse().forEach(function(application) {
-        const project = projects.find(function(item) {
-            return String(item.id) === String(application.projectId);
-        });
-
+    filtered.forEach(function(application) {
+        const project = projectFor(application);
         const card = document.createElement("article");
         card.className = "investor-card";
         card.style.marginBottom = "12px";
 
         const heading = document.createElement("div");
         heading.className = "card-top";
-
         const title = document.createElement("strong");
         title.textContent = application.projectName || (project && project.name) || "Nomsiz loyiha";
-
         const status = document.createElement("span");
         status.className = "tag";
         status.textContent = application.status || "Yangi";
@@ -784,10 +843,8 @@ function showInvestmentApplications() {
         const statusControl = document.createElement("div");
         statusControl.className = "form-group";
         statusControl.style.marginTop = "12px";
-
         const statusLabel = document.createElement("label");
         statusLabel.textContent = "Ariza holati";
-
         const statusSelect = document.createElement("select");
         statusSelect.className = "field";
         statusSelect.setAttribute("aria-label", "Ariza holatini o‘zgartirish");
@@ -826,17 +883,16 @@ function showInvestmentApplications() {
         });
 
         statusControl.append(statusLabel, statusSelect);
-        card.append(statusControl);
+        card.append(heading, statusControl);
 
         const details = [
             "Investor: " + (application.investorName || "Ko‘rsatilmagan"),
-            "Taklif etilgan summa: " + Number(application.offerAmount || application.amount || 0).toLocaleString("uz-UZ") + " so‘m",
+            "Taklif etilgan summa: " + amountFor(application).toLocaleString("uz-UZ") + " so‘m",
             "Xabar: " + (application.offerMessage || application.message || "Xabar kiritilmagan"),
             "Sana: " + (application.date ? new Date(application.date).toLocaleString("uz-UZ") : "Ko‘rsatilmagan"),
             "Ariza raqami: " + (application.id || "—")
         ];
 
-        card.append(heading);
         details.forEach(function(value) {
             const paragraph = document.createElement("p");
             paragraph.textContent = value;
@@ -857,7 +913,6 @@ function showInvestmentApplications() {
     });
 }
 
-
 /* ==================================
    7. QIDIRUV VA FILTRLAR
 ================================== */
@@ -870,6 +925,15 @@ document.getElementById("directionFilter")
 
 document.getElementById("typeFilter")
     .addEventListener("change", showInvestors);
+
+document.getElementById("applicationSearch")
+    .addEventListener("input", showInvestmentApplications);
+
+document.getElementById("applicationStatusFilter")
+    .addEventListener("change", showInvestmentApplications);
+
+document.getElementById("applicationSort")
+    .addEventListener("change", showInvestmentApplications);
 
 
 /* ==================================
