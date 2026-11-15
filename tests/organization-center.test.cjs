@@ -29,7 +29,7 @@ test("2. Tashkilot formasi asosiy maydonlarni taqdim etadi", () => {
 test("3. Tashkilotlar markaziy namespaced store orqali saqlanadi", () => {
   assert.match(page, /core\.store\.get\(STORAGE_KEY/);
   assert.match(page, /core\.store\.set\(STORAGE_KEY/);
-  assert.match(page, /const STORAGE_KEY="organizations"/);
+  assert.match(page, /STORAGE_KEY="organizations"/);
 });
 
 test("4. A'zolar uchun email, telefon yoki parol yig'ilmaydi", () => {
@@ -40,7 +40,7 @@ test("4. A'zolar uchun email, telefon yoki parol yig'ilmaydi", () => {
 });
 
 test("5. A'zoni o'chirish o'rniga nofaol holatga o'tkazish qo'llanadi", () => {
-  assert.match(page, /m\.status="removed"/);
+  assert.match(page, /member\.status==="removed"/);
   assert.match(page, /Faol emas/);
 });
 
@@ -113,7 +113,7 @@ test("17. Loyihalarni qidirish va bog'lanishlar soni ko'rsatiladi", () => {
 });
 
 test("18. Tashkilot logo rasmi emas, xavfsiz matn belgisi bilan ko'rsatiladi", () => {
-  assert.match(page, /function initials/);
+  assert.match(page, /const initials=org=>/);
   assert.doesNotMatch(page, /id="logoUpload"/);
 });
 

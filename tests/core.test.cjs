@@ -49,7 +49,7 @@ test("2. Legacy allowlist takrorlanmaydi va noma’lum kalit rad etiladi", () =>
 test("3. Markaziy store yozish, o‘qish va o‘chirishni bajaradi", () => {
   const { api } = createCore();
   assert.equal(api.store.set("test.value", { count: 3 }).ok, true);
-  assert.deepEqual(api.store.get("test.value"), { count: 3 });
+  assert.deepEqual(JSON.parse(JSON.stringify(api.store.get("test.value"))), { count: 3 });
   assert.equal(api.store.remove("test.value").ok, true);
   assert.equal(api.store.get("test.value", "fallback"), "fallback");
 });
@@ -64,7 +64,7 @@ test("5. Legacy yozuv va inspect mavjud formatni saqlaydi", () => {
   const { api } = createCore();
   const projects = [{ id: "p-1", title: "Sinov loyiha" }];
   assert.equal(api.legacy.write("projects", projects).ok, true);
-  assert.deepEqual(api.legacy.read("projects", []), projects);
+  assert.deepEqual(JSON.parse(JSON.stringify(api.legacy.read("projects", []))), projects);
   const report = api.legacy.inspect(["projects"]);
   assert.equal(report.ok, true);
   assert.equal(report.items[0].valueType, "array");

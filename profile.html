@@ -205,7 +205,8 @@ function showUnifiedApplications(){
   const sources=[
    {key:"investmentApplications",label:"Investitsiya",title:x=>x.projectName||"Loyiha",inbound:x=>String(x.projectOwnerId||"")===String(profile.id)||(email&&normalize(x.projectOwnerEmail)===email),outbound:x=>String(x.applicantId||"")===String(profile.id)||(email&&normalize(x.applicantEmail)===email),person:x=>x.investorName||x.applicantName||"Investor"},
    {key:"jobApplications",label:"Ish",title:x=>x.jobTitle||"Vakansiya",inbound:x=>String(x.listingOwnerId||"")===String(profile.id)||(email&&normalize(x.listingOwnerEmail)===email),outbound:x=>String(x.applicantId||"")===String(profile.id)||(email&&normalize(x.applicantEmail)===email),person:x=>x.applicantName||"Nomzod"},
-   {key:"teamApplications",label:"Jamoa",title:x=>x.teamName||"Jamoa",inbound:x=>String(x.listingOwnerId||"")===String(profile.id)||(email&&normalize(x.listingOwnerEmail)===email),outbound:x=>String(x.applicantId||"")===String(profile.id)||(email&&normalize(x.applicantEmail)===email),person:x=>x.applicantName||"Ishtirokchi"}
+   {key:"teamApplications",label:"Jamoa",title:x=>x.teamName||"Jamoa",inbound:x=>String(x.listingOwnerId||"")===String(profile.id)||(email&&normalize(x.listingOwnerEmail)===email),outbound:x=>String(x.applicantId||"")===String(profile.id)||(email&&normalize(x.applicantEmail)===email),person:x=>x.applicantName||"Ishtirokchi"},
+   {key:"offerApplications",label:"Taklif",title:x=>x.offerTitle||"Taklif",inbound:x=>String(x.offerOwnerId||"")===String(profile.id)||(email&&normalize(x.offerOwnerEmail)===email),outbound:x=>String(x.applicantId||"")===String(profile.id)||(email&&normalize(x.applicantEmail)===email),person:x=>x.applicantName||x.applicant||x.offerOwner||"Ishtirokchi"}
   ];
   const incomingItems=[],outgoingItems=[];
   sources.forEach(source=>readData(source.key).forEach(item=>{

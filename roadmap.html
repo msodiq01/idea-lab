@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="IDEA LAB platformasining bugungi imkoniyatlari va kelajak rivojlanish yo‘l xaritasi.">
+  <title>IDEA LAB | Rivojlanish yo‘l xaritasi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/idea-shell.css">
+  <style>
+    .roadmap-wrap{width:min(1180px,calc(100% - 48px));margin:38px auto 80px}
+    .roadmap-hero{position:relative;overflow:hidden;padding:clamp(28px,5vw,58px);border:1px solid #e4e7fb;border-radius:26px;background:linear-gradient(120deg,#fff 0%,#f7f7ff 58%,#edf4ff 100%);box-shadow:var(--il-shadow)}
+    .roadmap-kicker{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid #e2dfff;border-radius:99px;background:#f3f1ff;color:#5146e5;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+    .roadmap-hero h1{max-width:850px;margin:20px 0 14px;font-size:clamp(34px,5vw,58px);letter-spacing:-.055em;line-height:1.08}
+    .roadmap-hero p{max-width:760px;margin:0;color:#68758d;font-size:15px;line-height:1.85}
+    .roadmap-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+    .roadmap-meta span{padding:8px 11px;border:1px solid #e6eaf2;border-radius:10px;background:rgba(255,255,255,.8);color:#66738a;font-size:11px;font-weight:700}
+    .roadmap-intro{display:flex;justify-content:space-between;align-items:end;gap:20px;margin:42px 0 18px}
+    .roadmap-intro h2{margin:0;font-size:25px;letter-spacing:-.04em}
+    .roadmap-intro p{max-width:650px;margin:7px 0 0;font-size:13px}
+    .roadmap-legend{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px}
+    .roadmap-legend span,.roadmap-status{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:99px;font-size:10px;font-weight:800}
+    .roadmap-status:before,.roadmap-legend span:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+    .status-live{background:#eaf8f1;color:#16845a}
+    .status-demo{background:#fff6e7;color:#a66b16}
+    .status-plan{background:#f0efff;color:#5146e5}
+    .roadmap-phase{margin-top:34px}
+    .roadmap-phase-head{display:flex;align-items:center;gap:13px;margin-bottom:16px}
+    .roadmap-phase-number{display:grid;place-items:center;width:38px;height:38px;flex:none;border-radius:13px;background:#efeeff;color:#5146e5;font-size:14px;font-weight:850}
+    .roadmap-phase-head h2{margin:0;font-size:20px;letter-spacing:-.035em}
+    .roadmap-phase-head p{margin:3px 0 0;font-size:12px}
+    .roadmap-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+    .roadmap-card{min-width:0;padding:21px;border:1px solid var(--il-line);border-radius:17px;background:#fff;box-shadow:var(--il-shadow)}
+    .roadmap-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}
+    .roadmap-icon{display:grid;place-items:center;width:39px;height:39px;border-radius:12px;background:#f1f0ff;font-size:19px}
+    .roadmap-card h3{margin:0 0 8px;font-size:16px;letter-spacing:-.025em}
+    .roadmap-card>p{margin:0 0 13px;font-size:12px;line-height:1.7}
+    .roadmap-card ul{display:grid;gap:7px;margin:0;padding-left:17px;color:#68758d;font-size:11px;line-height:1.6}
+    .roadmap-note{margin-top:35px;padding:20px 22px;border:1px solid #e7e5ff;border-radius:16px;background:#f8f7ff;color:#5e6680;font-size:12px;line-height:1.8}
+    .roadmap-note strong{color:#3932a7}
+    .roadmap-footer{display:flex;flex-wrap:wrap;gap:12px;margin-top:25px}
+    .roadmap-footer a{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 15px;border:1px solid var(--il-line);border-radius:11px;background:#fff;color:#536078;text-decoration:none;font-size:12px;font-weight:750}
+    .roadmap-footer a.primary{border-color:var(--il-primary);background:var(--il-primary);color:#fff}
+    @media(max-width:900px){.roadmap-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:640px){.roadmap-wrap{width:calc(100% - 24px);margin-top:20px}.roadmap-grid{grid-template-columns:1fr}.roadmap-intro{display:block}.roadmap-intro h2{font-size:22px}.roadmap-card{padding:18px}.roadmap-hero{padding:25px 21px;border-radius:20px}.roadmap-hero p{font-size:13px}}
+  </style>
+</head>
+<body>
+  <main class="roadmap-wrap">
+    <header class="roadmap-hero">
+      <span class="roadmap-kicker">✦ IDEA LAB · PLATFORM VISION</span>
+      <h1>Bugungi imkoniyatlardan <span class="gradient-text">global ekotizim</span> sari.</h1>
+      <p>Bu sahifada IDEA LAB’ning mavjud bo‘limlari, ishlab chiqilayotgan integratsiyalari va kelajakda yaratish rejalashtirilgan yo‘nalishlari bir joyda ko‘rsatiladi. Har bir imkoniyatning holati ochiq belgilanadi.</p>
+      <div class="roadmap-meta">
+        <span>Yagona platforma</span><span>Bir nechta faoliyat yo‘nalishi</span><span>Modullararo bog‘lanish</span><span>Global rivojlanish</span>
+      </div>
+    </header>
+
+    <div class="roadmap-intro">
+      <div><h2>Platforma imkoniyatlari katalogi</h2><p>Holat belgisi funksiyaning bugungi tayyorlik darajasini bildiradi.</p></div>
+    </div>
+    <div class="roadmap-legend" aria-label="Holat belgilari">
+      <span class="status-live">Interfeys mavjud</span>
+      <span class="status-demo">Demo / cheklangan</span>
+      <span class="status-plan">Kelajak rejasi</span>
+    </div>
+
+    <section class="roadmap-phase" aria-labelledby="phase-current">
+      <div class="roadmap-phase-head"><span class="roadmap-phase-number">01</span><div><h2 id="phase-current">Mavjud platforma yo‘nalishlari</h2><p>Hozirgi repozitoriyda sahifa yoki demo interfeysi bor bo‘lgan modullar.</p></div></div>
+      <div class="roadmap-grid">
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🚀</span><span class="roadmap-status status-live">Interfeys mavjud</span></div><h3>G‘oyalar va loyihalar</h3><p>G‘oyani taqdim etish, loyiha sahifasi va rivojlanish imkoniyatlari.</p><ul><li>Loyiha tavsifi va bosqichlari</li><li>Hamkor va resurs ehtiyojlari</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">👥</span><span class="roadmap-status status-live">Interfeys mavjud</span></div><h3>Jamoalar va vakansiyalar</h3><p>Jamoa tuzish, rollar va ish imkoniyatlarini ko‘rish.</p><ul><li>Jamoaga a’zo izlash</li><li>Vakansiya va ariza oqimi</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🧑‍💻</span><span class="roadmap-status status-live">Interfeys mavjud</span></div><h3>Mutaxassislar</h3><p>Ko‘nikma va tajribaga asoslangan mutaxassis profillari.</p><ul><li>Kasbiy profil</li><li>Mutaxassislarni izlash</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">💼</span><span class="roadmap-status status-live">Interfeys mavjud</span></div><h3>Investorlar va takliflar</h3><p>Loyihalar, investitsiya qiziqishlari va hamkorlik murojaatlari.</p><ul><li>Investorlar bo‘limi</li><li>Takliflar markazi</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🌐</span><span class="roadmap-status status-demo">Demo / cheklangan</span></div><h3>Global bozor va almashinuv</h3><p>Talab, taklif va loyiha imkoniyatlarini ko‘rsatadigan kataloglar.</p><ul><li>Talab va takliflar</li><li>Bozor katalogi demo oqimi</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🗂️</span><span class="roadmap-status status-demo">Demo / cheklangan</span></div><h3>Shaxsiy kabinet va boshqaruv</h3><p>Profil va ayrim faoliyat/arizalarni bir joyda ko‘rish.</p><ul><li>Profil ma’lumotlari</li><li>Yagona arizalar markazining boshlang‘ich ko‘rinishi</li></ul></article>
+      </div>
+    </section>
+
+    <section class="roadmap-phase" aria-labelledby="phase-foundation">
+      <div class="roadmap-phase-head"><span class="roadmap-phase-number">02</span><div><h2 id="phase-foundation">Yagona ekotizim poydevori</h2><p>Modullarni bitta foydalanuvchi tajribasi va umumiy ma’lumot oqimiga bog‘lash.</p></div></div>
+      <div class="roadmap-grid">
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🪪</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Yagona akkaunt va ko‘p rolli profil</h3><p>Bir foydalanuvchi bitta akkaunt bilan turli faoliyatlarni boshqaradi.</p><ul><li>Tadbirkor, mutaxassis, xaridor, ish izlovchi va ko‘ngilli rollari</li><li>Asosiy yo‘nalish va qo‘shimcha imkoniyatlar</li><li>Profil maxfiyligi va ko‘rinish sozlamalari</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🧭</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Shaxsiy ish maydoni</h3><p>Har bir foydalanuvchiga maqsadi va faoliyatiga mos boshqaruv paneli.</p><ul><li>Shaxsiy vazifalar va faoliyat tarixi</li><li>Loyiha, e’lon va ehtiyojlar boshqaruvi</li><li>Yagona kabinet va kontekstli bosh sahifa</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🧩</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Yagona e’lonlar modeli</h3><p>Turli modullardagi yozuvlarni takrorlamasdan bog‘lash.</p><ul><li>Mahsulot, xizmat, resurs, ish va loyiha turlari</li><li>Talab va takliflarning umumiy modeli</li><li>Egasi, holati va ko‘rinish qoidalari</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">📨</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>To‘liq arizalar va murojaatlar markazi</h3><p>Barcha modullardagi kiruvchi va yuborilgan murojaatlarni birlashtirish.</p><ul><li>Yagona statuslar va kuzatuv</li><li>Qabul qilish, rad etish va muzokara</li><li>Arizani asl e’lon bilan bog‘lash</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🔔</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Bildirishnomalar va xabarlar</h3><p>Har bir foydalanuvchiga faqat o‘ziga tegishli yangiliklarni yetkazish.</p><ul><li>Ariza va status yangilanishlari</li><li>Shaxsiy suhbatlar</li><li>Eslatmalar va xabar sozlamalari</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🛡️</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Ishonch, xavfsizlik va tekshiruv</h3><p>Foydalanuvchilar va tashkilotlar uchun ishonchli muhit.</p><ul><li>Profil va tashkilot tasdiqlash</li><li>Shikoyat, moderatsiya va xavfsizlik</li><li>Reyting, fikr va nizolarni ko‘rib chiqish</li></ul></article>
+      </div>
+    </section>
+
+    <section class="roadmap-phase" aria-labelledby="phase-economy">
+      <div class="roadmap-phase-head"><span class="roadmap-phase-number">03</span><div><h2 id="phase-economy">Iqtisodiyot, savdo va infratuzilma</h2><p>Mahsulot va xizmatlardan tortib real operatsion jarayonlargacha.</p></div></div>
+      <div class="roadmap-grid">
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🛒</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Mahsulot va xizmatlar bozori</h3><p>Sotuvchi, xaridor va xizmat ko‘rsatuvchilar uchun to‘liq bozor oqimi.</p><ul><li>Katalog, savatcha va buyurtmalar</li><li>Sotuvchi sahifasi va mijozlar bilan ishlash</li><li>Buyurtma holati va qaytarish jarayoni</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">💳</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Moliya va hisob-kitob</h3><p>Biznes faoliyati uchun moliyaviy jarayonlarni tartibga solish.</p><ul><li>Hisob-faktura va to‘lov integratsiyalari</li><li>Daromad-xarajat va hisob yuritish</li><li>To‘lov holati va hujjat tarixi</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🚚</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Logistika va ta’minot zanjiri</h3><p>Yetkazib berish, ombor va ta’minotchilarni bog‘lash.</p><ul><li>Yetkazish xizmatlari va kuzatuv</li><li>Ombor, zaxira va inventar</li><li>Xarid va ta’minot so‘rovlari</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🏢</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Mulk va infratuzilma</h3><p>Faoliyat uchun zarur joylar va moddiy aktivlar katalogi.</p><ul><li>Yer, bino, ofis va ishlab chiqarish joylari</li><li>Ijara va foydalanish takliflari</li><li>Uskuna va texnika resurslari</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">📑</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Raqamli hujjatlar va kelishuvlar</h3><p>Hamkorlik va savdo jarayonlaridagi hujjat aylanishi.</p><ul><li>Shartnoma shablonlari va hujjatlar</li><li>Elektron tasdiqlash integratsiyalari</li><li>Versiyalar va audit tarixi</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🏭</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Ishlab chiqarish va resurslar</h3><p>Ishlab chiqaruvchilar, xomashyo va quvvatlarni bog‘lash.</p><ul><li>Uskuna va xomashyo ehtiyojlari</li><li>Ishlab chiqarish quvvati va buyurtma</li><li>Ta’minotchi bilan hamkorlik</li></ul></article>
+      </div>
+    </section>
+
+    <section class="roadmap-phase" aria-labelledby="phase-people">
+      <div class="roadmap-phase-head"><span class="roadmap-phase-number">04</span><div><h2 id="phase-people">Ta’lim, jamiyat va hamkorlik</h2><p>Insonlar, bilim, tashkilotlar va jamoat tashabbuslari uchun imkoniyatlar.</p></div></div>
+      <div class="roadmap-grid">
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🎓</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Ta’lim va kasbiy rivojlanish</h3><p>Bilim va ko‘nikmalarni rivojlantirish hamda namoyish etish.</p><ul><li>Kurslar, mentorlik va amaliyot</li><li>Ko‘nikma xaritasi va portfolio</li><li>Ta’lim tashkilotlari bilan hamkorlik</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🔬</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Ilm-fan va innovatsiya</h3><p>Tadqiqotlar, ixtirolar va yangi texnologiyalarni rivojlantirish.</p><ul><li>Tadqiqot va laboratoriya loyihalari</li><li>Patent va texnologiya hamkorligi</li><li>Ilmiy jamoalar va grant imkoniyatlari</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🎪</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Tadbirlar va hamjamiyat</h3><p>Odamlar va tashkilotlarni umumiy tashabbuslar atrofida birlashtirish.</p><ul><li>Konferensiya, forum va tanlovlar</li><li>Ro‘yxatdan o‘tish va tadbir boshqaruvi</li><li>Klublar va hamjamiyatlar</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">💚</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Ko‘ngillilik va ijtimoiy loyihalar</h3><p>Jamiyatga foydali tashabbuslarni tashkil etish va qo‘llab-quvvatlash.</p><ul><li>Ko‘ngillilarni jalb qilish va vazifalar</li><li>Ijtimoiy ehtiyoj va yordam loyihalari</li><li>Natija va ta’sirni qayd etish</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🏛️</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Tashkilotlar va boshqaruv</h3><p>Jamoa, kompaniya, klub va muassasalarning ish jarayonlari.</p><ul><li>Bo‘limlar, a’zolik va rollar</li><li>Vazifalar, loyihalar va hisobotlar</li><li>Tashkilotlararo hamkorlik</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🌱</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Barqarorlik va hududiy tashabbuslar</h3><p>Hududlar rivoji va ekologik-ijtimoiy loyihalarni bog‘lash.</p><ul><li>Mahalliy muammolar va takliflar</li><li>Ekologik va infratuzilma tashabbuslari</li><li>Hamkorlar va resurslarni safarbar etish</li></ul></article>
+      </div>
+    </section>
+
+    <section class="roadmap-phase" aria-labelledby="phase-intelligence">
+      <div class="roadmap-phase-head"><span class="roadmap-phase-number">05</span><div><h2 id="phase-intelligence">Aqlli texnologiyalar va global kengayish</h2><p>Platformani xalqaro miqyosda kengaytirish va jarayonlarni yengillashtirish.</p></div></div>
+      <div class="roadmap-grid">
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🧠</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Aqlli moslashtirish va tavsiyalar</h3><p>Talablar, takliflar va ko‘nikmalarni tushunarli mezonlar asosida moslashtirish.</p><ul><li>Ko‘nikma, joylashuv va ehtiyoj bo‘yicha moslik</li><li>Moslik sabablarini tushuntirish</li><li>Foydalanuvchi nazoratidagi tavsiyalar</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">📈</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Analitika va boshqaruv paneli</h3><p>Faoliyat va natijalarni o‘lchash uchun hisobotlar.</p><ul><li>Loyiha va biznes ko‘rsatkichlari</li><li>Hududiy va sohaviy tahlil</li><li>Ma’lumotga asoslangan qarorlar</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">⚙️</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>AI yordamchilari va avtomatlashtirish</h3><p>Takroriy ishlarni yengillashtiradigan aqlli vositalar.</p><ul><li>Hujjat va loyiha ish jarayonlari</li><li>Rejalashtirish va eslatmalar</li><li>Inson tasdig‘i bilan bajariladigan amallar</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🌍</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Xalqaro bozor va ko‘p tillilik</h3><p>Turli mamlakat va tillardagi foydalanuvchilarni bog‘lash.</p><ul><li>Ko‘p tilli interfeys</li><li>Valyuta va hududiy sozlamalar</li><li>Transchegaraviy hamkorlik</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">🔌</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>API va tashqi integratsiyalar</h3><p>Hamkor platformalar va xizmatlar bilan xavfsiz ulanish.</p><ul><li>Ochiq API va ishlab chiquvchilar vositalari</li><li>To‘lov, xarita va aloqa xizmatlari</li><li>Tashkilot tizimlari bilan integratsiya</li></ul></article>
+        <article class="roadmap-card"><div class="roadmap-card-top"><span class="roadmap-icon">📱</span><span class="roadmap-status status-plan">Kelajak rejasi</span></div><h3>Mobil platforma va IoT</h3><p>Mobil foydalanish va real jarayonlardan ma’lumot olish imkoniyatlari.</p><ul><li>Mobil ilova yoki PWA</li><li>Qurilmalar va sensorlar integratsiyasi</li><li>Monitoring va avtomatik ogohlantirishlar</li></ul></article>
+      </div>
+    </section>
+
+    <div class="roadmap-note"><strong>Muhim:</strong> “Kelajak rejasi” deb belgilangan imkoniyatlar hozircha ishlab turgan xizmat emas. Ular IDEA LAB’ning rivojlanish ko‘lami sifatida ko‘rsatilgan; aniq muddat va ishga tushirish sanasi tasdiqlanmagan. “Demo / cheklangan” yozuvi esa ma’lumotlar hozircha brauzer yoki demo oqimi bilan cheklanishi mumkinligini anglatadi.</div>
+    <div class="roadmap-footer"><a class="primary" href="index.html#ecosystem-map">Platforma xaritasiga qaytish</a><a href="projects.html">Loyihalarni ko‘rish</a><a href="profile.html">Shaxsiy kabinet</a></div>
+  </main>
+  <script src="assets/idea-shell.js"></script>
+</body>
+</html>

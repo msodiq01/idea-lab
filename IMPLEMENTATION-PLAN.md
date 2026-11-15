@@ -2,7 +2,7 @@
 
 Sana: 2026-11-15  
 Repository: `msodiq01/idea-lab`  
-Ishchi branch: `feature/unified-ecosystem`  
+Ishchi branch: `feature/unified-applications-stage-2`  
 Holat: auditdan keyingi rejalashtirish; frontend va Supabase hali demo/draft rejimida.
 
 ## Asosiy qaror
@@ -96,7 +96,9 @@ Shaxsiy kabinet barcha modullarni o‘ziga ko‘chirib olmaydi. Harakat tegishli
 - Yangi jamoa va vakansiya e’lonlariga profil egasi IDsi va emaili biriktiriladi (profil oldindan saqlangan bo‘lsa).
 - Yangi jamoa/ishga arizalarga arizachi IDsi/emaili va e’lon egasining IDsi biriktiriladi.
 - Yangi investitsiya arizalariga arizachi identifikatori va loyiha egasi IDsi biriktiriladi.
-- Kabinetga kiruvchi va yuborilgan investitsiya, ish va jamoa arizalarini ko‘rsatadigan umumiy markaz qo‘shildi.
+- Yangi taklif e’lonlariga egasi IDsi/emaili, taklif arizalariga esa arizachi IDsi va taklif egasi identifikatori qo‘shiladi.
+- Talab-taklif e’lonlarining yangi yozuvlariga profil egasi IDsi/emaili qo‘shiladi; eski yozuvlar o‘zgarmaydi.
+- Kabinetning yagona markaziga taklif arizalari ham qo‘shildi (faqat aniq ID/email mosligida).
 - Eski yozuvlar avtomatik ravishda foydalanuvchiga biriktirilmaydi; eski ma’lumotlar o‘zgartirilmagan.
 
 ### Tekshiruv
@@ -105,8 +107,33 @@ Shaxsiy kabinet barcha modullarni o‘ziga ko‘chirib olmaydi. Harakat tegishli
 - Umumiy CSS qavslar balansi tekshirildi.
 - Brauzerda to‘liq funksional, mobil va ikki foydalanuvchili testlar hali bajarilishi kerak.
 
+### 2-bosqich — davomiy integratsiya (2026-11-15)
+- `offers.html`: yangi taklif egasiga profil IDsi/emaili biriktiriladi; yangi arizaga arizachi va taklif egasi identifikatorlari yoziladi.
+- Taklifga takroriy ariza tekshiruvi profil IDsi mavjud bo‘lsa ID orqali ishlaydi; profilsiz eski demo oqimi ism orqali saqlanadi.
+- `exchange.html`: yangi talab/taklif yozuvlariga egasining profil identifikatorlari qo‘shiladi.
+- `profile.html`: yagona arizalar markaziga taklif arizalari qo‘shildi; eski identifikatorsiz yozuvlar avtomatik egaga biriktirilmaydi.
+- Eski `offers`, `offerApplications`, `offerMessages` va `ideaLabExchangeItems` yozuvlari migratsiya qilinmadi yoki o‘zgartirilmadi.
+
+### Vizual dizayn — yagona SaaS ish maydoni (2026-11-15)
+- Umumiy dizayn tizimi premium SaaS ko‘rinishida qayta ishlanmoqda: och rangli sirtlar, aniq tipografika, indigo asosiy rang, yumshoq chegaralar va chuqurlik.
+- Barcha sahifalarda bitta ixcham navigatsiya, faol bo‘lim belgisi, guruhlangan bo‘limlar menyusi va mobilga mos menyu qo‘llanadi.
+- Takroriy eski menyular yashiriladi; sahifa kontenti, formalar va modullar saqlanadi.
+- Hero, kartalar, statistik bloklar, tugmalar, formalar, filtrlar va mobil gridlar uchun umumiy stil qo‘llanadi.
+- Demo rejimi ochiq ko‘rsatiladi; haqiqiy server ulanishi bor deb ko‘rsatilmaydi.
+- CSS/JS sintaksisi va vizual regresiya tekshiruvlari qo‘shildi; haqiqiy brauzer screenshot/interaction testi hali bajarilishi kerak.
+
 ### Keyingi ish
 - Vakansiya va jamoa e’lonlarini yaratishdan oldin profil saqlanganini tushuntiruvchi, foydalanuvchini majburlamaydigan UX qo‘shish.
 - Ariza statusini kabinetdan o‘zgartirish uchun tegishli moduldagi mavjud xavfsiz status funksiyalariga yo‘naltirish yoki umumiy API yaratish.
 - Takliflar va resurs buyurtmalarini profil IDsi bilan bog‘lash.
 - So‘ng test brauzerida to‘liq oqimni tekshirish.
+
+
+## Kelajak imkoniyatlari katalogi — 2026-11-15
+
+- roadmap.html qo‘shildi: mavjud modullar, demo cheklovlari va rejalashtirilgan imkoniyatlar besh rivojlanish bosqichida ko‘rsatiladi.
+- Bosh sahifadagi platforma xaritasiga kelajak modullari qo‘shildi; har bir karta batafsil yo‘l xaritasiga olib boradi.
+- Umumiy navigatsiyadagi “Barcha bo‘limlar” menyusiga “Yo‘l xaritasi” kiritildi.
+- Kelajak yo‘nalishlari: yagona akkaunt va ko‘p rolli profil; shaxsiy ish maydoni; yagona e’lonlar; arizalar, bildirishnomalar va xabarlar; ishonch/xavfsizlik; mahsulot-xizmat savdosi; moliya; logistika; mulk va infratuzilma; raqamli hujjatlar; ishlab chiqarish; ta’lim, ilm-fan, tadbirlar, ko‘ngillilik, tashkilot boshqaruvi; aqlli moslashtirish, analitika, AI avtomatlashtirish, xalqaro imkoniyatlar, API va mobil/IoT.
+- “Kelajak rejasi” kartalari ishga tushgan xizmat sifatida ko‘rsatilmaydi. Rejalarga muddat yoki va’da berilmagan.
+- tests/design-system.test.cjs bosh sahifa havolasi, navigatsiya, roadmap sahifasi va holat belgilarini tekshiradi.

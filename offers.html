@@ -878,7 +878,9 @@ offerForm.addEventListener("submit", function(event) {
         return;
     }
 
-    offers.unshift(offer);
+    offers.unshift(ideaCore && ideaCore.identity
+        ? ideaCore.identity.stamp(offer, "owner")
+        : offer);
 
     if (!saveData("offers", offers)) {
         return;
@@ -924,9 +926,14 @@ function applyToOffer(offerId) {
 
     const applications = readData("offerApplications");
 
+    const currentProfile = ideaCore && ideaCore.identity
+        ? ideaCore.identity.current()
+        : null;
     const alreadyApplied = applications.some(item =>
-        item.offerId === offerId &&
-        item.applicant === currentUser
+        String(item.offerId) === String(offerId) &&
+        (currentProfile && item.applicantId
+            ? String(item.applicantId) === String(currentProfile.id)
+            : item.applicant === currentUser)
     );
 
     if (alreadyApplied) {
@@ -945,12 +952,17 @@ function applyToOffer(offerId) {
         offerId: offer.id,
         offerTitle: offer.title,
         offerOwner: offer.author,
+        offerOwnerId: offer.ownerId || "",
+        offerOwnerEmail: offer.ownerEmail || "",
         applicant: currentUser,
         message: message.trim(),
         status: "Yangi",
         date: new Date().toISOString()
     };
 
+    if (ideaCore && ideaCore.identity) {
+        Object.assign(application, ideaCore.identity.stamp(application, "applicant"));
+    }
     applications.unshift(application);
 
     if (!saveData("offerApplications", applications)) {
