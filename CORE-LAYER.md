@@ -2,7 +2,7 @@
 
 Versiya: 1.0.0  
 Sana: 2026-11-15  
-Holat: alohida tayyorlangan frontend yadro; sahifalarga hali ulanmagan.
+Holat: frontend yadro; to‘rtta sahifada pilot integratsiya mavjud.
 
 ## Yaratilgan fayl
 
@@ -42,7 +42,7 @@ const unsubscribe = IDEALAB.subscribe(IDEALAB.events.storageChanged, (event) => 
 
 ## Muhim cheklovlar
 
-1. Yadro `index.html` va `projects.html` sahifalarida loyiha ma’lumotini o‘qish/yozish uchun pilot sifatida ishlatiladi. Qolgan sahifalar hali eski to‘g‘ridan-to‘g‘ri localStorage chaqiruvlaridan foydalanadi.
+1. Yadro `index.html`, `projects.html`, `project-detail.html` va `investors.html` sahifalarida pilot sifatida ishlatiladi. `projects`, `investmentApplications` va `investors` kabi eski kalitlar allowlist orqali o‘qiladi/yoziladi; qolgan sahifalarning bir qismi hali eski to‘g‘ridan-to‘g‘ri localStorage chaqiruvlaridan foydalanadi.
 2. Yangi store kalitlari `ideaLab.core.` prefiksi bilan saqlanadi va eski localStorage kalitlariga tegmaydi.
 3. Bu brauzer ichidagi demo saqlash. Ma'lumotlar boshqa foydalanuvchilarga ko'rinmaydi va autentifikatsiya o'rnini bosmaydi.
 4. Email/telefon tekshiruvi faqat qulaylik uchun; server tekshiruvini almashtirmaydi.
@@ -56,7 +56,7 @@ const unsubscribe = IDEALAB.subscribe(IDEALAB.events.storageChanged, (event) => 
 - Storage mavjud bo'lmagan holatda xato boshqaruvi tekshirilsin.
 - XSS uchun `escapeHtml` test qilinsin.
 - Status lug'atidagi qiymatlar UI'dagi mavjud statuslar bilan solishtirilsin.
-- Ikki sahifaga ulashdan oldin bir sahifadagi mavjud localStorage kalitlari bilan to'qnashuv yo'qligi tekshirilsin.
+- Har bir yangi sahifa ulanishida mavjud localStorage kalitlari va JSON shakli saqlanishi tekshirilsin. To‘rtta pilot sahifaning inline JavaScript sintaksisi tekshirildi; to‘liq brauzer oqimi hali qo‘lda sinovdan o‘tishi kerak.
 
 ## Legacy ma’lumotlarini tekshirish va zaxiralash
 
