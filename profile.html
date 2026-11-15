@@ -72,7 +72,7 @@ button{cursor:pointer}
 .avatar-copy{min-width:0}.avatar-copy strong{display:block;font-size:13px;margin-bottom:5px}.avatar-copy p{color:var(--muted);font-size:10px;line-height:1.6;margin-bottom:10px}
 .avatar-actions{display:flex;gap:8px;flex-wrap:wrap}.avatar-actions .btn{padding:8px 11px;font-size:10px}
 .avatar-status{display:block;color:var(--cyan);font-size:10px;margin-top:8px;min-height:14px}
-@media(max-width:480px){.avatar-editor{align-items:flex-start;gap:12px}.avatar-preview{width:74px;height:74px;flex-basis:74px}}
+.auth-session{padding:16px;margin:0 0 18px;border:1px solid var(--border);border-radius:13px;background:rgba(57,133,255,.045)}.auth-session-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:9px}.auth-session h3{font-size:13px}.auth-session p{color:var(--muted);font-size:11px;line-height:1.7}.auth-session-meta{margin-top:8px;color:#b9cbe0!important;overflow-wrap:anywhere}.auth-session-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.auth-session-actions .btn{padding:8px 11px;font-size:10px}.auth-session-message{display:block;min-height:15px;margin-top:8px;color:var(--cyan);font-size:10px}@media(max-width:480px){.avatar-editor{align-items:flex-start;gap:12px}.avatar-preview{width:74px;height:74px;flex-basis:74px}}
 .role-option{display:flex;align-items:center;gap:9px;padding:11px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.02);color:#c6d4e6;font-size:11px;cursor:pointer;transition:.2s}
 .role-option:has(input:checked){border-color:rgba(39,215,232,.5);background:rgba(39,215,232,.07);color:white}
 .role-option input{accent-color:var(--cyan);width:15px;height:15px}
@@ -139,6 +139,17 @@ button{cursor:pointer}
     <div class="main-content">
       <section class="panel" id="profileSection">
         <div class="panel-heading"><div><h2>Profil ma’lumotlari</h2><p>Asosiy ma’lumotlaringiz va IDEA LAB’dagi faoliyat yo‘nalishlaringiz.</p></div><span class="pill">PROFIL</span></div>
+        <section class="auth-session" id="authSessionPanel" aria-labelledby="authSessionTitle">
+          <div class="auth-session-head"><h3 id="authSessionTitle">Yagona akkaunt holati</h3><span class="pill" id="authSessionBadge">DEMO REJIM</span></div>
+          <p id="authSessionDescription" role="status" aria-live="polite">Auth serveri ulanmagan. Hozircha profil ma’lumotlari ushbu brauzerda saqlanadi.</p>
+          <p class="auth-session-meta" id="authSessionIdentity">Faol akkaunt aniqlanmadi.</p>
+          <div class="auth-session-actions">
+            <button class="btn btn-secondary" type="button" id="refreshAuthSession">Sessiyani yangilash</button>
+            <button class="btn btn-danger" type="button" id="profileSignOut" disabled>Akkauntdan chiqish</button>
+            <a class="btn btn-secondary" href="auth.html">Kirish sahifasi</a>
+          </div>
+          <span class="auth-session-message" id="authSessionMessage" role="status" aria-live="polite"></span>
+        </section>
         <form id="profileForm">
           <div class="avatar-editor">
             <div class="avatar-preview" id="avatarPreview" aria-label="Profil rasmi ko‘rinishi"><span id="avatarInitials">IL</span></div>
@@ -205,9 +216,70 @@ button{cursor:pointer}
 </main>
 <footer class="footer"><div class="container footer-inner"><span>© 2026 IDEA LAB. Barcha huquqlar himoyalangan.</span><span>G‘oya — Jamoa — Harakat — Natija</span></div></footer>
 <script src="assets/idea-core.js"></script>
+<script src="assets/idea-auth.js"></script>
 <script>
 "use strict";
 const ideaCore = window.IDEALAB || null;
+const authAdapter = window.IDEALAB_AUTH || null;
+const authSessionBadge = document.getElementById("authSessionBadge");
+const authSessionDescription = document.getElementById("authSessionDescription");
+const authSessionIdentity = document.getElementById("authSessionIdentity");
+const authSessionMessage = document.getElementById("authSessionMessage");
+const refreshAuthSessionButton = document.getElementById("refreshAuthSession");
+const profileSignOutButton = document.getElementById("profileSignOut");
+let activeAuthSession = null;
+function renderAuthSession(session) {
+  activeAuthSession = session && session.user && session.user.id ? session : null;
+  const active = Boolean(activeAuthSession);
+  const configured = Boolean(authAdapter && authAdapter.getStatus().configured);
+  authSessionBadge.textContent = active ? "AKKAUNT FAOL" : (configured ? "SESSIYA YO‘Q" : "DEMO REJIM");
+  authSessionDescription.textContent = active
+    ? "Siz yagona akkaunt tizimiga kirgansiz. Bu holat hozircha eski brauzer profilingizni avtomatik bog‘lamaydi."
+    : (configured ? "Faol akkaunt sessiyasi topilmadi. Kirish sahifasi orqali akkauntingizga kiring." : "Auth serveri ulanmagan. Hozircha profil ma’lumotlari ushbu brauzerda saqlanadi.");
+  const user = activeAuthSession && activeAuthSession.user;
+  authSessionIdentity.textContent = user
+    ? "Email: " + (user.email || "ko‘rsatilmagan") + " · Akkaunt ID: " + String(user.id).slice(0, 8) + "…"
+    : "Faol akkaunt aniqlanmadi.";
+  profileSignOutButton.disabled = !configured || !active;
+}
+async function refreshAuthSession(showMessage) {
+  if (!authAdapter || !authAdapter.getStatus().configured) {
+    renderAuthSession(null);
+    if (showMessage) authSessionMessage.textContent = "Backend hali ulanmagan — sessiyani tekshirib bo‘lmaydi.";
+    return;
+  }
+  refreshAuthSessionButton.disabled = true;
+  authSessionMessage.textContent = "Sessiya tekshirilmoqda…";
+  const result = await authAdapter.getSession();
+  refreshAuthSessionButton.disabled = false;
+  if (!result.ok) {
+    authSessionMessage.textContent = result.error.message;
+    return;
+  }
+  renderAuthSession(result.data && result.data.session);
+  authSessionMessage.textContent = "Sessiya holati yangilandi.";
+}
+refreshAuthSessionButton.addEventListener("click", () => refreshAuthSession(true));
+profileSignOutButton.addEventListener("click", async () => {
+  if (!authAdapter || profileSignOutButton.disabled) return;
+  profileSignOutButton.disabled = true;
+  authSessionMessage.textContent = "Akkauntdan chiqilmoqda…";
+  const result = await authAdapter.signOut();
+  if (!result.ok) {
+    authSessionMessage.textContent = result.error.message;
+    await refreshAuthSession(false);
+    return;
+  }
+  renderAuthSession(null);
+  authSessionMessage.textContent = "Akkauntdan muvaffaqiyatli chiqildi.";
+});
+if (authAdapter && authAdapter.getStatus().configured) {
+  authAdapter.onAuthStateChange(({ session }) => {
+    renderAuthSession(session);
+    authSessionMessage.textContent = "Akkaunt holati o‘zgardi.";
+  });
+}
+
 const profileForm=document.getElementById("profileForm");
 function readData(key){try{const parsed=ideaCore&&ideaCore.legacy?ideaCore.legacy.read(key,[]):JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(parsed)?parsed:[]}catch(error){console.error("Ma’lumotni o‘qishda xatolik:",key,error);return[]}}
 function getProfile(){try{const value=ideaCore&&ideaCore.legacy?ideaCore.legacy.read("userProfile",null):JSON.parse(localStorage.getItem("userProfile")||"null");return value&&typeof value==="object"?value:null}catch(error){return null}}
