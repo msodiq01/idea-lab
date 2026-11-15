@@ -83,6 +83,23 @@ Profil va tashkilotlar uchun birinchi draft migration `20261116120000_idea_app_i
 
 Bu jadval va statuslar hozirgi DDL draftining chegarasini belgilaydi; ularni frontend'dan hozircha ishlatib bo'lmaydi.
 
+### Projects RLS — repository draft
+
+Migration `20261116140000_idea_app_projects_rls.sql` loyiha, jamoa, vazifa va yangiliklar uchun siyosatlarni belgilaydi. U faqat repository'da, jonli Supabase'ga qo'llanmagan.
+
+- Owner: `projects.created_by`; project update/delete faqat owner.
+- Manager: faol `manager` a'zoligi; jamoani ko'rish, contributor/viewer taklif qilish, vazifa va yangiliklarni boshqarish.
+- Contributor: faol a'zolik; loyiha vazifalarini yaratish/tahrirlash va draft yangiliklar.
+- Viewer: loyiha, vazifa va jamoa ichidagi yangiliklarni o'qish.
+- O'z-o'zidan qo'shilish faqat public + recruiting loyihaga pending contributor/viewer so'rovi; foydalanuvchi o'zini active yoki manager qila olmaydi.
+- Membership status/role o'zgarishlari to'g'ridan-to'g'ri client UPDATE bilan yopiq; keyinchalik aniq tranzaksion server amali bo'ladi.
+- Task boshqa foydalanuvchiga tayinlanmaydi; alohida server-side tekshiruv talab qilinadi.
+- Public update faqat public loyiha, published holati va owner/manager nashr huquqi bilan ko'rinadi. Hozircha anon/public API grant yo'q.
+- RLS helper'lari alohida, expose qilinmaydigan `idea_private` sxemasida. Ular `SECURITY DEFINER`, qat'iy `search_path`, dinamik SQL'siz va `auth.uid()` asosida. EXECUTE faqat authenticated; schema Data API'da ochilmagan.
+- Hech qanday jadval grantlari yoki Data API exposure qo'shilmagan. RLS siyosatlari grant o'rnini bosmaydi.
+
+Two-user sinovlar `verification/project-rls-acceptance.md` da, metadata tekshiruvi `verification/project-rls-preflight.sql` da. Staging qabulidan oldin schema expose qilish yoki browser table grant berish mumkin emas.
+
 ## 4. Ma'lumot maxfiyligi va ruxsat modeli
 
 ### Profil
@@ -129,7 +146,7 @@ Shuning uchun:
 | 0 | Jonli sxema snapshot va backup/restore imkoniyatini tasdiqlash | Qayta tiklash rejasi va schema checksum |
 | 1 | `idea_app` namespace yaratish | Mavjud `public` obyektlariga ta'sir yo'q |
 | 2 | Identity/profile va organizations | UID FK, privacy split, RLS, grants |
-| 3 | Projects, teams, tasks, updates | Alohida DDL draft; owner/member RLS va cross-user testlari keyingi bosqichda |
+| 3 | Projects, teams, tasks, updates | DDL va RLS draftlari tayyor; staging'da two-user acceptance hali bajarilishi kerak |
 | 4 | Listings + directory views | Maxfiy ustunlar yo'q; status filtrlari |
 | 5 | Applications + messages | Ishtirokchi doirasi, status transition |
 | 6 | Events + registrations + activity | Capacity/duplicate va audit testlari |

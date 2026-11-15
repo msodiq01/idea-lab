@@ -6,6 +6,11 @@ Bu papkadagi SQL — IDEA LAB umumiy backendini tayyorlash uchun. Ulangan Supaba
 
 - `migrations/20261116120000_idea_app_identity_organizations.sql` — alohida `idea_app` sxemasida profil, maxfiy kontakt, tashkilot va tashkilot a'zoligi poydevori.
 - `migrations/20261116130000_idea_app_projects_teams.sql` — loyiha, jamoa a'zoligi, vazifalar va yangiliklar moduli; birinchi identity/organization migration'iga bog'liq.
+- `migrations/20261116140000_idea_app_projects_rls.sql` — loyiha, jamoa, vazifa va yangiliklar uchun RLS siyosatlari drafti. Faqat repository'da; jonli Supabase'ga qo'llanmagan.
+- RLS yordamchi funksiyalari hech qachon Data API'ga expose qilinmasligi kerak bo'lgan alohida `idea_private` sxemasida. Ular `auth.uid()` bilan tekshiradi, qat'iy `search_path` ishlatadi va faqat `authenticated` uchun EXECUTE oladi.
+- Jadval grantlari berilmagan; `idea_app` Data API'ga expose qilinmagan. Shuning uchun policy drafti hozircha brauzerga kirish bermaydi.
+- Qabul sinovlari: `verification/project-rls-acceptance.md`; read-only staging tekshiruvi: `verification/project-rls-preflight.sql`.
+- Ataylab cheklangan: membership status/role o'zgarishi server tranzaksiyasiga qoldirilgan; boshqa foydalanuvchiga task tayinlash yo'q; self-join faqat public recruiting loyiha uchun pending so'rov yaratadi.
 - Ikkinchi migration ham repository draft: **jonli Supabase'ga qo'llanmagan**. To'rt yangi jadvalda RLS yoqilgan, browser grantlari va policy'lar yo'q.
 - Loyiha egasi `projects.created_by` orqali belgilanadi; `organization_id` ixtiyoriy bog'lanish. A'zolik, vazifa va yangiliklarning haqiqiy ruxsat siyosatlari keyingi xavfsizlik bosqichida yoziladi.
 - Bu migration faqat repository draft: **jonli Supabase loyihasiga qo'llanmagan**.
