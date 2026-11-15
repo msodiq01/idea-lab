@@ -1,7 +1,7 @@
 # IDEA LAB — Auth implementatsiya bosqichlari
 
 Sana: 2026-11-15  
-Holat: Auth adapterining xavfsiz poydevori; real loyiha bilan ulanish yoqilmagan.
+Holat: email/parol va telefon/SMS UI hamda adapter tayyor; real loyiha bilan ulanish hozircha offline rejimda.
 
 ## 1. Hozir qo'shilgan imkoniyat
 
@@ -14,8 +14,10 @@ Holat: Auth adapterining xavfsiz poydevori; real loyiha bilan ulanish yoqilmagan
 - `updatePassword(password)` — faqat adapterda tasdiqlangan sessiya mavjud bo'lsa yangi parolni yuboradi.
 - `onAuthStateChange()` obyekti `unsubscribe()` yordamchisini ham beradi.
 - `onAuthStateChange(callback)` — session holati o'zgarishini kuzatadi.
+- `sendPhoneSignupOtp(phone)` / `sendPhoneLoginOtp(phone)` — telefon uchun SMS OTP so'raydi; signup yangi akkaunt yaratishga ruxsat beradi, login esa bermaydi.
+- `verifyPhoneOtp(phone, token)` — telefon raqami va 6 xonali SMS kodni tekshiradi.
 
-Adapter Supabase SDK'ni o'zi yuklamaydi. Hozirgi HTML sahifalariga ulanmagan va mavjud profil yoki localStorage yozuvlarini o'zgartirmaydi.
+`auth.html` sahifasida email/parol va telefon/SMS usullari mavjud. Supabase JS SDK sahifada versiyasi mahkamlangan CDN orqali yuklanadi; `assets/idea-config.js` esa hozircha `offline-demo` holatida. Adapter mavjud profil yoki localStorage yozuvlarini o'zgartirmaydi.
 
 ## 2. Konfiguratsiya shartnomasi
 
@@ -46,7 +48,7 @@ Bu faqat namuna. Haqiqiy qiymatlar Git repository'ga yozilmasin. Brauzerda faqat
 |---|---|---|
 | A | Supabase staging project egasi va ref tasdiqlash | Production emasligi aniq |
 | B | Public config va SDK yuklash usulini belgilash | Secret frontendga chiqmaydi |
-| C | Login/signup/reset UI | Validatsiya, xatolar va session holati sinovdan o'tgan |
+| C | Email va telefon OTP login/signup/reset UI | Validatsiya, xatolar va session holati sinovdan o'tgan |
 | D | Profile upsert trigger/policy tekshiruvi | `profiles.id = auth.uid()` |
 | E | Legacy profile link flow | Egalik isboti va takroriy mapping himoyasi |
 | F | Ikki akkauntli RLS sinovlari | Boshqa foydalanuvchi ma'lumoti yopiq |
@@ -55,8 +57,8 @@ Bu faqat namuna. Haqiqiy qiymatlar Git repository'ga yozilmasin. Brauzerda faqat
 
 ## 5. Hozircha ataylab qilinmagan ishlar
 
-- Auth sahifalari foydalanuvchi oqimiga qo'shilmadi.
-- Supabase SDK dependency/CDN qo'shilmadi.
+- Haqiqiy Supabase URL va public kalit hali kiritilmadi.
+- SMS provayder va email SMTP hali sozlanmadi.
 - Haqiqiy URL yoki kalit kiritilmadi.
 - SQL migration ishga tushirilmadi.
 - Legacy profil va boshqa localStorage ma'lumotlari ko'chirilmadi yoki o'chirilmadi.
