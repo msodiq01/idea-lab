@@ -174,3 +174,59 @@ test("auth state subscription exposes a safe unsubscribe helper", () => {
   listener.unsubscribe();
   assert.equal(unsubscribed, true);
 });
+
+
+test("phone signup requests SMS OTP with account creation enabled", async () => {
+  let received;
+  const sdk = { createClient: () => ({ auth: {
+    signInWithOtp: async input => { received = input; return { data: {}, error: null }; }
+  } }) };
+  const auth = loadAuth(sdk);
+  auth.configure(config, sdk);
+  const result = await auth.sendPhoneSignupOtp("+998 90 123 45 67");
+  assert.equal(result.ok, true);
+  assert.equal(received.phone, "+998901234567");
+  assert.equal(received.options.shouldCreateUser, true);
+});
+
+test("phone login requests SMS OTP without creating a new account", async () => {
+  let received;
+  const sdk = { createClient: () => ({ auth: {
+    signInWithOtp: async input => { received = input; return { data: {}, error: null }; }
+  } }) };
+  const auth = loadAuth(sdk);
+  auth.configure(config, sdk);
+  const result = await auth.sendPhoneLoginOtp("+998901234567");
+  assert.equal(result.ok, true);
+  assert.equal(received.options.shouldCreateUser, false);
+});
+
+test("phone OTP validation blocks invalid phone and code before provider calls", async () => {
+  let calls = 0;
+  const sdk = { createClient: () => ({ auth: {
+    signInWithOtp: async () => { calls++; return { data: {}, error: null }; },
+    verifyOtp: async () => { calls++; return { data: {}, error: null }; }
+  } }) };
+  const auth = loadAuth(sdk);
+  auth.configure(config, sdk);
+  assert.equal((await auth.sendPhoneSignupOtp("901234567")).error.code, "INVALID_PHONE");
+  assert.equal((await auth.verifyPhoneOtp("+998901234567", "12ab56")).error.code, "INVALID_OTP");
+  assert.equal(calls, 0);
+});
+
+test("phone OTP verification uses SMS type and updates session status", async () => {
+  let received;
+  const sdk = { createClient: () => ({ auth: {
+    verifyOtp: async input => {
+      received = input;
+      return { data: { session: { user: { id: "phone-auth-uid" } } }, error: null };
+    }
+  } }) };
+  const auth = loadAuth(sdk);
+  auth.configure(config, sdk);
+  const result = await auth.verifyPhoneOtp("+998901234567", "123456");
+  assert.equal(result.ok, true);
+  assert.equal(received.type, "sms");
+  assert.equal(received.token, "123456");
+  assert.equal(auth.getStatus().authenticated, true);
+});
