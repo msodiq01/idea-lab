@@ -644,6 +644,42 @@
                 font-size: 11px;
             }
         }
+    
+        .module-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0 0 13px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .3px;
+        }
+        .module-status.available {
+            color: var(--cyan);
+            border-color: rgba(36,213,232,.28);
+            background: rgba(36,213,232,.07);
+        }
+        .module-status.planned {
+            color: #c2cbe0;
+            background: rgba(255,255,255,.035);
+        }
+        .module-card.planned {
+            opacity: .88;
+        }
+        .module-card .feature-link {
+            display: inline-block;
+            margin-top: 2px;
+        }
+        @media (max-width: 760px) {
+            #ecosystem-map .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
     </style>
     <link rel="stylesheet" href="assets/idea-shell.css">\n</head>
 
@@ -810,6 +846,103 @@
                 </a>
             </article>
 
+        </div>
+    </div>
+</section>
+
+<!-- ECOSYSTEM MAP -->
+<section class="section" id="ecosystem-map">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-label">IDEA LAB PLATFORM MAP</div>
+            <h2 class="section-title">Bitta ekotizim — o‘zaro bog‘langan imkoniyatlar.</h2>
+            <p class="section-description">
+                Mavjud bo‘limlar va kelgusi xizmatlar bir xaritada.
+                Holat belgisi interfeys tayyorligini bildiradi, xizmat to‘liq ishga tushganini emas.
+            </p>
+        </div>
+
+        <div class="feature-grid">
+            <article class="feature-card module-card">
+                <span class="module-status available">Interfeys mavjud</span>
+                <div class="feature-icon">🚀</div>
+                <h3>G‘oyalar va loyihalar</h3>
+                <p>G‘oyani loyiha sifatida taqdim etish, ko‘rish va rivojlantirish.</p>
+                <a class="feature-link" href="projects.html">Loyihalarga o‘tish →</a>
+            </article>
+            <article class="feature-card module-card">
+                <span class="module-status available">Interfeys mavjud</span>
+                <div class="feature-icon">👥</div>
+                <h3>Jamoa va vakansiyalar</h3>
+                <p>Loyiha uchun jamoa tuzish, ish o‘rinlari va arizalarni ko‘rish.</p>
+                <a class="feature-link" href="teams.html">Jamoalar markazi →</a>
+            </article>
+            <article class="feature-card module-card">
+                <span class="module-status available">Interfeys mavjud</span>
+                <div class="feature-icon">🧑‍💻</div>
+                <h3>Mutaxassislar</h3>
+                <p>Ko‘nikmalar, tajriba va professional profillar katalogi.</p>
+                <a class="feature-link" href="specialists.html">Mutaxassislarni ko‘rish →</a>
+            </article>
+            <article class="feature-card module-card">
+                <span class="module-status available">Interfeys mavjud</span>
+                <div class="feature-icon">🤝</div>
+                <h3>Investorlar va hamkorlik</h3>
+                <p>Investor profillari, hamkorlik takliflari va murojaatlar.</p>
+                <a class="feature-link" href="investors.html">Investorlar markazi →</a>
+            </article>
+            <article class="feature-card module-card">
+                <span class="module-status available">Demo rejim</span>
+                <div class="feature-icon">🔄</div>
+                <h3>Talab va takliflar</h3>
+                <p>Mahsulot, xizmat, uskuna va resurslarga ehtiyoj yoki taklif joylash.</p>
+                <a class="feature-link" href="exchange.html">Talab va takliflar →</a>
+            </article>
+            <article class="feature-card module-card">
+                <span class="module-status available">Demo rejim</span>
+                <div class="feature-icon">🌐</div>
+                <h3>Global bozor</h3>
+                <p>Loyihalar va imkoniyatlarni yagona katalogda kashf etish.</p>
+                <a class="feature-link" href="marketplace.html">Bozorga o‘tish →</a>
+            </article>
+            <article class="feature-card module-card">
+                <span class="module-status available">Interfeys mavjud</span>
+                <div class="feature-icon">📨</div>
+                <h3>Takliflar va muloqot</h3>
+                <p>Hamkorlik takliflari, arizalar va muloqot interfeysi.</p>
+                <a class="feature-link" href="offers.html">Takliflar markazi →</a>
+            </article>
+            <article class="feature-card module-card">
+                <span class="module-status available">Demo rejim</span>
+                <div class="feature-icon">📊</div>
+                <h3>Shaxsiy boshqaruv</h3>
+                <p>Profil va platformadagi faoliyatni boshqarish ko‘rinishi.</p>
+                <a class="feature-link" href="dashboard.html">Dashboard →</a>
+            </article>
+            <article class="feature-card module-card planned">
+                <span class="module-status planned">Keyingi bosqich</span>
+                <div class="feature-icon">💳</div>
+                <h3>Moliya va hisob-kitob</h3>
+                <p>Hisob-faktura, to‘lov provayderlari va hisob yuritish integratsiyalari.</p>
+            </article>
+            <article class="feature-card module-card planned">
+                <span class="module-status planned">Keyingi bosqich</span>
+                <div class="feature-icon">🏢</div>
+                <h3>Mulk va infratuzilma</h3>
+                <p>Yer, bino, ofis, ombor va ijara imkoniyatlari.</p>
+            </article>
+            <article class="feature-card module-card planned">
+                <span class="module-status planned">Keyingi bosqich</span>
+                <div class="feature-icon">📚</div>
+                <h3>Ta’lim va hamjamiyat</h3>
+                <p>Ta’lim, tadbirlar, ilmiy va ijtimoiy tashabbuslar.</p>
+            </article>
+            <article class="feature-card module-card planned">
+                <span class="module-status planned">Keyingi bosqich</span>
+                <div class="feature-icon">📡</div>
+                <h3>IoT va aqlli tahlil</h3>
+                <p>Qurilmalar monitoringi, tahlil va avtomatlashtirish integratsiyalari.</p>
+            </article>
         </div>
     </div>
 </section>
