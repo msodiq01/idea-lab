@@ -253,6 +253,36 @@
     return STATUS[group]?.[value] || "Noma'lum holat";
   }
 
+  function currentProfile() {
+    const profile = legacy.read("userProfile", null);
+    if (!profile || typeof profile !== "object" || !profile.id) return null;
+    return profile;
+  }
+
+  const identity = Object.freeze({
+    current: currentProfile,
+    stamp(record, role = "applicant") {
+      if (!record || typeof record !== "object") {
+        return reportError("INVALID_IDENTITY_RECORD", "Yozuv obyekti noto'g'ri.");
+      }
+      const profile = currentProfile();
+      if (!profile) return { ...record };
+      const fields = role === "owner"
+        ? { ownerId: profile.id, ownerName: profile.fullName || "", ownerEmail: profile.email || "" }
+        : { applicantId: profile.id, applicantName: record.applicantName || profile.fullName || "", applicantEmail: profile.email || "", applicantPhone: record.applicantPhone || profile.phone || "" };
+      return { ...record, ...fields };
+    },
+    matches(record, role = "owner") {
+      const profile = currentProfile();
+      if (!profile || !record || typeof record !== "object") return false;
+      const idField = role === "owner" ? "ownerId" : "applicantId";
+      if (record[idField] && String(record[idField]) === String(profile.id)) return true;
+      const emailField = role === "owner" ? "ownerEmail" : "applicantEmail";
+      return Boolean(profile.email && record[emailField] &&
+        String(record[emailField]).trim().toLowerCase() === String(profile.email).trim().toLowerCase());
+    }
+  });
+
   const coreApi = Object.freeze({
     version: VERSION,
     environment: Object.freeze({ backend: "offline-demo", authenticated: false }),
@@ -260,6 +290,7 @@
     status: STATUS,
     store,
     legacy,
+    identity,
     subscribe,
     emit,
     createId,
