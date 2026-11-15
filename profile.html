@@ -36,7 +36,7 @@ button{cursor:pointer}
 .btn-secondary{background:rgba(255,255,255,.04);border-color:var(--border);color:var(--text)}
 .btn-danger{background:rgba(255,113,133,.1);border-color:rgba(255,113,133,.22);color:#ff9aa9}
 .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:12px 0 28px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:12px 0 28px}
 .stat{padding:19px 21px;background:linear-gradient(145deg,var(--surface2),var(--surface));border:1px solid var(--border);border-radius:15px}
 .stat-label{color:var(--muted);font-size:11px;margin-bottom:10px}
 .stat-value{font-size:27px;font-weight:900;letter-spacing:-1px}
@@ -95,7 +95,7 @@ button{cursor:pointer}
 .activity-group h3{font-size:12px;margin-bottom:10px;color:#dce8f7}
 .footer{border-top:1px solid var(--border);padding:22px 0;color:#7188a3;font-size:10px}
 .footer-inner{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
-@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{position:static;grid-template-columns:1fr 1fr}.nav-links{gap:10px}.cards{grid-template-columns:1fr 1fr}}
+@media(max-width:850px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}.sidebar{position:static;grid-template-columns:1fr 1fr}.nav-links{gap:10px}.cards{grid-template-columns:1fr 1fr}}
 @media(max-width:620px){.profile-extra{grid-template-columns:1fr}.profile-extra .field-group.full{grid-column:auto}.nav-inner{padding:13px 0;align-items:flex-start;flex-direction:column}.nav-links{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}.container,.nav-inner{width:calc(100% - 28px)}.hero{padding-top:34px}.hero h1{letter-spacing:-1.3px}.stats{grid-template-columns:1fr;gap:9px}.stat{padding:15px}.layout{padding-bottom:45px}.sidebar{grid-template-columns:1fr}.panel{padding:16px}.form-grid,.roles-grid,.cards{grid-template-columns:1fr}.field-group.full{grid-column:auto}.panel-heading{flex-direction:column}.footer-inner{flex-direction:column}}
 </style>
     <link rel="stylesheet" href="assets/idea-shell.css">\n</head>
@@ -119,6 +119,7 @@ button{cursor:pointer}
     <div class="stat"><div class="stat-label">Mening loyihalarim</div><div class="stat-value" id="projectCount">0</div><div class="stat-note">Siz yaratgan loyihalar</div></div>
     <div class="stat"><div class="stat-label">Kelgan investor takliflari</div><div class="stat-value" id="offerCount">0</div><div class="stat-note">Ko‘rib chiqishingiz mumkin</div></div>
     <div class="stat"><div class="stat-label">Faoliyat yozuvlari</div><div class="stat-value" id="activityCount">0</div><div class="stat-note">Sizga tegishli topilgan yozuvlar</div></div>
+    <div class="stat"><div class="stat-label">Arizalarim</div><div class="stat-value" id="applicationCount">0</div><div class="stat-note" id="applicationCountNote">0 kiruvchi · 0 yuborilgan</div></div>
   </section>
   <div class="layout">
     <aside class="sidebar">
@@ -268,7 +269,7 @@ function showUnifiedApplications(){
   if(!profile||!profile.id){
    incoming.appendChild(emptyState("Arizalarni shaxsiy profilga bog‘lash uchun avval profilingizni saqlang."));
    outgoing.appendChild(emptyState("Profil saqlangandan keyin yangi arizalaringiz shu yerda ko‘rinadi."));
-   return;
+   return {incoming:0,outgoing:0};
   }
   const email=normalize(profile.email);
   const sources=[
@@ -298,8 +299,9 @@ function showUnifiedApplications(){
   };
   render(incoming,incomingItems,"Hozircha profilingizga aniq bog‘langan kiruvchi ariza yo‘q.","incoming");
   render(outgoing,outgoingItems,"Hozircha profilingizga aniq bog‘langan yuborilgan ariza yo‘q.","outgoing");
+  return {incoming:incomingItems.length,outgoing:outgoingItems.length};
 }
-function renderDashboard(){const projects=showMyProjects();const offers=showMyInvestorOffers();showUnifiedApplications();const activities=showMyActivity();document.getElementById("projectCount").textContent=projects.length;document.getElementById("offerCount").textContent=offers.length;document.getElementById("activityCount").textContent=activities}
+function renderDashboard(){const projects=showMyProjects();const offers=showMyInvestorOffers();const applications=showUnifiedApplications();const activities=showMyActivity();document.getElementById("projectCount").textContent=projects.length;document.getElementById("offerCount").textContent=offers.length;document.getElementById("activityCount").textContent=activities;document.getElementById("applicationCount").textContent=applications.incoming+applications.outgoing;document.getElementById("applicationCountNote").textContent=applications.incoming+" kiruvchi · "+applications.outgoing+" yuborilgan"}
 function updateProfileProgress(){const values=[document.getElementById("fullName").value.trim(),document.getElementById("profileEmail").value.trim(),document.getElementById("profilePhone").value.trim(),Array.from(document.querySelectorAll('input[name="userRoles"]:checked')).length>0,document.getElementById("primaryGoal").value,document.getElementById("profileBio").value.trim(),document.getElementById("profileSkills").value.trim()];const percent=Math.round(values.filter(Boolean).length/values.length*100);document.getElementById("profileProgressText").textContent=percent+"%";document.getElementById("profileProgressFill").style.width=percent+"%";return percent}
 function loadProfile(){const profile=getProfile();if(profile){avatarData=typeof profile.avatarData==="string"?profile.avatarData:"";document.getElementById("fullName").value=profile.fullName||"";document.getElementById("profileEmail").value=profile.email||"";document.getElementById("profilePhone").value=profile.phone||"";document.getElementById("primaryGoal").value=profile.primaryGoal||"";document.getElementById("profileBio").value=profile.bio||"";document.getElementById("profileSkills").value=Array.isArray(profile.skills)?profile.skills.join(", "):(profile.skills||"");document.querySelectorAll('input[name="userRoles"]').forEach(input=>{input.checked=Array.isArray(profile.roles)&&profile.roles.includes(input.value)})}updateProfileProgress();renderAvatar()}
 ["fullName","profileEmail","profilePhone","primaryGoal","profileBio","profileSkills"].forEach(id=>document.getElementById(id).addEventListener("input",updateProfileProgress));document.getElementById("fullName").addEventListener("input",renderAvatar);document.querySelectorAll('input[name="userRoles"]').forEach(input=>input.addEventListener("change",updateProfileProgress));
