@@ -1,6 +1,6 @@
 # IDEA LAB — Ta’minotchini tekshirish jarayoni
 
-Versiya: 1.5 · Sana: 2026-11-20  
+Versiya: 1.6 · Sana: 2026-11-21  
 Holat: backend migration tayyorlandi; jonli Supabase loyihasiga qo‘llangani tasdiqlanmagan.
 
 ## 1. Maqsad
@@ -103,3 +103,30 @@ Migration tayinlash interfeysi yoki avtomatik taqsimlash algoritmini yaratmaydi.
 - [ ] Assignment berish/bekor qilish serverda audit bilan ishlaydi.
 - [ ] Reviewer faqat biriktirilgan arizalar va hujjatlarni ko‘radi.
 - [ ] Demo holati real tekshiruv sifatida ko‘rsatilmaydi.
+
+## 12. Administrator boshqaruv markazi — 2026-11-21
+Fayllar:
+- `supplier-verification-admin.html`
+- `supabase/functions/supplier-verification-admin/index.ts`
+- `supabase/migrations/20261121_supplier_verification_admin_control.sql`
+
+Administrator markazi reviewer vakolatini faollashtirish/faolsizlantirish, faol arizalarni ko‘rish, reviewer tayinlash, assignmentni bekor qilish va audit tarixini ko‘rish uchun yaratilgan.
+
+Xavfsizlik:
+1. Birinchi admin faqat ishonchli database owner sessiyasi orqali `supplier_verification_admins` allowlist'iga qo‘shiladi.
+2. Edge Function JWT'ni Supabase Auth orqali tekshiradi va har bir so‘rovda admin allowlist'ni qayta tekshiradi.
+3. SQL mutation funksiyalari service_role bilan cheklanadi va actor ID'ni admin allowlist bilan mustaqil tekshiradi.
+4. Reviewer faolsizlantirilganda uning barcha faol ariza biriktirishlari ham bekor qilinadi va auditga yoziladi. Qayta faollashtirish eski tayinlovlarni tiklamaydi.
+5. Hujjat download API'si ham endi reviewerning aynan shu arizaga faol biriktirilganini tekshiradi.
+6. Admin UI backend sozlanmagan bo‘lsa yopiq qoladi; service-role kaliti brauzerga kiritilmaydi.
+
+Holat: sahifa, Edge Function va migration repository'da tayyor. Birinchi admin bootstrap qilinmagan, migration qo‘llanmagan, Edge Function deploy qilinmagan. Real hujjatlar bilan ishlash yoqilmagan.
+
+## 13. Sinov va qabul mezonlari
+`tests/supplier-verification-admin-center.test.cjs` statik xavfsizlik kontraktlarini tekshiradi. Staging'da quyidagilar alohida tasdiqlanishi kerak:
+- [ ] Admin bo‘lmagan foydalanuvchi barcha boshqaruv amallaridan rad etiladi.
+- [ ] Reviewer faqat faol assignment bo‘lgan ariza va hujjatni ko‘ra oladi.
+- [ ] Reviewer faolsizlantirilganda barcha faol assignment'lar bekor bo‘ladi.
+- [ ] Assignment revoke keyingi o‘qish, signed URL va qarorlarni bloklaydi.
+- [ ] Har bir boshqaruv amali server audit tarixiga yoziladi.
+- [ ] Service-role kaliti hech qachon brauzerga chiqmaydi.
