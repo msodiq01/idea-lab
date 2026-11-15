@@ -102,10 +102,11 @@ begin
     raise exception 'Authenticated reviewer required' using errcode = '42501';
   end if;
 
-  if not exists (
-    select 1 from public.supplier_verification_reviewers r
-    where r.user_id = v_reviewer_id and r.is_active = true
-  ) then
+  perform 1
+  from public.supplier_verification_reviewers r
+  where r.user_id = v_reviewer_id and r.is_active = true
+  for share;
+  if not found then
     raise exception 'Reviewer permission required' using errcode = '42501';
   end if;
 
