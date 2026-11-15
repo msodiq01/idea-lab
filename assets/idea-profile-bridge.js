@@ -43,7 +43,9 @@
         authUserId,
         legacyEmailPresent: Boolean(profile && typeof profile.email === "string" && profile.email.trim()),
         authenticatedEmailPresent: Boolean(session.user.email),
-        ownershipVerifiedBy: "authenticated-session",
+        identityEvidence: "authenticated-session-only",
+        legacyOwnershipVerified: false,
+        requiresLegacyOwnershipProof: true,
         requiresExplicitConfirmation: true,
         rolesTransferred: false,
         profileDataTransferred: false

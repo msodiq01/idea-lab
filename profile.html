@@ -150,6 +150,11 @@ button{cursor:pointer}
           </div>
           <span class="auth-session-message" id="authSessionMessage" role="status" aria-live="polite"></span>
         </section>
+        <section class="auth-session" id="profileIdentityReview" aria-labelledby="profileIdentityReviewTitle">
+          <div class="auth-session-head"><h3 id="profileIdentityReviewTitle">Profil identifikatsiyasi tekshiruvi</h3><span class="pill">FAQAT KO‘RIB CHIQISH</span></div>
+          <p id="profileIdentityReviewStatus" role="status" aria-live="polite">Mahalliy profil va Auth sessiyasi holati tekshirilmoqda…</p>
+          <p class="auth-session-meta" id="profileIdentityReviewDetail">Bu tekshiruv hech qanday ma’lumotni bog‘lamaydi yoki o‘zgartirmaydi.</p>
+        </section>
         <form id="profileForm">
           <div class="avatar-editor">
             <div class="avatar-preview" id="avatarPreview" aria-label="Profil rasmi ko‘rinishi"><span id="avatarInitials">IL</span></div>
@@ -217,6 +222,7 @@ button{cursor:pointer}
 <footer class="footer"><div class="container footer-inner"><span>© 2026 IDEA LAB. Barcha huquqlar himoyalangan.</span><span>G‘oya — Jamoa — Harakat — Natija</span></div></footer>
 <script src="assets/idea-core.js"></script>
 <script src="assets/idea-auth.js"></script>
+<script src="assets/idea-profile-bridge.js"></script>
 <script>
 "use strict";
 const ideaCore = window.IDEALAB || null;
@@ -228,6 +234,31 @@ const authSessionMessage = document.getElementById("authSessionMessage");
 const refreshAuthSessionButton = document.getElementById("refreshAuthSession");
 const profileSignOutButton = document.getElementById("profileSignOut");
 let activeAuthSession = null;
+function renderProfileIdentityReview() {
+  const statusNode = document.getElementById("profileIdentityReviewStatus");
+  const detailNode = document.getElementById("profileIdentityReviewDetail");
+  if (!statusNode || !detailNode) return;
+  const bridge = window.IDEALAB_PROFILE_BRIDGE;
+  if (!bridge) {
+    statusNode.textContent = "Identifikatsiya tekshiruvi yuklanmadi.";
+    detailNode.textContent = "Hech qanday bog‘lash bajarilmadi.";
+    return;
+  }
+  const result = bridge.inspect({
+    readLegacyProfile: getProfile,
+    readSession: () => activeAuthSession
+  });
+  const labels = {
+    "no-legacy-profile": "Mahalliy profil topilmadi.",
+    "sign-in-required": "Tekshiruv uchun Auth akkauntiga kirish kerak.",
+    "ready-for-explicit-review": "Auth sessiyasi va mahalliy profil topildi; egalikni alohida tasdiqlash talab etiladi.",
+    "unavailable": "Tekshiruv hozircha bajarilmadi."
+  };
+  statusNode.textContent = labels[result.state] || "Tekshiruv holati noma’lum.";
+  detailNode.textContent = result.proposal
+    ? "Auth sessiyasi faqat akkauntga kirilganini tasdiqlaydi. Bu eski profil sizga tegishli ekanini isbotlamaydi. Avtomatik bog‘lash, ma’lumot ko‘chirish yoki rol berish amalga oshirilmaydi."
+    : "Bu tekshiruv hech qanday ma’lumotni bog‘lamaydi yoki o‘zgartirmaydi.";
+}
 function renderAuthSession(session) {
   activeAuthSession = session && session.user && session.user.id ? session : null;
   const active = Boolean(activeAuthSession);
@@ -241,6 +272,7 @@ function renderAuthSession(session) {
     ? "Email: " + (user.email || "ko‘rsatilmagan") + " · Akkaunt ID: " + String(user.id).slice(0, 8) + "…"
     : "Faol akkaunt aniqlanmadi.";
   profileSignOutButton.disabled = !configured || !active;
+  renderProfileIdentityReview();
 }
 async function refreshAuthSession(showMessage) {
   if (!authAdapter || !authAdapter.getStatus().configured) {
@@ -283,6 +315,7 @@ if (authAdapter && authAdapter.getStatus().configured) {
 const profileForm=document.getElementById("profileForm");
 function readData(key){try{const parsed=ideaCore&&ideaCore.legacy?ideaCore.legacy.read(key,[]):JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(parsed)?parsed:[]}catch(error){console.error("Ma’lumotni o‘qishda xatolik:",key,error);return[]}}
 function getProfile(){try{const value=ideaCore&&ideaCore.legacy?ideaCore.legacy.read("userProfile",null):JSON.parse(localStorage.getItem("userProfile")||"null");return value&&typeof value==="object"?value:null}catch(error){return null}}
+renderProfileIdentityReview();
 let avatarData="";
 const avatarInput=document.getElementById("avatarInput");
 const avatarPreview=document.getElementById("avatarPreview");
@@ -377,7 +410,7 @@ function renderDashboard(){const projects=showMyProjects();const offers=showMyIn
 function updateProfileProgress(){const values=[document.getElementById("fullName").value.trim(),document.getElementById("profileEmail").value.trim(),document.getElementById("profilePhone").value.trim(),Array.from(document.querySelectorAll('input[name="userRoles"]:checked')).length>0,document.getElementById("primaryGoal").value,document.getElementById("profileBio").value.trim(),document.getElementById("profileSkills").value.trim()];const percent=Math.round(values.filter(Boolean).length/values.length*100);document.getElementById("profileProgressText").textContent=percent+"%";document.getElementById("profileProgressFill").style.width=percent+"%";return percent}
 function loadProfile(){const profile=getProfile();if(profile){avatarData=typeof profile.avatarData==="string"?profile.avatarData:"";document.getElementById("fullName").value=profile.fullName||"";document.getElementById("profileEmail").value=profile.email||"";document.getElementById("profilePhone").value=profile.phone||"";document.getElementById("primaryGoal").value=profile.primaryGoal||"";document.getElementById("profileBio").value=profile.bio||"";document.getElementById("profileSkills").value=Array.isArray(profile.skills)?profile.skills.join(", "):(profile.skills||"");document.querySelectorAll('input[name="userRoles"]').forEach(input=>{input.checked=Array.isArray(profile.roles)&&profile.roles.includes(input.value)})}updateProfileProgress();renderAvatar()}
 ["fullName","profileEmail","profilePhone","primaryGoal","profileBio","profileSkills"].forEach(id=>document.getElementById(id).addEventListener("input",updateProfileProgress));document.getElementById("fullName").addEventListener("input",renderAvatar);document.querySelectorAll('input[name="userRoles"]').forEach(input=>input.addEventListener("change",updateProfileProgress));
-profileForm.addEventListener("submit",function(event){event.preventDefault();const roles=Array.from(document.querySelectorAll('input[name="userRoles"]:checked')).map(input=>input.value);const previousProfile=getProfile();const profile={id:previousProfile&&previousProfile.id?previousProfile.id:(ideaCore?ideaCore.createId():"profile-"+Date.now()),fullName:document.getElementById("fullName").value.trim(),email:document.getElementById("profileEmail").value.trim(),phone:document.getElementById("profilePhone").value.trim(),roles:roles,primaryGoal:document.getElementById("primaryGoal").value,bio:document.getElementById("profileBio").value.trim(),skills:document.getElementById("profileSkills").value.split(",").map(value=>value.trim()).filter(Boolean),avatarData:avatarData,updatedAt:new Date().toISOString()};if(!profile.fullName||!profile.email){document.getElementById("profileMessage").textContent="Ism va email manzilini to‘ldiring.";return}if(ideaCore&&!ideaCore.isValidEmail(profile.email)){document.getElementById("profileMessage").textContent="Email manzili formati noto‘g‘ri.";return}if(profile.phone&&ideaCore&&!ideaCore.isValidPhone(profile.phone)){document.getElementById("profileMessage").textContent="Telefon raqami formati noto‘g‘ri.";return}try{if(ideaCore&&ideaCore.legacy){const saved=ideaCore.legacy.write("userProfile",profile);if(!saved||!saved.ok)throw new Error("local profile save failed")}else{localStorage.setItem("userProfile",JSON.stringify(profile))}}catch(error){document.getElementById("profileMessage").textContent="Saqlashda xatolik. Brauzer xotirasini tekshiring.";return}if(ideaCore){ideaCore.emit(previousProfile?"profile:updated":"profile:created",{profileId:profile.id,roles:profile.roles,updatedAt:profile.updatedAt})}window.dispatchEvent(new Event("ideaLab:profile-updated"));document.getElementById("profileMessage").textContent="Profil muvaffaqiyatli saqlandi. Ma’lumotlar hozircha shu brauzerda saqlanadi.";updateProfileProgress();renderDashboard()});
+profileForm.addEventListener("submit",function(event){event.preventDefault();const roles=Array.from(document.querySelectorAll('input[name="userRoles"]:checked')).map(input=>input.value);const previousProfile=getProfile();const profile={id:previousProfile&&previousProfile.id?previousProfile.id:(ideaCore?ideaCore.createId():"profile-"+Date.now()),fullName:document.getElementById("fullName").value.trim(),email:document.getElementById("profileEmail").value.trim(),phone:document.getElementById("profilePhone").value.trim(),roles:roles,primaryGoal:document.getElementById("primaryGoal").value,bio:document.getElementById("profileBio").value.trim(),skills:document.getElementById("profileSkills").value.split(",").map(value=>value.trim()).filter(Boolean),avatarData:avatarData,updatedAt:new Date().toISOString()};if(!profile.fullName||!profile.email){document.getElementById("profileMessage").textContent="Ism va email manzilini to‘ldiring.";return}if(ideaCore&&!ideaCore.isValidEmail(profile.email)){document.getElementById("profileMessage").textContent="Email manzili formati noto‘g‘ri.";return}if(profile.phone&&ideaCore&&!ideaCore.isValidPhone(profile.phone)){document.getElementById("profileMessage").textContent="Telefon raqami formati noto‘g‘ri.";return}try{if(ideaCore&&ideaCore.legacy){const saved=ideaCore.legacy.write("userProfile",profile);if(!saved||!saved.ok)throw new Error("local profile save failed")}else{localStorage.setItem("userProfile",JSON.stringify(profile))}}catch(error){document.getElementById("profileMessage").textContent="Saqlashda xatolik. Brauzer xotirasini tekshiring.";return}if(ideaCore){ideaCore.emit(previousProfile?"profile:updated":"profile:created",{profileId:profile.id,roles:profile.roles,updatedAt:profile.updatedAt})}window.dispatchEvent(new Event("ideaLab:profile-updated"));document.getElementById("profileMessage").textContent="Profil muvaffaqiyatli saqlandi. Ma’lumotlar hozircha shu brauzerda saqlanadi.";updateProfileProgress();renderProfileIdentityReview();renderDashboard()});
 window.addEventListener("storage",function(event){if(["userProfile","projects","investmentApplications","jobApplications","teamApplications","resourceOrders"].includes(event.key))renderDashboard()});
 loadProfile();renderDashboard();
 </script>
