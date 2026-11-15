@@ -421,7 +421,7 @@ button, input, textarea {
     font-size: 12px;
 }
 
-@media (max-width: 850px) {
+.investment-passport{background:linear-gradient(145deg,rgba(37,99,235,.13),rgba(16,26,48,.98));border:1px solid rgba(67,136,255,.28)}.passport-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.passport-stat{padding:15px;background:rgba(20,33,61,.8);border:1px solid var(--border);border-radius:12px;min-width:0}.passport-stat span{display:block;color:var(--muted);font-size:11px;line-height:1.5}.passport-stat strong{display:block;margin-top:8px;font-size:clamp(16px,2vw,21px);overflow-wrap:anywhere}.passport-progress{height:9px;margin-top:10px;background:#091326;border-radius:20px;overflow:hidden}.passport-progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:20px;transition:width .25s}.passport-caption{font-size:11px;color:var(--muted);line-height:1.7;margin-top:12px}.equity-preview{padding:13px 14px;margin:0 0 18px;border-radius:11px;border:1px solid rgba(40,217,208,.2);background:rgba(40,217,208,.06);color:#a5d9dc;font-size:12px;line-height:1.7}.equity-preview strong{color:#fff;font-size:18px}@media(max-width:550px){.passport-grid{grid-template-columns:1fr 1fr}.passport-stat{padding:12px}}\n@media (max-width: 850px) {
     .layout {
         grid-template-columns: 1fr;
     }
@@ -530,7 +530,23 @@ button, input, textarea {
                     </div>
                 </section>
 
-                <section class="panel">
+                <section class="panel investment-passport" id="investmentPassport" aria-labelledby="passportTitle">
+ <div class="panel-heading"><h2 id="passportTitle">Loyiha investitsiya pasporti</h2><span>Capital overview</span></div>
+ <p class="form-intro">Loyiha egasi kiritgan baholash va investitsiya maqsadi hamda shu loyihaga kelgan takliflar bo‘yicha umumiy ma’lumot.</p>
+ <div class="passport-grid">
+  <div class="passport-stat"><span>Loyihaning umumiy qiymati</span><strong id="passportValuation">Ko‘rsatilmagan</strong></div>
+  <div class="passport-stat"><span>Jalb qilinishi rejalashtirilgan mablag‘</span><strong id="passportTarget">Ko‘rsatilmagan</strong></div>
+  <div class="passport-stat"><span>Kelgan investitsiya takliflari</span><strong id="passportRequested">0 UZS</strong></div>
+  <div class="passport-stat"><span>Qabul qilingan takliflar summasi</span><strong id="passportAccepted">0 UZS</strong></div>
+  <div class="passport-stat"><span>Ko‘rib chiqilayotgan takliflar</span><strong id="passportReview">0 UZS</strong></div>
+  <div class="passport-stat"><span>Takliflar soni</span><strong id="passportCount">0</strong></div>
+ </div>
+ <div class="passport-progress" role="progressbar" aria-label="Jalb qilish maqsadiga nisbatan qabul qilingan takliflar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="passportProgressBar"><span id="passportProgressFill"></span></div>
+ <p class="passport-caption" id="passportProgressText">Mablag‘ jalb qilish maqsadi hali belgilanmagan.</p>
+ <p class="passport-caption">Eslatma: qabul qilingan takliflar summasi real pul tushumi degani emas. Bu ma’lumotlar hozircha shu brauzerdagi lokal demo yozuvlardan olinadi.</p>
+</section>
+
+<section class="panel">
                     <div class="panel-heading">
                         <h2>Investitsiya taklifi</h2>
                         <span>03 / Investment</span>
@@ -542,6 +558,7 @@ button, input, textarea {
                     </p>
 
                     <form id="investmentForm">
+<div class="equity-preview" id="equityPreview" aria-live="polite">Taklif summasini kiritsangiz, loyiha bahosidan kelib chiqib taxminiy investor ulushi hisoblanadi.</div>
 
                         <div class="form-group">
                             <label for="investorName">
@@ -683,6 +700,8 @@ button, input, textarea {
 </footer>
 
 <script src="assets/idea-core.js"></script>
+<script src="assets/idea-investment-calculator.js"></script>
+<script src="assets/idea-project-finance.js"></script>
 <script>
 "use strict";
 
@@ -787,6 +806,40 @@ function addDetail(title, value) {
     projectDetails.appendChild(item);
 }
 
+function renderInvestmentPassport(){
+ if(!project)return;
+ const applications=readData("investmentApplications").filter(item=>item&&String(item.projectId)===String(project.id));
+ const summary=window.IDEALABProjectFinance?window.IDEALABProjectFinance.summarize(project,applications):{applicationCount:applications.length,requestedAmount:0,acceptedOfferAmount:0,reviewOfferAmount:0};
+ const valuation=Number(project.projectValuation||project.valuation||0);
+ const target=Number(project.fundingTarget||project.investment||project.amount||0);
+ document.getElementById("passportValuation").textContent=valuation>0?formatMoney(valuation):"Ko‘rsatilmagan";
+ document.getElementById("passportTarget").textContent=target>0?formatMoney(target):"Ko‘rsatilmagan";
+ document.getElementById("passportRequested").textContent=formatMoney(summary.requestedAmount);
+ document.getElementById("passportAccepted").textContent=formatMoney(summary.acceptedOfferAmount);
+ document.getElementById("passportReview").textContent=formatMoney(summary.reviewOfferAmount);
+ document.getElementById("passportCount").textContent=String(summary.applicationCount);
+ const percent=target>0?Math.min(100,summary.acceptedOfferAmount/target*100):0;
+ document.getElementById("passportProgressFill").style.width=percent+"%";
+ document.getElementById("passportProgressBar").setAttribute("aria-valuenow",String(Math.round(percent)));
+ document.getElementById("passportProgressText").textContent=target>0
+  ?"Qabul qilingan takliflar rejalashtirilgan maqsadning "+percent.toLocaleString("uz-UZ",{maximumFractionDigits:1})+"% ini tashkil etadi. Bu pul tushumi tasdig‘i emas."
+  :"Mablag‘ jalb qilish maqsadi hali belgilanmagan.";
+}
+function renderEquityPreview(){
+ const box=document.getElementById("equityPreview");
+ const amount=Number(document.getElementById("offerAmount").value);
+ const valuation=Number(project&&(project.projectValuation||project.valuation)||0);
+ if(!project||!Number.isSafeInteger(amount)||amount<=0){box.textContent="Taklif summasini kiritsangiz, loyiha bahosidan kelib chiqib taxminiy investor ulushi hisoblanadi.";return}
+ if(!Number.isSafeInteger(valuation)||valuation<=0){box.textContent="Loyiha qiymati hali kiritilmagan. Ulush foizini hisoblash uchun loyiha egasi moliya markazida baholashni saqlashi kerak.";return}
+ try{
+  const result=window.IDEALABInvestmentCalculator.calculate({valuation,investment:amount,basis:project.valuationBasis==="post-money"?"post-money":"pre-money"});
+  box.textContent="";
+  const label=document.createElement("span");label.textContent="Taxminiy investor ulushi: ";
+  const strong=document.createElement("strong");strong.textContent=new Intl.NumberFormat("uz-UZ",{minimumFractionDigits:2,maximumFractionDigits:2}).format(result.equityPercent)+"%";
+  const details=document.createElement("span");details.textContent=" · Investitsiyadan keyingi hisobiy baho: "+formatMoney(result.postMoneyValue)+". Bu dastlabki hisob, rasmiy ulush taklifi yoki aksiya ajratilishi emas.";
+  box.append(label,strong,details);
+ }catch(error){box.textContent=error.message}
+}
 function showMessage(message, type) {
     formMessage.textContent = message;
     formMessage.className = "form-message " + type;
@@ -848,7 +901,9 @@ function showProject() {
         getValue(project.direction, "—");
 
     document.getElementById("statInvestment").textContent =
-        formatMoney(project.investment);
+        formatMoney(project.fundingTarget || project.investment || project.amount);
+
+    renderInvestmentPassport();
 
     ownerName.textContent = getValue(project.ownerName);
 
@@ -883,6 +938,8 @@ function showProject() {
 // ========================================
 // 6. INVESTITSIYA ARIZASINI YUBORISH
 // ========================================
+
+document.getElementById("offerAmount").addEventListener("input", renderEquityPreview);
 
 investmentForm.addEventListener("submit", function(event) {
 
@@ -1005,6 +1062,7 @@ investmentForm.addEventListener("submit", function(event) {
 // ========================================
 
 showProject();
+if(project){renderInvestmentPassport();renderEquityPreview();}
 
 </script>
 
