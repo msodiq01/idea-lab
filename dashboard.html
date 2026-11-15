@@ -20,6 +20,7 @@
 .d-device{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--d-line)}.d-device:last-child{border:0}.d-device strong{font-size:12px;display:block}.d-device small{color:var(--d-muted);font-size:10px}.d-state{font-size:10px;color:#f2c36b;background:rgba(242,195,107,.1);padding:6px 9px;border-radius:30px;white-space:nowrap}
 .d-modules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.d-module{border:1px solid var(--d-line);border-radius:13px;padding:15px;background:rgba(16,34,57,.65)}.d-module b{font-size:12px;display:block;margin-bottom:5px}.d-module span{font-size:10px;color:var(--d-muted);line-height:1.5}
 .d-footnote{color:#8399b3;font-size:10px;line-height:1.6;margin-top:12px}
+.welcome-panel{display:flex;align-items:center;justify-content:space-between;gap:22px;padding:22px 24px;border:1px solid var(--d-line);border-radius:18px;background:linear-gradient(115deg,rgba(57,133,255,.10),rgba(39,215,232,.07)),#0c1b2d;margin:0 0 22px}.welcome-copy{min-width:0}.welcome-kicker{font-size:10px;letter-spacing:1.5px;font-weight:800;color:var(--d-cyan)}.welcome-panel h2{font-size:22px;margin:6px 0}.welcome-panel p{color:var(--d-muted);font-size:12px;margin:0;line-height:1.65}.welcome-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.welcome-tag{padding:5px 9px;border-radius:30px;border:1px solid var(--d-line);color:#c6d5e8;font-size:10px}.welcome-cta{flex:none;display:inline-flex;align-items:center;justify-content:center;padding:11px 15px;border-radius:10px;background:linear-gradient(120deg,var(--d-blue),var(--d-cyan));color:#061321;text-decoration:none;font-size:11px;font-weight:800;white-space:nowrap}@media(max-width:620px){.welcome-panel{align-items:flex-start;flex-direction:column;padding:18px}.welcome-cta{width:100%}}
 @media(max-width:850px){.d-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.d-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.d-lower{grid-template-columns:1fr}}
 @media(max-width:560px){.d-wrap{width:calc(100% - 24px);margin-top:25px}.d-heading{display:block}.d-date{display:block;margin-top:12px}.d-modules{grid-template-columns:repeat(2,minmax(0,1fr))}.d-card{padding:15px}.d-stat-value{font-size:27px}}
 </style>
@@ -29,6 +30,10 @@
 <section class="d-heading">
 <div><div class="d-kicker">IDEA LAB / BOSHQARUV MARKAZI</div><h1>Dashboard</h1><p>G‘oyalar, loyihalar, jamoalar, resurslar va hamkorlik jarayonlarini yagona joydan boshqaring.</p></div>
 <div class="d-date" id="todayLabel">Bugungi sana</div>
+</section>
+<section class="welcome-panel" id="personalWelcome" aria-label="Shaxsiy tavsiyalar">
+<div class="welcome-copy"><div class="welcome-kicker">SIZNING IDEA LAB MAYDONINGIZ</div><h2 id="welcomeTitle">Xush kelibsiz!</h2><p id="welcomeDescription">Asosiy maqsadingizni tanlang — platforma sizga mos bo‘limni ko‘rsatadi.</p><div class="welcome-tags" id="welcomeRoles"></div></div>
+<a class="welcome-cta" id="welcomeAction" href="profile.html">Profilni sozlash →</a>
 </section>
 <section class="d-grid" aria-label="Asosiy ko‘rsatkichlar">
 <article class="d-card"><span class="d-stat-icon">◈</span><div class="d-stat-label">Mening loyihalarim</div><div class="d-stat-value" id="projectCount">0</div><div class="d-stat-foot">Ushbu brauzerda saqlangan loyihalar</div></article>
@@ -100,6 +105,35 @@ if (ideaCore) {
  coreNotice.textContent = "Markaziy yadro yuklanmadi. Sahifani yangilang yoki assets/idea-core.js faylini tekshiring.";
 }
 const read=(key)=>{try{const value=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(value)?value:[]}catch(_){return[]}};
+const profile=(()=>{try{const value=JSON.parse(localStorage.getItem("userProfile")||"null");return value&&typeof value==="object"?value:null}catch(_){return null}})();
+const welcomeTitle=document.getElementById("welcomeTitle");
+const welcomeDescription=document.getElementById("welcomeDescription");
+const welcomeAction=document.getElementById("welcomeAction");
+const welcomeRoles=document.getElementById("welcomeRoles");
+const goalRoutes=[
+ {match:"G‘oyamni loyiha qilish",href:"projects.html",label:"G‘oya va loyihalar bo‘limiga o‘tish"},
+ {match:"Loyihamga jamoa topish",href:"teams.html",label:"Jamoalar bo‘limiga o‘tish"},
+ {match:"Ish yoki amaliyot topish",href:"teams.html#career-section",label:"Ish imkoniyatlarini ko‘rish"},
+ {match:"Mutaxassis sifatida xizmat ko‘rsatish",href:"specialists.html",label:"Mutaxassislar bo‘limiga o‘tish"},
+ {match:"Mahsulot yoki xizmat sotish",href:"marketplace.html",label:"Global bozorga o‘tish"},
+ {match:"Kerakli mahsulot yoki xizmatni topish",href:"marketplace.html",label:"Global bozorni ko‘rish"},
+ {match:"Investitsiya yoki hamkor topish",href:"investors.html",label:"Investorlar bo‘limiga o‘tish"},
+ {match:"Ko‘ngillilik va ijtimoiy loyihalarda qatnashish",href:"teams.html",label:"Jamoalar va loyihalarni ko‘rish"},
+ {match:"Tashkilotimni rivojlantirish",href:"organizations.html",label:"Tashkilotlar markaziga o‘tish"}
+];
+if(profile){
+ welcomeTitle.textContent="Xush kelibsiz, "+String(profile.fullName||"foydalanuvchi")+"!";
+ const goal=String(profile.primaryGoal||"");
+ const route=goalRoutes.find(item=>item.match===goal);
+ welcomeDescription.textContent=goal?"Asosiy maqsadingiz: "+goal+". Sizga mos ishni quyidagi bo‘limdan davom ettiring.":"Profilingizda asosiy maqsad belgilanmagan. Maqsadni tanlang — keyingi qadamlaringizni shu asosda yo‘naltiramiz.";
+ if(route){welcomeAction.href=route.href;welcomeAction.textContent=route.label+" →"}else{welcomeAction.href="profile.html";welcomeAction.textContent="Maqsadni tanlash →"}
+ (Array.isArray(profile.roles)?profile.roles:[]).slice(0,5).forEach(role=>{const tag=document.createElement("span");tag.className="welcome-tag";tag.textContent=String(role);welcomeRoles.appendChild(tag)});
+ if(!welcomeRoles.childElementCount){const tag=document.createElement("span");tag.className="welcome-tag";tag.textContent="Faoliyat rollari hali tanlanmagan";welcomeRoles.appendChild(tag)}
+}else{
+ welcomeTitle.textContent="IDEA LAB’ga xush kelibsiz!";
+ welcomeDescription.textContent="Shaxsiy profilingizni yarating, rollaringizni va asosiy maqsadingizni tanlang. Shundan keyin kabinet sizga mos yo‘nalishni ko‘rsatadi.";
+ welcomeAction.href="profile.html";welcomeAction.textContent="Profil yaratish →";
+}
 const projects=read("projects");
 const investment=read("investmentApplications");
 const jobs=read("jobApplications");
