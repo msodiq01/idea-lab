@@ -15,7 +15,7 @@ function json(body: unknown, status = 200, origin?: string) {
   if (origin) {
     headers.set("access-control-allow-origin", origin);
     headers.set("access-control-allow-methods", "POST, OPTIONS");
-    headers.set("access-control-allow-headers", "authorization, content-type");
+    headers.set("access-control-allow-headers", "authorization, apikey, content-type, x-client-info");
   }
   return new Response(JSON.stringify(body), { status, headers });
 }
