@@ -109,13 +109,13 @@ begin
     raise exception 'Reviewer permission required' using errcode = '42501';
   end if;
 
-  if not exists (
-    select 1
-    from public.supplier_verification_review_assignments a
-    where a.application_id = p_application_id
-      and a.reviewer_user_id = v_reviewer_id
-      and a.is_active = true
-  ) then
+  perform 1
+  from public.supplier_verification_review_assignments a
+  where a.application_id = p_application_id
+    and a.reviewer_user_id = v_reviewer_id
+    and a.is_active = true
+  for update;
+  if not found then
     raise exception 'Active case assignment required' using errcode = '42501';
   end if;
 
