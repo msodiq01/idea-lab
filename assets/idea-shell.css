@@ -1,11 +1,19 @@
-:root{--il-bg:#07111f;--il-panel:#0d1b2d;--il-line:rgba(148,183,220,.16);--il-text:#f1f6ff;--il-muted:#91a5bd;--il-cyan:#27d7e8;--il-blue:#3985ff}
-#il-global{font-family:Inter,Arial,sans-serif;background:linear-gradient(110deg,#0c1c31,#091525);color:var(--il-text);border-bottom:1px solid var(--il-line);position:relative;z-index:999;padding:12px max(18px,calc((100% - 1200px)/2));box-shadow:0 8px 28px #0002}
+/* IDEA LAB — yagona vizual standart */
+:root{
+ --il-bg:#07111f;--il-panel:#0d1b2d;--il-card:#102239;--il-line:rgba(148,183,220,.16);
+ --il-text:#f1f6ff;--il-muted:#91a5bd;--il-cyan:#27d7e8;--il-blue:#3985ff;
+ --il-radius:16px;--il-shadow:0 14px 40px rgba(0,0,0,.18)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0!important;background:var(--il-bg)!important;color:var(--il-text)!important;font-family:Inter,Arial,sans-serif!important;line-height:1.6}
+body>#il-global{font-family:Inter,Arial,sans-serif;background:linear-gradient(110deg,#0c1c31,#091525);color:var(--il-text);border-bottom:1px solid var(--il-line);position:relative;z-index:999;padding:12px max(18px,calc((100% - 1200px)/2));box-shadow:0 8px 28px #0002}
 #il-global *{box-sizing:border-box}
 .il-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .il-brand{font-weight:900;letter-spacing:-.5px;font-size:19px;text-decoration:none;color:white}
 .il-brand b{color:var(--il-cyan)}
 .il-links{display:flex;gap:7px;flex-wrap:wrap}
-.il-links a{color:#b9c9dc;text-decoration:none;font-size:12px;padding:8px 10px;border-radius:9px;border:1px solid transparent}
+.il-links a{color:#b9c9dc;text-decoration:none;font-size:12px;padding:8px 10px;border-radius:9px;border:1px solid transparent;white-space:nowrap}
 .il-links a:hover,.il-links a[aria-current=page]{background:#172b43;border-color:var(--il-line);color:white}
 .il-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:12px}
 .il-metric{background:#102239;border:1px solid var(--il-line);border-radius:12px;padding:10px 12px;min-width:0}
@@ -15,4 +23,34 @@
 .il-status{display:inline-flex;align-items:center;gap:6px;color:#b8c9db;font-size:11px}
 .il-dot{width:7px;height:7px;border-radius:50%;background:#f3b95f;display:inline-block}
 .il-note{font-size:10px;color:#8399b3;margin-top:7px}
-@media(max-width:650px){#il-global{padding:10px 12px}.il-top{align-items:flex-start}.il-links{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:3px}.il-links a{white-space:nowrap}.il-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.il-metric strong{font-size:15px}}
+/* Yagona umumiy sahifa maydoni va tipografiya */
+main{color:var(--il-text)}
+h1,h2,h3,h4{color:var(--il-text)}
+p,small,label{overflow-wrap:anywhere}
+a{transition:color .18s ease,border-color .18s ease,background .18s ease}
+button,.btn,[type=submit]{font:inherit;cursor:pointer}
+input,select,textarea{font:inherit;max-width:100%}
+input:not([type=checkbox]):not([type=radio]),select,textarea{
+ background:#091729!important;color:var(--il-text)!important;border:1px solid #29415f!important;border-radius:10px!important
+}
+input::placeholder,textarea::placeholder{color:#8298b2!important}
+.card,.project-card,.offer-card,.application-card,.stat-card,.d-card,.d-panel,.d-module,.search-panel,.profile,.panel,.match,.empty{
+ background:linear-gradient(145deg,rgba(16,34,57,.98),rgba(11,27,45,.98))!important;
+ color:var(--il-text)!important;border:1px solid var(--il-line)!important;border-radius:var(--il-radius)!important;box-shadow:var(--il-shadow)
+}
+.card p,.project-card p,.offer-card p,.application-card p,.profile p,.muted{color:var(--il-muted)}
+button,.btn,[type=submit]{
+ background:linear-gradient(110deg,#087eaf,#2463eb)!important;color:#fff!important;border:1px solid rgba(65,180,230,.28)!important;
+ border-radius:10px!important;padding:10px 15px!important
+}
+button:hover,.btn:hover,[type=submit]:hover{filter:brightness(1.12)}
+.hero{background:radial-gradient(ellipse at 80% 0%,rgba(39,215,232,.13),transparent 45%),linear-gradient(120deg,#0d1b2d,#102b49)!important;color:var(--il-text)!important}
+.hero p{color:#c0d0e3!important}
+footer{background:#091525!important;color:var(--il-muted)!important;border-top:1px solid var(--il-line)}
+@media(max-width:650px){
+ body>#il-global{padding:10px 12px}
+ .il-top{align-items:flex-start}
+ .il-links{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:3px}
+ .il-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .il-metric strong{font-size:15px}
+}
