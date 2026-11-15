@@ -67,3 +67,10 @@ Deploy qilishdan oldin migration'larni tartib bilan staging'da qo‘llang, `SUPA
 Birinchi administratorni faqat ishonchli database owner sessiyasi orqali allowlist'ga kiriting. Reviewer vakolatini boshqarish, arizalar ro‘yxati, assignment berish/bekor qilish va tarix Edge Function orqali bajariladi. Reviewer deaktivatsiyasi barcha faol assignment'larni ham bekor qiladi. Hujjat download endpoint'i ham case assignment talab qiladi.
 
 Deploy va sozlash bo‘yicha batafsil ko‘rsatma `functions/supplier-verification-admin/README.md` ichida. Migration va function hali deploy qilinmagan; admin UI backend konfiguratsiyasi bo‘lmaganda yopiq turadi.
+
+## Staging tayyorgarligi va qabul sinovlari
+
+- [Staging deployment runbook](verification/supplier-verification-staging-runbook.md) — migration tartibi, secret chegaralari, birinchi admin bootstrap, testlar va rollback.
+- [Staging preflight SQL](verification/supplier-verification-staging-preflight.sql) — migrationlardan keyingi read-only metadata tekshiruvlari.
+
+Bu hujjatlar deploy bajarmaydi. Staging loyihasi tanlanmagan, migrationlar qo'llanmagan va Edge Function'lar deploy qilinmagan. Avval alohida staging loyihasida qabul sinovlari o'tishi shart.
