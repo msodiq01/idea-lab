@@ -19,12 +19,14 @@ select n.nspname as schema_name, p.proname as function_name,
        has_function_privilege('authenticated', p.oid, 'EXECUTE') as authenticated_can_execute
 from pg_proc p
 join pg_namespace n on n.oid = p.pronamespace
-where n.nspname = 'idea_app'
+where n.nspname = 'idea_private'
   and p.proname in ('is_project_owner', 'has_active_project_role', 'is_organization_owner')
 order by p.proname;
 
-select has_schema_privilege('anon', 'idea_app', 'USAGE') as anon_schema_usage,
-       has_schema_privilege('authenticated', 'idea_app', 'USAGE') as authenticated_schema_usage,
+select has_schema_privilege('anon', 'idea_app', 'USAGE') as anon_app_schema_usage,
+       has_schema_privilege('authenticated', 'idea_app', 'USAGE') as authenticated_app_schema_usage,
+       has_schema_privilege('anon', 'idea_private', 'USAGE') as anon_private_schema_usage,
+       has_schema_privilege('authenticated', 'idea_private', 'USAGE') as authenticated_private_schema_usage,
        has_table_privilege('anon', 'idea_app.projects', 'SELECT') as anon_projects_select,
        has_table_privilege('authenticated', 'idea_app.projects', 'SELECT') as authenticated_projects_select,
        has_table_privilege('authenticated', 'idea_app.projects', 'INSERT') as authenticated_projects_insert;
