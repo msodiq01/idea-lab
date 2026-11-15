@@ -275,10 +275,6 @@ on idea_app.projects for select to anon, authenticated
 using (
   visibility = 'public'
   and status in ('recruiting', 'active', 'completed')
-  and exists (
-    select 1 from idea_app.project_listings l
-    where l.project_id = id and l.listing_status = 'published'
-  )
 );
 
 create policy project_updates_public_listing_read
@@ -290,7 +286,7 @@ using (
     select 1
     from idea_app.project_listings l
     join idea_app.projects p on p.id = l.project_id
-    where l.project_id = project_id
+    where l.project_id = u.project_id
       and l.listing_status = 'published'
       and p.visibility = 'public'
       and p.status in ('recruiting', 'active', 'completed')
