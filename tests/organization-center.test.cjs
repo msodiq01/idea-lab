@@ -11,7 +11,7 @@ const shell = fs.readFileSync(path.join(root, "assets", "idea-shell.js"), "utf8"
 const dashboard = fs.readFileSync(path.join(root, "dashboard.html"), "utf8");
 
 function inlineScripts(source) {
-  return Array.from(source.matchAll(/<script>([\\s\\S]*?)<\\/script>/g), match => match[1]);
+  return Array.from(source.matchAll(/<script>([\s\S]*?)<\/script>/g), match => match[1]);
 }
 
 test("1. Organization Center sahifasi mavjud va offline demo holatini bildiradi", () => {
@@ -27,8 +27,8 @@ test("2. Tashkilot formasi asosiy maydonlarni taqdim etadi", () => {
 });
 
 test("3. Tashkilotlar markaziy namespaced store orqali saqlanadi", () => {
-  assert.match(page, /core\\.store\\.get\\(STORAGE_KEY/);
-  assert.match(page, /core\\.store\\.set\\(STORAGE_KEY/);
+  assert.match(page, /core\.store\.get\(STORAGE_KEY/);
+  assert.match(page, /core\.store\.set\(STORAGE_KEY/);
   assert.match(page, /const STORAGE_KEY="organizations"/);
 });
 
@@ -40,14 +40,14 @@ test("4. A'zolar uchun email, telefon yoki parol yig'ilmaydi", () => {
 });
 
 test("5. A'zoni o'chirish o'rniga nofaol holatga o'tkazish qo'llanadi", () => {
-  assert.match(page, /m\\.status="removed"/);
+  assert.match(page, /m\.status="removed"/);
   assert.match(page, /Faol emas/);
 });
 
 test("6. Loyihalar ID orqali bog'lanadi va asl loyiha yozuvi o'zgartirilmaydi", () => {
   assert.match(page, /projectIds/);
   assert.match(page, /Asl loyiha yozuvi o‘zgarmadi/);
-  assert.match(page, /core\\.legacy\\.read\\("projects"/);
+  assert.match(page, /core\.legacy\.read\("projects"/);
 });
 
 test("7. Tashkilot website havolasi faqat HTTP(S) protokollarini qabul qiladi", () => {
@@ -56,8 +56,8 @@ test("7. Tashkilot website havolasi faqat HTTP(S) protokollarini qabul qiladi", 
 });
 
 test("8. Global navigatsiya va dashboard Organization Centerga olib boradi", () => {
-  assert.match(shell, /\["Tashkilotlar","organizations\\.html"\]/);
-  assert.match(dashboard, /href="organizations\\.html"/);
+  assert.match(shell, /\["Tashkilotlar","organizations\.html"\]/);
+  assert.match(dashboard, /href="organizations\.html"/);
 });
 
 test("9. Inline JavaScript sintaksisi xatosiz", () => {
@@ -68,6 +68,6 @@ test("9. Inline JavaScript sintaksisi xatosiz", () => {
 });
 
 test("10. Muhim UI element IDlari takrorlanmaydi", () => {
-  const ids = Array.from(page.matchAll(/\\bid="([^"]+)"/g), match => match[1]);
+  const ids = Array.from(page.matchAll(/\bid="([^"]+)"/g), match => match[1]);
   assert.equal(ids.length, new Set(ids).size);
 });
