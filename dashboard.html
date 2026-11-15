@@ -37,6 +37,17 @@
 <article class="d-card"><span class="d-stat-icon">⌁</span><div class="d-stat-label">IoT qurilmalar</div><div class="d-stat-value">0</div><div class="d-stat-foot">Hozircha qurilmalar ulanmagan</div></article>
 <article class="d-card"><span class="d-stat-icon">⇄</span><div class="d-stat-label">Talab va takliflar</div><div class="d-stat-value" id="exchangeCount">0</div><div class="d-stat-foot">Mahalliy e’lonlar</div></article>
 </section>
+<section class="d-section" id="coreStatusPanel" aria-label="Platforma tizim holati">
+<div class="d-section-head"><div><h2>Platforma holati</h2><p>Markaziy yadro va brauzer muhiti holati.</p></div></div>
+<div class="d-grid" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))">
+<article class="d-card"><div class="d-stat-label">Markaziy yadro</div><div class="d-stat-value" style="font-size:19px" id="coreVersion">Tekshirilmoqda</div><div class="d-stat-foot">IDEA LAB frontend yadrosi</div></article>
+<article class="d-card"><div class="d-stat-label">Server aloqasi</div><div class="d-stat-value" style="font-size:19px" id="backendStatus">Tekshirilmoqda</div><div class="d-stat-foot">Haqiqiy backend holati</div></article>
+<article class="d-card"><div class="d-stat-label">Mahalliy xotira</div><div class="d-stat-value" style="font-size:19px" id="storageStatus">Tekshirilmoqda</div><div class="d-stat-foot">Ushbu brauzer xotirasi</div></article>
+<article class="d-card"><div class="d-stat-label">Kirish holati</div><div class="d-stat-value" style="font-size:19px" id="authStatus">Tekshirilmoqda</div><div class="d-stat-foot">Hisob autentifikatsiyasi</div></article>
+</div>
+<p class="d-footnote" id="coreNotice">Holat aniqlanmoqda.</p>
+</section>
+
 <section class="d-section">
 <div class="d-section-head"><div><h2>Tezkor amallar</h2><p>Kerakli bo‘limga bir qadamda o‘ting.</p></div></div>
 <div class="d-actions">
@@ -68,6 +79,25 @@
 <script src="assets/idea-core.js"></script>
 <script>
 (function(){
+const ideaCore = window.IDEALAB || null;
+const coreNotice = document.getElementById("coreNotice");
+if (ideaCore) {
+ document.getElementById("coreVersion").textContent = "v" + ideaCore.version;
+ document.getElementById("backendStatus").textContent = ideaCore.environment.backend === "offline-demo" ? "Ulanmagan" : "Ulangan";
+ document.getElementById("storageStatus").textContent = ideaCore.storageAvailable() ? "Mavjud" : "Mavjud emas";
+ document.getElementById("authStatus").textContent = ideaCore.environment.authenticated ? "Faol" : "Faol emas";
+ coreNotice.textContent = "Dashboard markaziy yadro bilan ishlayapti. Hozirgi rejim offline-demo; foydalanuvchilararo sinxronlash va server aloqasi hali ulanmagan.";
+ ideaCore.emit("dashboard:opened", { openedAt: new Date().toISOString() });
+ ideaCore.subscribe(ideaCore.events.error, (event) => {
+   coreNotice.textContent = "Tizim ogohlantirishi: " + String(event.message || "Noma’lum xato");
+ });
+} else {
+ document.getElementById("coreVersion").textContent = "Yadro topilmadi";
+ document.getElementById("backendStatus").textContent = "Noma’lum";
+ document.getElementById("storageStatus").textContent = "Noma’lum";
+ document.getElementById("authStatus").textContent = "Faol emas";
+ coreNotice.textContent = "Markaziy yadro yuklanmadi. Sahifani yangilang yoki assets/idea-core.js faylini tekshiring.";
+}
 const read=(key)=>{try{const value=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(value)?value:[]}catch(_){return[]}};
 const projects=read("projects");
 const investment=read("investmentApplications");
