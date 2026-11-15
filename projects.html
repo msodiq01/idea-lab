@@ -701,22 +701,15 @@ const totalInvestment = document.getElementById("totalInvestment");
 
 function readProjects() {
     try {
-        const savedProjects = localStorage.getItem("projects");
+        const parsedProjects = window.IDEALAB && window.IDEALAB.legacy
+            ? window.IDEALAB.legacy.read("projects", [])
+            : JSON.parse(localStorage.getItem("projects") || "[]");
 
-        if (!savedProjects) {
-            return [];
-        }
-
-        const parsedProjects = JSON.parse(savedProjects);
-
-        if (!Array.isArray(parsedProjects)) {
-            return [];
-        }
+        if (!Array.isArray(parsedProjects)) return [];
 
         return parsedProjects.filter(function(project) {
             return project && typeof project === "object";
         });
-
     } catch (error) {
         console.error("Loyihalarni o‘qishda xatolik:", error);
         return [];
