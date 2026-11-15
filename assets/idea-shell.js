@@ -1,113 +1,27 @@
-/* IDEA LAB — unified responsive and accessible product navigation */
+/* IDEA LAB — compact, grouped platform navigation */
 (()=>{
  "use strict";
  if(document.getElementById("il-global")) return;
-
- const primary=[
-  ["Bosh sahifa","index.html"],
-  ["G‘oyalar","projects.html"],
-  ["Global bozor","marketplace.html"],
-  ["Jamoalar","teams.html"],
-  ["Kabinet","profile.html"],
-  ["Qidiruv","search.html"]
- ];
+ const primary=[["Bosh sahifa","index.html"],["Loyihalar","projects.html"],["Global bozor","marketplace.html"],["Jamoalar","teams.html"],["Qidiruv","search.html"]];
  const groups=[
-  ["Boshqaruv",[["Dashboard","dashboard.html"],["Boshqaruv markazi","management.html"],["Moliya markazi","finance.html"],["Analitika va hisobotlar","analytics.html"],["Shaxsiy kabinet","profile.html"],["Arizalar markazi","applications.html"],["Bildirishnomalar","notifications.html"],["Faoliyatlar tarixi","activity.html"],["Rollar va ruxsatlar","access.html"],["Ma’lumotlar zaxirasi","backup.html"],["Tashkilotlar","organizations.html"],["Mening to‘plamim","collection.html"]]],
-  ["G‘oya va rivojlanish",[["Loyihalar","projects.html"],["Kelajak loyihalari","portfolio.html"],["Talab va taklif","exchange.html"],["Resurslar reyestri","resources.html"],["Tadbirlar kalendari","events.html"]]],
-  ["Biznes va bozor",[["Global bozor","marketplace.html"],["Investorlar","investors.html"],["Mening investitsiyalarim","investor-portfolio.html"],["Loyiha xarajatlari","project-expenses.html"],["Resurs buyurtmalari","resource-orders.html"],["Resurschilar katalogi","suppliers.html"],["Hujjatlar markazi","supplier-verification.html"],["Tekshiruvchi kabineti","supplier-reviewer.html"],["Tekshiruv boshqaruvi","supplier-verification-admin.html"],["Takliflar markazi","offers.html"]]],
-  ["Jamoa va imkoniyatlar",[["Jamoalar","teams.html"],["Vakansiyalar","teams.html#career-section"],["Mutaxassislar","specialists.html"]]],
-  ["Platforma rivoji",[["Platforma haqida","about.html"],["Yo‘l xaritasi","roadmap.html"]]]
+  ["Kabinet va boshqaruv",[["Shaxsiy kabinet","profile.html"],["Boshqaruv paneli","dashboard.html"],["Arizalar markazi","applications.html"],["Bildirishnomalar","notifications.html"],["Faoliyatlar tarixi","activity.html"],["Tashkilotlar","organizations.html"],["Boshqaruv markazi","management.html"],["Moliya markazi","finance.html"],["Analitika va hisobotlar","analytics.html"],["Rollar va ruxsatlar","access.html"],["Ma’lumotlar zaxirasi","backup.html"],["Mening to‘plamim","collection.html"]]],
+  ["G‘oya va loyihalar",[["Loyihalar katalogi","projects.html"],["Kelajak loyihalari","portfolio.html"],["Loyiha xarajatlari","project-expenses.html"],["Tadbirlar","events.html"],["Yo‘l xaritasi","roadmap.html"]]],
+  ["Bozor va hamkorlik",[["Global bozor","marketplace.html"],["Talab va taklif","exchange.html"],["Takliflar markazi","offers.html"],["Investorlar","investors.html"],["Mening investitsiyalarim","investor-portfolio.html"]]],
+  ["Jamoa va karyera",[["Jamoalar","teams.html"],["Vakansiyalar","teams.html#career-section"],["Mutaxassislar","specialists.html"]]],
+  ["Resurslar va ta’minot",[["Resurslar reyestri","resources.html"],["Resurs buyurtmalari","resource-orders.html"],["Resurschilar katalogi","suppliers.html"],["Hujjatlar markazi","supplier-verification.html"],["Tekshiruvchi kabineti","supplier-reviewer.html"],["Tekshiruv boshqaruvi","supplier-verification-admin.html"]]],
+  ["Platforma",[["Platforma haqida","about.html"],["Platforma yo‘l xaritasi","roadmap.html"]]]
  ];
  const current=location.pathname.split("/").pop()||"index.html";
  const isCurrent=url=>url.split("#")[0]===current;
  const link=(name,url)=>'<a href="'+url+'" '+(isCurrent(url)?'aria-current="page"':'')+'>'+name+'</a>';
-
- /* Keyboard and screen-reader users can bypass repeated navigation. */
- const skip=document.createElement("a");
- skip.className="il-skip-link";
- skip.href="#il-main-content";
- skip.textContent="Asosiy kontentga o‘tish";
- document.body.insertBefore(skip,document.body.firstChild);
-
- const root=document.createElement("header");
- root.id="il-global";
- root.setAttribute("aria-label","IDEA LAB asosiy navigatsiyasi");
- root.innerHTML=
-  '<div class="il-top">'+
-   '<a class="il-brand" href="index.html" aria-label="IDEA LAB bosh sahifasi"><span class="il-brand-mark" aria-hidden="true">✦</span><span>IDEA <b>LAB</b></span></a>'+
-   '<nav class="il-links" aria-label="Asosiy yo‘nalishlar">'+
-    primary.map(([name,url])=>link(name,url)).join("")+
-   '</nav>'+
-   '<div class="il-actions"><a class="il-quick-action" href="exchange.html">+ E’lon joylash</a><span class="il-status"><i class="il-dot" aria-hidden="true"></i> Demo rejim</span><a class="il-profile-link" id="il-profile-link" href="profile.html" aria-label="Shaxsiy kabinet"><span class="il-profile-avatar" id="il-profile-avatar" aria-hidden="true">IL</span><span class="il-profile-name" id="il-profile-name">Kabinet</span></a></div>'+
-  '</div>'+
-  '<nav class="il-section-nav" aria-label="Barcha bo‘limlar">'+
-   groups.map(([heading,items])=>'<section class="il-section-group"><span>'+heading+'</span>'+items.map(([name,url])=>link(name,url)).join("")+'</section>').join("")+
-  '</nav>';
-
- const main=document.querySelector("main")||document.querySelector(".container, .wrap, .d-wrap, .oc-wrap");
- if(main&&!main.id) main.id="il-main-content";
- document.body.insertBefore(root,skip.nextSibling);
-
- /* Ichki sahifalardan qulay va xavfsiz qaytish yo‘li. */
- if(current!=="index.html"){
-  const backBar=document.createElement("div");
-  backBar.className="il-page-tools";
-  backBar.innerHTML='<a class="il-back-link" href="index.html"><span aria-hidden="true">←</span> Orqaga</a><a class="il-home-link" href="index.html">Bosh sahifa</a>';
-  const content=document.querySelector("main")||document.querySelector(".container, .wrap, .d-wrap, .oc-wrap");
-  if(content&&content.parentNode) content.parentNode.insertBefore(backBar,content);
-  else root.insertAdjacentElement("afterend",backBar);
-  const backLink=backBar.querySelector(".il-back-link");
-  backLink.addEventListener("click",event=>{
-   let sameSiteReferrer=false;
-   try{sameSiteReferrer=!!document.referrer&&new URL(document.referrer).origin===location.origin}catch(_){}
-   if(history.length>1&&sameSiteReferrer){event.preventDefault();history.back()}
-  });
- }
-
- /* Profil identifikatori va rasmi barcha sahifalarda bir xil ko‘rinadi. */
- const profileLink=root.querySelector("#il-profile-link");
- const profileAvatar=root.querySelector("#il-profile-avatar");
- const profileName=root.querySelector("#il-profile-name");
- const renderProfile=()=>{
-  let profile=null;
-  try{profile=JSON.parse(localStorage.getItem("userProfile")||"null")}catch(_){}
-  const name=profile&&typeof profile.fullName==="string"?profile.fullName.trim():"";
-  const initials=name.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0].toLocaleUpperCase("uz-UZ")).join("")||"IL";
-  const photo=profile&&typeof profile.avatarData==="string"&&/^data:image\/(jpeg|png|webp);base64,/i.test(profile.avatarData)?profile.avatarData:"";
-  profileAvatar.replaceChildren();
-  if(photo){
-   const image=document.createElement("img");
-   image.src=photo;image.alt="";image.width=36;image.height=36;
-   profileAvatar.appendChild(image);
-  }else{profileAvatar.textContent=initials}
-  profileName.textContent=name||"Kabinet";
-  profileLink.setAttribute("aria-label",name?"Shaxsiy kabinet: "+name:"Shaxsiy kabinet");
-  profileLink.title=name||"Shaxsiy kabinet";
- };
- renderProfile();
- window.addEventListener("storage",event=>{if(event.key==="userProfile")renderProfile()});
- window.addEventListener("ideaLab:profile-updated",renderProfile);
-
- /* Eski navigatsiya yashiriladi; sahifa mazmuni va formalar saqlanadi. */
- document.querySelectorAll("body > header.navbar, body > header.header").forEach(node=>node.classList.add("il-legacy-nav-shell"));
- document.querySelectorAll("body > nav, body nav.nav-links, body nav.nav").forEach(node=>{
-  if(!root.contains(node)) node.remove();
- });
-
- const menu=root.querySelector(".il-all-menu");
- if(menu){
-  const summary=menu.querySelector("summary");
-  document.addEventListener("click",event=>{
-   if(menu.open&&!menu.contains(event.target)) menu.open=false;
-  });
-  menu.addEventListener("click",event=>{
-   if(event.target.closest("a")) menu.open=false;
-  });
-  document.addEventListener("keydown",event=>{
-   if(event.key==="Escape"&&menu.open){
-    menu.open=false;
-    summary.focus();
-   }
-  });
- }
+ const skip=document.createElement("a");skip.className="il-skip-link";skip.href="#il-main-content";skip.textContent="Asosiy kontentga o‘tish";document.body.insertBefore(skip,document.body.firstChild);
+ const root=document.createElement("header");root.id="il-global";root.setAttribute("aria-label","IDEA LAB asosiy navigatsiyasi");
+ root.innerHTML='<div class="il-top"><a class="il-brand" href="index.html" aria-label="IDEA LAB bosh sahifasi"><span class="il-brand-mark" aria-hidden="true">✦</span><span>IDEA <b>LAB</b></span></a><nav class="il-links" aria-label="Asosiy yo‘nalishlar">'+primary.map(([n,u])=>link(n,u)).join("")+'</nav><div class="il-actions"><a class="il-quick-action" href="index.html#createProject">+ Yangi loyiha</a><details class="il-all-menu"><summary aria-label="Barcha bo‘limlarni ochish">Barcha bo‘limlar</summary><div class="il-menu-panel" aria-label="Bo‘limlar katalogi">'+groups.map(([h,items])=>'<section class="il-menu-group"><strong>'+h+'</strong>'+items.map(([n,u])=>link(n,u)).join("")+'</section>').join("")+'</div></details><span class="il-status"><i class="il-dot" aria-hidden="true"></i> Demo rejim</span><a class="il-profile-link" id="il-profile-link" href="profile.html" aria-label="Shaxsiy kabinet"><span class="il-profile-avatar" id="il-profile-avatar" aria-hidden="true">IL</span><span class="il-profile-name" id="il-profile-name">Kabinet</span></a></div></div>';
+ const main=document.querySelector("main")||document.querySelector(".container, .wrap, .d-wrap, .oc-wrap");if(main&&!main.id)main.id="il-main-content";document.body.insertBefore(root,skip.nextSibling);
+ if(current!=="index.html"){const bar=document.createElement("div");bar.className="il-page-tools";bar.innerHTML='<a class="il-back-link" href="index.html"><span aria-hidden="true">←</span> Bosh sahifa</a><span class="il-page-context">IDEA LAB bo‘limi</span>';const content=document.querySelector("main")||document.querySelector(".container, .wrap, .d-wrap, .oc-wrap");if(content&&content.parentNode)content.parentNode.insertBefore(bar,content);else root.insertAdjacentElement("afterend",bar);const back=bar.querySelector(".il-back-link");back.addEventListener("click",event=>{let sameSiteReferrer=false;try{sameSiteReferrer=!!document.referrer&&new URL(document.referrer).origin===location.origin}catch(_){}if(history.length>1&&sameSiteReferrer){event.preventDefault();history.back()}})}
+ const profileLink=root.querySelector("#il-profile-link"),avatar=root.querySelector("#il-profile-avatar"),nameNode=root.querySelector("#il-profile-name");
+ const renderProfile=()=>{let profile=null;try{profile=JSON.parse(localStorage.getItem("userProfile")||"null")}catch(_){}const name=profile&&typeof profile.fullName==="string"?profile.fullName.trim():"";const initials=name.split(/\s+/).filter(Boolean).slice(0,2).map(v=>v[0].toLocaleUpperCase("uz-UZ")).join("")||"IL";const photo=profile&&typeof profile.avatarData==="string"&&/^data:image\/(jpeg|png|webp);base64,/i.test(profile.avatarData)?profile.avatarData:"";avatar.replaceChildren();if(photo){const img=document.createElement("img");img.src=photo;img.alt="";img.width=36;img.height=36;avatar.appendChild(img)}else avatar.textContent=initials;nameNode.textContent=name||"Kabinet";profileLink.setAttribute("aria-label",name?"Shaxsiy kabinet: "+name:"Shaxsiy kabinet");profileLink.title=name||"Shaxsiy kabinet"};
+ renderProfile();window.addEventListener("storage",event=>{if(event.key==="userProfile")renderProfile()});window.addEventListener("ideaLab:profile-updated",renderProfile);
+ document.querySelectorAll("body > header.navbar, body > header.header").forEach(n=>n.classList.add("il-legacy-nav-shell"));document.querySelectorAll("body > nav, body nav.nav-links, body nav.nav").forEach(n=>{if(!root.contains(n))n.remove()});
+ const menu=root.querySelector(".il-all-menu");if(menu){const summary=menu.querySelector("summary");document.addEventListener("click",event=>{if(menu.open&&!menu.contains(event.target))menu.open=false});menu.addEventListener("click",event=>{if(event.target.closest("a"))menu.open=false});document.addEventListener("keydown",event=>{if(event.key==="Escape"&&menu.open){menu.open=false;summary.focus()}})}
 })();

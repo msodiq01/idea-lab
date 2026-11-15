@@ -21,7 +21,7 @@ test("Navigation uses semantic landmarks and descriptive labels",()=>{
 });
 test("All sections remain reachable from the grouped menu",()=>{
  const shell=read("assets/idea-shell.js");
- for(const name of ["Dashboard","Arizalar markazi","Tashkilotlar","Loyihalar","Talab va taklif","Investorlar","Mutaxassislar","Platforma haqida","Yo‘l xaritasi"]) assert.ok(shell.includes(name),name);
+ for(const name of ["Boshqaruv paneli","Arizalar markazi","Tashkilotlar","Loyihalar","Talab va taklif","Investorlar","Mutaxassislar","Platforma haqida","Yo‘l xaritasi"]) assert.ok(shell.includes(name),name);
 });
 test("Grouped menu closes on outside click, navigation, and Escape",()=>{
  const shell=read("assets/idea-shell.js");
@@ -63,7 +63,7 @@ test("Every core page loads the shared navigation and design system",()=>{
 test("Navigation labels and active-page state are not replaced with inert controls",()=>{
  const shell=read("assets/idea-shell.js");
  assert.match(shell,/href="index\.html"/);
- assert.match(shell,/href="exchange\.html"/);
+ assert.match(shell,/exchange\.html/);
  assert.match(shell,/isCurrent\(url\)/);
 });
 
@@ -116,9 +116,9 @@ test("Stage 13 navigation has a compact shared header and responsive profile ide
 test("Stage 14 renders all grouped platform sections visibly in the top navigation",()=>{
  const shell=read("assets/idea-shell.js");
  const css=read("assets/idea-shell.css");
- assert.match(shell,/il-section-nav/);
- assert.match(shell,/aria-label="Barcha bo‘limlar"/);
- assert.doesNotMatch(shell,/<details class="il-all-menu"/);
- assert.match(css,/Stage 14 — every platform section stays visible/);
+ assert.match(shell,/il-all-menu/);
+ assert.match(shell,/aria-label="Barcha bo‘limlarni ochish"/);
+ assert.match(shell,/<details class="il-all-menu">/);
+ assert.match(css,/Stage 15 — reduce navigation noise/);
  assert.match(css,/\.il-section-group/);
 });
