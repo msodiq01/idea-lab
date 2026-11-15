@@ -154,6 +154,9 @@ Deno.serve(async (request) => {
       }
 
       const filename = path.split("/").at(-1)!;
+      if (!UUID_RE.test(filename) || path.split("/").length !== 3) {
+        return json({ error: "Invalid opaque object name" }, 400, origin);
+      }
       const folder = `${applicationId}/${documentType}`;
       const { data: objects, error: listError } = await admin.storage
         .from(BUCKET)
