@@ -10,6 +10,9 @@ Holat: Auth adapterining xavfsiz poydevori; real loyiha bilan ulanish yoqilmagan
 - `configure(config, sdk)` — faqat aniq `mode: "supabase"`, HTTPS Supabase project URL va public anon/publishable key bilan SDK mijozini yaratadi.
 - `getStatus()` — `offline-demo` yoki `supabase` konfiguratsiya holatini qaytaradi.
 - `getSession()`, `signUp()`, `signIn()`, `signOut()` — Supabase Auth operatsiyalariga xavfsiz wrapper.
+- `resetPassword(email, redirectTo)` — email orqali tiklash xatini so'raydi; email va HTTPS redirect manzilini tekshiradi.
+- `updatePassword(password)` — faqat adapterda tasdiqlangan sessiya mavjud bo'lsa yangi parolni yuboradi.
+- `onAuthStateChange()` obyekti `unsubscribe()` yordamchisini ham beradi.
 - `onAuthStateChange(callback)` — session holati o'zgarishini kuzatadi.
 
 Adapter Supabase SDK'ni o'zi yuklamaydi. Hozirgi HTML sahifalariga ulanmagan va mavjud profil yoki localStorage yozuvlarini o'zgartirmaydi.
@@ -61,4 +64,4 @@ Bu faqat namuna. Haqiqiy qiymatlar Git repository'ga yozilmasin. Brauzerda faqat
 
 ## 6. Tekshiruv
 
-`tests/auth-adapter.test.cjs` offline holat, noto'g'ri konfiguratsiya, SDK yo'qligi, signup validatsiyasi, login wrapper, xatolarni tozalash va session listener'ni tekshiradi. Bu avtomatlashtirilgan unit test; jonli Supabase yoki brauzer staging sinovi emas.
+`tests/auth-adapter.test.cjs` offline holat, noto'g'ri konfiguratsiya, SDK yo'qligi, signup/login, parolni tiklash validatsiyasi, xavfsiz redirect, parol yangilash sharti, sign-out holati, listener unsubscribe va xatolarni tozalashni tekshiradi. Bu avtomatlashtirilgan unit test; jonli Supabase yoki brauzer staging sinovi emas.
