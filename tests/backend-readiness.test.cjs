@@ -106,6 +106,14 @@ test("Live Supabase audit distinguishes the finance schema from repository appli
   assert.match(review, /kengroq loyiha\/jamoa\/vakansiya modeli jonli 9-jadval moliyaviy-resurs sxemasiga hali qo‘shilmagan/);
 });
 
+test("Finance audit flags investor destination-account visibility as an unresolved RLS gap", () => {
+  assert.match(review, /Investorning o‘z investments yozuvini o‘qish policy'si mavjud/);
+  assert.match(review, /Investor o‘z investitsiyasiga tegishli manzil hisobini hozir bevosita o‘qiy olmaydi/);
+  assert.match(review, /faqat o‘z investitsiyasiga bog‘langan, faol va aynan tanlangan destination account/);
+  assert.match(review, /masked_identifier\/display_label/);
+  assert.match(review, /Hozir bu ruxsat qo‘shilmagan/);
+});
+
 test("Live Supabase audit documents the read-only state and remaining Auth setup", () => {
   assert.match(review, /ACTIVE_HEALTHY/);
   assert.match(review, /9 ta jadval/);
