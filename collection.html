@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="IDEA LAB shaxsiy to‘plami — muhim g‘oyalar, imkoniyatlar va materiallar bir joyda">
+<title>IDEA LAB | Mening to‘plamim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/idea-shell.css">
+<style>
+.pc-wrap{width:min(1120px,calc(100% - 40px));margin:34px auto 76px}
+.pc-hero{padding:34px 36px;border:1px solid #e5e8fb;border-radius:22px;background:linear-gradient(115deg,#fff,#f3f4ff);box-shadow:0 10px 30px rgba(28,42,74,.06)}
+.pc-kicker{color:#5146e5;font-size:10px;font-weight:800;letter-spacing:1.7px}
+.pc-hero h1{margin:10px 0;font-size:clamp(28px,4vw,44px);letter-spacing:-1.7px}
+.pc-hero p{max-width:720px;color:#69768d;font-size:14px;line-height:1.8}
+.pc-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:20px 0}
+.pc-stat,.pc-panel{background:#fff;border:1px solid #e5eaf2;border-radius:16px;box-shadow:0 8px 25px rgba(28,42,74,.045)}
+.pc-stat{padding:17px}.pc-stat span{display:block;color:#69768d;font-size:11px}.pc-stat strong{display:block;margin-top:7px;font-size:25px}
+.pc-panel{padding:20px;margin-top:16px}.pc-panel h2{font-size:18px;margin:0 0 14px}
+.pc-form{display:grid;grid-template-columns:1.2fr 1fr 1.5fr;gap:10px}
+.pc-form input,.pc-form select,.pc-form textarea,.pc-search{width:100%;min-height:43px;border:1px solid #dce3ef;border-radius:10px;padding:10px 12px;background:#fff;color:#243047;font:inherit;font-size:12px}
+.pc-form textarea{grid-column:1/-1;min-height:72px;resize:vertical}
+.pc-form .pc-wide{grid-column:1/-1}
+.pc-primary,.pc-secondary,.pc-delete{min-height:40px;padding:9px 14px;border:1px solid #e1e6ef;border-radius:10px;background:#fff;color:#526078;font-size:11px;font-weight:750;cursor:pointer}
+.pc-primary{background:#5146e5;border-color:#5146e5;color:#fff}
+.pc-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.pc-filters{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}
+.pc-filter{border:1px solid #e5eaf2;border-radius:10px;padding:8px 12px;background:#fff;color:#5f6b81;font-size:11px;font-weight:700;cursor:pointer}
+.pc-filter[aria-pressed=true]{background:#f0efff;border-color:#dcd8ff;color:#5146e5}
+.pc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.pc-item{min-width:0;padding:16px;border:1px solid #e5eaf2;border-radius:14px;background:#fff}
+.pc-item-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.pc-item h3{margin:0 0 6px;font-size:14px;overflow-wrap:anywhere}
+.pc-tag{display:inline-flex;padding:4px 8px;border-radius:20px;background:#f0efff;color:#5146e5;font-size:10px;font-weight:750}
+.pc-item p{font-size:12px;line-height:1.7;overflow-wrap:anywhere}
+.pc-item a{font-size:11px;color:#5146e5;overflow-wrap:anywhere}
+.pc-meta{font-size:10px;color:#8993a5;margin-top:9px}
+.pc-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.pc-empty{padding:34px 18px;text-align:center;border:1px dashed #d9e0eb;border-radius:13px;color:#69768d;font-size:12px;line-height:1.8}
+.pc-empty strong{display:block;color:#26334a;font-size:14px;margin-bottom:4px}
+.pc-note{margin-top:14px;padding:12px 14px;border:1px solid #f2e5c9;border-radius:12px;background:#fffaf0;color:#806333;font-size:11px;line-height:1.7}
+@media(max-width:760px){.pc-form{grid-template-columns:1fr 1fr}.pc-form input:first-child{grid-column:1/-1}.pc-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.pc-wrap{width:calc(100% - 24px);margin-top:20px}.pc-hero{padding:24px 20px}.pc-panel{padding:14px}.pc-stats{gap:8px}.pc-stat{padding:13px}.pc-stat strong{font-size:21px}.pc-form{grid-template-columns:1fr}.pc-form input:first-child,.pc-form textarea{grid-column:auto}}
+</style>
+</head>
+<body>
+<main class="pc-wrap">
+<section class="pc-hero">
+<div class="pc-kicker">IDEA LAB / SHAXSIY MAKON</div>
+<h1>Mening to‘plamim</h1>
+<p>Siz uchun muhim bo‘lgan g‘oyalar, imkoniyatlar, hujjatlar, havolalar va shaxsiy eslatmalarni bir joyda saqlang. O‘zingizga qulay tartibda yig‘ing va keyin tez toping.</p>
+</section>
+<section class="pc-stats" aria-label="To‘plam statistikasi">
+<div class="pc-stat"><span>Jami saqlangan</span><strong id="pc-total">0</strong></div>
+<div class="pc-stat"><span>Yulduzchali</span><strong id="pc-pinned">0</strong></div>
+<div class="pc-stat"><span>Kategoriyalar</span><strong id="pc-categories">0</strong></div>
+</section>
+<section class="pc-panel" aria-labelledby="pc-form-title">
+<h2 id="pc-form-title">Yangi ma’lumot qo‘shish</h2>
+<form id="pc-form" class="pc-form">
+<input id="pc-title" maxlength="120" required placeholder="Nomi: masalan, Yoshlar granti" aria-label="Ma’lumot nomi">
+<select id="pc-category" aria-label="Kategoriya">
+<option value="G‘oyalar">G‘oyalar</option><option value="Imkoniyatlar">Imkoniyatlar</option><option value="Hujjatlar">Hujjatlar</option><option value="O‘qish va rivojlanish">O‘qish va rivojlanish</option><option value="Rejalar">Rejalar</option><option value="Eslatmalar">Eslatmalar</option><option value="Boshqa">Boshqa</option>
+</select>
+<input id="pc-url" type="url" placeholder="Havola (ixtiyoriy, https://...)" aria-label="Havola">
+<textarea id="pc-description" maxlength="1000" placeholder="Nima uchun muhim? Qisqa izoh yoki keyingi qadam..." aria-label="Izoh"></textarea>
+<button class="pc-primary pc-wide" type="submit">＋ To‘plamga qo‘shish</button>
+</form>
+</section>
+<section class="pc-panel">
+<div class="pc-toolbar"><div><h2 style="margin:0">Saqlangan ma’lumotlar</h2><div class="pc-meta">Qidirish, saralash va keraklisini belgilash</div></div><input id="pc-search" class="pc-search" style="max-width:260px" type="search" placeholder="To‘plamdan qidirish..." aria-label="To‘plamdan qidirish"></div>
+<div class="pc-filters" id="pc-filters" aria-label="Kategoriya filtrlari">
+<button class="pc-filter" type="button" data-filter="Barchasi" aria-pressed="true">Barchasi</button>
+<button class="pc-filter" type="button" data-filter="G‘oyalar" aria-pressed="false">G‘oyalar</button>
+<button class="pc-filter" type="button" data-filter="Imkoniyatlar" aria-pressed="false">Imkoniyatlar</button>
+<button class="pc-filter" type="button" data-filter="Hujjatlar" aria-pressed="false">Hujjatlar</button>
+<button class="pc-filter" type="button" data-filter="O‘qish va rivojlanish" aria-pressed="false">O‘qish</button>
+<button class="pc-filter" type="button" data-filter="Rejalar" aria-pressed="false">Rejalar</button>
+<button class="pc-filter" type="button" data-filter="Eslatmalar" aria-pressed="false">Eslatmalar</button>
+</div>
+<div id="pc-list" class="pc-grid" aria-live="polite"><div class="pc-empty"><strong>To‘plamingiz hozircha bo‘sh</strong>Birinchi kerakli ma’lumotingizni yuqoridagi shakl orqali qo‘shing.</div></div>
+<div class="pc-note">Eslatma: hozircha ma’lumotlar faqat shu brauzer qurilmasida saqlanadi. Brauzer ma’lumotlari tozalansa, ular yo‘qolishi mumkin. Server va akkaunt sinxronizatsiyasi keyingi bosqichda ulanadi.</div>
+</section>
+</main>
+<script src="assets/idea-shell.js"></script>
+<script>
+(()=>{"use strict";
+const KEY="ideaLabPersonalCollection";
+const $=id=>document.getElementById(id);
+const form=$("pc-form"),list=$("pc-list"),search=$("pc-search"),filters=$("pc-filters");
+let activeFilter="Barchasi",items=[];
+const safeUrl=value=>{try{const u=new URL(value);return ["http:","https:"].includes(u.protocol)?u.href:""}catch(_){return ""}};
+const load=()=>{try{const data=JSON.parse(localStorage.getItem(KEY)||"[]");items=Array.isArray(data)?data.filter(x=>x&&typeof x.id==="string"&&typeof x.title==="string"):[]}catch(_){items=[]}};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(items));return true}catch(_){alert("Brauzer xotirasiga saqlab bo‘lmadi. Xotirada joy borligini tekshiring.");return false}};
+const node=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el};
+function render(){
+ $("pc-total").textContent=items.length;
+ $("pc-pinned").textContent=items.filter(x=>x.pinned).length;
+ $("pc-categories").textContent=new Set(items.map(x=>x.category)).size;
+ list.replaceChildren();
+ const q=search.value.trim().toLocaleLowerCase("uz");
+ const shown=items.filter(x=>(activeFilter==="Barchasi"||x.category===activeFilter)&&[x.title,x.description,x.category].join(" ").toLocaleLowerCase("uz").includes(q)).sort((a,b)=>Number(b.pinned)-Number(a.pinned)||b.createdAt-a.createdAt);
+ if(!shown.length){const empty=node("div","pc-empty");empty.style.gridColumn="1/-1";empty.append(node("strong","",items.length?"Mos ma’lumot topilmadi":"To‘plamingiz hozircha bo‘sh"),node("span","",items.length?"Qidiruv yoki kategoriya filtrini o‘zgartirib ko‘ring.":"Birinchi kerakli ma’lumotingizni yuqoridagi shakl orqali qo‘shing."));list.append(empty);return}
+ shown.forEach(item=>{
+  const card=node("article","pc-item"),head=node("div","pc-item-head"),left=node("div");
+  left.append(node("h3","",item.title),node("span","pc-tag",item.category));
+  if(item.pinned)left.append(node("span","pc-meta"," ★ Muhim deb belgilangan"));
+  head.append(left);card.append(head);
+  if(item.description)card.append(node("p","",item.description));
+  const url=safeUrl(item.url||"");if(url){const a=node("a","", "Havolani ochish ↗");a.href=url;a.target="_blank";a.rel="noopener noreferrer";card.append(a)}
+  card.append(node("div","pc-meta",new Date(item.createdAt).toLocaleDateString("uz-UZ")));
+  const actions=node("div","pc-actions"),pin=node("button","pc-secondary",item.pinned?"★ Belgini olib tashlash":"☆ Muhim deb belgilash"),del=node("button","pc-delete","O‘chirish");
+  pin.type=del.type="button";
+  pin.addEventListener("click",()=>{item.pinned=!item.pinned;if(save())render()});
+  del.addEventListener("click",()=>{if(!confirm("Ushbu ma’lumotni to‘plamdan o‘chirasizmi?"))return;items=items.filter(x=>x.id!==item.id);if(save())render()});
+  actions.append(pin,del);card.append(actions);list.append(card);
+ });
+}
+form.addEventListener("submit",event=>{event.preventDefault();const title=$("pc-title").value.trim();if(!title)return;const urlInput=$("pc-url").value.trim();const url=urlInput?safeUrl(urlInput):"";if(urlInput&&!url){alert("Havola http:// yoki https:// bilan boshlanishi kerak.");return}
+ const item={id:(window.crypto&&crypto.randomUUID)?crypto.randomUUID():"item-"+Date.now()+"-"+Math.random().toString(36).slice(2),title,category:$("pc-category").value,url,description:$("pc-description").value.trim(),createdAt:Date.now(),pinned:false};
+ items.unshift(item);if(save()){form.reset();render();$("pc-title").focus()}
+});
+search.addEventListener("input",render);
+filters.addEventListener("click",event=>{const btn=event.target.closest("button[data-filter]");if(!btn)return;activeFilter=btn.dataset.filter;filters.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)));render()});
+load();render();
+})();
+</script>
+</body>
+</html>
