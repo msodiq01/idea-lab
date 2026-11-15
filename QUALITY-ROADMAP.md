@@ -124,3 +124,10 @@ Hech qanday HTML, SQL, localStorage yozuvi yoki server sozlamasi ushbu hujjatlas
 9. Saqlash xatolari va noto'g'ri ma'lumotlar uchun testlar.
 10. Tashkilot markazi uchun regressiya checklist.
 
+
+
+### Qo'shimcha sifat nazorati
+- `tests/organization-center.test.cjs` — Organization Center uchun 10 ta Node.js regressiya testi qo'shildi.
+- `README.md` — lokal ishga tushirish, test buyrug'i va offline demo cheklovlari hujjatlashtirildi.
+- Ushbu bosqichda HTML ichidagi JavaScript, test fayli sintaksisi, asosiy UI IDlari, navigatsiya va xavfsiz link qoidalari statik tekshiruvdan o'tdi.
+- Muhim: bu tekshiruvlar `node --test` buyrug'ini repository muhitida bajarish yoki haqiqiy mobil brauzer sinovining o'rnini bosmaydi.
