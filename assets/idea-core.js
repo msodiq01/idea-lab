@@ -125,6 +125,77 @@
     }
   });
 
+  // Legacy localStorage: faqat ko'rish va foydalanuvchi aniq chaqirganda zaxiralash.
+  const LEGACY_KEYS = Object.freeze([
+    "projects", "investmentApplications", "investmentOffers", "investorRequests",
+    "jobApplications", "teamApplications", "resourceOrders", "ideaLabExchangeItems",
+    "offers", "ideaLabSpecialists", "ideaLabProfile", "ideaLabCurrentUser",
+    "teams", "jobs", "specialists", "profile", "offerApplications", "offerMessages"
+  ]);
+
+  const legacy = Object.freeze({
+    keys: LEGACY_KEYS,
+    inspect(keys = LEGACY_KEYS) {
+      if (!Array.isArray(keys)) return reportError("INVALID_LEGACY_KEYS", "Eski kalitlar ro'yxati noto'g'ri.");
+      const selected = [...new Set(keys)];
+      const unknown = selected.filter((key) => !LEGACY_KEYS.includes(key));
+      if (unknown.length) return reportError("UNKNOWN_LEGACY_KEY", "Ruxsat etilmagan eski ma'lumot kaliti bor.");
+      try {
+        const items = selected.map((key) => {
+          const raw = global.localStorage.getItem(key);
+          if (raw === null) return { key, exists: false, validJson: null, itemCount: 0, valueType: null };
+          try {
+            const value = JSON.parse(raw);
+            return {
+              key, exists: true, validJson: true,
+              itemCount: Array.isArray(value) ? value.length : (value && typeof value === "object" ? Object.keys(value).length : 1),
+              valueType: Array.isArray(value) ? "array" : (value === null ? "null" : typeof value)
+            };
+          } catch (_) {
+            return { key, exists: true, validJson: false, itemCount: null, valueType: "invalid-json" };
+          }
+        });
+        return { ok: true, items, totalFound: items.filter((item) => item.exists).length };
+      } catch (error) {
+        return reportError("LEGACY_INSPECT_FAILED", "Eski ma'lumotlarni tekshirib bo'lmadi.", error.message);
+      }
+    },
+    createBackup(keys) {
+      if (!Array.isArray(keys) || keys.length === 0) {
+        return reportError("BACKUP_KEYS_REQUIRED", "Zaxira uchun kalitlar ro'yxatini aniq ko'rsating.");
+      }
+      const selected = [...new Set(keys)];
+      const unknown = selected.filter((key) => !LEGACY_KEYS.includes(key));
+      if (unknown.length) return reportError("UNKNOWN_LEGACY_KEY", "Ruxsat etilmagan eski ma'lumot kaliti bor.");
+      try {
+        const records = {};
+        selected.forEach((key) => {
+          const raw = global.localStorage.getItem(key);
+          if (raw !== null) records[key] = raw;
+        });
+        const backupId = createId();
+        const snapshot = {
+          id: backupId,
+          createdAt: new Date().toISOString(),
+          source: "localStorage",
+          records
+        };
+        const saved = store.set("migration.backup." + backupId, snapshot);
+        if (!saved.ok) return saved;
+        return { ok: true, backupId, backedUpKeys: Object.keys(records), recordCount: Object.keys(records).length };
+      } catch (error) {
+        return reportError("LEGACY_BACKUP_FAILED", "Zaxira nusxa yaratilmadi; eski ma'lumotlar o'zgartirilmadi.", error.message);
+      }
+    },
+    readBackup(backupId) {
+      if (typeof backupId !== "string" || !backupId.trim()) {
+        return reportError("BACKUP_ID_REQUIRED", "Zaxira ID raqami kerak.");
+      }
+      const snapshot = store.get("migration.backup." + backupId, null);
+      return snapshot ? { ok: true, snapshot } : { ok: false, error: { code: "BACKUP_NOT_FOUND", message: "Zaxira topilmadi." } };
+    }
+  });
+
   function createId() {
     if (global.crypto && typeof global.crypto.randomUUID === "function") {
       return global.crypto.randomUUID();
