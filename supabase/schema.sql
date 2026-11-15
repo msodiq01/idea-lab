@@ -229,6 +229,72 @@ create table if not exists public.resource_orders (
   updated_at timestamptz not null default now()
 );
 
+
+-- Project collaboration and operational workflow
+create table if not exists public.project_members (
+  id uuid primary key default gen_random_uuid(),
+  project_id uuid not null references public.projects(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  member_role text not null default 'member',
+  invited_by uuid references auth.users(id) on delete set null,
+  created_at timestamptz not null default now(),
+  unique (project_id, user_id)
+);
+
+create table if not exists public.project_tasks (
+  id uuid primary key default gen_random_uuid(),
+  project_id uuid not null references public.projects(id) on delete cascade,
+  created_by uuid not null references auth.users(id) on delete cascade,
+  assigned_to uuid references auth.users(id) on delete set null,
+  title text not null,
+  description text not null default '',
+  status text not null default 'todo',
+  priority text not null default 'normal',
+  due_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.project_updates (
+  id uuid primary key default gen_random_uuid(),
+  project_id uuid not null references public.projects(id) on delete cascade,
+  author_id uuid not null references auth.users(id) on delete cascade,
+  update_type text not null default 'note',
+  title text not null default '',
+  body text not null default '',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.events (
+  id uuid primary key default gen_random_uuid(),
+  owner_id uuid not null references auth.users(id) on delete cascade,
+  title text not null,
+  description text not null default '',
+  location text not null default '',
+  starts_at timestamptz,
+  ends_at timestamptz,
+  capacity integer,
+  status text not null default 'published',
+  project_id uuid references public.projects(id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.event_registrations (
+  id uuid primary key default gen_random_uuid(),
+  event_id uuid not null references public.events(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  status text not null default 'registered',
+  created_at timestamptz not null default now(),
+  unique (event_id, user_id)
+);
+
+create index if not exists project_members_project_idx on public.project_members(project_id);
+create index if not exists project_tasks_project_status_idx on public.project_tasks(project_id, status);
+create index if not exists project_updates_project_created_idx on public.project_updates(project_id, created_at desc);
+create index if not exists events_owner_start_idx on public.events(owner_id, starts_at);
+create index if not exists event_registrations_event_idx on public.event_registrations(event_id);
+
 create index if not exists projects_owner_created_idx on public.projects(owner_id, created_at desc);
 create index if not exists teams_owner_created_idx on public.teams(owner_id, created_at desc);
 create index if not exists job_posts_owner_created_idx on public.job_posts(owner_id, created_at desc);
@@ -242,6 +308,12 @@ create index if not exists job_applications_job_idx on public.job_applications(j
 create index if not exists offer_applications_offer_idx on public.offer_applications(offer_id);
 create index if not exists offer_messages_application_idx on public.offer_messages(application_id, created_at);
 create index if not exists resource_orders_resource_idx on public.resource_orders(resource_id);
+
+alter table public.project_members enable row level security;
+alter table public.project_tasks enable row level security;
+alter table public.project_updates enable row level security;
+alter table public.events enable row level security;
+alter table public.event_registrations enable row level security;
 
 alter table public.profiles enable row level security;
 alter table public.projects enable row level security;
@@ -257,6 +329,81 @@ alter table public.job_applications enable row level security;
 alter table public.offer_applications enable row level security;
 alter table public.offer_messages enable row level security;
 alter table public.resource_orders enable row level security;
+
+create policy "Project owners and members can view project members"
+on public.project_members for select to authenticated
+using (
+  user_id = auth.uid()
+  or exists (select 1 from public.projects p where p.id = project_id and p.owner_id = auth.uid())
+);
+create policy "Project owners can manage project members"
+on public.project_members for all to authenticated
+using (exists (select 1 from public.projects p where p.id = project_id and p.owner_id = auth.uid()))
+with check (exists (select 1 from public.projects p where p.id = project_id and p.owner_id = auth.uid()));
+
+create policy "Project members can view tasks"
+on public.project_tasks for select to authenticated
+using (
+  exists (select 1 from public.projects p where p.id = project_id and p.owner_id = auth.uid())
+  or exists (select 1 from public.project_members m where m.project_id = project_id and m.user_id = auth.uid())
+);
+create policy "Project members can create tasks"
+on public.project_tasks for insert to authenticated
+with check (
+  created_by = auth.uid()
+  and (
+    exists (select 1 from public.projects p where p.id = project_id and p.owner_id = auth.uid())
+    or exists (select 1 from public.project_members m where m.project_id = project_id and m.user_id = auth.uid())
+  )
+);
+create policy "Project owners and task assignees can update tasks"
+on public.project_tasks for update to authenticated
+using (
+  exists (select 1 from public.projects p where p.id = project_id and p.owner_id = auth.uid())
+  or assigned_to = auth.uid()
+)
+with check (
+  exists (select 1 from public.projects p where p.id = project_id and p.owner_id = auth.uid())
+  or assigned_to = auth.uid()
+);
+
+create policy "Project members can view updates"
+on public.project_updates for select to authenticated
+using (
+  exists (select 1 from public.projects p where p.id = project_id and p.owner_id = auth.uid())
+  or exists (select 1 from public.project_members m where m.project_id = project_id and m.user_id = auth.uid())
+);
+create policy "Project members can publish updates"
+on public.project_updates for insert to authenticated
+with check (
+  author_id = auth.uid()
+  and (
+    exists (select 1 from public.projects p where p.id = project_id and p.owner_id = auth.uid())
+    or exists (select 1 from public.project_members m where m.project_id = project_id and m.user_id = auth.uid())
+  )
+);
+
+create policy "Authenticated users can view published events"
+on public.events for select to authenticated
+using (status = 'published' or owner_id = auth.uid());
+create policy "Owners manage events"
+on public.events for all to authenticated
+using (owner_id = auth.uid())
+with check (owner_id = auth.uid());
+
+create policy "Users and event owners can view registrations"
+on public.event_registrations for select to authenticated
+using (
+  user_id = auth.uid()
+  or exists (select 1 from public.events e where e.id = event_id and e.owner_id = auth.uid())
+);
+create policy "Users can register themselves"
+on public.event_registrations for insert to authenticated
+with check (user_id = auth.uid());
+create policy "Event owners can update registrations"
+on public.event_registrations for update to authenticated
+using (exists (select 1 from public.events e where e.id = event_id and e.owner_id = auth.uid()))
+with check (exists (select 1 from public.events e where e.id = event_id and e.owner_id = auth.uid()));
 
 create policy "Profiles are readable by their owner" on public.profiles for select to authenticated using (id = auth.uid());
 create policy "Users can create their profile" on public.profiles for insert to authenticated with check (id = auth.uid());
@@ -407,7 +554,7 @@ declare
   tbl text;
 begin
   foreach tbl in array array[
-    'profiles','projects','teams','job_posts','specialist_profiles',
+    'profiles','projects','teams','job_posts','project_tasks','events','specialist_profiles',
     'offers','investors','resources','project_investment_applications',
     'team_applications','job_applications','offer_applications','resource_orders'
   ]
