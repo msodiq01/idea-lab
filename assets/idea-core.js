@@ -130,7 +130,7 @@
     "projects", "investmentApplications", "investmentOffers", "investorRequests",
     "jobApplications", "teamApplications", "resourceOrders", "ideaLabExchangeItems",
     "offers", "userProfile", "ideaLabSpecialists", "ideaLabProfile", "ideaLabCurrentUser",
-    "teams", "teamApplications", "jobs", "jobApplications", "specialists", "profile", "investors", "offerApplications", "offerMessages"
+    "teams", "jobs", "specialists", "profile", "investors", "offerApplications", "offerMessages"
   ]);
 
   const legacy = Object.freeze({
