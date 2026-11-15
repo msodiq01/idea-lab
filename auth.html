@@ -90,7 +90,7 @@ main{width:min(1050px,calc(100% - 32px));margin:54px auto 70px;display:grid;grid
  function showMessage(text,type){message.textContent=text;message.className="message"+(type?" "+type:"")}
  function switchMode(next){
   mode=next;Object.keys(forms).forEach(key=>forms[key].classList.toggle("hidden",key!==next));
-  signOutButton.addEventListener("click",async()=>{if(!configured||signOutButton.disabled)return;signOutButton.disabled=true;const result=await auth.signOut();if(result.ok){updateSessionControls(null);showMessage("Akkauntdan chiqildi.","success");refreshIdentityPreview()}else{showMessage(result.error.message,"error");updateSessionControls({user:{id:"active"}})}});
+  signOutButton.addEventListener("click",async()=>{if(!configured||signOutButton.disabled)return;signOutButton.disabled=true;const result=await auth.signOut();if(result.ok){updateSessionControls(null);showMessage("Akkauntdan chiqildi.","success");refreshIdentityPreview()}else{showMessage(result.error.message,"error");const current=await auth.getSession();updateSessionControls(current.ok&&current.data?current.data.session:null)}});
  document.querySelectorAll("[data-mode]").forEach(btn=>{const active=btn.dataset.mode===next;btn.classList.toggle("active",active);btn.setAttribute("aria-selected",String(active))});
   document.getElementById("authTitle").textContent=next==="signup"?"Yangi akkaunt yaratish":next==="reset"?"Parolni tiklash":"Akkauntga kirish";
   document.getElementById("authSubtitle").textContent=next==="signup"?"IDEA LAB bilan ishlashni boshlang.":next==="reset"?"Email manzilingizga tiklash havolasi yuboriladi.":"Mavjud akkauntingiz ma’lumotlarini kiriting.";
