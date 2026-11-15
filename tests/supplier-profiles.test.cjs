@@ -1,0 +1,12 @@
+"use strict";const assert=require("node:assert/strict"),m=require("../assets/idea-supplier-profiles.js");
+const p=m.create({name:"Ta’minotchi A",category:"Qadoqlash",region:"Samarqand",documentReference:"REG-001"},"supplier-1");
+assert.equal(p.verificationStatus,"Hujjatlar yuborilgan");assert.equal(p.accountId,"supplier-1");
+assert.throws(()=>m.create({name:"A",category:"B"},""),/akkaunt ID/);
+assert.throws(()=>m.create({name:"",category:"B",region:"C"},"s1"),/majburiy/);
+let profiles=m.upsert([],p);assert.equal(profiles.length,1);
+profiles=m.upsert(profiles,m.create({name:"Ta’minotchi A+",category:"Qadoqlash",region:"Samarqand"},"supplier-1"));
+assert.equal(profiles.length,1);assert.equal(profiles[0].name,"Ta’minotchi A+");assert.equal(profiles[0].verificationStatus,"Tekshirilmagan");
+const orders=[{supplierId:"supplier-1",total:100,status:"Yakunlandi"},{supplierId:"supplier-1",total:200,status:"Resurs yetkazildi"},{supplierId:"supplier-1",total:50,status:"Bekor qilindi"},{supplierId:"other",total:999,status:"Yakunlandi"}];
+const s=m.summarize(orders,"supplier-1");assert.equal(s.recordedOrders,3);assert.equal(s.completedOrders,1);assert.equal(s.deliveredOrders,2);assert.equal(s.cancelledOrders,1);assert.equal(s.recordedOrderValue,350);assert.equal(s.completionRate,33);
+assert.match(s.source,/mustaqil tekshirilmagan/);
+console.log("Supplier profile model tests passed.");
