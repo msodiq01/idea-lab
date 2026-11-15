@@ -160,3 +160,14 @@ A match is a suggestion, not consent or a contract. Users explicitly submit, acc
 6. Only after frontend flows are tested, implement real authentication, server persistence, access policies, matching and live notifications.
 
 See `ECOSYSTEM-ARCHITECTURE.md` for the detailed data contract, user journeys, privacy rules and acceptance criteria.
+
+
+## 10. Finance, management and intelligence expansion — 2026-11-15
+
+A detailed target specification is now recorded in `FINANCE-MANAGEMENT-ARCHITECTURE.md`. It defines separate personal, business/organization and project finance workspaces; cash-flow and budget reporting; invoices and receivables/payables; management tasks, objectives, decisions, risks and KPIs; future-project portfolio tracking; and financial/operational analytics.
+
+**Current state:** specification only. No live accounting, bank connection, payment processing, organization finance workspace or management dashboard is claimed as operational. Existing demo/localStorage behavior remains unchanged.
+
+**Implementation order:** (1) agree data scopes and permissions, (2) build a read-only dashboard prototype using clearly labelled sample data, (3) implement secure server-side finance records and audit events in a test environment, (4) connect project/organization budgets and management workflows, (5) add reports and exports, and only then (6) evaluate licensed bank/payment/accounting integrations.
+
+Financial data must be isolated by personal, organization and project ownership. Payment execution, custody of funds and bank access require suitable providers, legal review and explicit authorization. AI may analyze authorized data but cannot approve or execute financial actions.
