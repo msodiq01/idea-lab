@@ -164,3 +164,13 @@ test("Resource, event and search workspaces use separate local records and safe 
   assert.match(search, /textContent/);
   assert.match(search, /localStorage/);
 });
+
+test("Grouped navigation avoids repeating primary destinations", () => {
+  const shell = read("assets/idea-shell.js");
+  const primaryBlock = shell.match(/const primary=\[(.*?)\];/);
+  const groupsBlock = shell.match(/const groups=\[(.*?)\n \];/s);
+  assert.ok(primaryBlock && groupsBlock);
+  const primaryUrls = [...primaryBlock[1].matchAll(/"([^"]+\.html)"/g)].map(match => match[1]);
+  const groupedUrls = [...groupsBlock[1].matchAll(/"([^"]+\.html)"/g)].map(match => match[1]);
+  for (const url of primaryUrls) assert.ok(!groupedUrls.includes(url), url + " should not be duplicated in grouped navigation");
+});
