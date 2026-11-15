@@ -40,13 +40,28 @@
      groups.map(([heading,items])=>'<section class="il-menu-group" aria-label="'+heading+'"><strong>'+heading+'</strong>'+items.map(([name,url])=>link(name,url)).join("")+'</section>').join("")+
     '</div></details>'+
    '</nav>'+
-   '<div class="il-actions"><a class="il-profile-link" id="il-profile-link" href="profile.html" aria-label="Shaxsiy kabinet"><span class="il-profile-avatar" id="il-profile-avatar" aria-hidden="true">IL</span><span class="il-profile-name" id="il-profile-name">Kabinet</span></a><span class="il-status"><i class="il-dot" aria-hidden="true"></i> Demo rejim</span>'+
-    '<a class="il-quick-action" href="exchange.html">+ E’lon joylash</a></div>'+
+   '<div class="il-actions"><a class="il-quick-action" href="exchange.html">+ E’lon joylash</a><span class="il-status"><i class="il-dot" aria-hidden="true"></i> Demo rejim</span><a class="il-profile-link" id="il-profile-link" href="profile.html" aria-label="Shaxsiy kabinet"><span class="il-profile-avatar" id="il-profile-avatar" aria-hidden="true">IL</span><span class="il-profile-name" id="il-profile-name">Kabinet</span></a></div>'+
   '</div>';
 
  const main=document.querySelector("main")||document.querySelector(".container, .wrap, .d-wrap, .oc-wrap");
  if(main&&!main.id) main.id="il-main-content";
  document.body.insertBefore(root,skip.nextSibling);
+
+ /* Ichki sahifalardan qulay va xavfsiz qaytish yo‘li. */
+ if(current!=="index.html"){
+  const backBar=document.createElement("div");
+  backBar.className="il-page-tools";
+  backBar.innerHTML='<a class="il-back-link" href="index.html"><span aria-hidden="true">←</span> Orqaga</a><a class="il-home-link" href="index.html">Bosh sahifa</a>';
+  const content=document.querySelector("main")||document.querySelector(".container, .wrap, .d-wrap, .oc-wrap");
+  if(content&&content.parentNode) content.parentNode.insertBefore(backBar,content);
+  else root.insertAdjacentElement("afterend",backBar);
+  const backLink=backBar.querySelector(".il-back-link");
+  backLink.addEventListener("click",event=>{
+   let sameSiteReferrer=false;
+   try{sameSiteReferrer=!!document.referrer&&new URL(document.referrer).origin===location.origin}catch(_){}
+   if(history.length>1&&sameSiteReferrer){event.preventDefault();history.back()}
+  });
+ }
 
  /* Profil identifikatori va rasmi barcha sahifalarda bir xil ko‘rinadi. */
  const profileLink=root.querySelector("#il-profile-link");
