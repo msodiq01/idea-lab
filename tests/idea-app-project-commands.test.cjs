@@ -56,9 +56,9 @@ test("task assignee must be project owner or active project member", () => {
   assert.match(sql, /function idea_private\.validate_project_task_assignee\(\)[\s\S]*?security invoker[\s\S]*?set search_path = ''/i);
   assert.match(sql, /Task assignee must be the project owner or an active project member/i);
   assert.match(sql, /create trigger project_tasks_validate_assignee/i);
-  assert.match(sql, /function idea_private\\.is_active_project_member\\([\\s\\S]*?security definer[\\s\\S]*?set search_path = ''/i);
-  assert.match(sql, /auth\\.uid\\(\\)/i);
-  assert.match(sql, /grant execute on function idea_private\\.is_active_project_member\\(uuid, uuid\\)\\s+to authenticated/i);
+  assert.match(sql, /function idea_private\.is_active_project_member\([\s\S]*?security definer[\s\S]*?set search_path = ''/i);
+  assert.match(sql, /auth\.uid\(\)/i);
+  assert.match(sql, /grant execute on function idea_private\.is_active_project_member\(uuid, uuid\)\s+to authenticated/i);
 });
 
 test("only owner or manager can assign tasks to other active members", () => {
@@ -70,8 +70,8 @@ test("only owner or manager can assign tasks to other active members", () => {
 test("only the private membership lookup is SECURITY DEFINER; command triggers are invoker", () => {
   const definerMatches = executableSql.match(/security definer/gi) || [];
   assert.equal(definerMatches.length, 1);
-  assert.match(sql, /function idea_private\\.enforce_project_member_transition\\(\\)[\\s\\S]*?security invoker/i);
-  assert.match(sql, /function idea_private\\.validate_project_task_assignee\\(\\)[\\s\\S]*?security invoker/i);
+  assert.match(sql, /function idea_private\.enforce_project_member_transition\(\)[\s\S]*?security invoker/i);
+  assert.match(sql, /function idea_private\.validate_project_task_assignee\(\)[\s\S]*?security invoker/i);
 });
 
 test("no Data API table exposure or table-wide grants are added", () => {
