@@ -31,7 +31,7 @@ test("every sensitive verification table has RLS enabled", () => {
   for (const [sql, table] of tableMigrations) {
     assert.match(
       sql,
-      new RegExp("alter\\\\s+table\\\\s+public\\\\." + table + "\\\\s+enable\\\\s+row\\\\s+level\\\\s+security", "i"),
+      new RegExp("alter\\s+table\\s+public\\." + table + "\\s+enable\\s+row\\s+level\\s+security", "i"),
       table + " must have RLS enabled"
     );
   }
@@ -52,7 +52,7 @@ test("client table grants are limited to supplier-owned reads and application su
     const allMigrations = [core, reviewers, accessAudit, assignments, admin].join("\n");
     assert.match(
       allMigrations,
-      new RegExp("revoke\\\\s+all\\\\s+on\\\\s+public\\\\." + table + "\\\\s+from\\\\s+public,\\\\s*anon,\\\\s*authenticated", "i"),
+      new RegExp("revoke\\s+all\\s+on\\s+public\\." + table + "\\s+from\\s+public,\\s*anon,\\s*authenticated", "i"),
       table + " must deny direct client table access"
     );
   }
@@ -96,8 +96,8 @@ test("audit, reviewer, assignment and administrator control tables are not clien
     [admin, "supplier_verification_admins"],
     [admin, "supplier_verification_assignment_events"],
   ]) {
-    assert.match(sql, new RegExp("alter\\\\s+table\\\\s+public\\\\." + table + "\\\\s+enable\\\\s+row\\\\s+level\\\\s+security", "i"));
-    assert.match(sql, new RegExp("grant\\\\s+all\\\\s+on\\\\s+public\\\\." + table + "\\\\s+to\\\\s+service_role", "i"));
-    assert.match(sql, new RegExp("revoke\\\\s+all\\\\s+on\\\\s+public\\\\." + table + "\\\\s+from\\\\s+public,\\\\s*anon,\\\\s*authenticated", "i"));
+    assert.match(sql, new RegExp("alter\\s+table\\s+public\\." + table + "\\s+enable\\s+row\\s+level\\s+security", "i"));
+    assert.match(sql, new RegExp("grant\\s+all\\s+on\\s+public\\." + table + "\\s+to\\s+service_role", "i"));
+    assert.match(sql, new RegExp("revoke\\s+all\\s+on\\s+public\\." + table + "\\s+from\\s+public,\\s*anon,\\s*authenticated", "i"));
   }
 });
