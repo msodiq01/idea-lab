@@ -66,7 +66,32 @@ test("state transitions use invoker trigger guards and immutable identity", () =
     assert.match(section, /set search_path = ''/i);
     assert.match(section, /auth\.uid\(\)/i);
   }
-  assert.doesNotMatch(executableSql, /security definer/i);
+  assert.equal((executableSql.match(/security definer/gi) || []).length, 3);
+});
+
+test("private owner predicates protect restricted columns without exposing them", () => {
+  const helpers = [
+    ["is_specialist_profile_owner", "specialist_profiles", "user_id"],
+    ["is_resource_offer_owner", "resource_offers", "owner_id"],
+    ["is_partnership_opportunity_owner", "partnership_opportunities", "owner_id"]
+  ];
+  for (const [fn, table, column] of helpers) {
+    const start = sql.indexOf("create or replace function idea_private." + fn);
+    const end = sql.indexOf("$function$;", start) + 11;
+    const body = sql.slice(start, end);
+    assert.ok(start >= 0, fn + " exists");
+    assert.match(body, /security definer/i);
+    assert.match(body, /set search_path = ''/i);
+    assert.ok(body.includes("from idea_app." + table));
+    assert.ok(body.includes(column + " = (select auth.uid())"));
+    assert.match(sql, new RegExp("revoke all on function idea_private\\." + fn + "\\(uuid\\) from public, anon, authenticated", "i"));
+    assert.match(sql, new RegExp("grant execute on function idea_private\\." + fn + "\\(uuid\\) to authenticated", "i"));
+  }
+  const policiesAndTriggers = sql.slice(sql.indexOf("create policy specialist_requests_select_participants"));
+  assert.doesNotMatch(policiesAndTriggers, /sp\.user_id\s*=\s*\(select auth\.uid\(\)\)/i);
+  assert.doesNotMatch(policiesAndTriggers, /ro\.owner_id\s*=\s*\(select auth\.uid\(\)\)/i);
+  assert.doesNotMatch(policiesAndTriggers, /po\.owner_id\s*=\s*\(select auth\.uid\(\)\)/i);
+  assert.doesNotMatch(policiesAndTriggers, /select (sp\.user_id|ro\.owner_id|po\.owner_id) into/i);
 });
 
 test("opportunities are non-binding and do not create financial transaction tables", () => {
