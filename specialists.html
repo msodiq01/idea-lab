@@ -161,116 +161,82 @@ footer{background:#091727;color:var(--muted);text-align:center;padding:25px;bord
 </footer>
 
 <script src="assets/idea-core.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js"></script>
+<script src="assets/idea-config.js"></script>
+<script src="assets/idea-auth.js"></script>
+<script src="assets/idea-data.js"></script>
 <script>
 
-const ideaCore = window.IDEALAB || null;
-const STORAGE_KEY = "ideaLabSpecialists";
-
-function getSpecialists() {
-    try {
-        const data = ideaCore && ideaCore.legacy
-            ? ideaCore.legacy.read(STORAGE_KEY, [])
-            : JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-        return Array.isArray(data) ? data : [];
-    } catch {
-        return [];
-    }
-}
-
-function saveSpecialists(data) {
-    try {
-        if (ideaCore && ideaCore.legacy) {
-            const result = ideaCore.legacy.write(STORAGE_KEY, data);
-            if (!result || !result.ok) {
-                alert("Profilni saqlab bo‘lmadi. Brauzer xotirasini tekshiring.");
-                return false;
-            }
-            return true;
-        }
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        return true;
-    } catch (error) {
-        alert("Profilni brauzer xotirasiga saqlab bo‘lmadi. Xotira joyini tekshiring.");
-        return false;
-    }
-}
-
-function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, char => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-    })[char]);
-}
-
-function renderSpecialists() {
- const list=document.getElementById("specialistList"),specialists=getSpecialists();list.replaceChildren();
- if(!specialists.length){const card=document.createElement("div");card.className="card";const h=document.createElement("h3"),p=document.createElement("p");h.textContent="Hozircha mutaxassislar yo‘q";p.textContent="Birinchi bo‘lib o‘z profilingizni yarating.";card.append(h,p);list.append(card);return}
- specialists.forEach(person=>{
+"use strict";
+const ideaCore=window.IDEALAB||null;
+const auth=window.IDEALAB_AUTH||null;
+const data=window.IDEALAB_DATA||null;
+const STORAGE_KEY="ideaLabSpecialists";
+let serverMode=false, authenticated=false, serverSpecialists=[];
+if(auth&&window.IDEALAB_CONFIG&&window.supabase)auth.configure(window.IDEALAB_CONFIG,window.supabase);
+function getLocalSpecialists(){try{const value=ideaCore&&ideaCore.legacy?ideaCore.legacy.read(STORAGE_KEY,[]):JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");return Array.isArray(value)?value:[]}catch(_){return[]}}
+function saveLocalSpecialists(items){try{if(ideaCore&&ideaCore.legacy){const result=ideaCore.legacy.write(STORAGE_KEY,items);return Boolean(result&&result.ok)}localStorage.setItem(STORAGE_KEY,JSON.stringify(items));return true}catch(_){return false}}
+function renderSpecialists(){
+ const list=document.getElementById("specialistList"),items=serverMode?serverSpecialists:getLocalSpecialists();list.replaceChildren();
+ if(!items.length){const card=document.createElement("div");card.className="card";const h=document.createElement("h3"),p=document.createElement("p");h.textContent="Hozircha mutaxassislar yo‘q";p.textContent=serverMode?"Ommaviy server katalogida hozircha profil yo‘q.":"Demo katalog bo‘sh. Akkauntga kirib ommaviy profil yarating.";card.append(h,p);list.append(card);return}
+ items.forEach(person=>{
   const card=document.createElement("div");card.className="card profile";
   const h=document.createElement("h3");h.textContent=person.name||"Ism ko‘rsatilmagan";card.append(h);
-  [["",person.profession],["",person.about],["Tajriba: ",person.experience],["Ta’lim: ",person.education],["Ish qidiryapti: ",person.jobSearch?"Ha":"Yo‘q"]].forEach(([k,v])=>{const p=document.createElement("p");p.textContent=k+(v||"Ko‘rsatilmagan");card.append(p)});
+  [["",person.profession||person.headline],["",person.about||person.bio],["Hudud: ",person.city],["Ish holati: ",person.availabilityStatus==="open"?"Imkoniyatlarga ochiq":person.availabilityStatus==="limited"?"Cheklangan":"Hozircha mavjud emas"]].forEach(([k,v])=>{if(v){const p=document.createElement("p");p.textContent=k+v;card.append(p)}});
   const skills=document.createElement("div");(Array.isArray(person.skills)?person.skills:[]).forEach(skill=>{const tag=document.createElement("span");tag.className="tag";tag.textContent=skill;skills.append(tag)});card.append(skills);
   const portfolio=document.createElement("p");portfolio.append(document.createTextNode("Portfolio: "));
-  let safeUrl="";try{const u=new URL(person.portfolio);if(u.protocol==="https:"||u.protocol==="http:")safeUrl=u.href}catch(_){}
-  if(safeUrl){const link=document.createElement("a");link.href=safeUrl;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Ko‘rish";portfolio.append(link)}else portfolio.append(document.createTextNode("Kiritilmagan"));
-  card.append(portfolio);list.append(card);
+  const links=Array.isArray(person.portfolioUrls)?person.portfolioUrls:(person.portfolio?[person.portfolio]:[]);
+  let count=0;links.forEach(value=>{try{const url=new URL(value);if(!["https:","http:"].includes(url.protocol))return;const link=document.createElement("a");link.href=url.href;link.target="_blank";link.rel="noopener noreferrer";link.textContent=count?" · Havola":"Ko‘rish";portfolio.append(link);count++}catch(_){}});
+  if(!count)portfolio.append(document.createTextNode("Kiritilmagan"));card.append(portfolio);list.append(card);
  });
 }
-
-document.getElementById("profileForm").addEventListener("submit", function(event) {
-
-    event.preventDefault();
-
-    const person = {
-        id: ideaCore ? ideaCore.createId() : Date.now(),
-        name: document.getElementById("name").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
-        profession: document.getElementById("profession").value,
-        skills: document.getElementById("skills").value
-            .split(",")
-            .map(item => item.trim())
-            .filter(Boolean),
-        experience: document.getElementById("experience").value,
-        education: document.getElementById("education").value.trim(),
-        about: document.getElementById("about").value.trim(),
-        portfolio: document.getElementById("portfolio").value.trim(),
-        jobSearch: document.getElementById("jobSearch").checked,
-        createdAt: new Date().toISOString()
-    };
-
-    if (ideaCore && !ideaCore.isValidPhone(person.phone)) {
-        alert("Telefon raqamini xalqaro formatda to‘g‘ri kiriting.");
-        return;
-    }
-
-    const specialists = getSpecialists();
-
-    specialists.push(person);
-
-    if (!saveSpecialists(specialists)) return;
-
-    if (ideaCore) {
-        ideaCore.emit("specialist:profile-created", {
-            profileId: person.id,
-            profession: person.profession,
-            createdAt: person.createdAt
-        });
-    }
-
-    alert("Profil ushbu brauzerda saqlandi. Boshqa foydalanuvchilarga hozircha ko‘rinmaydi.");
-
-    this.reset();
-
-    renderSpecialists();
-
+async function loadSpecialists(){
+ const status=document.getElementById("specialistBackendStatus");
+ if(!auth||!data||!auth.getStatus().configured){serverMode=false;status.textContent="Demo rejim: profil faqat ushbu brauzerda saqlanadi.";renderSpecialists();return}
+ const session=await auth.getSession();
+ authenticated=Boolean(session.ok&&session.data&&session.data.session&&session.data.session.user);
+ const result=await data.listPublicSpecialists({limit:50});
+ if(result&&result.ok){serverMode=true;serverSpecialists=result.data.map(row=>({name:row.public_name,profession:row.headline,about:row.bio,skills:row.skill_tags||[],city:row.city,availabilityStatus:row.availability_status,portfolioUrls:row.portfolio_urls||[]}));status.textContent=authenticated?"Server katalogi faol. Profilingizni serverga saqlashingiz mumkin.":"Ommaviy server katalogi faol. Profil yaratish uchun akkauntga kiring."; }
+ else{serverMode=false;status.textContent="Server katalogi yuklanmadi. Ma’lumotlar demo rejimida ko‘rsatilmoqda."; }
+ renderSpecialists();
+}
+document.getElementById("profileForm").addEventListener("submit",async function(event){
+ event.preventDefault();
+ const person={
+  id:ideaCore?ideaCore.createId():Date.now(),
+  name:document.getElementById("name").value.trim(),
+  email:document.getElementById("email").value.trim(),
+  phone:document.getElementById("phone").value.trim(),
+  profession:document.getElementById("profession").value,
+  skills:document.getElementById("skills").value.split(",").map(x=>x.trim()).filter(Boolean),
+  experience:document.getElementById("experience").value,
+  education:document.getElementById("education").value.trim(),
+  about:document.getElementById("about").value.trim(),
+  portfolio:document.getElementById("portfolio").value.trim(),
+  jobSearch:document.getElementById("jobSearch").checked,
+  createdAt:new Date().toISOString()
+ };
+ if(!person.name||!person.profession){alert("Ism va mutaxassislikni kiriting.");return}
+ if(ideaCore&&!ideaCore.isValidPhone(person.phone)){alert("Telefon raqamini xalqaro formatda to‘g‘ri kiriting.");return}
+ if(serverMode){
+  if(!authenticated){alert("Ommaviy mutaxassis profilini yaratish uchun avval IDEA LAB akkauntiga kiring.");return}
+  const saved=await data.upsertSpecialistProfile({
+   publicName:person.name,headline:person.profession,bio:person.about,
+   skills:person.skills,categories:[person.profession],portfolioUrls:person.portfolio?[person.portfolio]:[],
+   availabilityStatus:person.jobSearch?"open":"unavailable",engagementModes:["remote"],visibility:"public"
+  });
+  if(!saved||!saved.ok){alert("Serverga saqlash amalga oshmadi: "+(saved&&saved.error&&saved.error.message?saved.error.message:"xatolik"));return}
+  alert("Mutaxassis profilingiz serverga saqlandi va ommaviy katalogga yuborildi. Email va telefon katalogga joylanmadi.");
+  this.reset();await loadSpecialists();return;
+ }
+ const items=getLocalSpecialists();items.push(person);
+ if(!saveLocalSpecialists(items)){alert("Profilni saqlab bo‘lmadi. Brauzer xotirasini tekshiring.");return}
+ if(ideaCore)ideaCore.emit("specialist:profile-created",{profileId:person.id,profession:person.profession,createdAt:person.createdAt});
+ alert("Profil demo rejimida ushbu brauzerga saqlandi. Boshqa foydalanuvchilarga ko‘rinmaydi.");
+ this.reset();renderSpecialists();
 });
-
-renderSpecialists();
-
+const statusNode=document.createElement("p");statusNode.id="specialistBackendStatus";statusNode.className="form-note";statusNode.setAttribute("role","status");document.getElementById("profileForm").prepend(statusNode);
+loadSpecialists();
 </script>
 
     <script src="assets/idea-shell.js" defer></script>\n</body>
