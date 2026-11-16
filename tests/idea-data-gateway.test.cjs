@@ -179,3 +179,70 @@ test("project command migration uses invoker functions and grants no broad table
   assert.match(sql, /review_project_membership/);
   assert.match(sql, /leave_project/);
 });
+
+
+test("project applications validate input and use only the server-owned submit command", async () => {
+  const { api, calls } = load();
+  const bad = await api.submitProjectApplication({ projectId: "bad", message: "", amount: -1 });
+  assert.equal(bad.error.code, "INVALID_PROJECT_ID");
+  assert.equal(calls.length, 0);
+  const projectId = "123e4567-e89b-42d3-a456-426614174000";
+  const result = await api.submitProjectApplication({
+    projectId, message: "Investor taklifi", amount: 2500000, currency: "uzs"
+  });
+  assert.equal(result.ok, true);
+  const call = calls.find(item => item.method === "rpc");
+  assert.equal(call.name, "submit_project_application");
+  assert.equal(call.args.p_project_id, projectId);
+  assert.equal(call.args.p_applicant_note, "Investor taklifi");
+  assert.equal(call.args.p_offer_amount, 2500000);
+  assert.equal(call.args.p_currency_code, "UZS");
+  assert.equal(Object.hasOwn(call.args, "p_applicant_id"), false);
+  assert.equal(Object.hasOwn(call.args, "p_owner_id"), false);
+});
+
+test("application centre reads only the participant-filtered server view", async () => {
+  const { api, calls } = load({ data: [{ id: "application-1", source_type: "project" }] });
+  const result = await api.listApplicationCenter({ limit: 80 });
+  assert.equal(result.ok, true);
+  assert.equal(calls.find(item => item.method === "from").view, "application_center");
+  assert.equal(calls.find(item => item.method === "limit").value, 50);
+  assert.equal(calls.some(item => item.method === "rpc"), false);
+});
+
+test("project application status updates validate allowed server transitions", async () => {
+  const { api, calls } = load();
+  const applicationId = "123e4567-e89b-42d3-a456-426614174000";
+  const bad = await api.updateProjectApplication({ applicationId, status: "admin" });
+  assert.equal(bad.error.code, "INVALID_APPLICATION_STATUS");
+  assert.equal(calls.length, 0);
+  const good = await api.updateProjectApplication({ applicationId, status: "accepted" });
+  assert.equal(good.ok, true);
+  const call = calls.find(item => item.method === "rpc");
+  assert.equal(call.name, "update_project_application");
+  assert.equal(call.args.p_application_id, applicationId);
+  assert.equal(call.args.p_status, "accepted");
+});
+
+test("application migration uses invoker views, participant RLS and auth-derived identities", () => {
+  const sql = fs.readFileSync(path.join(root, "supabase/migrations/20261116200000_idea_app_application_center.sql"), "utf8");
+  assert.match(sql, /security invoker/i);
+  assert.match(sql, /select auth\.uid\(\)/i);
+  assert.match(sql, /submit_project_application/);
+  assert.match(sql, /update_project_application/);
+  assert.match(sql, /application_center/);
+  assert.match(sql, /union all/i);
+  assert.match(sql, /revoke all on function/);
+  assert.doesNotMatch(sql, /security definer/i);
+});
+
+test("project detail and Applications Centre activate real storage only from explicit Supabase config", () => {
+  const detail = fs.readFileSync(path.join(root, "project-detail.html"), "utf8");
+  const centre = fs.readFileSync(path.join(root, "applications.html"), "utf8");
+  assert.ok(detail.includes("assets/idea-config.js"));
+  assert.ok(detail.includes("assets/idea-auth.js"));
+  assert.ok(detail.includes("assets/idea-data.js"));
+  assert.ok(detail.includes("submitProjectApplication"));
+  assert.ok(centre.includes("listApplicationCenter"));
+  assert.ok(centre.includes('IDEALAB_CONFIG.mode==="supabase"'));
+});
