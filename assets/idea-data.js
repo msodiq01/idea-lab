@@ -248,6 +248,144 @@
         p_currency_code: currency
       });
     },
+    upsertProfile(input = {}) {
+      if (!requiredText(input.displayName, 2, 120) || (input.headline || "").length > 160 || (input.bio || "").length > 1600) {
+        return Promise.resolve(fail("INVALID_PROFILE", "Profil nomi yoki tavsifi noto‘g‘ri."));
+      }
+      const visibility = ["private", "unlisted", "public"].includes(input.visibility) ? input.visibility : "private";
+      const username = input.username ? String(input.username).trim().toLowerCase() : null;
+      if (username && !/^[a-z0-9][a-z0-9_.-]{2,29}$/.test(username)) return Promise.resolve(fail("INVALID_USERNAME", "Foydalanuvchi nomi formati noto‘g‘ri."));
+      return runPublicCommand("idea_lab_upsert_profile", {
+        p_display_name: input.displayName.trim(), p_username: username,
+        p_headline: input.headline || "", p_bio: input.bio || "",
+        p_city: input.city || null, p_country_code: input.countryCode || null,
+        p_visibility: visibility
+      });
+    },
+    upsertSpecialistProfile(input = {}) {
+      const list = (value, maxItems, maxLength) => Array.isArray(value) && value.length <= maxItems &&
+        value.every(item => typeof item === "string" && item.trim().length <= maxLength);
+      if (!requiredText(input.publicName, 2, 100) || (input.headline || "").length > 160 ||
+          (input.bio || "").length > 2400 || !list(input.skills || [], 30, 80) ||
+          !list(input.categories || [], 12, 60) || !list(input.portfolioUrls || [], 8, 500) ||
+          !list(input.engagementModes || ["remote"], 4, 20)) {
+        return Promise.resolve(fail("INVALID_SPECIALIST_PROFILE", "Mutaxassis profili maydonlari noto‘g‘ri."));
+      }
+      const modes = input.engagementModes || ["remote"];
+      if (!modes.length || modes.some(mode => !["remote", "onsite", "hybrid", "volunteer"].includes(mode))) {
+        return Promise.resolve(fail("INVALID_ENGAGEMENT_MODE", "Ishlash shakli noto‘g‘ri."));
+      }
+      const availability = ["open", "limited", "unavailable"].includes(input.availabilityStatus) ? input.availabilityStatus : "open";
+      const visibility = ["private", "unlisted", "public"].includes(input.visibility) ? input.visibility : "private";
+      const urls = (input.portfolioUrls || []).map(value => value.trim());
+      if (urls.some(value => { try { const url = new URL(value); return !["https:", "http:"].includes(url.protocol); } catch (_) { return true; } })) {
+        return Promise.resolve(fail("INVALID_PORTFOLIO_URL", "Portfolio havolasi HTTP yoki HTTPS bo‘lishi kerak."));
+      }
+      return runPublicCommand("idea_lab_upsert_specialist_profile", {
+        p_public_name: input.publicName.trim(), p_headline: input.headline || "", p_bio: input.bio || "",
+        p_skill_tags: (input.skills || []).map(x => x.trim()).filter(Boolean),
+        p_specialist_categories: (input.categories || []).map(x => x.trim()).filter(Boolean),
+        p_city: input.city || null, p_country_code: input.countryCode || null,
+        p_portfolio_urls: urls, p_availability_status: availability,
+        p_engagement_modes: modes, p_visibility: visibility
+      });
+    },
+    createOrganization(input = {}) {
+      if (!requiredText(input.name, 2, 120) || (input.description || "").length > 2400) return Promise.resolve(fail("INVALID_ORGANIZATION", "Tashkilot nomi yoki tavsifi noto‘g‘ri."));
+      const types = ["company", "nonprofit", "educational_institution", "community", "team", "other"];
+      const visibility = ["private", "unlisted", "public"].includes(input.visibility) ? input.visibility : "private";
+      return runPublicCommand("idea_lab_create_organization", {
+        p_name: input.name.trim(), p_slug: input.slug || null,
+        p_organization_type: types.includes(input.type) ? input.type : "other",
+        p_description: input.description || "", p_location_label: input.location || null,
+        p_website_url: input.websiteUrl || null, p_visibility: visibility
+      });
+    },
+    updateOrganization(input = {}) {
+      if (!isUuid(input.organizationId) || !requiredText(input.name, 2, 120)) return Promise.resolve(fail("INVALID_ORGANIZATION", "Tashkilot ma’lumoti noto‘g‘ri."));
+      return runPublicCommand("idea_lab_update_organization", {
+        p_organization_id: input.organizationId, p_name: input.name.trim(), p_slug: input.slug || null,
+        p_organization_type: input.type || "other", p_description: input.description || "",
+        p_location_label: input.location || null, p_website_url: input.websiteUrl || null,
+        p_visibility: input.visibility || "private", p_status: input.status || "draft"
+      });
+    },
+    inviteOrganizationMember(input = {}) {
+      if (!isUuid(input.organizationId) || !isUuid(input.userId) || !["admin", "editor", "member"].includes(input.role || "member")) {
+        return Promise.resolve(fail("INVALID_ORGANIZATION_INVITE", "Tashkilot taklif ma’lumotlari noto‘g‘ri."));
+      }
+      return runPublicCommand("idea_lab_invite_organization_member", {
+        p_organization_id: input.organizationId, p_user_id: input.userId, p_membership_role: input.role || "member"
+      });
+    },
+    acceptOrganizationInvite(membershipId) {
+      if (!isUuid(membershipId)) return Promise.resolve(fail("INVALID_MEMBERSHIP_ID", "A’zolik identifikatori noto‘g‘ri."));
+      return runPublicCommand("idea_lab_accept_organization_invite", { p_membership_id: membershipId });
+    },
+    createResourceOffer(input = {}) {
+      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(String(input.slug || "")) || !requiredText(input.title, 3, 160) ||
+          !requiredText(input.category, 1, 40) || (input.description || "").length > 3000) {
+        return Promise.resolve(fail("INVALID_RESOURCE_OFFER", "Resurs taklifi maydonlari noto‘g‘ri."));
+      }
+      return runPublicCommand("idea_lab_create_resource_offer", {
+        p_project_id: isUuid(input.projectId) ? input.projectId : null, p_slug: input.slug,
+        p_title: input.title.trim(), p_category: input.category, p_description: input.description || "",
+        p_quantity_label: input.quantityLabel || "", p_availability_label: input.availabilityLabel || "",
+        p_location_label: input.location || null, p_public_terms: input.publicTerms || "",
+        p_status: input.status || "draft"
+      });
+    },
+    updateResourceOffer(input = {}) {
+      if (!isUuid(input.offerId) || !requiredText(input.title, 3, 160)) return Promise.resolve(fail("INVALID_RESOURCE_OFFER", "Resurs taklifi noto‘g‘ri."));
+      return runPublicCommand("idea_lab_update_resource_offer", {
+        p_offer_id: input.offerId, p_project_id: isUuid(input.projectId) ? input.projectId : null,
+        p_slug: input.slug, p_title: input.title.trim(), p_category: input.category,
+        p_description: input.description || "", p_quantity_label: input.quantityLabel || "",
+        p_availability_label: input.availabilityLabel || "", p_location_label: input.location || null,
+        p_public_terms: input.publicTerms || "", p_status: input.status || "draft"
+      });
+    },
+    createPartnershipOpportunity(input = {}) {
+      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(String(input.slug || "")) || !requiredText(input.title, 3, 160) ||
+          !requiredText(input.summary, 1, 600) || (input.details || "").length > 4000) {
+        return Promise.resolve(fail("INVALID_PARTNERSHIP", "Hamkorlik e’loni maydonlari noto‘g‘ri."));
+      }
+      return runPublicCommand("idea_lab_create_partnership_opportunity", {
+        p_project_id: isUuid(input.projectId) ? input.projectId : null, p_slug: input.slug,
+        p_opportunity_type: input.type || "other", p_title: input.title.trim(),
+        p_summary: input.summary.trim(), p_details: input.details || "",
+        p_location_label: input.location || null, p_status: input.status || "draft"
+      });
+    },
+    updatePartnershipOpportunity(input = {}) {
+      if (!isUuid(input.opportunityId) || !requiredText(input.title, 3, 160) || !requiredText(input.summary, 1, 600)) {
+        return Promise.resolve(fail("INVALID_PARTNERSHIP", "Hamkorlik e’loni noto‘g‘ri."));
+      }
+      return runPublicCommand("idea_lab_update_partnership_opportunity", {
+        p_opportunity_id: input.opportunityId, p_project_id: isUuid(input.projectId) ? input.projectId : null,
+        p_slug: input.slug, p_opportunity_type: input.type || "other", p_title: input.title.trim(),
+        p_summary: input.summary.trim(), p_details: input.details || "",
+        p_location_label: input.location || null, p_status: input.status || "draft"
+      });
+    },
+    submitResourceRequest(input = {}) {
+      if (!isUuid(input.offerId) || (input.note || "").length > 2000 || (input.quantity || "").length > 120) {
+        return Promise.resolve(fail("INVALID_RESOURCE_REQUEST", "Resurs so‘rovi maydonlari noto‘g‘ri."));
+      }
+      return runPublicCommand("idea_lab_submit_resource_request", {
+        p_offer_id: input.offerId, p_project_id: isUuid(input.projectId) ? input.projectId : null,
+        p_request_note: input.note || "", p_requested_quantity: input.quantity || ""
+      });
+    },
+    submitPartnershipEnquiry(input = {}) {
+      if (!isUuid(input.opportunityId) || !requiredText(input.message, 1, 2500)) {
+        return Promise.resolve(fail("INVALID_PARTNERSHIP_ENQUIRY", "Hamkorlik murojaati noto‘g‘ri."));
+      }
+      return runPublicCommand("idea_lab_submit_partnership_enquiry", {
+        p_opportunity_id: input.opportunityId, p_project_id: isUuid(input.projectId) ? input.projectId : null,
+        p_message: input.message.trim()
+      });
+    },
     updateProjectApplication(input = {}) {
       if (!isUuid(input.applicationId)) return Promise.resolve(fail("INVALID_APPLICATION_ID", "Ariza identifikatori noto‘g‘ri."));
       const allowed = ["in_review", "accepted", "rejected", "withdrawn"];
