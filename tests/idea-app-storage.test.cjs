@@ -55,3 +55,26 @@ test("Storage migration does not make assets public or grant anonymous access", 
   assert.doesNotMatch(executableSql, /create policy[\s\S]*?to anon/i);
   assert.doesNotMatch(executableSql, /public\s*=\s*true/i);
 });
+
+const preflight = fs.readFileSync(
+  path.join(root, "supabase/verification/storage-preflight.sql"),
+  "utf8"
+);
+
+test("Storage preflight is read-only and checks bucket, policies and role privileges", () => {
+  assert.match(preflight, /READ ONLY/i);
+  assert.match(preflight, /storage\.buckets/i);
+  assert.match(preflight, /pg_policies/i);
+  assert.match(preflight, /anon_policy_count/i);
+  assert.match(preflight, /authenticated_select_privilege/i);
+  const statements = preflight
+    .replace(/--[^\n]*/g, "")
+    .split(";")
+    .map((part) => part.trim())
+    .filter(Boolean);
+  assert.ok(statements.length >= 4);
+  for (const statement of statements) {
+    assert.match(statement, /^select\b/i);
+    assert.doesNotMatch(statement, /\b(insert|update|delete|merge|alter|create|drop|truncate|grant|revoke)\b/i);
+  }
+});
