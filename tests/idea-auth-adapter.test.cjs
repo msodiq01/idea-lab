@@ -66,3 +66,61 @@ test("Auth noto‘g‘ri parol va telefon formatini serverga yubormasdan rad eta
   assert.equal(badPhone.ok, false);
   assert.equal(calls, 0);
 });
+
+test("authenticated profile data is read from the current Auth user metadata", async () => {
+  const calls = [];
+  const user = { id: "user-a", email: "a@example.test", user_metadata: { full_name: "Example User" } };
+  const { auth } = loadAuth({
+    async getSession() { return { data: { session: { user } }, error: null }; },
+    async getUser() { calls.push("getUser"); return { data: { user }, error: null }; }
+  });
+  auth.configure(config);
+  await auth.getSession();
+  const result = await auth.getProfileData();
+  assert.equal(result.ok, true);
+  assert.equal(result.data.id, "user-a");
+  assert.equal(result.data.metadata.full_name, "Example User");
+  assert.deepEqual(calls, ["getUser"]);
+});
+
+test("profile updates write only bounded display metadata and never authorization claims", async () => {
+  let payload;
+  const user = { id: "user-a" };
+  const { auth } = loadAuth({
+    async getSession() { return { data: { session: { user } }, error: null }; },
+    async updateUser(value) { payload = value; return { data: { user: { ...user, user_metadata: value.data } }, error: null }; }
+  });
+  auth.configure(config);
+  await auth.getSession();
+  const result = await auth.updateProfileData({
+    fullName: " Example User ",
+    phone: "+998901234567",
+    bio: "Short bio",
+    primaryGoal: "Learn",
+    roles: ["founder"],
+    skills: ["research", "design"],
+    is_admin: true,
+    service_role: "never"
+  });
+  assert.equal(result.ok, true);
+  assert.equal(payload.data.full_name, "Example User");
+  assert.equal(payload.data.profile_bio, "Short bio");
+  assert.deepEqual(payload.data.profile_roles, ["founder"]);
+  assert.deepEqual(payload.data.profile_skills, ["research", "design"]);
+  assert.equal(Object.hasOwn(payload.data, "is_admin"), false);
+  assert.equal(Object.hasOwn(payload.data, "service_role"), false);
+});
+
+test("profile metadata validation blocks oversized values before any Auth request", async () => {
+  let calls = 0;
+  const { auth } = loadAuth({
+    async getSession() { return { data: { session: { user: { id: "user-a" } } }, error: null }; },
+    async updateUser() { calls++; return { data: {}, error: null }; }
+  });
+  auth.configure(config);
+  await auth.getSession();
+  const result = await auth.updateProfileData({ bio: "x".repeat(2001) });
+  assert.equal(result.ok, false);
+  assert.equal(result.error.code, "INVALID_PROFILE");
+  assert.equal(calls, 0);
+});
