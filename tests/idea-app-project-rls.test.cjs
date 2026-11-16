@@ -18,7 +18,7 @@ const identitySql = fs.readFileSync(
 
 
 test("RLS migration is additive and targets only idea_app", () => {
-  assert.match(sql, /NOT applied to any Supabase project/i);
+  assert.match(sql, /applied to Supabase production project idea-lab/i);
   assert.match(sql, /create policy projects_select_authorized/i);
   assert.doesNotMatch(executableSql, /alter\s+table\s+public\./i);
   assert.doesNotMatch(executableSql, /drop\s+(table|schema|function)/i);
