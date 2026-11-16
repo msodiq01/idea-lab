@@ -89,3 +89,28 @@ test("read-only preflight covers all new module objects", () => {
     assert.ok(preflight.includes(name));
   }
 });
+
+
+test("anonymous catalogue grants exclude internal owner and specialist user IDs", () => {
+  const specialistGrant = sql.match(/grant select \(public_name,[\s\S]*?\)\s+on idea_app\.specialist_profiles to anon;/i);
+  assert.ok(specialistGrant, "anonymous specialist grant should exist");
+  assert.doesNotMatch(specialistGrant[0], /\buser_id\b/i);
+
+  const resourceGrant = sql.match(/grant select \(id, slug,[\s\S]*?\)\s+on idea_app\.resource_offers to anon, authenticated;/i);
+  assert.ok(resourceGrant, "resource catalogue grant should exist");
+  assert.doesNotMatch(resourceGrant[0], /\bowner_id\b/i);
+
+  const partnershipGrant = sql.match(/grant select \(id, slug,[\s\S]*?\)\s+on idea_app\.partnership_opportunities to anon, authenticated;/i);
+  assert.ok(partnershipGrant, "partnership catalogue grant should exist");
+  assert.doesNotMatch(partnershipGrant[0], /\bowner_id\b/i);
+});
+
+test("specialists can provide a response note when accepting or declining", () => {
+  const start = sql.indexOf("if v_actor = old.specialist_id and not v_reviewer");
+  const end = sql.indexOf("elsif v_reviewer", start);
+  assert.ok(start >= 0 && end > start, "specialist response branch should exist");
+  const branch = sql.slice(start, end);
+  assert.match(branch, /new\.status in \('accepted','declined'\)/);
+  assert.doesNotMatch(branch, /new\.response_note\s*=\s*old\.response_note/i);
+  assert.match(sql, /grant update \(status, response_note, responded_at, updated_at\)\s+on idea_app\.specialist_requests to authenticated/i);
+});
