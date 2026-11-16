@@ -1,6 +1,6 @@
 # Supabase tayyorlash
 
-> **Jonli backend holati — 2026-11-16:** IDEA LAB’ning 10 ta yangi migratsiyasi idea-lab production loyihasiga muvaffaqiyatli qo‘llandi. idea_app private sxemasida 17 ta jadval mavjud va ularning barchasida RLS yoqilgan; har birida tegishli siyosatlar mavjud. Ochiq API faqat public sxemasidagi xavfsiz view va SECURITY INVOKER RPC wrapper'lari orqali ishlaydi. Shaxsiy fayllar uchun private Storage bucket yaratildi.
+> **Jonli backend holati — 2026-11-16:** IDEA LAB’ning 10 ta yangi migratsiyasi idea-lab production loyihasiga muvaffaqiyatli qo‘llandi. idea_app private sxemasida 16 ta jadval mavjud va ularning barchasida RLS yoqilgan; har birida tegishli siyosatlar mavjud. Ochiq API faqat public sxemasidagi xavfsiz view va SECURITY INVOKER RPC wrapper'lari orqali ishlaydi. Shaxsiy fayllar uchun private Storage bucket yaratildi.
 >
 > Frontend Supabase public backend'iga ulandi. Ikki alohida foydalanuvchi bilan RLS izolyatsiyasi sinovi hali bajarilmagan (Auth foydalanuvchilari hozircha 0 ta); shu sababli hozircha faqat bo‘sh loyiha ustida dastlabki pilot sinovi tavsiya etiladi. Mavjud public biznes jadvallari o‘zgartirilmadi. 20261122_application_activity_notifications.sql va supplier-verification keyingi migratsiyalari qo‘llanmagan.
 >
