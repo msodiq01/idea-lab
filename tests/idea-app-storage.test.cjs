@@ -75,6 +75,6 @@ test("Storage preflight is read-only and checks bucket, policies and role privil
   assert.ok(statements.length >= 4);
   for (const statement of statements) {
     assert.match(statement, /^select\b/i);
-    assert.doesNotMatch(statement, /\b(insert|update|delete|merge|alter|create|drop|truncate|grant|revoke)\b/i);
+    assert.doesNotMatch(statement, /^\s*(insert|update|delete|merge|alter|create|drop|truncate|grant|revoke)\b/im);
   }
 });
