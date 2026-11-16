@@ -36,9 +36,9 @@
 <a class="welcome-cta" id="welcomeAction" href="profile.html">Profilni sozlash →</a>
 </section>
 <section class="d-grid" aria-label="Asosiy ko‘rsatkichlar">
-<article class="d-card"><span class="d-stat-icon">◈</span><div class="d-stat-label">Mening loyihalarim</div><div class="d-stat-value" id="projectCount">0</div><div class="d-stat-foot">Ushbu brauzerda saqlangan loyihalar</div></article>
-<article class="d-card"><span class="d-stat-icon">↗</span><div class="d-stat-label">Yuborilgan arizalar</div><div class="d-stat-value" id="applicationCount">0</div><div class="d-stat-foot">Mavjud mahalliy ariza yozuvlari</div></article>
-<article class="d-card"><span class="d-stat-icon">◎</span><div class="d-stat-label">Hamkorlik so‘rovlari</div><div class="d-stat-value" id="collaborationCount">0</div><div class="d-stat-foot">Jamoa va resurs murojaatlari</div></article>
+<article class="d-card"><span class="d-stat-icon">◈</span><div class="d-stat-label" id="projectCountLabel">Mahalliy loyihalar</div><div class="d-stat-value" id="projectCount">0</div><div class="d-stat-foot" id="projectCountFoot">Faqat ushbu brauzerda saqlangan</div></article>
+<article class="d-card"><span class="d-stat-icon">↗</span><div class="d-stat-label" id="applicationCountLabel">Mahalliy arizalar</div><div class="d-stat-value" id="applicationCount">0</div><div class="d-stat-foot" id="applicationCountFoot">Faqat ushbu brauzerda saqlangan yozuvlar</div></article>
+<article class="d-card"><span class="d-stat-icon">◎</span><div class="d-stat-label" id="collaborationCountLabel">Mahalliy hamkorlik so‘rovlari</div><div class="d-stat-value" id="collaborationCount">0</div><div class="d-stat-foot" id="collaborationCountFoot">Faqat ushbu brauzerda saqlangan yozuvlar</div></article>
 <article class="d-card"><span class="d-stat-icon">⌁</span><div class="d-stat-label">IoT qurilmalar</div><div class="d-stat-value">0</div><div class="d-stat-foot">Hozircha qurilmalar ulanmagan</div></article>
 <article class="d-card"><span class="d-stat-icon">⇄</span><div class="d-stat-label">Talab va takliflar</div><div class="d-stat-value" id="exchangeCount">0</div><div class="d-stat-foot">Mahalliy e’lonlar</div></article>
 </section>
@@ -190,11 +190,21 @@ async function refreshServerDashboard(){
  const data=window.IDEALAB_DATA;
  const auth=window.IDEALAB_AUTH;
  if(!data||!auth||!auth.getStatus().configured)return;
+ document.getElementById("projectCountLabel").textContent="Ommaviy loyihalar";
+ document.getElementById("projectCount").textContent="…";
+ document.getElementById("projectCountFoot").textContent="Server katalogi yuklanmoqda";
+ document.getElementById("applicationCountLabel").textContent="Arizalar markazi";
+ document.getElementById("applicationCount").textContent="…";
+ document.getElementById("applicationCountFoot").textContent="Hisob sessiyasi tekshirilmoqda";
+ document.getElementById("collaborationCountLabel").textContent="Hamkorlik so‘rovlari";
+ document.getElementById("collaborationCount").textContent="…";
+ document.getElementById("collaborationCountFoot").textContent="Server ma’lumotlari kutilmoqda";
  try{
   const projectResult=await data.listPublicProjects({limit:50});
   if(projectResult&&projectResult.ok){
-   const serverProjects=projectResult.data||[];
+   const serverProjects=Array.isArray(projectResult.data)?projectResult.data:[];
    document.getElementById("projectCount").textContent=String(serverProjects.length);
+   document.getElementById("projectCountFoot").textContent="Platformada e’lon qilingan loyihalar";
    const target=document.getElementById("recentProjects");
    target.replaceChildren();
    if(!serverProjects.length){
@@ -213,22 +223,42 @@ async function refreshServerDashboard(){
      info.append(title,detail);item.append(info,link);target.append(item);
     });
    }
+  }else{
+   document.getElementById("projectCount").textContent="—";
+   document.getElementById("projectCountFoot").textContent="Server katalogini yuklab bo‘lmadi";
   }
-  await auth.getSession();
+  const sessionResult=await auth.getSession();
   const current=auth.getStatus();
   document.getElementById("authStatus").textContent=current.authenticated?"Faol":"Kirilmagan";
   if(current.authenticated){
+   document.getElementById("applicationCountFoot").textContent="Sizga tegishli va siz qatnashgan yozuvlar";
    const applicationResult=await data.listApplicationCenter({limit:50});
    if(applicationResult&&applicationResult.ok){
-    const rows=applicationResult.data||[];
+    const rows=Array.isArray(applicationResult.data)?applicationResult.data:[];
     document.getElementById("applicationCount").textContent=String(rows.length);
-    document.getElementById("collaborationCount").textContent=String(rows.filter(row=>["team","resource","partnership","specialist"].includes(String(row.source_type||"").toLowerCase())).length);
+    document.getElementById("applicationCountFoot").textContent="Siz yuborgan va sizga kelgan arizalar";
+    const collaborationRows=rows.filter(row=>["resource","partnership","specialist"].includes(String(row.source_type||"").toLowerCase()));
+    document.getElementById("collaborationCount").textContent=String(collaborationRows.length);
+    document.getElementById("collaborationCountFoot").textContent="Resurs, hamkorlik va mutaxassis so‘rovlari";
     coreNotice.textContent="Supabase bilan faol sessiya mavjud. Loyiha katalogi va arizalar soni serverdan yuklandi.";
+   }else{
+    document.getElementById("applicationCount").textContent="—";
+    document.getElementById("applicationCountFoot").textContent="Server arizalarini yuklab bo‘lmadi";
+    document.getElementById("collaborationCount").textContent="—";
+    document.getElementById("collaborationCountFoot").textContent="Server so‘rovlarini yuklab bo‘lmadi";
    }
   }else{
+   document.getElementById("applicationCount").textContent="—";
+   document.getElementById("applicationCountFoot").textContent="Ko‘rish uchun akkauntga kiring";
+   document.getElementById("collaborationCount").textContent="—";
+   document.getElementById("collaborationCountFoot").textContent="Ko‘rish uchun akkauntga kiring";
    coreNotice.textContent="Supabase backend ulangan. Ommaviy loyihalar serverdan yuklandi; shaxsiy arizalarni ko‘rish uchun akkauntga kiring.";
   }
  }catch(_){
+  document.getElementById("projectCount").textContent="—";
+  document.getElementById("projectCountFoot").textContent="Server bilan aloqa xatosi";
+  document.getElementById("applicationCount").textContent="—";
+  document.getElementById("collaborationCount").textContent="—";
   coreNotice.textContent="Server ma’lumotlarini yangilashda xatolik. Sahifani yangilang yoki backend ulanishini tekshiring.";
  }
 }
