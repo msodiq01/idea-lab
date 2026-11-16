@@ -1,7 +1,6 @@
-/* IDEA LAB — read-only Supabase data gateway
- * Safe by default: requires the existing Auth adapter and explicit Supabase config.
- * Uses only reviewed public invoker views in idea_app; no direct table writes.
- * Data API schema exposure is a separate deployment gate and remains disabled.
+/* IDEA LAB — Supabase data gateway
+ * Uses safe public invoker views and SECURITY INVOKER RPC wrappers.
+ * Private idea_app tables remain outside the exposed Data API schema.
  */
 ((global) => {
   "use strict";
@@ -9,11 +8,11 @@
   if (global.IDEALAB_DATA) return;
 
   const VIEWS = Object.freeze({
-    projects: "public_project_directory",
-    updates: "public_project_updates",
-    specialists: "public_specialist_directory",
-    resources: "public_resource_catalogue",
-    partnerships: "public_partnership_directory"
+    projects: "idea_lab_public_project_directory",
+    updates: "idea_lab_public_project_updates",
+    specialists: "idea_lab_public_specialist_directory",
+    resources: "idea_lab_public_resource_catalogue",
+    partnerships: "idea_lab_public_partnership_directory"
   });
   const DEFAULT_LIMIT = 20;
   const MAX_LIMIT = 50;
@@ -39,7 +38,7 @@
     if (!client) return fail("BACKEND_NOT_CONFIGURED", "Backend hali ulanmagan yoki Auth sessiyasi tayyor emas.");
     if (typeof client.schema !== "function") return fail("DATA_API_UNAVAILABLE", "Supabase Data API mijozi mavjud emas.");
     try {
-      const response = await client.schema("idea_app").rpc(name, args);
+      const response = await client.rpc("idea_lab_" + name, args);
       if (response && response.error) {
         return fail("COMMAND_FAILED", "Amal bajarilmadi. Ruxsatlar va backend migratsiyalarini tekshirish kerak.");
       }
@@ -89,7 +88,7 @@
     if (!client) return fail("BACKEND_NOT_CONFIGURED", "Backend hali ulanmagan yoki Auth sessiyasi tayyor emas.");
     if (typeof client.schema !== "function") return fail("DATA_API_UNAVAILABLE", "Supabase Data API mijozi mavjud emas.");
     try {
-      let query = client.schema("idea_app").from(view).select("*");
+      let query = client.from(view).select("*");
       if (typeof configure === "function") query = configure(query);
       const response = await query;
       if (response && response.error) {
@@ -108,9 +107,9 @@
       return Object.freeze({
         configured: Boolean(state && state.configured),
         authenticated: Boolean(state && state.authenticated),
-        schema: "idea_app",
-        accessMode: "reviewed-public-views-only",
-        schemaExposureRequired: true
+        schema: "public",
+        accessMode: "safe-public-views-and-invoker-rpcs",
+        schemaExposureRequired: false
       });
     },
     listPublicProjects(options = {}) {
