@@ -1,6 +1,6 @@
 -- IDEA LAB: isolated identity + organization foundation
 -- Version: 20261116120000
--- Status: repository draft only; NOT applied to any Supabase project.
+-- Status: applied to Supabase production project idea-lab on 2026-11-16.nly; NOT applied to any Supabase project.
 -- Scope: additive objects in private schema idea_app. Existing public schema is untouched.
 -- Access: deny-by-default. No Data API exposure, client grants, or RLS policies in this phase.
 
