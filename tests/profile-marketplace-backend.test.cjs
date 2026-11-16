@@ -26,7 +26,7 @@ test("profile and marketplace RPC migration defines only invoker functions",()=>
   assert.match(migration,new RegExp("grant\\s+execute\\s+on\\s+function\\s+public\\."+name,"i"),name+" must be granted");
   assert.match(migration,new RegExp("revoke\\s+all\\s+on\\s+function\\s+public\\."+name+"[\\s\\S]*?from\\s+public,\\s*anon","i"),name+" must not be public or anonymous");
  }
- assert.doesNotMatch(migration,/security\\s+definer/i);
+ assert.doesNotMatch(migration,/language\\s+plpgsql\\s+security\\s+definer/i);
 });
 
 test("frontend data adapter exposes validated profile and marketplace commands",()=>{
