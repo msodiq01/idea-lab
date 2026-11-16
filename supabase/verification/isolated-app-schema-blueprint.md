@@ -127,10 +127,11 @@ Two-user sinovlar `verification/project-rls-acceptance.md` da, metadata tekshiru
 ## 4. Ma'lumot maxfiyligi va ruxsat modeli
 
 ### Profil
-- `profiles` faqat egasiga tegishli tahrirlanadigan profil maydonlarini saqlaydi.
-- `profile_contacts` alohida yopiq jadval: telefon/email faqat egasi va aniq vakolatli jarayonlarga.
-- Profil jadvalidagi rol yoki admin huquqini foydalanuvchi o'zi tahrirlay olmaydi.
-- Vakolatlar `user_metadata` dan olinmaydi. Zarur bo'lsa, faqat ishonchli server boshqaradigan `app_metadata` yoki alohida yopiq rol jadvali ishlatiladi.
+- `profiles` egasining tahrirlanadigan profil maydonlarini saqlaydi; public profil faqat egasi `visibility='public'` qilganda va ko'rsatiladigan nom yetarli bo'lganda katalogda chiqadi.
+- `public_profile_directory` — `security_invoker=true` view; Auth `user_id`, avatar storage path va kontakt ma'lumotlarini chiqarmaydi.
+- `profile_contacts` alohida yopiq jadval: telefon, Telegram va email hozircha faqat egasiga ko'rinadi. Jadvaldagi `visibility` qiymati hozircha kontaktlarni ommaga ochmaydi.
+- Profil va kontakt jadvalidagi Auth identifikatori client SELECT grantlaridan chiqarilgan; egani tekshirish RLS orqali amalga oshadi.
+- Profil jadvalidagi rol yoki admin huquqini foydalanuvchi o'zi tahrirlay olmaydi. Vakolatlar `user_metadata` dan olinmaydi.
 
 ### E'lonlar
 - Public directory faqat maxsus view/DTO orqali; telefon, email, Telegram, private storage path va ichki egasi IDsi chiqarilmaydi.
@@ -146,10 +147,11 @@ Two-user sinovlar `verification/project-rls-acceptance.md` da, metadata tekshiru
 - Audit va activity yozuvlarini client bevosita INSERT/UPDATE/DELETE qila olmaydi.
 
 ### Tashkilot va loyiha a'zoligi
-- A'zolik taklif → pending → active/declined/removed holatlaridan o'tadi.
-- Faqat tashkilot/loyiha egasi a'zolikni boshqaradi.
-- Oddiy a'zo o'zini owner/admin qila olmaydi.
-- Vazifa update siyosati project_id yoki assigned_to qiymatini boshqa loyiha/foydalanuvchiga o'tkazib yuborishga yo'l qo'ymaydi.
+- Tashkilot ommaviy katalogda faqat `visibility='public'` va `status='active'` bo'lganda ko'rinadi; `public_organization_directory` egasi IDsi va logo storage path'ni chiqarmaydi.
+- Tashkilot egasi tashkilotni boshqaradi va mavjud Auth foydalanuvchisiga taklif yozuvi yaratadi; taklif etilgan foydalanuvchi faqat o'z taklifini qabul yoki rad etishi mumkin.
+- `organization_members.user_id` va `invited_by` client SELECT grantlaridan chiqarilgan. Hozircha foydalanuvchini email orqali qidirish yoki xavfsiz ismga bog'langan a'zolar katalogi endpointi tayyor emas; bunday UI alohida server-side yechim talab qiladi.
+- Oddiy a'zo o'zini owner/admin qila olmaydi; tashkilot rollari faqat egasi tomonidan boshqariladi.
+- Loyiha vazifasi assignee tekshiruvi private trigger-only helper orqali bajariladi; project owner IDsi va a'zolik ro'yxati clientga ochilmaydi.
 
 ## 5. Data API va schema exposure
 
