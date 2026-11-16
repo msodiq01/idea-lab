@@ -1,7 +1,7 @@
 -- IDEA LAB: projects, project teams, tasks, and updates
 -- Version: 20261116130000
 -- Depends on: 20261116120000_idea_app_identity_organizations.sql
--- Status: applied to Supabase production project idea-lab on 2026-11-16.nly; NOT applied to any Supabase project.
+-- Status: applied to Supabase production project idea-lab on 2026-11-16.
 -- Scope: additive objects in the private idea_app schema. Existing public schema is untouched.
 -- Access: deny-by-default. No Data API exposure, client grants, or RLS policies in this phase.
 
