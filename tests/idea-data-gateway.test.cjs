@@ -82,8 +82,8 @@ test("public project catalogue reads only the reviewed invoker view", async () =
   const result = await api.listPublicProjects({ limit: 12 });
   assert.equal(result.ok, true);
   assert.equal(result.data[0].slug, "sample");
-  assert.deepEqual(calls.map(call => call.name || call.view || call.method), ["idea_app", "public_project_directory", "select", "order", "limit"]);
-  assert.equal(calls[0].name, "idea_app");
+  assert.deepEqual(calls.map(call => call.name || call.view || call.method), ["idea_lab_public_project_directory", "select", "order", "limit"]);
+  assert.equal(calls[0].view, "idea_lab_public_project_directory");
   assert.equal(calls.at(-1).value, 12);
 });
 
@@ -112,9 +112,9 @@ test("specialist, resource and partnership catalogues use only fixed safe views"
   await api.listPublicResources();
   await api.listPublicPartnerships();
   assert.deepEqual(calls.filter(call => call.method === "from").map(call => call.view), [
-    "public_specialist_directory",
-    "public_resource_catalogue",
-    "public_partnership_directory"
+    "idea_lab_public_specialist_directory",
+    "idea_lab_public_resource_catalogue",
+    "idea_lab_public_partnership_directory"
   ]);
 });
 
@@ -155,7 +155,7 @@ test("project creation calls only the fixed invoker command and never accepts an
   const result = await api.createProject({ title: "My project", summary: "Summary" });
   assert.equal(result.ok, true);
   const call = calls.find(item => item.method === "rpc");
-  assert.equal(call.name, "create_project");
+  assert.equal(call.name, "idea_lab_create_project");
   assert.equal(call.args.p_title, "My project");
   assert.equal(call.args.p_summary, "Summary");
   assert.equal(Object.hasOwn(call.args, "p_created_by"), false);
@@ -174,12 +174,12 @@ test("project edit and team actions use fixed RPC names and validated identifier
   await api.reviewProjectMembership({ membershipId, approve: true, role: "contributor" });
   await api.leaveProject(membershipId);
   assert.deepEqual(calls.filter(item => item.method === "rpc").map(item => item.name), [
-    "update_project",
-    "request_project_membership",
-    "review_project_membership",
-    "leave_project"
+    "idea_lab_update_project",
+    "idea_lab_request_project_membership",
+    "idea_lab_review_project_membership",
+    "idea_lab_leave_project"
   ]);
-  const review = calls.find(item => item.name === "review_project_membership");
+  const review = calls.find(item => item.name === "idea_lab_review_project_membership");
   assert.equal(review.args.p_membership_role, "contributor");
 });
 
