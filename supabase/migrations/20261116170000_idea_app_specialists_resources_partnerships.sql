@@ -176,6 +176,42 @@ alter table idea_app.resource_requests enable row level security;
 alter table idea_app.partnership_opportunities enable row level security;
 alter table idea_app.partnership_enquiries enable row level security;
 
+-- Private ownership predicates let RLS and invoker triggers verify ownership
+-- without granting clients SELECT access to internal Auth/owner identifier columns.
+create or replace function idea_private.is_specialist_profile_owner(p_profile_id uuid)
+returns boolean language sql stable security definer set search_path = ''
+as $function$
+  select exists (
+    select 1 from idea_app.specialist_profiles sp
+    where sp.id = p_profile_id and sp.user_id = (select auth.uid())
+  );
+$function$;
+
+create or replace function idea_private.is_resource_offer_owner(p_offer_id uuid)
+returns boolean language sql stable security definer set search_path = ''
+as $function$
+  select exists (
+    select 1 from idea_app.resource_offers ro
+    where ro.id = p_offer_id and ro.owner_id = (select auth.uid())
+  );
+$function$;
+
+create or replace function idea_private.is_partnership_opportunity_owner(p_opportunity_id uuid)
+returns boolean language sql stable security definer set search_path = ''
+as $function$
+  select exists (
+    select 1 from idea_app.partnership_opportunities po
+    where po.id = p_opportunity_id and po.owner_id = (select auth.uid())
+  );
+$function$;
+
+revoke all on function idea_private.is_specialist_profile_owner(uuid) from public, anon, authenticated;
+revoke all on function idea_private.is_resource_offer_owner(uuid) from public, anon, authenticated;
+revoke all on function idea_private.is_partnership_opportunity_owner(uuid) from public, anon, authenticated;
+grant execute on function idea_private.is_specialist_profile_owner(uuid) to authenticated;
+grant execute on function idea_private.is_resource_offer_owner(uuid) to authenticated;
+grant execute on function idea_private.is_partnership_opportunity_owner(uuid) to authenticated;
+
 -- Specialist profile: public listing fields only; the specialist owns their own record.
 create policy specialist_profiles_public_read
 on idea_app.specialist_profiles for select to anon, authenticated
@@ -196,10 +232,7 @@ with check (user_id = (select auth.uid()));
 create policy specialist_requests_select_participants
 on idea_app.specialist_requests for select to authenticated
 using (
-  exists (
-    select 1 from idea_app.specialist_profiles sp
-    where sp.id = specialist_id and sp.user_id = (select auth.uid())
-  )
+  (select idea_private.is_specialist_profile_owner(specialist_id))
   or (select idea_private.is_project_owner(project_id))
   or (select idea_private.has_active_project_role(project_id, array['manager']::text[]))
 );
@@ -219,18 +252,12 @@ with check (
 create policy specialist_requests_update_participants
 on idea_app.specialist_requests for update to authenticated
 using (
-  exists (
-    select 1 from idea_app.specialist_profiles sp
-    where sp.id = specialist_id and sp.user_id = (select auth.uid())
-  )
+  (select idea_private.is_specialist_profile_owner(specialist_id))
   or (select idea_private.is_project_owner(project_id))
   or (select idea_private.has_active_project_role(project_id, array['manager']::text[]))
 )
 with check (
-  exists (
-    select 1 from idea_app.specialist_profiles sp
-    where sp.id = specialist_id and sp.user_id = (select auth.uid())
-  )
+  (select idea_private.is_specialist_profile_owner(specialist_id))
   or (select idea_private.is_project_owner(project_id))
   or (select idea_private.has_active_project_role(project_id, array['manager']::text[]))
 );
@@ -264,10 +291,7 @@ create policy resource_requests_select_participants
 on idea_app.resource_requests for select to authenticated
 using (
   requester_id = (select auth.uid())
-  or exists (
-    select 1 from idea_app.resource_offers ro
-    where ro.id = offer_id and ro.owner_id = (select auth.uid())
-  )
+  or (select idea_private.is_resource_offer_owner(offer_id))
 );
 create policy resource_requests_insert_requester
 on idea_app.resource_requests for insert to authenticated
@@ -287,17 +311,11 @@ create policy resource_requests_update_participants
 on idea_app.resource_requests for update to authenticated
 using (
   requester_id = (select auth.uid())
-  or exists (
-    select 1 from idea_app.resource_offers ro
-    where ro.id = offer_id and ro.owner_id = (select auth.uid())
-  )
+  or (select idea_private.is_resource_offer_owner(offer_id))
 )
 with check (
   requester_id = (select auth.uid())
-  or exists (
-    select 1 from idea_app.resource_offers ro
-    where ro.id = offer_id and ro.owner_id = (select auth.uid())
-  )
+  or (select idea_private.is_resource_offer_owner(offer_id))
 );
 
 -- Partnership opportunities are public only while published.
@@ -328,10 +346,7 @@ create policy partnership_enquiries_select_participants
 on idea_app.partnership_enquiries for select to authenticated
 using (
   requester_id = (select auth.uid())
-  or exists (
-    select 1 from idea_app.partnership_opportunities po
-    where po.id = opportunity_id and po.owner_id = (select auth.uid())
-  )
+  or (select idea_private.is_partnership_opportunity_owner(opportunity_id))
 );
 create policy partnership_enquiries_insert_requester
 on idea_app.partnership_enquiries for insert to authenticated
@@ -351,17 +366,11 @@ create policy partnership_enquiries_update_participants
 on idea_app.partnership_enquiries for update to authenticated
 using (
   requester_id = (select auth.uid())
-  or exists (
-    select 1 from idea_app.partnership_opportunities po
-    where po.id = opportunity_id and po.owner_id = (select auth.uid())
-  )
+  or (select idea_private.is_partnership_opportunity_owner(opportunity_id))
 )
 with check (
   requester_id = (select auth.uid())
-  or exists (
-    select 1 from idea_app.partnership_opportunities po
-    where po.id = opportunity_id and po.owner_id = (select auth.uid())
-  )
+  or (select idea_private.is_partnership_opportunity_owner(opportunity_id))
 );
 
 -- Server-owned updated_at timestamps for owner-editable catalogue/profile rows.
@@ -387,7 +396,7 @@ returns trigger language plpgsql security invoker set search_path = ''
 as $function$
 declare
   v_actor uuid := (select auth.uid());
-  v_specialist_user_id uuid;
+  v_is_specialist boolean;
   v_reviewer boolean;
 begin
   if v_actor is null then raise exception 'Authentication required' using errcode = '42501'; end if;
@@ -396,12 +405,10 @@ begin
      or new.request_note is distinct from old.request_note or new.created_at is distinct from old.created_at then
     raise exception 'Specialist request identity and request note are immutable' using errcode = '42501';
   end if;
-  select sp.user_id into v_specialist_user_id
-  from idea_app.specialist_profiles sp
-  where sp.id = old.specialist_id;
+  v_is_specialist := (select idea_private.is_specialist_profile_owner(old.specialist_id));
   v_reviewer := (select idea_private.is_project_owner(old.project_id))
     or (select idea_private.has_active_project_role(old.project_id, array['manager']::text[]));
-  if v_actor = v_specialist_user_id and not v_reviewer
+  if v_is_specialist and not v_reviewer
      and old.status = 'submitted' and new.status in ('accepted','declined') then
     new.responded_at := pg_catalog.now();
   elsif v_reviewer and old.status = 'submitted' and new.status = 'cancelled'
@@ -423,7 +430,7 @@ returns trigger language plpgsql security invoker set search_path = ''
 as $function$
 declare
   v_actor uuid := (select auth.uid());
-  v_owner uuid;
+  v_is_owner boolean;
 begin
   if v_actor is null then raise exception 'Authentication required' using errcode = '42501'; end if;
   if new.id is distinct from old.id or new.offer_id is distinct from old.offer_id
@@ -432,12 +439,12 @@ begin
      or new.created_at is distinct from old.created_at then
     raise exception 'Resource request identity and requester content are immutable' using errcode = '42501';
   end if;
-  select ro.owner_id into v_owner from idea_app.resource_offers ro where ro.id = old.offer_id;
+  v_is_owner := (select idea_private.is_resource_offer_owner(old.offer_id));
   if v_actor = old.requester_id and old.status = 'submitted'
      and new.status = 'cancelled' and new.owner_note = old.owner_note
      and new.reviewed_at is not distinct from old.reviewed_at then
     null;
-  elsif v_actor = v_owner and old.status = 'submitted'
+  elsif v_is_owner and old.status = 'submitted'
         and new.status in ('accepted','rejected') then
     new.reviewed_at := pg_catalog.now();
   else
@@ -456,7 +463,7 @@ returns trigger language plpgsql security invoker set search_path = ''
 as $function$
 declare
   v_actor uuid := (select auth.uid());
-  v_owner uuid;
+  v_is_owner boolean;
 begin
   if v_actor is null then raise exception 'Authentication required' using errcode = '42501'; end if;
   if new.id is distinct from old.id or new.opportunity_id is distinct from old.opportunity_id
@@ -464,12 +471,12 @@ begin
      or new.message is distinct from old.message or new.created_at is distinct from old.created_at then
     raise exception 'Partnership enquiry identity and message are immutable' using errcode = '42501';
   end if;
-  select po.owner_id into v_owner from idea_app.partnership_opportunities po where po.id = old.opportunity_id;
+  v_is_owner := (select idea_private.is_partnership_opportunity_owner(old.opportunity_id));
   if v_actor = old.requester_id and old.status in ('submitted','in_review')
      and new.status = 'withdrawn' and new.owner_note = old.owner_note
      and new.reviewed_at is not distinct from old.reviewed_at then
     null;
-  elsif v_actor = v_owner and old.status in ('submitted','in_review')
+  elsif v_is_owner and old.status in ('submitted','in_review')
         and new.status in ('in_review','accepted','declined')
         and (new.status <> 'in_review' or old.status = 'submitted') then
     new.reviewed_at := pg_catalog.now();
