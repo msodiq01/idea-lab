@@ -388,8 +388,7 @@ begin
   v_reviewer := (select idea_private.is_project_owner(old.project_id))
     or (select idea_private.has_active_project_role(old.project_id, array['manager']::text[]));
   if v_actor = old.specialist_id and not v_reviewer
-     and old.status = 'submitted' and new.status in ('accepted','declined')
-     and new.response_note = old.response_note then
+     and old.status = 'submitted' and new.status in ('accepted','declined') then
     new.responded_at := pg_catalog.now();
   elsif v_reviewer and old.status = 'submitted' and new.status = 'cancelled'
         and new.response_note = old.response_note then
