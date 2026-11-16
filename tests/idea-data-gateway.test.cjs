@@ -61,7 +61,7 @@ test("public project catalogue reads only the reviewed invoker view", async () =
   const result = await api.listPublicProjects({ limit: 12 });
   assert.equal(result.ok, true);
   assert.equal(result.data[0].slug, "sample");
-  assert.deepEqual(calls.map(call => call.name || call.view || call.method), ["schema", "public_project_directory", "select", "order", "limit"]);
+  assert.deepEqual(calls.map(call => call.name || call.view || call.method), ["idea_app", "public_project_directory", "select", "order", "limit"]);
   assert.equal(calls[0].name, "idea_app");
   assert.equal(calls.at(-1).value, 12);
 });
