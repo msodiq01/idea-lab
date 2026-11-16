@@ -265,3 +265,15 @@ test("project detail and Applications Centre activate real storage only from exp
   assert.ok(centre.includes("listApplicationCenter"));
   assert.ok(centre.includes('IDEALAB_CONFIG.mode==="supabase"'));
 });
+
+
+test("account page offers separate Supabase sign-up and sign-in while config remains safely disabled", () => {
+  const account = fs.readFileSync(path.join(root, "account.html"), "utf8");
+  const config = fs.readFileSync(path.join(root, "assets/idea-config.js"), "utf8");
+  assert.ok(account.includes("IDEALAB_AUTH.signUp"));
+  assert.ok(account.includes("IDEALAB_AUTH.signIn"));
+  assert.ok(account.includes("IDEALAB_AUTH.signOut"));
+  assert.ok(config.includes('mode: "offline-demo"'));
+  assert.ok(config.includes("sb_publishable_"));
+  assert.doesNotMatch(config, /service_role|secret_key|database_password/i);
+});
