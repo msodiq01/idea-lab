@@ -62,6 +62,20 @@ test("task assignee must be project owner or active project member", () => {
   assert.match(sql, /grant execute on function idea_private\.is_valid_project_task_assignee\(uuid, uuid\)\s+to authenticated/i);
 });
 
+test("task assignee validation avoids client access to private owner and roster columns", () => {
+  const triggerStart = sql.indexOf("function idea_private.validate_project_task_assignee()");
+  const triggerEnd = sql.indexOf("$function$;", triggerStart) + 11;
+  const trigger = sql.slice(triggerStart, triggerEnd);
+  assert.match(trigger, /idea_private\.is_valid_project_task_assignee\(new\.project_id, new\.assignee_id\)/i);
+  assert.doesNotMatch(trigger, /select p\.created_by|select 1 from idea_app\.project_members/i);
+
+  const policyStart = sql.indexOf("create policy project_tasks_update_owner_manager");
+  const policyEnd = sql.indexOf(";", policyStart);
+  const policy = sql.slice(policyStart, policyEnd);
+  assert.match(policy, /has_active_project_role\(project_id, array\['manager'\]/i);
+  assert.doesNotMatch(policy, /select p\.created_by|select 1 from idea_app\.project_members/i);
+});
+
 test("only owner or manager can assign tasks to other active members", () => {
   assert.match(sql, /create policy project_tasks_update_owner_manager[\s\S]*?for update to authenticated/i);
   assert.match(sql, /has_active_project_role\(project_id, array\['manager'\]::text\[\]\)/i);
