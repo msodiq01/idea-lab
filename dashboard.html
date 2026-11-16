@@ -209,7 +209,7 @@ async function refreshServerDashboard(){
      const detail=document.createElement("small");const link=document.createElement("a");
      title.textContent=String(project.title||"Nomsiz loyiha");
      detail.textContent=String(project.summary||project.category||"Ommaviy loyiha");
-     link.className="d-link";link.href=project.slug?"project.html?slug="+encodeURIComponent(project.slug):"projects.html";link.textContent="Ko‘rish";
+     link.className="d-link";link.href="projects.html";link.textContent="Ko‘rish";
      info.append(title,detail);item.append(info,link);target.append(item);
     });
    }
