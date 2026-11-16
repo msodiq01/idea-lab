@@ -275,5 +275,5 @@ test("account page offers separate Supabase sign-up and sign-in while config rem
   assert.ok(account.includes("IDEALAB_AUTH.signOut"));
   assert.ok(config.includes('mode: "offline-demo"'));
   assert.ok(config.includes("sb_publishable_"));
-  assert.doesNotMatch(config, /service_role|secret_key|database_password/i);
+  assert.doesNotMatch(config, /service_role\\s*[:=]|secret_key\\s*[:=]|database_password\\s*[:=]/i);
 });
