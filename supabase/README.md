@@ -1,14 +1,14 @@
 # Supabase tayyorlash
 
-> **Jonli backend holati — 2026-11-16:** IDEA LAB’ning 10 ta yangi migratsiyasi idea-lab production loyihasiga muvaffaqiyatli qo‘llandi. idea_app private sxemasida 16 ta jadval mavjud va ularning barchasida RLS yoqilgan; har birida tegishli siyosatlar mavjud. Ochiq API faqat public sxemasidagi xavfsiz view va SECURITY INVOKER RPC wrapper'lari orqali ishlaydi. Shaxsiy fayllar uchun private Storage bucket yaratildi.
+> **Jonli backend holati — 2026-11-16:** IDEA LAB’ning 13 ta yangi migratsiyasi idea-lab production loyihasiga muvaffaqiyatli qo‘llandi. idea_app private sxemasida 16 ta jadval mavjud va ularning barchasida RLS yoqilgan; har birida tegishli siyosatlar mavjud. Ochiq API faqat public sxemasidagi xavfsiz view va SECURITY INVOKER RPC wrapper'lari orqali ishlaydi. Shaxsiy fayllar uchun private Storage bucket yaratildi.
 >
-> Frontend Supabase public backend'iga ulandi. Ikki alohida foydalanuvchi bilan RLS izolyatsiyasi sinovi hali bajarilmagan (Auth foydalanuvchilari hozircha 0 ta); shu sababli hozircha faqat bo‘sh loyiha ustida dastlabki pilot sinovi tavsiya etiladi. Mavjud public biznes jadvallari o‘zgartirilmadi. 20261122_application_activity_notifications.sql va supplier-verification keyingi migratsiyalari qo‘llanmagan.
+> Frontend Supabase public backend'iga ulangan. Qo‘shimcha production migratsiyalari: 20261116220000_project_application_by_slug.sql (slug orqali xavfsiz ariza), 20261116220100_correct_slug_application_resolution.sql (least-privilege tuzatish), 20261116230000_owner_project_listing_publish.sql (loyiha egasining ommaviy katalogga chiqarishi). Loyiha katalogi, tafsilot sahifasi, loyiha yaratish/nashr qilish va arizalar markazi server gateway orqali ishlaydi. Ikki alohida foydalanuvchi bilan RLS izolyatsiyasi sinovi hali bajarilmagan (Auth foydalanuvchilari hozircha 0 ta). Mavjud public biznes jadvallari o‘zgartirilmadi. 20261122_application_activity_notifications.sql va supplier-verification keyingi migratsiyalari qo‘llanmagan.
 >
 > Quyidagi avvalgi staging/draft izohlarining ayrimlari deploymentdan oldingi holatni aks ettiradi; yuqoridagi jonli holat ma’lumoti ustuvor.
 
-Bu papkadagi SQL — IDEA LAB umumiy backendini tayyorlash uchun. Ulangan Supabase loyihasi mavjud, ammo hozirgi frontend hali offline-demo rejimida va ushbu papkadagi keng schema/migrationlar jonli bazaga qo‘llanmagan.
+Quyidagi ayrim izohlar tarixiy staging/draft hujjatlaridan qolgan. Jonli holat uchun ushbu fayl boshidagi status va Hozirgi holat bo‘limiga qarang; idea_app sxemasi Data API'ga bevosita expose qilinmaydi.
 
-## Yangi IDEA LAB ilova sxemasi (draft)
+## Tarixiy migration izohlari (deploymentdan oldingi draft holati; yuqoridagi jonli status ustuvor)
 
 - `migrations/20261116120000_idea_app_identity_organizations.sql` — alohida `idea_app` sxemasida profil, maxfiy kontakt, tashkilot va tashkilot a'zoligi poydevori.
 - `migrations/20261116130000_idea_app_projects_teams.sql` — loyiha, jamoa a'zoligi, vazifalar va yangiliklar moduli; birinchi identity/organization migration'iga bog'liq.
@@ -81,15 +81,20 @@ Faqat frontend uchun mo'ljallangan publishable/anon key ishlatilishi mumkin. Ser
 
 ## Hozirgi holat
 
-- Schema tayyorlangan: ha.
-- Security migration tayyorlangan: ha.
-- Ulangan Supabase loyiha read-only audit uchun mavjud: ha.
-- Ushbu repository schema.sql jonli loyihaga qo‘llangan: yo‘q / tasdiqlanmagan.
-- Repository migrationlari staging yoki productionga qo‘llangan: yo‘q / tasdiqlanmagan.
-- Jonli loyihaning hozirgi 9 jadvali alohida resurs/investitsiya poydevori; bu papkadagi keng loyiha/jamoa/vakansiya sxemasi bilan bir xil emas. Tafsilot: BACKEND-SECURITY-REVIEW.md.
-- Auth va server API ishlayapti: yo'q.
-- LocalStorage import qilingan: yo'q.
-
+- Production Supabase project idea-lab faol; Free tier ishlatilmoqda.
+- idea_app private sxemasida 16 ta jadval bor; 16/16 jadvalda RLS yoqilgan; 68 ta RLS policy mavjud.
+- Public API: 7 ta xavfsiz katalog view'i va autentifikatsiyalangan application_center view'i.
+- Project command API: 5 ta asosiy project RPC, 1 ta owner-only publish RPC.
+- Application API: ariza yuborish, holatni yangilash va slug orqali project arizasini yuborish RPC'lari.
+- Private Storage bucket: idea-user-assets; service-role kaliti frontendga berilmagan.
+- index.html serverga loyiha yaratadi; foydalanuvchi alohida belgilasa, loyiha ommaviy katalogga chiqariladi.
+- projects.html public katalogni Supabase'dan o'qiydi; project-detail.html?slug=... serverdagi loyihani ochadi va auth foydalanuvchisi slug orqali investitsiya arizasi yuboradi.
+- applications.html ishtirokchi uchun filtrlangan server arizalarini o‘qiydi.
+- GitHub Actions regressiya sinovlari: 456 passed, 0 failed; GitHub Pages deploy muvaffaqiyatli.
+- Auth foydalanuvchilari hozircha 0 ta. Shu sababli real ikki akkauntli qabul sinovi hali o'tkazilmagan; RLS izolyatsiyasini yakuniy tasdiqlash uchun ikki alohida akkaunt kerak.
+- LocalStorage'dagi eski loyihalar va arizalar Supabase'ga avtomatik ko‘chirilmagan.
+- 20261122_application_activity_notifications.sql va supplier-verification keyingi migratsiyalari production'ga qo‘llanmagan.
+- public.audit_logs uchun Security Advisor INFO qaydi bor: RLS yoqilgan, policy yo‘q; mavjud audit jadvali bo‘yicha ruxsatlar maqsadi aniqlanmaguncha o‘zgartirilmaydi.
 ## Ta’minotchi hujjatlari Edge Function
 
 `functions/supplier-verification-evidence/` ichida autentifikatsiyalangan upload-ticket, upload-finalization va download-ticket API poydevori bor. Sozlash, client protokoli, maxfiy kalitlar va staging qabul mezonlari shu papkadagi README'da. Function deploy qilinmagan va real hujjat qabul qilishga hali ruxsat berilmaydi.
