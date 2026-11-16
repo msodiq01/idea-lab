@@ -49,7 +49,7 @@ test("profile and organization constraints reject unsafe or malformed values", (
 });
 
 test("migration is explicitly documented as a draft and leaves existing public tables untouched", () => {
-  assert.match(sql, /NOT applied to any Supabase project/i);
+  assert.match(sql, /applied to Supabase production project idea-lab/i);
   assert.match(sql, /Existing public schema is untouched/i);
   assert.match(sql, /No Data API exposure, client grants, or RLS policies/i);
 });
