@@ -247,7 +247,9 @@ test("application migration uses invoker views, participant RLS and auth-derived
   assert.match(sql, /select auth\.uid\(\)/i);
   assert.match(sql, /submit_project_application/);
   assert.match(sql, /update_project_application/);
-  assert.match(sql, /create or replace view public\\.application_center/i);\n  assert.match(sql, /public\\.submit_project_application/i);\n  assert.match(sql, /public\\.update_project_application/i);
+  assert.match(sql, /create or replace view public\\.application_center/i);
+  assert.match(sql, /public\.submit_project_application/i);
+  assert.match(sql, /public\.update_project_application/i);
   assert.match(sql, /union all/i);
   assert.match(sql, /revoke all on function/);
   assert.doesNotMatch(sql, /security definer/i);
