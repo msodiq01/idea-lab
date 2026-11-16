@@ -758,12 +758,14 @@ function saveData(key, data) {
 
 const params = new URLSearchParams(window.location.search);
 const projectId = params.get("id");
-
-const projects = readData("projects");
-
-const project = projects.find(function(item) {
+const projectSlug = params.get("slug");
+const backendStatusAtLoad = window.IDEALAB_AUTH && window.IDEALAB_AUTH.getStatus();
+const backendConfigured = Boolean(backendStatusAtLoad && backendStatusAtLoad.configured);
+const projects = backendConfigured ? [] : readData("projects");
+let project = backendConfigured ? null : projects.find(function(item) {
     return String(item.id) === String(projectId);
 });
+let serverProject = false;
 // ========================================
 // 3. HTML ELEMENTLARI
 // ========================================
@@ -887,17 +889,23 @@ function showProject() {
         return;
     }
 
-    heroTitle.textContent = getValue(project.name, "Nomsiz loyiha");
-    document.getElementById("projectExpensesLink").href = "project-expenses.html?id=" + encodeURIComponent(String(project.id));
+    heroTitle.textContent = getValue(project.name || project.title, "Nomsiz loyiha");
+    if (serverProject) {
+        document.getElementById("projectExpensesLink").closest(".actions").hidden = true;
+        document.getElementById("investmentPassport").hidden = true;
+        ownerName.closest(".panel").hidden = true;
+    } else {
+        document.getElementById("projectExpensesLink").href = "project-expenses.html?id=" + encodeURIComponent(String(project.id));
+    }
 
     heroDescription.textContent = getValue(
-        project.description,
+        project.description || project.summary,
         "Loyiha tavsifi kiritilmagan."
     );
 
     const directionTag = document.createElement("span");
     directionTag.className = "tag";
-    directionTag.textContent = getValue(project.direction, "Yo'nalish belgilanmagan");
+    directionTag.textContent = getValue(project.direction || project.category || project.project_type, "Yo'nalish belgilanmagan");
 
     const statusTag = document.createElement("span");
     statusTag.className = "tag";
@@ -905,23 +913,23 @@ function showProject() {
 
     heroMeta.append(directionTag, statusTag);
 
-    addDetail("Loyiha nomi", project.name);
-    addDetail("Loyiha yo'nalishi", project.direction);
-    addDetail("Loyiha tavsifi", project.description);
+    addDetail("Loyiha nomi", project.name || project.title);
+    addDetail("Loyiha yo'nalishi", project.direction || project.category || project.project_type);
+    addDetail("Loyiha tavsifi", project.description || project.summary);
 
     document.getElementById("projectSpecialists").textContent =
-        getValue(project.specialists);
+        getValue(project.specialists, serverProject ? "Hozircha ochiq ma'lumot kiritilmagan." : undefined);
 
     document.getElementById("projectResources").textContent =
-        getValue(project.resources);
+        getValue(project.resources, serverProject ? "Hozircha ochiq ma'lumot kiritilmagan." : undefined);
 
     document.getElementById("statDirection").textContent =
-        getValue(project.direction, "—");
+        getValue(project.direction || project.category || project.project_type, "—");
 
     document.getElementById("statInvestment").textContent =
-        formatMoney(project.fundingTarget || project.investment || project.amount);
+        serverProject ? "Taklif yuborish mumkin" : formatMoney(project.fundingTarget || project.investment || project.amount);
 
-    renderInvestmentPassport();
+    if (!serverProject) renderInvestmentPassport();
 
     ownerName.textContent = getValue(project.ownerName);
 
@@ -984,20 +992,21 @@ investmentForm.addEventListener("submit", async function(event) {
         .getElementById("offerMessage")
         .value.trim();
 
-    if (!investorName || !investorEmail || !offerMessage) {
-        showMessage(
-            "Barcha maydonlarni to'ldiring.",
-            "error-message"
-        );
+    if (!offerMessage) {
+        showMessage("Taklif xabari va izohini kiriting.", "error-message");
         return;
     }
 
-    if (ideaCore && !ideaCore.isValidEmail(investorEmail)) {
-        showMessage(
-            "Email manzilini to'g'ri kiriting.",
-            "error-message"
-        );
-        return;
+    const backendStatus = window.IDEALAB_AUTH && window.IDEALAB_AUTH.getStatus();
+    if (!(backendStatus && backendStatus.configured)) {
+        if (!investorName || !investorEmail) {
+            showMessage("Ism va email maydonlarini to‘ldiring.", "error-message");
+            return;
+        }
+        if (ideaCore && !ideaCore.isValidEmail(investorEmail)) {
+            showMessage("Email manzilini to‘g‘ri kiriting.", "error-message");
+            return;
+        }
     }
 
     if (!Number.isSafeInteger(offerAmount) || offerAmount <= 0) {
@@ -1010,7 +1019,6 @@ investmentForm.addEventListener("submit", async function(event) {
 
     // Real Supabase mode: server resolves applicant and project owner from auth.uid()/project data.
     // Never trust owner IDs or fall back to localStorage after backend activation.
-    const backendStatus = window.IDEALAB_AUTH && window.IDEALAB_AUTH.getStatus();
     if (backendStatus && backendStatus.configured) {
         const sessionResult = await window.IDEALAB_AUTH.getSession();
         const session = sessionResult.ok && sessionResult.data && sessionResult.data.session;
@@ -1018,13 +1026,13 @@ investmentForm.addEventListener("submit", async function(event) {
             showMessage("Haqiqiy ariza yuborish uchun avval IDEA LAB akkauntingizga kiring.", "error-message");
             return;
         }
-        if (!window.IDEALAB_DATA || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(project.id))) {
-            showMessage("Bu loyiha hali Supabase serveridagi loyiha bilan bog‘lanmagan. Serverdagi loyiha sahifasidan qayta urinib ko‘ring.", "error-message");
+        if (!serverProject || !projectSlug || !window.IDEALAB_DATA) {
+            showMessage("Bu sahifa serverdagi loyiha manzili orqali ochilmagan. Loyihalar katalogidan qayta kiring.", "error-message");
             return;
         }
         submitButton.disabled = true;
-        const saved = await window.IDEALAB_DATA.submitProjectApplication({
-            projectId: String(project.id),
+        const saved = await window.IDEALAB_DATA.submitProjectApplicationBySlug({
+            projectSlug: projectSlug,
             message: offerMessage,
             amount: offerAmount,
             currency: "UZS"
@@ -1110,8 +1118,34 @@ investmentForm.addEventListener("submit", async function(event) {
 // 7. SAHIFANI ISHGA TUSHIRISH
 // ========================================
 
-showProject();
-if(project){renderInvestmentPassport();renderEquityPreview();}
+async function initializeProjectPage() {
+    if (backendConfigured) {
+        if (!projectSlug || !window.IDEALAB_DATA) {
+            project = null;
+            showProject();
+            return;
+        }
+        const result = await window.IDEALAB_DATA.getPublicProjectBySlug(projectSlug);
+        if (!result.ok || !result.data) {
+            project = null;
+            showProject();
+            return;
+        }
+        project = result.data;
+        serverProject = true;
+        showProject();
+        document.getElementById("investorName").closest(".form-group").hidden = true;
+        document.getElementById("investorEmail").closest(".form-group").hidden = true;
+        document.getElementById("investorName").required = false;
+        document.getElementById("investorEmail").required = false;
+        document.querySelector(".form-intro").textContent = "Taklif akkauntingiz orqali xavfsiz yuboriladi. Ism va email ma'lumotlari qayta so‘ralmaydi.";
+        renderEquityPreview();
+        return;
+    }
+    showProject();
+    if (project) { renderInvestmentPassport(); renderEquityPreview(); }
+}
+initializeProjectPage();
 
 </script>
 
