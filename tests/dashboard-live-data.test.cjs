@@ -16,6 +16,8 @@ test("server loyihalari xavfsiz DOM API orqali chiqariladi", () => {
   assert.match(html, /document\.createElement\("strong"\)/);
   assert.match(html, /title\.textContent=String\(project\.title/);
   assert.match(html, /target\.replaceChildren\(\)/);
+  assert.match(html, /Server katalogi yuklanmoqda/);
+  assert.match(html, /Loyihalarni yuklab bo‘lmadi/);
   assert.doesNotMatch(html, /target\.innerHTML\s*=.*project/);
 });
 
