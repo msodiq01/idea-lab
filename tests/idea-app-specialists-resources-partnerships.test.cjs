@@ -41,7 +41,7 @@ test("resource and partnership public views contain only published records", () 
 
 test("specialist requests are private to specialist and project reviewers", () => {
   const policy = sql.slice(sql.indexOf("create policy specialist_requests_select_participants"), sql.indexOf("create policy specialist_requests_insert_project_owner"));
-  assert.match(policy, /sp\.id = specialist_id and sp\.user_id = \(select auth\.uid\(\)\)/);
+  assert.match(policy, /idea_private\.is_specialist_profile_owner\(specialist_id\)/);
   assert.match(policy, /is_project_owner/);
   assert.match(policy, /has_active_project_role/);
 });
@@ -49,13 +49,13 @@ test("specialist requests are private to specialist and project reviewers", () =
 test("resource requests are private to requester and offer owner", () => {
   const policy = sql.slice(sql.indexOf("create policy resource_requests_select_participants"), sql.indexOf("create policy resource_requests_insert_requester"));
   assert.match(policy, /requester_id = \(select auth\.uid\(\)\)/);
-  assert.match(policy, /ro\.owner_id = \(select auth\.uid\(\)\)/);
+  assert.match(policy, /idea_private\.is_resource_offer_owner\(offer_id\)/);
 });
 
 test("partnership enquiries are private to requester and opportunity owner", () => {
   const policy = sql.slice(sql.indexOf("create policy partnership_enquiries_select_participants"), sql.indexOf("create policy partnership_enquiries_insert_requester"));
   assert.match(policy, /requester_id = \(select auth\.uid\(\)\)/);
-  assert.match(policy, /po\.owner_id = \(select auth\.uid\(\)\)/);
+  assert.match(policy, /idea_private\.is_partnership_opportunity_owner\(opportunity_id\)/);
 });
 
 test("state transitions use invoker trigger guards and immutable identity", () => {
@@ -136,7 +136,7 @@ test("anonymous catalogue grants exclude internal owner and specialist user IDs"
   assert.doesNotMatch(partnershipGrant, /\\bowner_id\\b/i);
 });
 test("specialists can provide a response note when accepting or declining", () => {
-  const start = sql.indexOf("if v_actor = v_specialist_user_id and not v_reviewer");
+  const start = sql.indexOf("if v_is_specialist and not v_reviewer");
   const end = sql.indexOf("elsif v_reviewer", start);
   assert.ok(start >= 0 && end > start, "specialist response branch should exist");
   const branch = sql.slice(start, end);
@@ -151,12 +151,12 @@ test("specialist Auth IDs are never selectable; public opaque profile IDs drive 
   assert.match(sql, /specialist_id uuid not null references idea_app\.specialist_profiles\(id\)/i);
   assert.match(sql, /select id, public_name,[\s\S]*?from idea_app\.specialist_profiles/i);
   assert.doesNotMatch(sql, /grant select \([^;]*\buser_id\b[^;]*\)\s+on idea_app\.specialist_profiles/i);
-  assert.match(sql, /select sp\.user_id into v_specialist_user_id[\s\S]*?where sp\.id = old\.specialist_id/i);
+  assert.match(sql, /v_is_specialist := \(select idea_private\.is_specialist_profile_owner\(old\.specialist_id\)\)/i);
 });
 
 
 test("all specialist request participant checks resolve opaque IDs to Auth ownership", () => {
   const updatePolicy = sql.slice(sql.indexOf("create policy specialist_requests_update_participants"), sql.indexOf("-- Resource offers:"));
-  assert.equal((updatePolicy.match(/sp\.id = specialist_id and sp\.user_id = \(select auth\.uid\(\)\)/g) || []).length, 2);
-  assert.doesNotMatch(updatePolicy, /specialist_id = \(select auth\.uid\(\)\)/);
+  assert.equal((updatePolicy.match(/idea_private\.is_specialist_profile_owner\(specialist_id\)/g) || []).length, 2);
+  assert.doesNotMatch(updatePolicy, /sp\.user_id|specialist_id = \(select auth\.uid\(\)\)/);
 });
