@@ -35,7 +35,7 @@ test("Storage policies cover select, insert, update and delete for authenticated
     assert.match(statement, /to authenticated/i);
     assert.match(statement, /bucket_id = 'idea-user-assets'/i);
     assert.match(statement, /storage\.foldername\(name\)\)\[1\] = \(select auth\.uid\(\)::text\)/i);
-    assert.match(statement, /cardinality\\(storage\\.foldername\\(name\\)\\) = 2/i);
+    assert.match(statement, /cardinality\(storage\.foldername\(name\)\) = 2/i);
     assert.match(statement, /avatars.*organization-logos.*project-files/is);
     assert.match(statement, /storage\.filename\(name\)/i);
     assert.doesNotMatch(statement, /to anon|to public/i);
