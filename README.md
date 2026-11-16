@@ -56,4 +56,11 @@ Supabase backendi **faol**, lekin platformaning barcha modullari serverga ko‘c
 - [Read-only xavfsizlik auditi SQL](supabase/verification/security_audit.sql)
 - [Ikki foydalanuvchili RLS test rejasi](supabase/verification/rls-test-plan.md)
 
-Avtomatik tekshiruv: `node --test tests/*.test.cjs`. GitHub Actions run #492 va #493 muvaffaqiyatli yakunlangan; keyingi resurs/investor o‘zgarishlari uchun yangi to‘liq run natijasi hali kutilmoqda. Haqiqiy Supabase RLS sinovi ikki alohida test akkaunti bilan, browser smoke test esa desktop va mobil qurilmada bajarilishi shart.
+Avtomatik tekshiruv: `node --test tests/*.test.cjs`. GitHub Actions PR #104 run #506 muvaffaqiyatli yakunlangan; yangi premium dizayn PR uchun alohida CI natijasi tekshiriladi. Haqiqiy Supabase RLS sinovi ikki alohida test akkaunti bilan, browser smoke test esa desktop va mobil qurilmada bajarilishi shart.
+
+
+## Modul zanjirlari va premium dizayn
+
+- Barcha asosiy sahifalar yagona premium vizual qatlam, navigatsiya, mobil moslashuv va fokus holatlaridan foydalanadi; kirish sahifasi o‘zining ixcham sarlavhasini saqlaydi.
+- Server belgisi backend konfiguratsiyasi mavjudligini va qolgan modullar demo ekanini alohida ko‘rsatadi; bu butun platforma serverga ulandi degani emas.
+- Har bir modulning haqiqiy ma’lumot manbasi, hozirgi integratsiya darajasi va keyingi bog‘lanish zanjiri [Modul va ma’lumotlar zanjiri xaritasi](MODULE-CONNECTION-MATRIX.md) hujjatida qayd etilgan.
