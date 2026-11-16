@@ -1006,7 +1006,38 @@
             .workflow-link { transition: none; }
         }
 
-    </style>
+    
+/* Final home-page contrast pass: keep the workflow and creation form readable */
+#ecosystem-map{
+ background:
+  radial-gradient(ellipse at 10% 5%,rgba(104,91,239,.11),transparent 34%),
+  radial-gradient(ellipse at 92% 88%,rgba(14,159,154,.09),transparent 32%),
+  linear-gradient(180deg,#f8f9ff 0%,#f0f3fb 100%)!important;
+ border-top:1px solid #e6e9f3!important;border-bottom:1px solid #e6e9f3!important;
+}
+#ecosystem-map .section-title{color:#18223a!important}
+#ecosystem-map .section-description{color:#64718a!important}
+#ecosystem-map .section-label{color:#5548d7!important;background:#eeedff!important;border-color:#dfdcff!important}
+#ecosystem-map .workflow-step{background:rgba(255,255,255,.94)!important;border-color:#e3e7f2!important}
+#ecosystem-map .workflow-copy h3{color:#1b2540!important}
+#ecosystem-map .workflow-copy p{color:#68758d!important}
+#ecosystem-map .workflow-note{border:1px solid #dfe5f0!important;border-radius:18px!important;background:#fff!important;color:#68758d!important}
+#ecosystem-map .workflow-note strong{color:#1b2540!important}
+.create-section{background:linear-gradient(180deg,#f4f6fc,#eef1fa)!important}
+.create-info h2{color:#18223a!important}
+.create-info>p,.benefit-item{color:#68758d!important}
+.benefit-icon{background:#e9f8f6!important;color:#0e8f89!important}
+.create-form-card{background:#fff!important;border:1px solid #e3e7f1!important;border-radius:24px!important;box-shadow:0 16px 42px rgba(27,38,76,.08)!important}
+.form-heading h3{color:#18223a!important}
+.form-heading p{color:#68758d!important}
+.form-group input,.form-group select,.form-group textarea{
+ background:#fbfcff!important;color:#243047!important;border-color:#dce2ef!important;border-radius:13px!important;
+}
+.form-group input::placeholder,.form-group textarea::placeholder{color:#98a2b4!important}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#8e84f1!important}
+@media(max-width:700px){#ecosystem-map .workflow-note{padding:14px!important}.create-form-card{padding:22px!important}}
+
+</style>
     <link rel="stylesheet" href="assets/idea-shell.css">\n</head>
 
 <body>
