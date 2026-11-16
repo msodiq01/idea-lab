@@ -1473,6 +1473,16 @@
     }
 
     const projectForm = document.getElementById("projectForm");
+    if (liveBackend) {
+        ["investment", "specialists", "resources", "ownerPhone"].forEach(function(id) {
+            const field = document.getElementById(id);
+            if (field && field.closest(".form-group")) field.closest(".form-group").hidden = true;
+        });
+        const note = document.createElement("p");
+        note.className = "form-message";
+        note.textContent = "Server rejimida loyiha nomi, yo‘nalishi va tavsifi saqlanadi. Ommaviy katalogga chiqarish uchun katakchani belgilang.";
+        projectForm.prepend(note);
+    }
     const projectDraftFields = [
         ["projectName", "name"],
         ["projectDirection", "direction"],
