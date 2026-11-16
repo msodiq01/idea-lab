@@ -682,8 +682,18 @@ button, input, select {
 </footer>
 
 <script src="assets/idea-core.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
+<script src="assets/idea-config.js"></script>
+<script src="assets/idea-auth.js"></script>
+<script src="assets/idea-data.js"></script>
 <script>
 "use strict";
+
+if (window.IDEALAB_AUTH && window.IDEALAB_CONFIG) {
+    window.IDEALAB_AUTH.configure(window.IDEALAB_CONFIG, window.supabase);
+}
+const liveBackend = Boolean(window.IDEALAB_AUTH && window.IDEALAB_AUTH.getStatus().configured);
+let serverCatalog = false;
 
 /* ELEMENTS */
 
@@ -716,7 +726,7 @@ function readProjects() {
     }
 }
 
-const projects = readProjects();
+let projects = liveBackend ? [] : readProjects();
 
 /* HELPERS */
 
@@ -833,7 +843,7 @@ function createProjectCard(project) {
 
     const projectCode = document.createElement("span");
     projectCode.className = "project-id";
-    projectCode.textContent = "IDEA #" + (projectId || "—");
+    projectCode.textContent = project.slug ? "OCHIQ LOYIHA" : "IDEA #" + (projectId || "—");
 
     top.appendChild(category);
     top.appendChild(projectCode);
@@ -859,7 +869,7 @@ function createProjectCard(project) {
 
     const investmentValue = document.createElement("div");
     investmentValue.className = "info-value";
-    investmentValue.textContent = formatMoney(investment);
+    investmentValue.textContent = serverCatalog ? "Ko‘rsatilmagan" : formatMoney(investment);
 
     investmentBox.appendChild(investmentLabel);
     investmentBox.appendChild(investmentValue);
@@ -876,19 +886,21 @@ function createProjectCard(project) {
 
     specialistsBox.appendChild(specialistsLabel);
     specialistsBox.appendChild(specialistsValue);
+    if (serverCatalog) specialistsBox.hidden = true;
 
     info.appendChild(investmentBox);
     info.appendChild(specialistsBox);
 
     const owner = document.createElement("div");
     owner.className = "owner";
-    owner.textContent = "Muallif: " + ownerName;
+    owner.textContent = serverCatalog ? "Ochiq loyiha" : "Muallif: " + ownerName;
+    if (serverCatalog) owner.hidden = true;
 
     const link = document.createElement("a");
     link.className = "details-link";
-    link.href =
-        "project-detail.html?id=" +
-        encodeURIComponent(String(projectId));
+    link.href = project.slug
+        ? "project-detail.html?slug=" + encodeURIComponent(String(project.slug))
+        : "project-detail.html?id=" + encodeURIComponent(String(projectId));
 
     const linkText = document.createElement("span");
     linkText.textContent = "Loyihani ko‘rish";
@@ -1096,10 +1108,29 @@ sortSelect.addEventListener("change", function() {
 
 /* INITIALIZE */
 
-updateStatistics();
-populateDirections();
-restoreProjectFilterPreferences();
-renderProjects();
+async function initializeProjectsPage() {
+    if (liveBackend && window.IDEALAB_DATA) {
+        const result = await window.IDEALAB_DATA.listPublicProjects({ limit: 50 });
+        if (!result.ok) {
+            projectList.replaceChildren(createEmptyState(true));
+            resultCount.textContent = "Serverdan loyihalarni yuklab bo‘lmadi";
+            return;
+        }
+        projects = result.data.map(item => ({
+            slug: item.slug,
+            name: item.title,
+            direction: item.category || item.project_type || "Boshqa",
+            description: item.summary || "Loyiha haqida qisqacha ma’lumot kiritilmagan.",
+            createdAt: item.published_at
+        }));
+        serverCatalog = true;
+    }
+    updateStatistics();
+    populateDirections();
+    restoreProjectFilterPreferences();
+    renderProjects();
+}
+initializeProjectsPage();
 
 </script>
 
