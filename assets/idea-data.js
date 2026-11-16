@@ -34,6 +34,30 @@
     return Math.max(1, Math.min(MAX_LIMIT, Math.floor(parsed)));
   }
 
+  async function runCommand(name, args) {
+    const client = getClient();
+    if (!client) return fail("BACKEND_NOT_CONFIGURED", "Backend hali ulanmagan yoki Auth sessiyasi tayyor emas.");
+    if (typeof client.schema !== "function") return fail("DATA_API_UNAVAILABLE", "Supabase Data API mijozi mavjud emas.");
+    try {
+      const response = await client.schema("idea_app").rpc(name, args);
+      if (response && response.error) {
+        return fail("COMMAND_FAILED", "Amal bajarilmadi. Ruxsatlar va backend migratsiyalarini tekshirish kerak.");
+      }
+      return { ok: true, data: response ? response.data : null, error: null };
+    } catch (_) {
+      return fail("COMMAND_FAILED", "Backend amali bajarilmadi.");
+    }
+  }
+
+  function requiredText(value, min, max) {
+    return typeof value === "string" && value.trim().length >= min && value.length <= max;
+  }
+
+  function isUuid(value) {
+    return typeof value === "string" &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+  }
+
   async function queryView(view, configure) {
     const client = getClient();
     if (!client) return fail("BACKEND_NOT_CONFIGURED", "Backend hali ulanmagan yoki Auth sessiyasi tayyor emas.");
@@ -91,6 +115,53 @@
       return queryView(VIEWS.partnerships, query => query
         .order("published_at", { ascending: false })
         .limit(limitValue(options.limit)));
+    }
+,
+    createProject(input = {}) {
+      if (!requiredText(input.title, 3, 160)) return Promise.resolve(fail("INVALID_PROJECT_TITLE", "Loyiha nomi 3–160 belgidan iborat bo‘lishi kerak."));
+      if ((input.summary || "").length > 320 || (input.description || "").length > 6000) return Promise.resolve(fail("INVALID_PROJECT_CONTENT", "Loyiha tavsifi belgilangan hajmdan oshdi."));
+      return runCommand("create_project", {
+        p_title: input.title.trim(),
+        p_summary: input.summary || "",
+        p_description: input.description || "",
+        p_project_type: input.projectType || "other",
+        p_visibility: input.visibility || "private",
+        p_start_date: input.startDate || null,
+        p_target_date: input.targetDate || null
+      });
+    },
+    updateProject(input = {}) {
+      if (!isUuid(input.projectId)) return Promise.resolve(fail("INVALID_PROJECT_ID", "Loyiha identifikatori noto‘g‘ri."));
+      if (!requiredText(input.title, 3, 160)) return Promise.resolve(fail("INVALID_PROJECT_TITLE", "Loyiha nomi 3–160 belgidan iborat bo‘lishi kerak."));
+      if ((input.summary || "").length > 320 || (input.description || "").length > 6000) return Promise.resolve(fail("INVALID_PROJECT_CONTENT", "Loyiha tavsifi belgilangan hajmdan oshdi."));
+      return runCommand("update_project", {
+        p_project_id: input.projectId,
+        p_title: input.title.trim(),
+        p_summary: input.summary || "",
+        p_description: input.description || "",
+        p_project_type: input.projectType || "other",
+        p_status: input.status || "draft",
+        p_visibility: input.visibility || "private",
+        p_start_date: input.startDate || null,
+        p_target_date: input.targetDate || null
+      });
+    },
+    requestProjectMembership(projectId) {
+      if (!isUuid(projectId)) return Promise.resolve(fail("INVALID_PROJECT_ID", "Loyiha identifikatori noto‘g‘ri."));
+      return runCommand("request_project_membership", { p_project_id: projectId });
+    },
+    reviewProjectMembership(input = {}) {
+      if (!isUuid(input.membershipId) || typeof input.approve !== "boolean") return Promise.resolve(fail("INVALID_MEMBERSHIP_DECISION", "Jamoa arizasi yoki qaror noto‘g‘ri."));
+      if (input.role && !["manager", "contributor", "viewer"].includes(input.role)) return Promise.resolve(fail("INVALID_MEMBERSHIP_ROLE", "Jamoa roli noto‘g‘ri."));
+      return runCommand("review_project_membership", {
+        p_membership_id: input.membershipId,
+        p_approve: input.approve,
+        p_membership_role: input.role || null
+      });
+    },
+    leaveProject(membershipId) {
+      if (!isUuid(membershipId)) return Promise.resolve(fail("INVALID_MEMBERSHIP_ID", "A’zolik identifikatori noto‘g‘ri."));
+      return runCommand("leave_project", { p_membership_id: membershipId });
     }
   });
 
