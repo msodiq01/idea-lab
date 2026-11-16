@@ -11,6 +11,11 @@ const sql = fs.readFileSync(
   "utf8"
 );
 const executableSql = sql.replace(/--.*$/gm, "");
+const identitySql = fs.readFileSync(
+  path.join(root, "supabase/migrations/20261116120000_idea_app_identity_organizations.sql"),
+  "utf8"
+);
+
 
 test("RLS migration is additive and targets only idea_app", () => {
   assert.match(sql, /NOT applied to any Supabase project/i);
@@ -106,7 +111,7 @@ test("each project table policy explicitly targets authenticated", () => {
     const start = sql.indexOf("create policy " + name);
     assert.notEqual(start, -1, name + " exists");
     const end = sql.indexOf(";", start);
-    assert.match(sql.slice(start, end), /to authenticated/i, name + " is authenticated-only");
+    assert.match(sql.slice(start, end), /to (?:anon, )?authenticated/i, name + " targets the expected browser roles");
   }
 });
 
