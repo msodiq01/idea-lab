@@ -8,23 +8,23 @@ const shellCss = fs.readFileSync(path.join(root, "assets/idea-shell.css"), "utf8
 const shellJs = fs.readFileSync(path.join(root, "assets/idea-shell.js"), "utf8");
 
 test("premium design layer includes responsive and reduced-motion support", () => {
-  assert.match(shellCss, /IDEA LAB Premium Experience/);
-  assert.match(shellCss, /#il-global \\.il-brand/);
-  assert.match(shellCss, /@media\\(max-width:640px\\)/);
-  assert.match(shellCss, /prefers-reduced-motion:reduce/);
+  assert.ok(shellCss.includes("IDEA LAB Premium Experience"));
+  assert.ok(shellCss.includes("#il-global .il-brand"));
+  assert.ok(shellCss.includes("@media(max-width:640px)"));
+  assert.ok(shellCss.includes("prefers-reduced-motion:reduce"));
 });
 
 test("global shell reports partial backend integration honestly", () => {
-  assert.match(shellJs, /Server ulangan · ayrim bo‘limlar demo/);
-  assert.match(shellJs, /Bu sahifada server ulanishi tasdiqlanmadi/);
+  assert.ok(shellJs.includes("Server ulangan · ayrim bo‘limlar demo"));
+  assert.ok(shellJs.includes("Bu sahifada server ulanishi tasdiqlanmadi"));
 });
 
 test("authentication page keeps its dedicated header without duplicate app navigation", () => {
-  assert.match(shellJs, /if\\(current==="auth\\.html"\\) return;/);
+  assert.ok(shellJs.includes('if(current==="auth.html") return;'));
 });
 
 test("quick create action points to the real project form anchor", () => {
-  assert.match(shellJs, /index\\.html#create-project/);
+  assert.ok(shellJs.includes("index.html#create-project"));
 });
 
 test("all application pages share the shell stylesheet and navigation script", () => {
@@ -40,7 +40,7 @@ test("all application pages share the shell stylesheet and navigation script", (
 test("specialist vacancy route points to the actual vacancy section", () => {
   const specialists = fs.readFileSync(path.join(root, "specialists.html"), "utf8");
   const teams = fs.readFileSync(path.join(root, "teams.html"), "utf8");
-  assert.match(specialists, /teams\\.html#career-section/);
-  assert.match(teams, /id=["']career-section["']/);
-  assert.doesNotMatch(specialists, /jobs\\.html/);
+  assert.ok(specialists.includes("teams.html#career-section"));
+  assert.ok(teams.includes('id="career-section"'));
+  assert.ok(!specialists.includes("jobs.html"));
 });
