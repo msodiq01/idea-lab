@@ -49,6 +49,32 @@
     }
   }
 
+  async function runPublicCommand(name, args) {
+    const client = getClient();
+    if (!client || typeof client.rpc !== "function") return fail("BACKEND_NOT_CONFIGURED", "Backend hali ulanmagan yoki Auth sessiyasi tayyor emas.");
+    try {
+      const response = await client.rpc(name, args);
+      if (response && response.error) return fail("COMMAND_FAILED", "Amal bajarilmadi. Ruxsatlar va backend migratsiyalarini tekshirish kerak.");
+      return { ok: true, data: response ? response.data : null, error: null };
+    } catch (_) {
+      return fail("COMMAND_FAILED", "Backend amali bajarilmadi.");
+    }
+  }
+
+  async function queryPublicView(view, configure) {
+    const client = getClient();
+    if (!client || typeof client.from !== "function") return fail("BACKEND_NOT_CONFIGURED", "Backend hali ulanmagan yoki Auth sessiyasi tayyor emas.");
+    try {
+      let query = client.from(view).select("*");
+      if (typeof configure === "function") query = configure(query);
+      const response = await query;
+      if (response && response.error) return fail("DATA_REQUEST_FAILED", "Ma'lumotlarni yuklab bo'lmadi. Backend ruxsatlarini tekshiring.");
+      return { ok: true, data: Array.isArray(response && response.data) ? response.data : [], error: null };
+    } catch (_) {
+      return fail("DATA_REQUEST_FAILED", "Ma'lumotlar xizmati bilan bog'lanib bo'lmadi.");
+    }
+  }
+
   function requiredText(value, min, max) {
     return typeof value === "string" && value.trim().length >= min && value.length <= max;
   }
@@ -164,7 +190,7 @@
       return runCommand("leave_project", { p_membership_id: membershipId });
     },
     listApplicationCenter(options = {}) {
-      return queryView("application_center", query => query
+      return queryPublicView("application_center", query => query
         .order("created_at", { ascending: false })
         .limit(limitValue(options.limit)));
     },
@@ -175,7 +201,7 @@
       if (!Number.isFinite(amount) || amount <= 0 || amount > 1e12) return Promise.resolve(fail("INVALID_APPLICATION_AMOUNT", "Taklif summasi noto‘g‘ri."));
       const currency = typeof input.currency === "string" ? input.currency.trim().toUpperCase() : "UZS";
       if (!/^[A-Z]{3}$/.test(currency)) return Promise.resolve(fail("INVALID_CURRENCY", "Valyuta kodi noto‘g‘ri."));
-      return runCommand("submit_project_application", {
+      return runPublicCommand("submit_project_application", {
         p_project_id: input.projectId,
         p_applicant_note: input.message.trim(),
         p_offer_amount: amount,
@@ -189,7 +215,7 @@
       if (input.reviewerNote !== undefined && (typeof input.reviewerNote !== "string" || input.reviewerNote.length > 2000)) {
         return Promise.resolve(fail("INVALID_REVIEWER_NOTE", "Izoh 2000 belgidan oshmasligi kerak."));
       }
-      return runCommand("update_project_application", {
+      return runPublicCommand("update_project_application", {
         p_application_id: input.applicationId,
         p_status: input.status,
         p_reviewer_note: input.reviewerNote === undefined ? null : input.reviewerNote
