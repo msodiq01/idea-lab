@@ -87,6 +87,18 @@ test("public project catalogue reads only the reviewed invoker view", async () =
   assert.equal(calls.at(-1).value, 12);
 });
 
+test("public project details resolve by validated slug without exposing internal UUIDs", async () => {
+  const { api, calls } = load({ data: [{ slug: "sample-project", title: "Sample" }] });
+  const bad = await api.getPublicProjectBySlug("../private");
+  assert.equal(bad.error.code, "INVALID_PROJECT_SLUG");
+  assert.equal(calls.length, 0);
+  const good = await api.getPublicProjectBySlug("sample-project");
+  assert.equal(good.ok, true);
+  assert.equal(good.data.slug, "sample-project");
+  assert.deepEqual(calls.filter(x => ["from", "eq", "limit"].includes(x.method)).map(x => x.method), ["from", "eq", "limit"]);
+  assert.equal(calls.find(x => x.method === "eq").value, "sample-project");
+});
+
 test("catalogue limits are bounded and invalid limits use the safe default", async () => {
   const first = load();
   await first.api.listPublicSpecialists({ limit: 10000 });
@@ -218,6 +230,24 @@ test("project applications validate input and use only the server-owned submit c
   assert.equal(Object.hasOwn(call.args, "p_owner_id"), false);
 });
 
+test("slug-based project application validates fields and calls only the server resolver", async () => {
+  const { api, calls } = load();
+  const bad = await api.submitProjectApplicationBySlug({ projectSlug: "../private", message: "Offer", amount: 1000 });
+  assert.equal(bad.error.code, "INVALID_PROJECT_SLUG");
+  assert.equal(calls.length, 0);
+  const result = await api.submitProjectApplicationBySlug({
+    projectSlug: "sample-project", message: "Investor taklifi", amount: 2500000, currency: "uzs"
+  });
+  assert.equal(result.ok, true);
+  const call = calls.find(item => item.method === "rpc");
+  assert.equal(call.name, "submit_project_application_by_slug");
+  assert.equal(call.args.p_project_slug, "sample-project");
+  assert.equal(call.args.p_applicant_note, "Investor taklifi");
+  assert.equal(call.args.p_offer_amount, 2500000);
+  assert.equal(call.args.p_currency_code, "UZS");
+  assert.equal(Object.hasOwn(call.args, "p_project_id"), false);
+});
+
 test("application centre reads only the participant-filtered server view", async () => {
   const { api, calls } = load({ data: [{ id: "application-1", source_type: "project" }] });
   const result = await api.listApplicationCenter({ limit: 80 });
@@ -253,6 +283,17 @@ test("application migration uses invoker views, participant RLS and auth-derived
   assert.match(sql, /union all/i);
   assert.match(sql, /revoke all on function/);
   assert.doesNotMatch(sql, /security definer/i);
+});
+
+test("project catalogue and detail page use live public slugs for server projects", () => {
+  const catalogue = fs.readFileSync(path.join(root, "projects.html"), "utf8");
+  const detail = fs.readFileSync(path.join(root, "project-detail.html"), "utf8");
+  assert.ok(catalogue.includes("listPublicProjects"));
+  assert.ok(catalogue.includes("project-detail.html?slug="));
+  assert.ok(detail.includes("getPublicProjectBySlug"));
+  assert.ok(detail.includes("submitProjectApplicationBySlug"));
+  assert.ok(detail.includes("projectSlug: projectSlug"));
+  assert.ok(detail.includes("if (backendConfigured)"));
 });
 
 test("project detail and Applications Centre activate real storage only from explicit Supabase config", () => {
