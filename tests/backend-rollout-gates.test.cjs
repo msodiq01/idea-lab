@@ -44,8 +44,7 @@ test("every draft is explicitly marked as unapplied", () => {
 });
 
 test("every created idea_app table has RLS enabled in the migration set", () => {
-  const sql = migrations.map(read).join("
-");
+  const sql = migrations.map(read).join("\n");
   const tables = [...sql.matchAll(/create table\s+idea_app\.(\w+)/gi)].map(match => match[1]);
   const enabled = new Set([...sql.matchAll(/alter table\s+idea_app\.(\w+)\s+enable row level security/gi)].map(match => match[1]));
   assert.equal(tables.length, 16, "expected the 16 reviewed application tables");
@@ -53,8 +52,7 @@ test("every created idea_app table has RLS enabled in the migration set", () => 
 });
 
 test("every UPDATE RLS policy includes USING and WITH CHECK", () => {
-  const sql = migrations.slice(2, 6).map(read).join("
-");
+  const sql = migrations.slice(2, 6).map(read).join("\n");
   const policies = sql.match(/create policy[\s\S]*?;/gi) || [];
   const updatePolicies = policies.filter(policy => /\bfor\s+update\b/i.test(policy));
   assert.ok(updatePolicies.length > 0, "expected UPDATE policies");
@@ -65,8 +63,7 @@ test("every UPDATE RLS policy includes USING and WITH CHECK", () => {
 });
 
 test("SECURITY DEFINER helpers are private, caller-bound, and explicitly granted", () => {
-  const sql = migrations.slice(2, 6).map(read).join("
-");
+  const sql = migrations.slice(2, 6).map(read).join("\n");
   const functions = [...sql.matchAll(/create(?: or replace)? function\s+([\w.]+)\s*\([\s\S]*?\$function\$;/gi)];
   const definers = functions.filter(match => /\bsecurity\s+definer\b/i.test(match[0]));
   assert.equal(definers.length, 7, "expected seven reviewed private authorization helpers");
