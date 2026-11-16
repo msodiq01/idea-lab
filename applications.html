@@ -114,7 +114,9 @@
  function normalizeStatus(v){return IDEALAB.applications.normalizeStatus(v)}
  function visible(){const q=norm($("searchInput").value),type=$("typeFilter").value,status=$("statusFilter").value;return records.filter(r=>(mode==="all"||r.direction==="both"||r.direction===mode)&&(!type||r.source.type===type)&&(!status||r.status===status)&&(!q||norm([r.title,r.person,r.source.label,r.item.companyName,r.item.projectName].join(" ")).includes(q)))}
  function statusClass(s){return s==="accepted"?"good":s==="rejected"||s==="withdrawn"?"bad":s==="reviewing"?"warn":""}
- const transitions=IDEALAB.applications.transitions;\n function canTransition(from,to,direction){return direction==="incoming"?IDEALAB.applications.nextStatuses(from,"owner").includes(to):direction==="outgoing"&&IDEALAB.applications.nextStatuses(from,"applicant").includes(to)}\n async function update(r,next){
+ const transitions=IDEALAB.applications.transitions;
+ function canTransition(from,to,direction){return direction==="incoming"?IDEALAB.applications.nextStatuses(from,"owner").includes(to):direction==="outgoing"&&IDEALAB.applications.nextStatuses(from,"applicant").includes(to)}
+ async function update(r,next){
   if(!canTransition(r.status,next,r.direction))return alert("Bu ariza uchun bunday holat o‘zgarishiga ruxsat yo‘q.");
   if(r.server){
    if(r.source.type!=="investment")return alert("Bu murojaat turi uchun serverdagi javob boshqaruvi keyingi bosqichda ulanadi.");
