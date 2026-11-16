@@ -31,6 +31,7 @@ jobs:
         run: |
           mkdir -p "$SUPABASE_WORKDIR/supabase/migrations"
           cp supabase/config.toml "$SUPABASE_WORKDIR/supabase/config.toml"
+          cp -R supabase/functions "$SUPABASE_WORKDIR/supabase/functions"
           cp supabase/migrations/202611161[2-9]0000_idea_app_*.sql "$SUPABASE_WORKDIR/supabase/migrations/"
           count=$(find "$SUPABASE_WORKDIR/supabase/migrations" -maxdepth 1 -name '*.sql' | wc -l)
           test "$count" -eq 8
