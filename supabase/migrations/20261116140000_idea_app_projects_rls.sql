@@ -84,6 +84,11 @@ comment on function idea_private.is_organization_owner(uuid) is
   'Non-exposed RLS helper: true only when auth.uid() owns the supplied organization.';
 
 -- IDENTITY AND ORGANIZATIONS
+-- Schema USAGE is required for anonymous clients to read the two safe directory
+-- views after idea_app is explicitly exposed through the Data API. No base-table
+-- privileges are granted to anon; RLS and view column projections remain in force.
+grant usage on schema idea_app to anon;
+
 create or replace function idea_private.touch_identity_updated_at()
 returns trigger
 language plpgsql
