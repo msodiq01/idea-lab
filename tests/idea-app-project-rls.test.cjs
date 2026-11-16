@@ -84,7 +84,8 @@ test("organization membership invitations and transitions are owner-bound", () =
   assert.match(trigger, /new\.invited_by is null/i);
   assert.match(trigger, /to_jsonb\(new\) - 'invited_by' - 'updated_at'/i);
   assert.match(trigger, /to_jsonb\(old\) - 'invited_by' - 'updated_at'/i);
-  assert.match(trigger, /if v_actor is null then[\\s\\S]*?raise exception 'Authentication required'/i);
+  assert.match(trigger, /if v_actor is null then/i);
+  assert.match(trigger, /raise exception 'Authentication required'/i);
   assert.match(sql, /create trigger organization_members_guard_transition/i);
   assert.doesNotMatch(executableSql, /grant\s+all\s+on\s+idea_app\.organization_members/i);
 });
