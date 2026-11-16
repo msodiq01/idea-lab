@@ -9,8 +9,8 @@ const root = path.join(__dirname, "..");
 const sql = fs.readFileSync(path.join(root, "supabase/migrations/20261116170000_idea_app_specialists_resources_partnerships.sql"), "utf8");
 const executableSql = sql.replace(/--.*$/gm, "");
 
-test("migration is additive and draft-only", () => {
-  assert.match(sql, /NOT applied to any Supabase project/i);
+test("migration is additive and production-applied", () => {
+  assert.match(sql, /applied to Supabase production project idea-lab/i);
   assert.doesNotMatch(executableSql, /alter\s+table\s+public\./i);
   assert.doesNotMatch(executableSql, /create\s+table\s+public\./i);
   assert.doesNotMatch(executableSql, /drop\s+(table|schema|function)/i);
