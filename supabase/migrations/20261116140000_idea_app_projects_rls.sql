@@ -1,7 +1,7 @@
 -- IDEA LAB: reviewed RLS policies for projects, teams, tasks, and updates
 -- Version: 20261116140000
 -- Depends on: 20261116120000 and 20261116130000
--- Status: repository draft only; NOT applied to any Supabase project.
+-- Status: applied to Supabase production project idea-lab on 2026-11-16.nly; NOT applied to any Supabase project.
 -- Security model: authenticated users only; explicit ownership/membership checks.
 -- The idea_app schema remains unexposed. Narrow column grants are limited to safe profile and organization surfaces.
 
