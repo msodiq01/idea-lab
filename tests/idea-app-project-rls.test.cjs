@@ -180,7 +180,7 @@ test("migration does not grant browser table privileges", () => {
 
 test("anonymous directory views receive schema usage without base-table grants", () => {
   assert.match(sql, /grant usage on schema idea_app to anon/i);
-  assert.match(sql, /grant select on idea_app\\.public_profile_directory to anon, authenticated/i);
-  assert.match(sql, /grant select on idea_app\\.public_organization_directory to anon, authenticated/i);
+  assert.match(sql, /grant select on idea_app[.]public_profile_directory to anon, authenticated/i);
+  assert.match(sql, /grant select on idea_app[.]public_organization_directory to anon, authenticated/i);
   assert.doesNotMatch(sql, /grant select on all tables in schema idea_app to anon/i);
 });
