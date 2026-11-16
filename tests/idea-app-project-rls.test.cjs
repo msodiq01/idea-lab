@@ -184,3 +184,8 @@ test("anonymous directory views receive schema usage without base-table grants",
   assert.match(sql, /grant select on idea_app[.]public_organization_directory to anon, authenticated/i);
   assert.doesNotMatch(sql, /grant select on all tables in schema idea_app to anon/i);
 });
+
+
+test("public profile directory has SELECT privilege on every projected base column", () => {
+  assert.match(sql, /grant select \(id, display_name, username, headline, bio, city, country_code, visibility, created_at\)\s+on idea_app\.profiles to anon, authenticated/i);
+});
