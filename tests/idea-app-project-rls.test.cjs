@@ -42,6 +42,43 @@ test("helper functions are not executable by PUBLIC or anon", () => {
   assert.match(sql, /grant execute on function idea_private\.is_organization_owner\(uuid\) to authenticated/i);
 });
 
+test("profiles and contact details have separate privacy boundaries", () => {
+  assert.match(sql, /create policy profiles_public_read[\s\S]*?visibility = 'public'/i);
+  assert.match(sql, /create policy profiles_owner_update[\s\S]*?user_id = \(select auth\.uid\(\)\)/i);
+  assert.match(sql, /create policy profile_contacts_owner_read[\s\S]*?user_id = \(select auth\.uid\(\)\)/i);
+  const views = sql.slice(sql.indexOf("create view idea_app.public_profile_directory"), sql.indexOf("create view idea_app.public_organization_directory"));
+  assert.match(views, /security_invoker = true/i);
+  assert.doesNotMatch(views, /user_id|avatar_storage_path|phone_e164|telegram_handle|contact_email/i);
+  assert.match(sql, /grant select \(display_name, username, headline, bio, city, country_code, visibility, created_at\)[\s\S]*?on idea_app\.profiles to anon, authenticated/i);
+  assert.doesNotMatch(sql, /grant select \([^;]*user_id[^;]*\)\s+on idea_app\.profiles/i);
+  assert.match(sql, /grant select \(phone_e164, telegram_handle, contact_email, website_url, visibility, created_at, updated_at\)[\s\S]*?on idea_app\.profile_contacts to authenticated/i);
+  assert.doesNotMatch(sql, /grant select \([^;]*\)\s+on idea_app\.profile_contacts to anon/i);
+});
+
+test("organizations are public only when active and explicitly public", () => {
+  const publicPolicy = sql.slice(sql.indexOf("create policy organizations_public_read"), sql.indexOf("create policy organizations_owner_read"));
+  assert.match(publicPolicy, /visibility = 'public'/i);
+  assert.match(publicPolicy, /status = 'active'/i);
+  const view = sql.slice(sql.indexOf("create view idea_app.public_organization_directory"), sql.indexOf("-- Column-level grants"));
+  assert.match(view, /security_invoker = true/i);
+  assert.doesNotMatch(view, /owner_id|logo_storage_path|user_id/i);
+  assert.doesNotMatch(sql, /grant select \([^;]*owner_id[^;]*\)\s+on idea_app\.organizations/i);
+});
+
+test("organization membership invitations and transitions are owner-bound", () => {
+  const insert = sql.slice(sql.indexOf("create policy organization_members_insert_owner_invitation"), sql.indexOf("create policy organization_members_update_owner"));
+  assert.match(insert, /invited_by = \(select auth\.uid\(\)\)/i);
+  assert.match(insert, /membership_status = 'invited'/i);
+  assert.match(insert, /is_organization_owner\(organization_id\)/i);
+  const trigger = sql.slice(sql.indexOf("function idea_private.guard_organization_member_transition"), sql.indexOf("$function$;", sql.indexOf("function idea_private.guard_organization_member_transition")) + 11);
+  assert.match(trigger, /security invoker/i);
+  assert.match(trigger, /set search_path = ''/i);
+  assert.match(trigger, /old\.membership_status = 'invited'/i);
+  assert.match(trigger, /new\.membership_status in \('active', 'declined'\)/i);
+  assert.match(sql, /create trigger organization_members_guard_transition/i);
+  assert.doesNotMatch(executableSql, /grant\s+all\s+on\s+idea_app\.organization_members/i);
+});
+
 test("each project table policy explicitly targets authenticated", () => {
   const names = [
     "projects_select_authorized", "projects_insert_owner", "projects_update_owner", "projects_delete_owner",
