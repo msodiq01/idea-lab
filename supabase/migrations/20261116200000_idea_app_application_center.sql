@@ -1,7 +1,7 @@
 -- IDEA LAB: server-persisted project applications and unified application centre
 -- Version: 20261116200000
 -- Depends on: idea_app identity, projects, project listings, modules, and project commands migrations.
--- Status: applied to Supabase production project idea-lab on 2026-11-16.nly after the complete prerequisite chain is reviewed in staging.
+-- Status: applied to Supabase production project idea-lab on 2026-11-16.
 -- No service-role key or privileged definer endpoint is introduced.
 
 begin;
