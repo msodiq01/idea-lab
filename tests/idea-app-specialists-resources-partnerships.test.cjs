@@ -92,7 +92,7 @@ test("read-only preflight covers all new module objects", () => {
 
 
 test("anonymous catalogue grants exclude internal owner and specialist user IDs", () => {
-  const specialistGrant = sql.match(/grant select \(id, public_name,[\s\S]*?\)\s+on idea_app\.specialist_profiles to anon;/i);
+  const specialistGrant = sql.match(/grant select \(id, public_name,[\s\S]*?\)\s+on idea_app\.specialist_profiles to anon, authenticated;/i);
   assert.ok(specialistGrant, "anonymous specialist grant should exist");
   assert.doesNotMatch(specialistGrant[0], /\buser_id\b/i);
 
