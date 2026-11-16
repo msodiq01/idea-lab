@@ -10,7 +10,8 @@ begin;
 
 -- SPECIALISTS
 create table idea_app.specialist_profiles (
-  user_id uuid primary key references auth.users(id) on delete cascade,
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null unique references auth.users(id) on delete cascade,
   public_name text not null,
   headline text not null default '',
   bio text not null default '',
@@ -46,7 +47,7 @@ create index specialist_directory_idx
 create table idea_app.specialist_requests (
   id uuid primary key default gen_random_uuid(),
   project_id uuid not null references idea_app.projects(id) on delete cascade,
-  specialist_id uuid not null references auth.users(id) on delete cascade,
+  specialist_id uuid not null references idea_app.specialist_profiles(id) on delete cascade,
   requested_by uuid not null references auth.users(id) on delete restrict,
   request_note text not null default '',
   status text not null default 'submitted',
@@ -195,7 +196,10 @@ with check (user_id = (select auth.uid()));
 create policy specialist_requests_select_participants
 on idea_app.specialist_requests for select to authenticated
 using (
-  specialist_id = (select auth.uid())
+  exists (
+    select 1 from idea_app.specialist_profiles sp
+    where sp.id = specialist_id and sp.user_id = (select auth.uid())
+  )
   or (select idea_private.is_project_owner(project_id))
   or (select idea_private.has_active_project_role(project_id, array['manager']::text[]))
 );
@@ -209,7 +213,7 @@ with check (
   )
   and exists (
     select 1 from idea_app.specialist_profiles sp
-    where sp.user_id = specialist_id and sp.visibility = 'public'
+    where sp.id = specialist_id and sp.visibility = 'public'
   )
 );
 create policy specialist_requests_update_participants
@@ -377,6 +381,7 @@ returns trigger language plpgsql security invoker set search_path = ''
 as $function$
 declare
   v_actor uuid := (select auth.uid());
+  v_specialist_user_id uuid;
   v_reviewer boolean;
 begin
   if v_actor is null then raise exception 'Authentication required' using errcode = '42501'; end if;
@@ -385,9 +390,12 @@ begin
      or new.request_note is distinct from old.request_note or new.created_at is distinct from old.created_at then
     raise exception 'Specialist request identity and request note are immutable' using errcode = '42501';
   end if;
+  select sp.user_id into v_specialist_user_id
+  from idea_app.specialist_profiles sp
+  where sp.id = old.specialist_id;
   v_reviewer := (select idea_private.is_project_owner(old.project_id))
     or (select idea_private.has_active_project_role(old.project_id, array['manager']::text[]));
-  if v_actor = old.specialist_id and not v_reviewer
+  if v_actor = v_specialist_user_id and not v_reviewer
      and old.status = 'submitted' and new.status in ('accepted','declined') then
     new.responded_at := pg_catalog.now();
   elsif v_reviewer and old.status = 'submitted' and new.status = 'cancelled'
@@ -472,7 +480,7 @@ for each row execute function idea_private.guard_partnership_enquiry_transition(
 
 -- Safe, invoker-based catalogues. No user IDs, emails, phone numbers, or private notes.
 create view idea_app.public_specialist_directory with (security_invoker = true) as
-select public_name, headline, bio, skill_tags, specialist_categories, city, country_code,
+select id, public_name, headline, bio, skill_tags, specialist_categories, city, country_code,
        portfolio_urls, availability_status, engagement_modes, created_at
 from idea_app.specialist_profiles
 where visibility = 'public';
@@ -495,15 +503,11 @@ grant usage on schema idea_app to anon, authenticated;
 grant usage on schema idea_private to authenticated;
 
 -- Public visitors receive profile content but never the Auth user identifier.
-grant select (public_name, headline, bio, skill_tags, specialist_categories,
+-- The generated profile ID is a public opaque identifier. The Auth user ID is never selectable.
+grant select (id, public_name, headline, bio, skill_tags, specialist_categories,
               city, country_code, portfolio_urls, availability_status, engagement_modes,
               visibility, created_at)
-  on idea_app.specialist_profiles to anon;
--- Signed-in users may read the specialist ID needed to submit a private request.
-grant select (user_id, public_name, headline, bio, skill_tags, specialist_categories,
-              city, country_code, portfolio_urls, availability_status, engagement_modes,
-              visibility, created_at)
-  on idea_app.specialist_profiles to authenticated;
+  on idea_app.specialist_profiles to anon, authenticated;
 grant insert (user_id, public_name, headline, bio, skill_tags, specialist_categories,
               city, country_code, portfolio_urls, availability_status, engagement_modes, visibility)
   on idea_app.specialist_profiles to authenticated;
