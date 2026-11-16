@@ -41,7 +41,7 @@ Bu papkadagi SQL — IDEA LAB umumiy backendini tayyorlash uchun. Ulangan Supaba
 4. `migrations/20261116150000_idea_app_project_member_commands.sql`
 5. `migrations/20261116160000_idea_app_listings_applications.sql`
 6. `migrations/20261116170000_idea_app_specialists_resources_partnerships.sql`
-8. `migrations/20261116180000_idea_app_storage_private_assets.sql`
+7. `migrations/20261116180000_idea_app_storage_private_assets.sql`
 8. `migrations/20261116190000_idea_app_project_commands.sql`
 
 Bu ketma-ketlik jonli bazaga qo'llash uchun ruxsat emas. `idea_app` Data API exposure o'chirilgan holda qoladi; avval staging'da migration, RLS, grants va anon/authenticated two-user qabul sinovlari o'tishi shart.
