@@ -94,8 +94,10 @@
  const read=key=>{try{const v=window.IDEALAB?IDEALAB.legacy.read(key,[]):JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(v)?v:[]}catch(_){return[]}};
  const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
  const statuses={submitted:"Yuborildi",reviewing:"Ko‘rib chiqilmoqda",interview:"Suhbat belgilandi",accepted:"Qabul qilindi",negotiating:"Muzokara olib borilmoqda",agreed:"Kelishuvga erishildi",in_progress:"Amalga oshirilmoqda",completed:"Yakunlandi",rejected:"Rad etildi",withdrawn:"Ariza qaytarib olindi",cancelled:"Bitim bekor qilindi"};
+ const projects=read("projects");
+ const projectForApplication=x=>projects.find(p=>String(p.id)===String(x.projectId));
  const sources=[
-  {key:"investmentApplications",type:"investment",label:"Investitsiya",title:x=>x.projectName||"Loyiha",incoming:x=>same(x.projectOwnerId,x.projectOwnerEmail),outgoing:x=>same(x.applicantId,x.applicantEmail),person:x=>x.investorName||x.applicantName||"Investor",amount:x=>x.offerAmount},
+  {key:"investmentApplications",type:"investment",label:"Investitsiya",title:x=>x.projectName||(projectForApplication(x)?.name)||"Loyiha",incoming:x=>{const p=projectForApplication(x);return same(x.projectOwnerId||p?.ownerId,x.projectOwnerEmail||p?.ownerEmail)},outgoing:x=>same(x.applicantId,x.applicantEmail),person:x=>x.investorName||x.applicantName||"Investor",amount:x=>x.offerAmount},
   {key:"investorRequests",type:"investor-request",label:"Investor bilan aloqa",title:x=>x.projectName||"Loyiha",incoming:()=>false,outgoing:x=>same(x.applicantId,x.applicantEmail),person:x=>x.investorName||"Investor"},
   {key:"jobApplications",type:"job",label:"Ish",title:x=>x.jobTitle||"Vakansiya",incoming:x=>same(x.listingOwnerId,x.listingOwnerEmail),outgoing:x=>same(x.applicantId,x.applicantEmail),person:x=>x.applicantName||"Nomzod"},
   {key:"teamApplications",type:"team",label:"Jamoa",title:x=>x.teamName||"Jamoa",incoming:x=>same(x.listingOwnerId,x.listingOwnerEmail),outgoing:x=>same(x.applicantId,x.applicantEmail),person:x=>x.applicantName||"Ishtirokchi"},
@@ -104,7 +106,7 @@
  ];
  function same(id,email){if(!profile)return false;const idMatch=Boolean(profile.id&&id&&String(profile.id)===String(id));const emailMatch=Boolean(profile.email&&email&&norm(profile.email)===norm(email));return idMatch||emailMatch}
  let records=[],mode="all";
- function collect(){records=[];if(!profile||!profile.id&&!profile.email)return; sources.forEach(s=>read(s.key).forEach((item,index)=>{const incoming=s.incoming(item),outgoing=s.outgoing(item);if(!incoming&&!outgoing)return;records.push({source:s,item,index,direction:incoming&&outgoing?"both":incoming?"incoming":"outgoing",id:String(item.id||s.key+"-"+index),status:normalizeStatus(item.status),title:s.title(item),person:s.person(item),date:item.createdAt||item.date||""})}))}
+ function collect(){records=[];if(!profile||!profile.id&&!profile.email)return; sources.forEach(s=>read(s.key).forEach((item,index)=>{const incoming=s.incoming(item),outgoing=s.outgoing(item);if(!incoming&&!outgoing)return;const project= s.key==="investmentApplications"?projectForApplication(item):null;records.push({source:s,item,index,direction:incoming&&outgoing?"both":incoming?"incoming":"outgoing",id:String(item.id||s.key+"-"+index),status:normalizeStatus(item.status),title:s.title(item),person:s.person(item),date:item.createdAt||item.date||"",project})}))}
  function normalizeStatus(v){return IDEALAB.applications.normalizeStatus(v)}
  function visible(){const q=norm($("searchInput").value),type=$("typeFilter").value,status=$("statusFilter").value;return records.filter(r=>(mode==="all"||r.direction==="both"||r.direction===mode)&&(!type||r.source.type===type)&&(!status||r.status===status)&&(!q||norm([r.title,r.person,r.source.label,r.item.companyName,r.item.projectName].join(" ")).includes(q)))}
  function statusClass(s){return s==="accepted"?"good":s==="rejected"||s==="withdrawn"?"bad":s==="reviewing"?"warn":""}
