@@ -195,6 +195,19 @@ declare
   v_actor uuid := (select auth.uid());
   v_is_owner boolean;
 begin
+  -- ON DELETE SET NULL from auth.users may execute this FK action without a
+  -- request JWT. Permit only that exact system-maintenance transition:
+  -- invited_by non-NULL -> NULL, with every other field unchanged.
+  if v_actor is null
+     and old.invited_by is not null
+     and new.invited_by is null
+     and (pg_catalog.to_jsonb(new) - 'invited_by' - 'updated_at')
+         is not distinct from
+         (pg_catalog.to_jsonb(old) - 'invited_by' - 'updated_at') then
+    new.updated_at := pg_catalog.now();
+    return new;
+  end if;
+
   if v_actor is null then
     raise exception 'Authentication required' using errcode = '42501';
   end if;
