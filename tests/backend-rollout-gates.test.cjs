@@ -103,7 +103,7 @@ test("frontend remains offline and has no embedded Supabase credentials", () => 
 
 test("idea_api design contract matches the reviewed public view projections and command set", () => {
   const runbook = fs.readFileSync(path.join(root, "supabase/verification/backend-rollout-gates.md"), "utf8");
-  const source = [read(migrations[4]), read(migrations[5])].join("\\n");
+  const source = [read(migrations[4]), read(migrations[5])].join("\n");
   const expectedViews = {
     public_project_directory: ["slug", "title", "summary", "category", "project_type", "project_status", "start_date", "target_date", "published_at"],
     public_project_updates: ["project_slug", "title", "body", "update_type", "published_at"],
@@ -115,8 +115,8 @@ test("idea_api design contract matches the reviewed public view projections and 
     const definition = source.match(new RegExp("create view idea_app\\." + view + "[\\s\\S]*?\\bas\\s+select([\\s\\S]*?)\\s+from\\s+idea_app\\.", "i"));
     assert.ok(definition, view + " must exist in the reviewed source migrations");
     const actual = definition[1].split(",").map(part => {
-      const expression = part.trim().replace(/\\s+/g, " ");
-      const alias = expression.match(/\\bas\\s+([a-z_][a-z0-9_]*)$/i);
+      const expression = part.trim().replace(/\s+/g, " ");
+      const alias = expression.match(/\bas\s+([a-z_][a-z0-9_]*)$/i);
       return alias ? alias[1] : expression.split(".").pop().trim();
     });
     assert.deepEqual(actual, columns, view + " API projection must match its source");
