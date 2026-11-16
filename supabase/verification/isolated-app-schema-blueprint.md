@@ -62,6 +62,8 @@ Birinchi iteratsiyada ilova jadvallari quyidagi nomlash va mas'uliyat bo'yicha l
 | `idea_app.project_listings` | Loyiha katalogidagi e'lon metadata'si | project |
 | `idea_app.listing_details` | Listing turiga xos xavfsiz metadata | listing |
 | `idea_app.specialist_profiles` | Mutaxassislik va ko'nikmalar | profile |
+
+Mutaxassis katalogida `specialist_profiles.id` tasodifiy public opaque ID bo‘ladi. `user_id` esa Auth ichki identifikatori sifatida saqlanadi va hech bir client roliga SELECT berilmaydi. Mutaxassisga so‘rov `specialist_profiles.id` orqali bog‘lanadi; trigger ichki `user_id`ni bazada yechadi.
 | `idea_app.applications` | Loyiha/ish/jamoa/taklif/resursga murojaat | applicant + target |
 | `idea_app.conversations` | Ariza ishtirokchilari suhbati | application |
 | `idea_app.conversation_participants` | Suhbat qatnashchilari | conversation + user |
