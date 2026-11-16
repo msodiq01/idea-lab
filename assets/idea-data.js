@@ -187,7 +187,7 @@
       if (!files.length) return { ok: true, data: { uploaded: 0 }, error: null };
       if (files.length > 5 || files.some(file =>
         !file || file.type !== "application/pdf" ||
-        !/\\.pdf$/i.test(file.name || "") ||
+        !/\.pdf$/i.test(file.name || "") ||
         !Number.isFinite(file.size) || file.size < 1 || file.size > 10 * 1024 * 1024
       )) return fail("INVALID_LEGAL_DOCUMENT", "Faqat 5 tagacha PDF hujjat, har biri 10 MB gacha yuklash mumkin.");
       const client = getClient();
