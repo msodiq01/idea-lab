@@ -176,9 +176,10 @@ Shuning uchun:
 | 4 | Project listings + directory views | Safe public fields; status filtrlari; API exposure alohida gate |
 | 5 | Applications + messages | Ishtirokchi doirasi, duplicate va status transition |
 | 6 | Events + registrations + activity | Capacity/duplicate va audit testlari |
-| 7 | Frontend adapter pilot | Faqat bitta modul; offline demo fallback |
-| 8 | Legacy import dry-run | Preview, duplicate/invalid quarantine, mapping report |
-| 9 | Rollout qarori | Ikki-user RLS, rollback va foydalanuvchi roziligi |
+| 7 | Private Storage assets | `idea-user-assets` private bucket; UID-prefiksli yo'llar; ikki-user Storage testlari; public delivery va cross-user sharing alohida keyingi ish |
+| 8 | Frontend adapter pilot | Faqat bitta modul; offline demo fallback |
+| 9 | Legacy import dry-run | Preview, duplicate/invalid quarantine, mapping report |
+| 10 | Rollout qarori | Ikki-user RLS/Storage, rollback va foydalanuvchi roziligi |
 
 Hech bir bosqich avtomatik ravishda keyingisini ishga tushirmaydi. Productionga o'zgarish faqat alohida tasdiqlangan migration, backup va rollback rejasi bilan.
 
