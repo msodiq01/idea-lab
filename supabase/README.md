@@ -27,6 +27,12 @@ Bu papkadagi SQL — IDEA LAB umumiy backendini tayyorlash uchun. Ulangan Supaba
 - `idea_app` Data API'ga expose qilinmagan. Frontend `offline-demo` rejimida qoladi.
 - Qo'llashdan oldin staging, backup/restore, metadata va ikki foydalanuvchili RLS sinovlari shart.
 
+- `migrations/20261116170000_idea_app_specialists_resources_partnerships.sql` — mutaxassislar katalogi, loyiha mutaxassis so'rovlari, resurs takliflari/so'rovlari va mentorlik/hamkorlik/homiylik/grant-yordam imkoniyatlari. Faqat repository draft; jonli bazaga qo'llanmagan.
+- Mutaxassis profili faqat egasi `public` qilganda katalogda ko'rinadi; telefon, email va Telegram kontaktlari ochiq katalogga kiritilmaydi.
+- Resurs va hamkorlik arizalari faqat tegishli so'rovchi hamda e'lon egasiga ko'rinadi; holat o'tishlari SECURITY INVOKER triggerlari bilan cheklanadi.
+- Hamkorlik moduli non-binding so'rovlar bilan cheklangan: to'lov, bank rekvizitlari, investitsiya shartnomasi yoki pul o'tkazmasi bajarilmaydi.
+- Qabul sinovlari: `verification/specialists-resources-partnerships-acceptance.md`; read-only preflight: `verification/specialists-resources-partnerships-preflight.sql`.
+
 ## Yangi IDEA LAB app migration tartibi (faqat staging draft)
 
 1. `migrations/20261116120000_idea_app_identity_organizations.sql`
@@ -34,6 +40,7 @@ Bu papkadagi SQL — IDEA LAB umumiy backendini tayyorlash uchun. Ulangan Supaba
 3. `migrations/20261116140000_idea_app_projects_rls.sql`
 4. `migrations/20261116150000_idea_app_project_member_commands.sql`
 5. `migrations/20261116160000_idea_app_listings_applications.sql`
+6. `migrations/20261116170000_idea_app_specialists_resources_partnerships.sql`
 
 Bu ketma-ketlik jonli bazaga qo'llash uchun ruxsat emas. `idea_app` Data API exposure o'chirilgan holda qoladi; avval staging'da migration, RLS, grants va anon/authenticated two-user qabul sinovlari o'tishi shart.
 
