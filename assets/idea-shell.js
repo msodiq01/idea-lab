@@ -12,6 +12,8 @@
   ["Platforma",[["Platforma haqida","about.html"]]]
  ];
  const current=location.pathname.split("/").pop()||"index.html";
+ // Authentication has its own focused header; do not inject the full application shell there.
+ if(current==="auth.html") return;
  const isCurrent=url=>url.split("#")[0]===current;
  const link=(name,url)=>'<a href="'+url+'" '+(isCurrent(url)?'aria-current="page"':'')+'>'+name+'</a>';
  const skip=document.createElement("a");skip.className="il-skip-link";skip.href="#il-main-content";skip.textContent="Asosiy kontentga o‘tish";document.body.insertBefore(skip,document.body.firstChild);
