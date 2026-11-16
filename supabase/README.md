@@ -99,6 +99,14 @@ Faqat frontend uchun mo'ljallangan publishable/anon key ishlatilishi mumkin. Ser
 - LocalStorage'dagi eski loyihalar va arizalar Supabase'ga avtomatik ko‘chirilmagan.
 - 20261122_application_activity_notifications.sql va supplier-verification keyingi migratsiyalari production'ga qo‘llanmagan.
 - public.audit_logs uchun Security Advisor INFO qaydi bor: RLS yoqilgan, policy yo‘q; mavjud audit jadvali bo‘yicha ruxsatlar maqsadi aniqlanmaguncha o‘zgartirilmaydi.
+## Resend Auth SMTP integratsiyasi
+
+- Sozlash runbook'i: `verification/resend-auth-smtp-setup.md`.
+- Resend SMTP Supabase Auth tasdiqlash/parol tiklash xatlari uchun tanlangan.
+- Hozircha faqat xavfsiz sozlash hujjati repository'ga qo'shildi; Resend hisob/domen tasdiqlanmagan va Supabase SMTP credentials kiritilmagan.
+- Shu sababli Resend production'da ulangan yoki email yuborish ishlayapti deb hisoblanmaydi.
+- Resend API key, SMTP password va Supabase secret'lari GitHub yoki frontend'ga joylanmaydi.
+
 ## Ta’minotchi hujjatlari Edge Function
 
 `functions/supplier-verification-evidence/` ichida autentifikatsiyalangan upload-ticket, upload-finalization va download-ticket API poydevori bor. Sozlash, client protokoli, maxfiy kalitlar va staging qabul mezonlari shu papkadagi README'da. Function deploy qilinmagan va real hujjat qabul qilishga hali ruxsat berilmaydi.
