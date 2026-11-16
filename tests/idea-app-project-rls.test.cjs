@@ -11,6 +11,11 @@ const sql = fs.readFileSync(
   "utf8"
 );
 const executableSql = sql.replace(/--.*$/gm, "");
+const identitySql = fs.readFileSync(
+  path.join(root, "supabase/migrations/20261116120000_idea_app_identity_organizations.sql"),
+  "utf8"
+);
+
 
 test("RLS migration is additive and targets only idea_app", () => {
   assert.match(sql, /NOT applied to any Supabase project/i);
@@ -42,9 +47,68 @@ test("helper functions are not executable by PUBLIC or anon", () => {
   assert.match(sql, /grant execute on function idea_private\.is_organization_owner\(uuid\) to authenticated/i);
 });
 
+test("profiles and contact details have separate privacy boundaries", () => {
+  assert.match(sql, /create policy profiles_public_read[\s\S]*?visibility = 'public'/i);
+  assert.match(sql, /create policy profiles_owner_update[\s\S]*?user_id = \(select auth\.uid\(\)\)/i);
+  assert.match(sql, /create policy profile_contacts_owner_read[\s\S]*?user_id = \(select auth\.uid\(\)\)/i);
+  const views = sql.slice(sql.indexOf("create view idea_app.public_profile_directory"), sql.indexOf("create view idea_app.public_organization_directory"));
+  assert.match(views, /security_invoker = true/i);
+  assert.doesNotMatch(views, /user_id|avatar_storage_path|phone_e164|telegram_handle|contact_email/i);
+  assert.match(sql, /grant select \(id, display_name, username, headline, bio, city, country_code, visibility, created_at\)[\s\S]*?on idea_app\.profiles to anon, authenticated/i);
+  assert.doesNotMatch(sql, /grant select \([^;]*user_id[^;]*\)\s+on idea_app\.profiles/i);
+  assert.match(sql, /grant select \(phone_e164, telegram_handle, contact_email, website_url, visibility, created_at, updated_at\)[\s\S]*?on idea_app\.profile_contacts to authenticated/i);
+  assert.doesNotMatch(sql, /grant select \([^;]*\)\s+on idea_app\.profile_contacts to anon/i);
+});
+
+test("organizations are public only when active and explicitly public", () => {
+  const publicPolicy = sql.slice(sql.indexOf("create policy organizations_public_read"), sql.indexOf("create policy organizations_owner_read"));
+  assert.match(publicPolicy, /visibility = 'public'/i);
+  assert.match(publicPolicy, /status = 'active'/i);
+  const view = sql.slice(sql.indexOf("create view idea_app.public_organization_directory"), sql.indexOf("-- Column-level grants"));
+  assert.match(view, /security_invoker = true/i);
+  assert.doesNotMatch(view, /owner_id|logo_storage_path|user_id/i);
+  assert.doesNotMatch(sql, /grant select \([^;]*owner_id[^;]*\)\s+on idea_app\.organizations/i);
+});
+
+test("organization membership invitations and transitions are owner-bound", () => {
+  const insert = sql.slice(sql.indexOf("create policy organization_members_insert_owner_invitation"), sql.indexOf("create policy organization_members_update_owner"));
+  assert.match(insert, /invited_by = \(select auth\.uid\(\)\)/i);
+  assert.match(insert, /membership_status = 'invited'/i);
+  assert.match(insert, /is_organization_owner\(organization_id\)/i);
+  const trigger = sql.slice(sql.indexOf("function idea_private.guard_organization_member_transition"), sql.indexOf("$function$;", sql.indexOf("function idea_private.guard_organization_member_transition")) + 11);
+  assert.match(trigger, /security invoker/i);
+  assert.match(trigger, /set search_path = ''/i);
+  assert.match(trigger, /old\.membership_status = 'invited'/i);
+  assert.match(trigger, /new\.membership_status in \('active', 'declined'\)/i);
+  assert.match(trigger, /old\.invited_by is not null/i);
+  assert.match(trigger, /new\.invited_by is null/i);
+  assert.match(trigger, /to_jsonb\(new\) - 'invited_by' - 'updated_at'/i);
+  assert.match(trigger, /to_jsonb\(old\) - 'invited_by' - 'updated_at'/i);
+  assert.match(trigger, /if v_actor is null then/i);
+  assert.match(trigger, /raise exception 'Authentication required'/i);
+  assert.match(sql, /create trigger organization_members_guard_transition/i);
+  assert.doesNotMatch(executableSql, /grant\s+all\s+on\s+idea_app\.organization_members/i);
+});
+
 test("each project table policy explicitly targets authenticated", () => {
   const names = [
     "projects_select_authorized", "projects_insert_owner", "projects_update_owner", "projects_delete_owner",
+    "profiles_public_read",
+    "profiles_owner_read",
+    "profiles_owner_insert",
+    "profiles_owner_update",
+    "profile_contacts_owner_read",
+    "profile_contacts_owner_insert",
+    "profile_contacts_owner_update",
+    "organizations_public_read",
+    "organizations_owner_read",
+    "organizations_owner_insert",
+    "organizations_owner_update",
+    "organizations_owner_delete",
+    "organization_members_select_participants",
+    "organization_members_insert_owner_invitation",
+    "organization_members_update_owner",
+    "organization_members_update_self",
     "project_members_select_participants", "project_members_insert_request_or_invitation", "project_members_delete_owner_or_manager",
     "project_tasks_select_team", "project_tasks_insert_team", "project_tasks_update_creator", "project_tasks_delete_owner_or_manager",
     "project_updates_select_team_or_public", "project_updates_insert_team", "project_updates_update_author", "project_updates_delete_author_or_manager"
@@ -53,7 +117,17 @@ test("each project table policy explicitly targets authenticated", () => {
     const start = sql.indexOf("create policy " + name);
     assert.notEqual(start, -1, name + " exists");
     const end = sql.indexOf(";", start);
-    assert.match(sql.slice(start, end), /to authenticated/i, name + " is authenticated-only");
+    assert.match(sql.slice(start, end), /to (?:anon, )?authenticated/i, name + " targets the expected browser roles");
+  }
+});
+
+test("identity and organization tables retain RLS and server-owned timestamps", () => {
+  for (const table of ["profiles","profile_contacts","organizations","organization_members"]) {
+    assert.match(identitySql, new RegExp("alter table idea_app\\." + table + " enable row level security", "i"));
+  }
+  assert.match(sql, /function idea_private\.touch_identity_updated_at\(\)[\s\S]*?security invoker[\s\S]*?set search_path = ''/i);
+  for (const trigger of ["profiles_touch_updated_at","profile_contacts_touch_updated_at","organizations_touch_updated_at"]) {
+    assert.match(sql, new RegExp("create trigger " + trigger, "i"));
   }
 });
 
@@ -101,4 +175,17 @@ test("privileged helpers stay in a separate non-exposed schema", () => {
 test("migration does not grant browser table privileges", () => {
   assert.match(sql, /grant usage on schema idea_private to authenticated/i);
   assert.doesNotMatch(executableSql, /grant\s+(select|insert|update|delete|all)\s+on\s+(all\s+tables|idea_private\.)/i);
+});
+
+
+test("anonymous directory views receive schema usage without base-table grants", () => {
+  assert.match(sql, /grant usage on schema idea_app to anon/i);
+  assert.match(sql, /grant select on idea_app[.]public_profile_directory to anon, authenticated/i);
+  assert.match(sql, /grant select on idea_app[.]public_organization_directory to anon, authenticated/i);
+  assert.doesNotMatch(sql, /grant select on all tables in schema idea_app to anon/i);
+});
+
+
+test("public profile directory has SELECT privilege on every projected base column", () => {
+  assert.match(sql, /grant select \(id, display_name, username, headline, bio, city, country_code, visibility, created_at\)\s+on idea_app\.profiles to anon, authenticated/i);
 });

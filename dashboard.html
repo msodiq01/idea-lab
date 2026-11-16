@@ -57,6 +57,7 @@
 <div class="d-section-head"><div><h2>Tezkor amallar</h2><p>Kerakli bo‘limga bir qadamda o‘ting.</p></div></div>
 <div class="d-actions">
 <a class="d-action" href="index.html#createProject"><div class="ico">✦</div><strong>Yangi loyiha</strong><span>G‘oyani loyiha sifatida kiriting va rivojlantirishni boshlang.</span></a>
+<a class="d-action" href="project-workspace.html"><div class="ico">⌘</div><strong>Loyiha ish maydoni</strong><span>Loyiha ma’lumotlari va jamoa a’zoligini boshqaring.</span></a>
 <a class="d-action" href="projects.html"><div class="ico">▦</div><strong>Loyihalarni ko‘rish</strong><span>Platformadagi mavjud loyihalarni o‘rganing.</span></a>
 <a class="d-action" href="offers.html"><div class="ico">⇄</div><strong>Takliflar markazi</strong><span>Kerakli resurs yoki xizmat bo‘yicha murojaat qiling.</span></a>
 <a class="d-action" href="organizations.html"><div class="ico">▣</div><strong>Tashkilotlar markazi</strong><span>Kompaniya, a’zolar, lavozimlar va loyihalarni boshqaring.</span></a>
@@ -97,6 +98,19 @@
 </section>
 </main>
 <script src="assets/idea-core.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js"></script>
+<script src="assets/idea-config.js"></script>
+<script src="assets/idea-auth.js"></script>
+<script src="assets/idea-data.js"></script>
+<script>
+(function(){
+  "use strict";
+  const config = window.IDEALAB_CONFIG;
+  if (config && config.mode === "supabase" && window.supabase && window.IDEALAB_AUTH) {
+    window.IDEALAB_AUTH.configure(config, window.supabase);
+  }
+})();
+</script>
 <script>
 (function(){
 const ideaCore = window.IDEALAB || null;

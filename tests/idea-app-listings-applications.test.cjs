@@ -45,6 +45,14 @@ test("applications are unique and applicant identity is server-bound", () => {
   assert.ok(sql.includes("p.status = 'recruiting'"));
 });
 
+test("application insertion checks project ownership through the private helper", () => {
+  const start = sql.indexOf("create policy applications_insert_applicant");
+  const end = sql.indexOf("create policy applications_update_applicant_withdraw", start);
+  const policy = sql.slice(start, end);
+  assert.match(policy, /not \(select idea_private\.is_project_owner\(p\.id\)\)/i);
+  assert.doesNotMatch(policy, /p\.created_by/i);
+});
+
 test("applications are visible only to participants and project reviewers", () => {
   const policy = sql.slice(sql.indexOf("create policy applications_select_participants"), sql.indexOf("create policy applications_insert_applicant"));
   assert.ok(policy.includes("applicant_id = (select auth.uid())"));

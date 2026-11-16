@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="IDEA LAB loyiha va jamoa boshqaruvi">
+<title>IDEA LAB | Loyiha ish maydoni</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/idea-shell.css">
+<style>
+:root{--pw-ink:#18233a;--pw-muted:#68758d;--pw-line:#e5eaf2;--pw-purple:#5146e5;--pw-teal:#0e9f9a}
+.pw-wrap{width:min(1160px,calc(100% - 40px));margin:34px auto 76px}
+.pw-hero{padding:clamp(24px,4vw,42px);border:1px solid #e5e8fb;border-radius:23px;background:linear-gradient(115deg,#fff,#f5f6ff 68%,#eefafa);box-shadow:0 10px 30px rgba(28,42,74,.07)}
+.pw-eyebrow{color:var(--pw-purple);font-size:10px;font-weight:850;letter-spacing:1.6px}
+.pw-hero h1{font-size:clamp(29px,4.5vw,44px);margin:10px 0 9px;letter-spacing:-1.7px}
+.pw-hero p{max-width:760px;color:var(--pw-muted);line-height:1.75;font-size:13px;margin:0}
+.pw-status{display:flex;align-items:flex-start;gap:12px;margin-top:19px;padding:14px 16px;border:1px solid #f0dfb8;background:#fff9ed;border-radius:13px;color:#805d20;font-size:12px;line-height:1.65}
+.pw-status strong{display:block;color:#664815;margin-bottom:2px}
+.pw-status-dot{width:9px;height:9px;flex:none;margin-top:5px;border-radius:50%;background:#d99a2b;box-shadow:0 0 0 4px #f8ebd2}
+.pw-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:20px}
+.pw-card{min-width:0;padding:22px;background:#fff;border:1px solid var(--pw-line);border-radius:18px;box-shadow:0 8px 26px rgba(28,42,74,.055)}
+.pw-card h2{font-size:17px;margin:0 0 6px;letter-spacing:-.4px}
+.pw-card>p{font-size:12px;color:var(--pw-muted);line-height:1.6;margin:0 0 17px}
+.pw-form{display:grid;gap:12px}
+.pw-field{display:grid;gap:6px}
+.pw-field label{font-size:11px;font-weight:750;color:#526078}
+.pw-field input,.pw-field select,.pw-field textarea{width:100%;min-width:0;border:1px solid #dce3ef;border-radius:10px;background:#fff;color:#243047;font:inherit;font-size:13px;padding:11px 12px;outline:none}
+.pw-field textarea{min-height:94px;resize:vertical}
+.pw-field input:focus,.pw-field select:focus,.pw-field textarea:focus{border-color:#938cf4;box-shadow:0 0 0 4px rgba(81,70,229,.09)}
+.pw-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pw-button{width:100%;min-height:42px;border:0;border-radius:10px;background:linear-gradient(110deg,var(--pw-purple),#6a60ec);color:#fff;font:inherit;font-size:12px;font-weight:800;cursor:pointer;padding:11px 14px}
+.pw-button:disabled{opacity:.55;cursor:not-allowed}
+.pw-button.secondary{background:#f1f2ff;color:var(--pw-purple);border:1px solid #e3e1ff}
+.pw-button.danger{background:#fff1f1;color:#b64141;border:1px solid #f1dada}
+.pw-message{display:none;padding:10px 12px;border-radius:10px;font-size:11px;line-height:1.55}
+.pw-message[data-kind="error"]{display:block;background:#fff1f1;color:#a33b3b;border:1px solid #f3dada}
+.pw-message[data-kind="success"]{display:block;background:#eefaf5;color:#18734f;border:1px solid #d5efe2}
+.pw-message[data-kind="info"]{display:block;background:#f2f5ff;color:#4b5b91;border:1px solid #e1e7fb}
+.pw-help{font-size:10px;color:#8490a5;line-height:1.55}
+.pw-wide{grid-column:1/-1}
+.pw-divider{height:1px;background:var(--pw-line);margin:5px 0}
+.pw-footer{margin-top:18px;color:#8993a8;font-size:10px;line-height:1.6}
+@media(max-width:760px){.pw-grid{grid-template-columns:1fr}.pw-wrap{width:calc(100% - 24px);margin-top:22px}.pw-card{padding:18px}}
+@media(max-width:420px){.pw-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="pw-wrap">
+<section class="pw-hero">
+<div class="pw-eyebrow">IDEA LAB / PROJECT WORKSPACE</div>
+<h1>Loyiha va jamoa ish maydoni</h1>
+<p>Loyihangizni yarating, ma’lumotlarini yangilang va jamoaga qo‘shilish jarayonlarini boshqaring. Har bir amal serverdagi ruxsatlar bilan tekshirilishi ko‘zda tutilgan.</p>
+<div class="pw-status" role="status" aria-live="polite">
+<span class="pw-status-dot"></span>
+<div><strong id="backendTitle">Backend hozircha ulanmagan</strong><span id="backendDescription">Bu sahifa tayyor, lekin Supabase konfiguratsiyasi va idea_app migratsiyalari faollashtirilmaguncha server amallari bajarilmaydi. Kiritilgan ma’lumotlar avtomatik ravishda serverga yuborilmaydi.</span></div>
+</div>
+</section>
+<section class="pw-grid" aria-label="Loyiha va jamoa amallari">
+<article class="pw-card">
+<h2>Yangi loyiha yaratish</h2>
+<p>Yangi tashabbus uchun asosiy ma’lumotlarni kiriting. Loyiha standart holatda shaxsiy qoralama sifatida yaratiladi.</p>
+<form class="pw-form" id="createProjectForm">
+<div class="pw-field"><label for="newTitle">Loyiha nomi *</label><input id="newTitle" name="title" required minlength="3" maxlength="160" placeholder="Masalan: Yoshlar uchun innovatsion platforma"></div>
+<div class="pw-field"><label for="newSummary">Qisqa mazmun</label><input id="newSummary" name="summary" maxlength="320" placeholder="Loyihangiz nima muammoni hal qiladi?"></div>
+<div class="pw-field"><label for="newDescription">Batafsil tavsif</label><textarea id="newDescription" name="description" maxlength="6000" placeholder="Maqsad, yechim va kutilayotgan natijalar..."></textarea></div>
+<div class="pw-row">
+<div class="pw-field"><label for="newType">Yo‘nalish</label><select id="newType" name="projectType"><option value="other">Boshqa</option><option value="startup">Startap</option><option value="social">Ijtimoiy</option><option value="research">Tadqiqot</option><option value="education">Ta’lim</option><option value="technology">Texnologiya</option><option value="creative">Ijodiy</option><option value="community">Jamoatchilik</option></select></div>
+<div class="pw-field"><label for="newVisibility">Ko‘rinish</label><select id="newVisibility" name="visibility"><option value="private">Shaxsiy</option><option value="unlisted">Havola orqali</option><option value="public">Ommaviy</option></select></div>
+</div>
+<div class="pw-row">
+<div class="pw-field"><label for="newStart">Boshlanish sanasi</label><input id="newStart" name="startDate" type="date"></div>
+<div class="pw-field"><label for="newTarget">Maqsadli sana</label><input id="newTarget" name="targetDate" type="date"></div>
+</div>
+<button class="pw-button" type="submit">Loyiha yaratish</button>
+<div class="pw-message" id="createMessage" role="status" aria-live="polite"></div>
+</form>
+</article>
+<article class="pw-card">
+<h2>Loyiha ma’lumotlarini yangilash</h2>
+<p>Faqat o‘zingiz boshqarish huquqiga ega bo‘lgan loyiha yangilanadi. Yakuniy ruxsat server RLS qoidalari bilan tekshiriladi.</p>
+<form class="pw-form" id="updateProjectForm">
+<div class="pw-field"><label for="editId">Loyiha ID *</label><input id="editId" name="projectId" required placeholder="UUID formatidagi loyiha ID"></div>
+<div class="pw-field"><label for="editTitle">Yangi loyiha nomi *</label><input id="editTitle" name="title" required minlength="3" maxlength="160"></div>
+<div class="pw-field"><label for="editSummary">Qisqa mazmun</label><input id="editSummary" name="summary" maxlength="320"></div>
+<div class="pw-field"><label for="editDescription">Tavsif</label><textarea id="editDescription" name="description" maxlength="6000"></textarea></div>
+<div class="pw-row">
+<div class="pw-field"><label for="editType">Yo‘nalish</label><select id="editType" name="projectType"><option value="other">Boshqa</option><option value="startup">Startap</option><option value="social">Ijtimoiy</option><option value="research">Tadqiqot</option><option value="education">Ta’lim</option><option value="technology">Texnologiya</option><option value="creative">Ijodiy</option><option value="community">Jamoatchilik</option></select></div>
+<div class="pw-field"><label for="editStatus">Holat</label><select id="editStatus" name="status"><option value="draft">Qoralama</option><option value="recruiting">Jamoa yig‘ilmoqda</option><option value="active">Faol</option><option value="paused">To‘xtatilgan</option><option value="completed">Yakunlangan</option><option value="archived">Arxivlangan</option></select></div>
+</div>
+<div class="pw-field"><label for="editVisibility">Ko‘rinish</label><select id="editVisibility" name="visibility"><option value="private">Shaxsiy</option><option value="unlisted">Havola orqali</option><option value="public">Ommaviy</option></select></div>
+<div class="pw-row">
+<div class="pw-field"><label for="editStart">Boshlanish sanasi</label><input id="editStart" name="startDate" type="date"></div>
+<div class="pw-field"><label for="editTarget">Maqsadli sana</label><input id="editTarget" name="targetDate" type="date"></div>
+</div>
+<button class="pw-button secondary" type="submit">Loyihani yangilash</button>
+<div class="pw-message" id="updateMessage" role="status" aria-live="polite"></div>
+</form>
+</article>
+<article class="pw-card">
+<h2>Jamoaga qo‘shilish so‘rovi</h2>
+<p>Jamoasiga qo‘shilmoqchi bo‘lgan loyihaning ID raqamini kiriting. So‘rov sizning hisobingiz nomidan yuboriladi.</p>
+<form class="pw-form" id="joinProjectForm">
+<div class="pw-field"><label for="joinId">Loyiha ID *</label><input id="joinId" name="projectId" required placeholder="UUID formatidagi loyiha ID"></div>
+<button class="pw-button" type="submit">Qo‘shilish so‘rovini yuborish</button>
+<div class="pw-message" id="joinMessage" role="status" aria-live="polite"></div>
+<p class="pw-help">So‘rov egasi tomonidan ko‘rib chiqiladi. Sizning hisob identifikatoringiz brauzer formasidan olinmaydi — server auth.uid() orqali aniqlaydi.</p>
+</form>
+</article>
+<article class="pw-card">
+<h2>A’zolik arizalarini boshqarish</h2>
+<p>Loyiha egasi arizani ko‘rib chiqishi, a’zo esa o‘z a’zoligini tark etishi mumkin.</p>
+<form class="pw-form" id="reviewMembershipForm">
+<div class="pw-field"><label for="reviewId">A’zolik arizasi ID *</label><input id="reviewId" name="membershipId" required placeholder="UUID formatidagi a’zolik ID"></div>
+<div class="pw-row">
+<div class="pw-field"><label for="reviewDecision">Qaror</label><select id="reviewDecision" name="decision"><option value="approve">Qabul qilish</option><option value="decline">Rad etish</option></select></div>
+<div class="pw-field"><label for="reviewRole">Roli</label><select id="reviewRole" name="role"><option value="contributor">Ishtirokchi</option><option value="manager">Menejer</option><option value="viewer">Kuzatuvchi</option></select></div>
+</div>
+<button class="pw-button secondary" type="submit">Arizani ko‘rib chiqish</button>
+<div class="pw-message" id="reviewMessage" role="status" aria-live="polite"></div>
+<div class="pw-divider"></div>
+<div class="pw-field"><label for="leaveId">Tark etiladigan a’zolik ID</label><input id="leaveId" name="membershipId" placeholder="UUID formatidagi a’zolik ID"></div>
+<button class="pw-button danger" id="leaveButton" type="button">Loyihani tark etish</button>
+<div class="pw-message" id="leaveMessage" role="status" aria-live="polite"></div>
+<p class="pw-help">A’zolik ID loyiha a’zoligi yozuviga tegishli. Amalni bajarishdan oldin server sizning huquqingizni tekshiradi.</p>
+</form>
+</article>
+</section>
+<p class="pw-footer">Xavfsizlik: ushbu sahifa faqat oldindan belgilangan IDEA LAB buyruqlaridan foydalanadi. Service role kaliti yoki boshqa maxfiy kalitlar brauzerga joylashtirilmaydi. Backend yoqilmagan bo‘lsa, hech qanday serverga yozish amalga oshmaydi.</p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js"></script>
+<script src="assets/idea-config.js"></script>
+<script src="assets/idea-auth.js"></script>
+<script src="assets/idea-data.js"></script>
+<script>
+(function(){
+"use strict";
+const config=window.IDEALAB_CONFIG;
+const auth=window.IDEALAB_AUTH;
+const data=window.IDEALAB_DATA;
+const title=document.getElementById("backendTitle");
+const description=document.getElementById("backendDescription");
+const configured=Boolean(config&&config.mode==="supabase"&&auth&&window.supabase&&auth.configure(config,window.supabase).ok);
+function message(id,kind,text){const el=document.getElementById(id);el.dataset.kind=kind;el.textContent=text;}
+function value(form,name){return form.elements[name].value.trim();}
+function busy(button,on){button.disabled=on;button.dataset.original=button.dataset.original||button.textContent;button.textContent=on?"Bajarilmoqda…":button.dataset.original;}
+function errorText(result){return result&&result.error&&result.error.message?result.error.message:"Amal bajarilmadi. Backend sozlamalarini tekshiring.";}
+if(configured){title.textContent="Supabase konfiguratsiyasi topildi";description.textContent="Buyruqlar faqat kirilgan foydalanuvchi sessiyasi va serverdagi RLS ruxsatlari bilan bajariladi. Schema exposure va migratsiyalar ham tayyor bo‘lishi kerak.";}
+else{document.querySelectorAll("form button[type=submit],#leaveButton").forEach(button=>button.disabled=true);}
+async function submit(formId,buttonSelector,messageId,action){
+const form=document.getElementById(formId);form.addEventListener("submit",async event=>{
+event.preventDefault();const button=form.querySelector(buttonSelector);if(!configured){message(messageId,"info","Backend offline-demo rejimida. Serverga hech qanday ma’lumot yuborilmadi.");return;}
+busy(button,true);try{const result=await action(form);if(result&&result.ok){message(messageId,"success","So‘rov muvaffaqiyatli bajarildi.");form.reset();}else message(messageId,"error",errorText(result));}catch(_){message(messageId,"error","Kutilmagan xatolik. Qayta urinib ko‘ring.");}finally{busy(button,false);}
+});
+}
+submit("createProjectForm",'button[type="submit"]',"createMessage",form=>data.createProject({title:value(form,"title"),summary:value(form,"summary"),description:value(form,"description"),projectType:value(form,"projectType"),visibility:value(form,"visibility"),startDate:value(form,"startDate")||null,targetDate:value(form,"targetDate")||null}));
+submit("updateProjectForm",'button[type="submit"]',"updateMessage",form=>data.updateProject({projectId:value(form,"projectId"),title:value(form,"title"),summary:value(form,"summary"),description:value(form,"description"),projectType:value(form,"projectType"),status:value(form,"status"),visibility:value(form,"visibility"),startDate:value(form,"startDate")||null,targetDate:value(form,"targetDate")||null}));
+submit("joinProjectForm",'button[type="submit"]',"joinMessage",form=>data.requestProjectMembership(value(form,"projectId")));
+submit("reviewMembershipForm",'button[type="submit"]',"reviewMessage",form=>data.reviewProjectMembership({membershipId:value(form,"membershipId"),approve:value(form,"decision")==="approve",role:value(form,"role")}));
+document.getElementById("leaveButton").addEventListener("click",async()=>{
+const id=document.getElementById("leaveId").value.trim();if(!id){message("leaveMessage","error","A’zolik ID raqamini kiriting.");return;}
+if(!configured){message("leaveMessage","info","Backend offline-demo rejimida. Serverga hech qanday ma’lumot yuborilmadi.");return;}
+const button=document.getElementById("leaveButton");busy(button,true);try{const result=await data.leaveProject(id);if(result&&result.ok){message("leaveMessage","success","A’zolikni tark etish so‘rovi bajarildi.");document.getElementById("leaveId").value="";}else message("leaveMessage","error",errorText(result));}catch(_){message("leaveMessage","error","Kutilmagan xatolik. Qayta urinib ko‘ring.");}finally{busy(button,false);}
+});
+})();
+</script>
+<script src="assets/idea-shell.js" defer></script>
+</body>
+</html>

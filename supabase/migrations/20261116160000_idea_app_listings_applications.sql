@@ -125,7 +125,7 @@ with check (
       and l.listing_status = 'published'
       and p.visibility = 'public'
       and p.status = 'recruiting'
-      and p.created_by <> (select auth.uid())
+      and not (select idea_private.is_project_owner(p.id))
   )
 );
 

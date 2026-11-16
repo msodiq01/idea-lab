@@ -77,6 +77,7 @@
   const api = Object.freeze({
     configure,
     getStatus() { return status; },
+    getClient() { return client && status.configured ? client : null; },
     async getSession() {
       const result = await invoke("getSession");
       if (result.ok) {

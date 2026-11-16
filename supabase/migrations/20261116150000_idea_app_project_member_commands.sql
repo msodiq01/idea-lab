@@ -6,9 +6,9 @@
 
 begin;
 
--- The trigger needs to validate another user's membership without exposing
--- the roster to contributors. This narrow lookup is private and caller-bound.
-create or replace function idea_private.is_active_project_member(
+-- The trigger validates an assignee without granting clients access to
+-- project owner IDs or the private membership roster.
+create or replace function idea_private.is_valid_project_task_assignee(
   p_project_id uuid,
   p_user_id uuid
 )
@@ -24,16 +24,24 @@ as $function$
     and p_user_id is not null
     and exists (
       select 1
-      from idea_app.project_members pm
-      where pm.project_id = p_project_id
-        and pm.user_id = p_user_id
-        and pm.membership_status = 'active'
+      from idea_app.projects p
+      where p.id = p_project_id
+        and (
+          p.created_by = p_user_id
+          or exists (
+            select 1
+            from idea_app.project_members pm
+            where pm.project_id = p.id
+              and pm.user_id = p_user_id
+              and pm.membership_status = 'active'
+          )
+        )
     );
 $function$;
 
-revoke all on function idea_private.is_active_project_member(uuid, uuid)
+revoke all on function idea_private.is_valid_project_task_assignee(uuid, uuid)
   from public, anon, authenticated;
-grant execute on function idea_private.is_active_project_member(uuid, uuid)
+grant execute on function idea_private.is_valid_project_task_assignee(uuid, uuid)
   to authenticated;
 
 -- A trigger is used instead of an exposed SECURITY DEFINER RPC. This keeps
@@ -149,12 +157,7 @@ begin
   end if;
 
   if new.assignee_id is not null
-     and new.assignee_id is distinct from (
-       select p.created_by
-       from idea_app.projects p
-       where p.id = new.project_id
-     )
-     and not (select idea_private.is_active_project_member(new.project_id, new.assignee_id)) then
+     and not (select idea_private.is_valid_project_task_assignee(new.project_id, new.assignee_id)) then
     raise exception 'Task assignee must be the project owner or an active project member'
       using errcode = '42501';
   end if;
@@ -220,22 +223,8 @@ using (
   or (select idea_private.has_active_project_role(project_id, array['manager']::text[]))
 )
 with check (
-  (
-    (select idea_private.is_project_owner(project_id))
-    or (select idea_private.has_active_project_role(project_id, array['manager']::text[]))
-  )
-  and (
-    assignee_id is null
-    or assignee_id = (
-      select p.created_by from idea_app.projects p where p.id = project_id
-    )
-    or exists (
-      select 1 from idea_app.project_members pm
-      where pm.project_id = project_id
-        and pm.user_id = assignee_id
-        and pm.membership_status = 'active'
-    )
-  )
+  (select idea_private.is_project_owner(project_id))
+  or (select idea_private.has_active_project_role(project_id, array['manager']::text[]))
 );
 
 comment on function idea_private.enforce_project_member_transition() is
