@@ -21,6 +21,7 @@ Apply only to a disposable staging database, after the full SQL review:
 5. `20261116160000_idea_app_listings_applications.sql`
 6. `20261116170000_idea_app_specialists_resources_partnerships.sql`
 7. `20261116180000_idea_app_storage_private_assets.sql`
+8. `20261116190000_idea_app_project_commands.sql`
 
 This sequence is a dependency order, **not** permission to run these migrations against production.
 
@@ -36,6 +37,15 @@ This sequence is a dependency order, **not** permission to run these migrations 
 - Test Auth signup, sign-in, sign-out, recovery, and session refresh with actual configured providers.
 - Test Storage upload/download/update/delete with two users and MIME/size/path violations.
 - Inspect logs and security/performance advisors after tests.
+
+## SQL audit findings (static review)
+
+- The six schema/RLS feature migrations define 16 application tables; all 16 have RLS enabled in their respective migration files.
+- The RLS/command/catalogue migrations define 68 named policies. Every statically extracted `FOR UPDATE` policy includes both `USING` and `WITH CHECK` clauses.
+- Seven `SECURITY DEFINER` helper functions were found in `idea_private`; each pins `search_path` to the empty string and is explicitly revoked from `PUBLIC`, `anon`, and `authenticated` before the intended authenticated-only execute grant. No `SECURITY DEFINER` function was found in `public`.
+- The command migration `20261116190000_idea_app_project_commands.sql` was missing from the earlier README/runbook sequence; it is now included after its table/trigger dependencies.
+- **Important integration mismatch:** `assets/idea-data.js` currently calls RPCs and reads views in `idea_app`. That schema must not be exposed wholesale because it also contains base tables. Before activation, move the browser contract to a dedicated exposed `idea_api` schema: safe invoker views that read from unexposed `idea_app`, plus narrow `SECURITY INVOKER` wrappers for the five existing commands. Keep `idea_app` and `idea_private` out of the exposed-schema list. Update the frontend gateway to `idea_api` only after that migration is reviewed and tested.
+- Static review is not a SQL parser or runtime proof. PostgreSQL execution, grants as actually resolved by PostgREST, two-user JWT tests, and Storage tests remain mandatory.
 
 ## Data API and frontend activation gate
 
