@@ -436,11 +436,64 @@ function updateProfilePersonaSummary(){
  document.getElementById("personaSkillsText").textContent="Ko‘nikmalar: "+(summary.skills.length?summary.skills.join(", "):"hali kiritilmagan.");
 }
 function updateProfileProgress(){const values=[document.getElementById("fullName").value.trim(),document.getElementById("profileEmail").value.trim(),document.getElementById("profilePhone").value.trim(),Array.from(document.querySelectorAll('input[name="userRoles"]:checked')).length>0,document.getElementById("primaryGoal").value,document.getElementById("profileBio").value.trim(),document.getElementById("profileSkills").value.trim()];const percent=Math.round(values.filter(Boolean).length/values.length*100);document.getElementById("profileProgressText").textContent=percent+"%";document.getElementById("profileProgressFill").style.width=percent+"%";updateProfilePersonaSummary();return percent}
-function loadProfile(){const profile=getProfile();if(profile){avatarData=typeof profile.avatarData==="string"?profile.avatarData:"";document.getElementById("fullName").value=profile.fullName||"";document.getElementById("profileEmail").value=profile.email||"";document.getElementById("profilePhone").value=profile.phone||"";document.getElementById("primaryGoal").value=profile.primaryGoal||"";document.getElementById("profileBio").value=profile.bio||"";document.getElementById("profileSkills").value=Array.isArray(profile.skills)?profile.skills.join(", "):(profile.skills||"");document.querySelectorAll('input[name="userRoles"]').forEach(input=>{input.checked=Array.isArray(profile.roles)&&profile.roles.includes(input.value)})}updateProfileProgress();renderAvatar()}
+async function loadProfile(){
+ let profile=getProfile();
+ // Never auto-attach an existing browser-only profile to whichever account happens to be signed in.
+ // A server profile is only used when this browser has no legacy profile to review.
+ if(!profile&&authAdapter&&authAdapter.getStatus().configured){
+  const sessionResult=await authAdapter.getSession();
+  const session=sessionResult.ok&&sessionResult.data&&sessionResult.data.session;
+  if(session&&session.user){
+   renderAuthSession(session);
+   const remote=await authAdapter.getProfileData();
+   if(remote.ok&&remote.data){
+    const meta=remote.data.metadata||{};
+    profile={id:"auth-"+remote.data.id,authUserId:remote.data.id,fullName:meta.full_name||"",email:remote.data.email||"",phone:meta.phone||"",roles:Array.isArray(meta.profile_roles)?meta.profile_roles:[],primaryGoal:meta.profile_goal||"",bio:meta.profile_bio||"",skills:Array.isArray(meta.profile_skills)?meta.profile_skills:[],avatarData:"",updatedAt:new Date().toISOString()};
+   }
+  }
+ }
+ if(profile){
+  avatarData=typeof profile.avatarData==="string"?profile.avatarData:"";
+  document.getElementById("fullName").value=profile.fullName||"";
+  document.getElementById("profileEmail").value=profile.email||"";
+  document.getElementById("profilePhone").value=profile.phone||"";
+  document.getElementById("primaryGoal").value=profile.primaryGoal||"";
+  document.getElementById("profileBio").value=profile.bio||"";
+  document.getElementById("profileSkills").value=Array.isArray(profile.skills)?profile.skills.join(", "):(profile.skills||"");
+  document.querySelectorAll('input[name="userRoles"]').forEach(input=>{input.checked=Array.isArray(profile.roles)&&profile.roles.includes(input.value)});
+ }
+ updateProfileProgress();renderAvatar();
+}
 ["fullName","profileEmail","profilePhone","primaryGoal","profileBio","profileSkills"].forEach(id=>document.getElementById(id).addEventListener("input",updateProfileProgress));document.getElementById("fullName").addEventListener("input",renderAvatar);document.querySelectorAll('input[name="userRoles"]').forEach(input=>input.addEventListener("change",updateProfileProgress));
-profileForm.addEventListener("submit",function(event){event.preventDefault();const roles=Array.from(document.querySelectorAll('input[name="userRoles"]:checked')).map(input=>input.value);const previousProfile=getProfile();const profile={id:previousProfile&&previousProfile.id?previousProfile.id:(ideaCore?ideaCore.createId():"profile-"+Date.now()),fullName:document.getElementById("fullName").value.trim(),email:document.getElementById("profileEmail").value.trim(),phone:document.getElementById("profilePhone").value.trim(),roles:roles,primaryGoal:document.getElementById("primaryGoal").value,bio:document.getElementById("profileBio").value.trim(),skills:document.getElementById("profileSkills").value.split(",").map(value=>value.trim()).filter(Boolean),avatarData:avatarData,updatedAt:new Date().toISOString()};if(!profile.fullName||!profile.email){document.getElementById("profileMessage").textContent="Ism va email manzilini to‘ldiring.";return}if(ideaCore&&!ideaCore.isValidEmail(profile.email)){document.getElementById("profileMessage").textContent="Email manzili formati noto‘g‘ri.";return}if(profile.phone&&ideaCore&&!ideaCore.isValidPhone(profile.phone)){document.getElementById("profileMessage").textContent="Telefon raqami formati noto‘g‘ri.";return}try{if(ideaCore&&ideaCore.legacy){const saved=ideaCore.legacy.write("userProfile",profile);if(!saved||!saved.ok)throw new Error("local profile save failed")}else{localStorage.setItem("userProfile",JSON.stringify(profile))}}catch(error){document.getElementById("profileMessage").textContent="Saqlashda xatolik. Brauzer xotirasini tekshiring.";return}if(ideaCore){ideaCore.emit(previousProfile?"profile:updated":"profile:created",{profileId:profile.id,roles:profile.roles,updatedAt:profile.updatedAt})}window.dispatchEvent(new Event("ideaLab:profile-updated"));document.getElementById("profileMessage").textContent="Profil muvaffaqiyatli saqlandi. Ma’lumotlar hozircha shu brauzerda saqlanadi.";updateProfileProgress();renderProfileIdentityReview();renderDashboard()});
+profileForm.addEventListener("submit",async function(event){event.preventDefault();const roles=Array.from(document.querySelectorAll('input[name="userRoles"]:checked')).map(input=>input.value);const previousProfile=getProfile();const profile={id:previousProfile&&previousProfile.id?previousProfile.id:(ideaCore?ideaCore.createId():"profile-"+Date.now()),fullName:document.getElementById("fullName").value.trim(),email:document.getElementById("profileEmail").value.trim(),phone:document.getElementById("profilePhone").value.trim(),roles:roles,primaryGoal:document.getElementById("primaryGoal").value,bio:document.getElementById("profileBio").value.trim(),skills:document.getElementById("profileSkills").value.split(",").map(value=>value.trim()).filter(Boolean),avatarData:avatarData,updatedAt:new Date().toISOString()};if(!profile.fullName||!profile.email){document.getElementById("profileMessage").textContent="Ism va email manzilini to‘ldiring.";return}if(ideaCore&&!ideaCore.isValidEmail(profile.email)){document.getElementById("profileMessage").textContent="Email manzili formati noto‘g‘ri.";return}if(profile.phone&&ideaCore&&!ideaCore.isValidPhone(profile.phone)){document.getElementById("profileMessage").textContent="Telefon raqami formati noto‘g‘ri.";return}const saveLocal=()=>{if(ideaCore&&ideaCore.legacy){const saved=ideaCore.legacy.write("userProfile",profile);if(!saved||!saved.ok)throw new Error("local profile save failed")}else{localStorage.setItem("userProfile",JSON.stringify(profile))}};
+ try{saveLocal()}catch(error){document.getElementById("profileMessage").textContent="Saqlashda xatolik. Brauzer xotirasini tekshiring.";return}
+ let saveMessage="Profil ushbu brauzerda saqlandi. Akkauntga kirmaguningizcha boshqa qurilmalarda ko‘rinmaydi.";
+ const sessionUserId=activeAuthSession&&activeAuthSession.user&&activeAuthSession.user.id;
+ if(sessionUserId&&authAdapter&&typeof authAdapter.updateProfileData==="function"){
+  let allowSync=!previousProfile||previousProfile.authUserId===sessionUserId;
+  if(previousProfile&&previousProfile.authUserId!==sessionUserId){
+   allowSync=window.confirm("Ushbu brauzerdagi eski profil ma’lumotlarini hozir kirilgan akkauntga bog‘lab, uning shaxsiy profil maydonlariga yuborishga rozimisiz? Bu faqat siz tasdiqlasangiz amalga oshadi.");
+  }
+  if(allowSync){
+   document.getElementById("profileMessage").textContent="Profil server bilan sinxronlanmoqda…";
+   const synced=await authAdapter.updateProfileData(profile);
+   if(synced.ok){
+    profile.authUserId=sessionUserId;
+    try{saveLocal()}catch(_){}
+    saveMessage="Profil server akkauntingizga va ushbu brauzerga saqlandi. Eski profil ma’lumotlari faqat siz tasdiqlaganingizdan keyin bog‘landi.";
+   }else{
+    saveMessage="Mahalliy profil saqlandi, ammo server bilan sinxronlanmadi: "+(synced.error&&synced.error.message?synced.error.message:"xatolik")+". Keyinroq qayta saqlashingiz mumkin.";
+   }
+  }else{
+   saveMessage="Profil faqat ushbu brauzerda saqlandi. Server akkauntiga bog‘lanmadi.";
+  }
+ }
+ if(ideaCore){ideaCore.emit(previousProfile?"profile:updated":"profile:created",{profileId:profile.id,roles:profile.roles,updatedAt:profile.updatedAt})}
+ window.dispatchEvent(new Event("ideaLab:profile-updated"));
+ document.getElementById("profileMessage").textContent=saveMessage;
+ updateProfileProgress();renderProfileIdentityReview();renderDashboard()});
 window.addEventListener("storage",function(event){if(["userProfile","projects","investmentApplications","jobApplications","teamApplications","resourceOrders"].includes(event.key))renderDashboard()});
-loadProfile();renderDashboard();
+refreshAuthSession(false).then(()=>loadProfile()).catch(()=>loadProfile());renderDashboard();
 </script>
     <script src="assets/idea-shell.js" defer></script>\n</body>
 </html>
