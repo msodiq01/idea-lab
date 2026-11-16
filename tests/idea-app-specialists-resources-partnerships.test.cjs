@@ -92,7 +92,7 @@ test("read-only preflight covers all new module objects", () => {
 
 
 test("anonymous catalogue grants exclude internal owner and specialist user IDs", () => {
-  const specialistGrant = sql.match(/grant select \(public_name,[\s\S]*?\)\s+on idea_app\.specialist_profiles to anon;/i);
+  const specialistGrant = sql.match(/grant select \(id, public_name,[\s\S]*?\)\s+on idea_app\.specialist_profiles to anon;/i);
   assert.ok(specialistGrant, "anonymous specialist grant should exist");
   assert.doesNotMatch(specialistGrant[0], /\buser_id\b/i);
 
@@ -106,7 +106,7 @@ test("anonymous catalogue grants exclude internal owner and specialist user IDs"
 });
 
 test("specialists can provide a response note when accepting or declining", () => {
-  const start = sql.indexOf("if v_actor = old.specialist_id and not v_reviewer");
+  const start = sql.indexOf("if v_actor = v_specialist_user_id and not v_reviewer");
   const end = sql.indexOf("elsif v_reviewer", start);
   assert.ok(start >= 0 && end > start, "specialist response branch should exist");
   const branch = sql.slice(start, end);
@@ -122,4 +122,11 @@ test("specialist Auth IDs are never selectable; public opaque profile IDs drive 
   assert.match(sql, /select id, public_name,[\s\S]*?from idea_app\.specialist_profiles/i);
   assert.doesNotMatch(sql, /grant select \([^;]*\buser_id\b[^;]*\)\s+on idea_app\.specialist_profiles/i);
   assert.match(sql, /select sp\.user_id into v_specialist_user_id[\s\S]*?where sp\.id = old\.specialist_id/i);
+});
+
+
+test("all specialist request participant checks resolve opaque IDs to Auth ownership", () => {
+  const updatePolicy = sql.slice(sql.indexOf("create policy specialist_requests_update_participants"), sql.indexOf("-- Resource offers:"));
+  assert.equal((updatePolicy.match(/sp\.id = specialist_id and sp\.user_id = \(select auth\.uid\(\)\)/g) || []).length, 2);
+  assert.doesNotMatch(updatePolicy, /specialist_id = \(select auth\.uid\(\)\)/);
 });
