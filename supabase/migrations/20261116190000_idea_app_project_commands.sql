@@ -1,7 +1,7 @@
 -- IDEA LAB: least-privilege project and membership command RPCs
 -- Version: 20261116190000
 -- Depends on: 20261116120000 through 20261116150000
--- Status: repository draft only; NOT applied to any Supabase project.
+-- Status: applied to Supabase production project idea-lab on 2026-11-16.nly; NOT applied to any Supabase project.
 -- Security: SECURITY INVOKER only. Existing RLS and transition triggers remain authoritative.
 
 begin;
