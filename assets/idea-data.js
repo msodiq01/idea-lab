@@ -165,5 +165,37 @@
     }
   });
 
+    listApplicationCenter(options = {}) {
+      return queryView("application_center", query => query
+        .order("created_at", { ascending: false })
+        .limit(limitValue(options.limit)));
+    },
+    submitProjectApplication(input = {}) {
+      if (!isUuid(input.projectId)) return Promise.resolve(fail("INVALID_PROJECT_ID", "Loyiha server identifikatori noto‘g‘ri."));
+      if (!requiredText(input.message, 1, 3000)) return Promise.resolve(fail("INVALID_APPLICATION_MESSAGE", "Taklif xabari 1–3000 belgidan iborat bo‘lishi kerak."));
+      const amount = Number(input.amount);
+      if (!Number.isFinite(amount) || amount <= 0 || amount > 1e12) return Promise.resolve(fail("INVALID_APPLICATION_AMOUNT", "Taklif summasi noto‘g‘ri."));
+      const currency = typeof input.currency === "string" ? input.currency.trim().toUpperCase() : "UZS";
+      if (!/^[A-Z]{3}$/.test(currency)) return Promise.resolve(fail("INVALID_CURRENCY", "Valyuta kodi noto‘g‘ri."));
+      return runCommand("submit_project_application", {
+        p_project_id: input.projectId,
+        p_applicant_note: input.message.trim(),
+        p_offer_amount: amount,
+        p_currency_code: currency
+      });
+    },
+    updateProjectApplication(input = {}) {
+      if (!isUuid(input.applicationId)) return Promise.resolve(fail("INVALID_APPLICATION_ID", "Ariza identifikatori noto‘g‘ri."));
+      const allowed = ["in_review", "accepted", "rejected", "withdrawn"];
+      if (!allowed.includes(input.status)) return Promise.resolve(fail("INVALID_APPLICATION_STATUS", "Ariza holati noto‘g‘ri."));
+      if (input.reviewerNote !== undefined && (typeof input.reviewerNote !== "string" || input.reviewerNote.length > 2000)) {
+        return Promise.resolve(fail("INVALID_REVIEWER_NOTE", "Izoh 2000 belgidan oshmasligi kerak."));
+      }
+      return runCommand("update_project_application", {
+        p_application_id: input.applicationId,
+        p_status: input.status,
+        p_reviewer_note: input.reviewerNote === undefined ? null : input.reviewerNote
+      });
+    },
   global.IDEALAB_DATA = api;
 })(typeof window !== "undefined" ? window : globalThis);
