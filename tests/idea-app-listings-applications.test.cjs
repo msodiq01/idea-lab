@@ -12,8 +12,8 @@ const sql = fs.readFileSync(
 );
 const executableSql = sql.replace(/--.*$/gm, "");
 
-test("migration is additive and repository-draft only", () => {
-  assert.ok(sql.includes("NOT applied to any Supabase project"));
+test("migration is additive and recorded as production-applied", () => {
+  assert.ok(sql.includes("applied to Supabase production project idea-lab"));
   assert.doesNotMatch(executableSql, /alter\s+table\s+public[.]/i);
   assert.doesNotMatch(executableSql, /drop\s+(table|schema|function)/i);
   assert.doesNotMatch(executableSql, /create\s+table\s+public[.]/i);
