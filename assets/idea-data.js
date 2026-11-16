@@ -117,6 +117,16 @@
         .order("published_at", { ascending: false })
         .limit(limitValue(options.limit)));
     },
+    getPublicProjectBySlug(slug) {
+      if (typeof slug !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug.trim()) || slug.length > 160) {
+        return Promise.resolve(fail("INVALID_PROJECT_SLUG", "Loyiha manzili noto‘g‘ri."));
+      }
+      return queryView(VIEWS.projects, query => query.eq("slug", slug.trim()).limit(1))
+        .then(result => {
+          if (!result.ok) return result;
+          return { ok: true, data: result.data[0] || null, error: null };
+        });
+    },
     listProjectUpdates(slug, options = {}) {
       if (typeof slug !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug.trim())) {
         return Promise.resolve(fail("INVALID_PROJECT_SLUG", "Loyiha manzili noto'g'ri."));
@@ -202,6 +212,21 @@
       if (!/^[A-Z]{3}$/.test(currency)) return Promise.resolve(fail("INVALID_CURRENCY", "Valyuta kodi noto‘g‘ri."));
       return runPublicCommand("submit_project_application", {
         p_project_id: input.projectId,
+        p_applicant_note: input.message.trim(),
+        p_offer_amount: amount,
+        p_currency_code: currency
+      });
+    },
+    submitProjectApplicationBySlug(input = {}) {
+      const slug = typeof input.projectSlug === "string" ? input.projectSlug.trim() : "";
+      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || slug.length > 160) return Promise.resolve(fail("INVALID_PROJECT_SLUG", "Loyiha manzili noto‘g‘ri."));
+      if (!requiredText(input.message, 1, 3000)) return Promise.resolve(fail("INVALID_APPLICATION_MESSAGE", "Taklif xabari 1–3000 belgidan iborat bo‘lishi kerak."));
+      const amount = Number(input.amount);
+      if (!Number.isFinite(amount) || amount <= 0 || amount > 1e12) return Promise.resolve(fail("INVALID_APPLICATION_AMOUNT", "Taklif summasi noto‘g‘ri."));
+      const currency = typeof input.currency === "string" ? input.currency.trim().toUpperCase() : "UZS";
+      if (!/^[A-Z]{3}$/.test(currency)) return Promise.resolve(fail("INVALID_CURRENCY", "Valyuta kodi noto‘g‘ri."));
+      return runPublicCommand("submit_project_application_by_slug", {
+        p_project_slug: slug,
         p_applicant_note: input.message.trim(),
         p_offer_amount: amount,
         p_currency_code: currency
