@@ -66,7 +66,7 @@ Production changes require a separate explicit approval after staging passes, a 
 ## Current blockers
 
 - No disposable staging project is available on the current free-project allowance.
-- No live PostgreSQL execution of these seven draft migrations has been performed.
+- No live PostgreSQL execution of these eight draft migrations has been performed.
 - No real two-user JWT RLS or Storage acceptance test has been performed.
 - Auth email/SMS provider configuration and CAPTCHA are not complete.
 - A dedicated safe API exposure boundary has not yet been implemented.
