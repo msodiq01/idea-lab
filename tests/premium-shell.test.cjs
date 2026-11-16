@@ -44,3 +44,21 @@ test("specialist vacancy route points to the actual vacancy section", () => {
   assert.ok(teams.includes('id="career-section"'));
   assert.ok(!specialists.includes("jobs.html"));
 });
+
+test("homepage workflow has a bright card layout with pill navigation and no left stripe", () => {
+  const home = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  assert.match(home, /G‘oyadan natijagacha — bitta izchil yo‘l/);
+  assert.match(home, /\.workflow-step[\s\S]*border-radius:22px/);
+  assert.match(home, /\.workflow-note[\s\S]*border-left:1px solid/);
+  assert.match(home, /\.workflow-link[\s\S]*border-radius:999px/);
+});
+
+test("project creation collects goals, support needs and validates private PDF evidence", () => {
+  const home = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  const gateway = fs.readFileSync(path.join(root, "assets/idea-data.js"), "utf8");
+  for (const id of ["projectGoal", "requiredSupport", "legalDocs"]) assert.ok(home.includes('id="' + id + '"'));
+  assert.match(home, /uploadProjectLegalDocuments/);
+  assert.match(gateway, /idea-project-legal-documents/);
+  assert.match(gateway, /10 \* 1024 \* 1024/);
+  assert.match(gateway, /auth\.getUser\(\)/);
+});
