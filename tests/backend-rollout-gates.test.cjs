@@ -103,7 +103,7 @@ test("frontend remains offline and has no embedded Supabase credentials", () => 
 
 test("idea_api design contract matches the reviewed public view projections and command set", () => {
   const runbook = fs.readFileSync(path.join(root, "supabase/verification/backend-rollout-gates.md"), "utf8");
-  const source = [read(migrations[4]), read(migrations[5])].join("\n");
+  const source = [read(migrations[4]), read(migrations[5]), read(migrations[7])].join("\n");
   const expectedViews = {
     public_project_directory: ["slug", "title", "summary", "category", "project_type", "project_status", "start_date", "target_date", "published_at"],
     public_project_updates: ["project_slug", "title", "body", "update_type", "published_at"],
