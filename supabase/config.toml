@@ -1,3 +1,5 @@
+project_id = "idea-lab"
+
 # IDEA LAB Supabase CLI configuration.
 # Replace no project-specific identifiers here; link explicitly to staging at deploy time.
 # Keep gateway JWT verification enabled for both sensitive Edge Functions.
