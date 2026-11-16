@@ -1,7 +1,7 @@
 -- IDEA LAB: public project listings, safe public projections, and applications
 -- Version: 20261116160000
 -- Depends on: identity, projects, project RLS, and guarded project commands migrations.
--- Status: applied to Supabase production project idea-lab on 2026-11-16.nly; NOT applied to any Supabase project.
+-- Status: applied to Supabase production project idea-lab on 2026-11-16.
 -- Existing public schema is untouched. Data API schema exposure remains a separate gate.
 
 begin;
