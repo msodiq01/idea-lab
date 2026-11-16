@@ -1,6 +1,9 @@
 name: IDEA LAB local Supabase migration verification
 
 on:
+  push:
+    branches:
+      - chore/backend-rollout-gates
   pull_request:
     branches:
       - main
