@@ -133,7 +133,7 @@ button{cursor:pointer}
       </div>
       <div class="side-card">
         <div class="side-title">ESLATMA</div>
-        <p class="tip">Profil ma’lumotlari hozircha shu brauzerning localStorage xotirasida saqlanadi. Bu hali serverga ulangan yagona akkaunt tizimi emas.</p>
+        <p class="tip">Akkauntga kirganingizda profil ma’lumotlari shaxsiy akkauntingiz bilan sinxronlanadi. Eski brauzer profili faqat siz tasdiqlaganingizdan keyin akkauntga bog‘lanadi; avatar hozircha ushbu qurilmada saqlanadi.</p>
       </div>
     </aside>
     <div class="main-content">
@@ -299,6 +299,7 @@ async function refreshAuthSession(showMessage) {
   const result = await authAdapter.getSession();
   refreshAuthSessionButton.disabled = false;
   if (!result.ok) {
+    renderAuthSession(null);
     authSessionMessage.textContent = result.error.message;
     return;
   }
