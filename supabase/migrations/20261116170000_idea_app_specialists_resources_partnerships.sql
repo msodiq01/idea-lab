@@ -266,6 +266,8 @@ with check (
   and status = 'submitted'
   and owner_note = ''
   and reviewed_at is null
+  and (project_id is null or (select idea_private.is_project_owner(project_id))
+       or (select idea_private.has_active_project_role(project_id, array['manager','contributor']::text[])))
   and exists (
     select 1 from idea_app.resource_offers ro
     where ro.id = offer_id and ro.status = 'published'
@@ -328,6 +330,8 @@ with check (
   and status = 'submitted'
   and owner_note = ''
   and reviewed_at is null
+  and (project_id is null or (select idea_private.is_project_owner(project_id))
+       or (select idea_private.has_active_project_role(project_id, array['manager','contributor']::text[])))
   and exists (
     select 1 from idea_app.partnership_opportunities po
     where po.id = opportunity_id and po.status = 'published'
@@ -349,6 +353,23 @@ with check (
     where po.id = opportunity_id and po.owner_id = (select auth.uid())
   )
 );
+
+-- Server-owned updated_at timestamps for owner-editable catalogue/profile rows.
+create or replace function idea_private.touch_module_updated_at()
+returns trigger language plpgsql security invoker set search_path = ''
+as $function$
+begin
+  new.updated_at := pg_catalog.now();
+  return new;
+end;
+$function$;
+revoke all on function idea_private.touch_module_updated_at() from public, anon, authenticated;
+create trigger specialist_profiles_touch_updated_at before update on idea_app.specialist_profiles
+for each row execute function idea_private.touch_module_updated_at();
+create trigger resource_offers_touch_updated_at before update on idea_app.resource_offers
+for each row execute function idea_private.touch_module_updated_at();
+create trigger partnership_opportunities_touch_updated_at before update on idea_app.partnership_opportunities
+for each row execute function idea_private.touch_module_updated_at();
 
 -- SECURITY INVOKER guards enforce immutable identity and allowed state transitions.
 create or replace function idea_private.guard_specialist_request_transition()
@@ -468,8 +489,8 @@ select slug, opportunity_type, title, summary, details, location_label, publishe
 from idea_app.partnership_opportunities
 where status = 'published';
 
--- Grants are narrow prerequisites for future API design. idea_app must remain
--- unexposed: invoker views require underlying grants and the base tables contain
+-- Grants are narrow prerequisites for future API design.
+-- idea_app must remain unexposed through the Data API: invoker views require underlying grants and the base tables contain
 -- internal owner/user/project identifiers. No Data API schema exposure is added.
 grant usage on schema idea_app to anon, authenticated;
 grant usage on schema idea_private to authenticated;
@@ -482,7 +503,7 @@ grant insert (user_id, public_name, headline, bio, skill_tags, specialist_catego
               city, country_code, portfolio_urls, availability_status, engagement_modes, visibility)
   on idea_app.specialist_profiles to authenticated;
 grant update (public_name, headline, bio, skill_tags, specialist_categories,
-              city, country_code, portfolio_urls, availability_status, engagement_modes, visibility, updated_at)
+              city, country_code, portfolio_urls, availability_status, engagement_modes, visibility)
   on idea_app.specialist_profiles to authenticated;
 grant select on idea_app.public_specialist_directory to anon, authenticated;
 
@@ -493,7 +514,7 @@ grant insert (owner_id, project_id, slug, title, category, description, quantity
               availability_label, location_label, public_terms, status, published_at)
   on idea_app.resource_offers to authenticated;
 grant update (project_id, slug, title, category, description, quantity_label,
-              availability_label, location_label, public_terms, status, published_at, updated_at)
+              availability_label, location_label, public_terms, status, published_at)
   on idea_app.resource_offers to authenticated;
 grant delete on idea_app.resource_offers to authenticated;
 grant select on idea_app.public_resource_catalogue to anon, authenticated;
@@ -505,7 +526,7 @@ grant insert (owner_id, project_id, slug, opportunity_type, title, summary, deta
               location_label, status, published_at)
   on idea_app.partnership_opportunities to authenticated;
 grant update (project_id, slug, opportunity_type, title, summary, details,
-              location_label, status, published_at, updated_at)
+              location_label, status, published_at)
   on idea_app.partnership_opportunities to authenticated;
 grant delete on idea_app.partnership_opportunities to authenticated;
 grant select on idea_app.public_partnership_directory to anon, authenticated;
