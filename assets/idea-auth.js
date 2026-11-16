@@ -66,7 +66,19 @@
     try {
       const response = await client.auth[method](...args);
       if (response && response.error) {
-        return resultError("AUTH_REQUEST_FAILED", "Kirish so'rovi bajarilmadi. Ma'lumotlarni tekshirib qayta urinib ko'ring.");
+        const authError = response.error;
+        const code = String(authError.code || "");
+        const status = Number(authError.status || authError.statusCode || 0);
+        if (code === "over_email_send_rate_limit" || status === 429) {
+          return resultError("EMAIL_RATE_LIMIT", "Email yuborish limiti vaqtincha tugagan. Qayta-qayta urinmang; biroz kutib, keyin bir marta qayta urinib ko‘ring.");
+        }
+        if (code === "invalid_credentials") {
+          return resultError("INVALID_CREDENTIALS", "Email yoki parol noto‘g‘ri. Email yozilishini tekshiring.");
+        }
+        if (code === "email_not_confirmed") {
+          return resultError("EMAIL_NOT_CONFIRMED", "Avval emailingizga yuborilgan tasdiqlash havolasini oching.");
+        }
+        return resultError("AUTH_REQUEST_FAILED", "Kirish yoki ro‘yxatdan o‘tish so‘rovi bajarilmadi. Kiritilgan ma’lumotlarni tekshiring.");
       }
       return { ok: true, data: response && response.data ? response.data : null };
     } catch (_) {
