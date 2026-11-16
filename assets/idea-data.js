@@ -181,6 +181,39 @@
         p_category: category
       });
     },
+    async uploadProjectLegalDocuments(input = {}) {
+      if (!isUuid(input.projectId)) return fail("INVALID_PROJECT_ID", "Loyiha identifikatori noto‘g‘ri.");
+      const files = Array.from(input.files || []);
+      if (!files.length) return { ok: true, data: { uploaded: 0 }, error: null };
+      if (files.length > 5 || files.some(file =>
+        !file || file.type !== "application/pdf" ||
+        !/\\.pdf$/i.test(file.name || "") ||
+        !Number.isFinite(file.size) || file.size < 1 || file.size > 10 * 1024 * 1024
+      )) return fail("INVALID_LEGAL_DOCUMENT", "Faqat 5 tagacha PDF hujjat, har biri 10 MB gacha yuklash mumkin.");
+      const client = getClient();
+      if (!client || !client.auth || !client.storage) return fail("STORAGE_UNAVAILABLE", "Hujjatlar ombori hozircha ulanmagan.");
+      try {
+        const sessionResult = await client.auth.getUser();
+        const user = sessionResult && sessionResult.data && sessionResult.data.user;
+        if (sessionResult.error || !user || !user.id) return fail("AUTH_REQUIRED", "Hujjat yuklash uchun akkauntga qayta kiring.");
+        const bucket = "idea-project-legal-documents";
+        const uploaded = [];
+        for (const file of files) {
+          const objectName = user.id + "/" + input.projectId + "/" + crypto.randomUUID() + ".pdf";
+          const result = await client.storage.from(bucket).upload(objectName, file, {
+            cacheControl: "3600", upsert: false, contentType: "application/pdf"
+          });
+          if (result.error) {
+            if (uploaded.length) await client.storage.from(bucket).remove(uploaded);
+            return fail("LEGAL_DOCUMENT_UPLOAD_FAILED", "PDF hujjat yuklanmadi. Loyiha saqlandi, hujjatlarni keyinroq qayta yuklang.");
+          }
+          uploaded.push(objectName);
+        }
+        return { ok: true, data: { uploaded: uploaded.length }, error: null };
+      } catch (_) {
+        return fail("LEGAL_DOCUMENT_UPLOAD_FAILED", "PDF hujjatlarni yuklashda xatolik yuz berdi.");
+      }
+    },
     updateProject(input = {}) {
       if (!isUuid(input.projectId)) return Promise.resolve(fail("INVALID_PROJECT_ID", "Loyiha identifikatori noto‘g‘ri."));
       if (!requiredText(input.title, 3, 160)) return Promise.resolve(fail("INVALID_PROJECT_TITLE", "Loyiha nomi 3–160 belgidan iborat bo‘lishi kerak."));
