@@ -1018,7 +1018,24 @@
 #ecosystem-map .section-title{color:#18223a!important}
 #ecosystem-map .section-description{color:#64718a!important}
 #ecosystem-map .section-label{color:#5548d7!important;background:#eeedff!important;border-color:#dfdcff!important}
-#ecosystem-map .workflow-step{background:rgba(255,255,255,.94)!important;border-color:#e3e7f2!important}
+#ecosystem-map .workflow-list{max-width:none!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:15px!important}
+#ecosystem-map .workflow-step{
+ min-width:0!important;grid-template-columns:48px minmax(0,1fr)!important;align-items:start!important;gap:14px!important;
+ padding:20px!important;border:1px solid #e3e7f2!important;border-radius:22px!important;
+ background:rgba(255,255,255,.94)!important;box-shadow:0 10px 28px rgba(29,40,78,.055)!important;
+}
+#ecosystem-map .workflow-number{width:44px!important;height:44px!important;border-radius:15px!important;color:#fff!important;background:linear-gradient(145deg,#7568f0,#5146d5 70%,#159c9b)!important}
+#ecosystem-map .workflow-step>.workflow-link,#ecosystem-map .workflow-step>.workflow-links{grid-column:2!important;margin-top:0!important}
+#ecosystem-map .workflow-links{display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;gap:8px!important}
+#ecosystem-map .workflow-link{min-height:34px!important;padding:7px 12px!important;border:1px solid #e2e4f4!important;border-radius:999px!important;background:#f7f7ff!important;color:#5146d5!important;font-size:11px!important}
+#ecosystem-map .workflow-link:hover{background:#5146d5!important;color:#fff!important;border-color:#5146d5!important}
+#ecosystem-map .workflow-step:hover{transform:translateY(-3px)!important;border-color:#c9c4ff!important;box-shadow:0 16px 34px rgba(40,43,100,.10)!important}
+#ecosystem-map .workflow-note{border:1px solid #dfe5f0!important;border-left:1px solid #dfe5f0!important;border-radius:18px!important;background:#fff!important;color:#68758d!important}
+@media(max-width:760px){
+ #ecosystem-map .workflow-list{grid-template-columns:1fr!important}
+ #ecosystem-map .workflow-step{grid-template-columns:42px minmax(0,1fr)!important;padding:17px!important;border-radius:18px!important}
+ #ecosystem-map .workflow-number{width:38px!important;height:38px!important}
+}
 #ecosystem-map .workflow-copy h3{color:#1b2540!important}
 #ecosystem-map .workflow-copy p{color:#68758d!important}
 #ecosystem-map .workflow-note{border:1px solid #dfe5f0!important;border-radius:18px!important;background:#fff!important;color:#68758d!important}
