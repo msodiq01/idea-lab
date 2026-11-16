@@ -54,7 +54,7 @@ test("profiles and contact details have separate privacy boundaries", () => {
   const views = sql.slice(sql.indexOf("create view idea_app.public_profile_directory"), sql.indexOf("create view idea_app.public_organization_directory"));
   assert.match(views, /security_invoker = true/i);
   assert.doesNotMatch(views, /user_id|avatar_storage_path|phone_e164|telegram_handle|contact_email/i);
-  assert.match(sql, /grant select \(display_name, username, headline, bio, city, country_code, visibility, created_at\)[\s\S]*?on idea_app\.profiles to anon, authenticated/i);
+  assert.match(sql, /grant select \(id, display_name, username, headline, bio, city, country_code, visibility, created_at\)[\s\S]*?on idea_app\.profiles to anon, authenticated/i);
   assert.doesNotMatch(sql, /grant select \([^;]*user_id[^;]*\)\s+on idea_app\.profiles/i);
   assert.match(sql, /grant select \(phone_e164, telegram_handle, contact_email, website_url, visibility, created_at, updated_at\)[\s\S]*?on idea_app\.profile_contacts to authenticated/i);
   assert.doesNotMatch(sql, /grant select \([^;]*\)\s+on idea_app\.profile_contacts to anon/i);
