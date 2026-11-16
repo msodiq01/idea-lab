@@ -491,7 +491,7 @@ profileForm.addEventListener("submit",async function(event){event.preventDefault
       visibility:"private"
      });
      if(profileRow&&profileRow.ok){
-      saveMessage="Profil Auth akkauntiga, server profil jadvaliga va ushbu brauzerga saqlandi.";
+      saveMessage="Profil server akkauntingizga va ushbu brauzerga saqlandi. Server profil jadvali ham yangilandi."
      }else{
       saveMessage="Auth akkaunt ma’lumotlari sinxronlandi, ammo profil jadvaliga yozilmadi: "+(profileRow&&profileRow.error&&profileRow.error.message?profileRow.error.message:"xatolik")+". Keyinroq qayta urinib ko‘ring.";
      }
