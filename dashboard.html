@@ -120,7 +120,12 @@ if (ideaCore) {
  document.getElementById("backendStatus").textContent = ideaCore.environment.backend === "offline-demo" ? "Ulanmagan" : "Ulangan";
  document.getElementById("storageStatus").textContent = ideaCore.storageAvailable() ? "Mavjud" : "Mavjud emas";
  document.getElementById("authStatus").textContent = ideaCore.environment.authenticated ? "Faol" : "Faol emas";
- coreNotice.textContent = "Dashboard markaziy yadro bilan ishlayapti. Hozirgi rejim offline-demo; foydalanuvchilararo sinxronlash va server aloqasi hali ulanmagan.";
+ const authStatus = window.IDEALAB_AUTH && window.IDEALAB_AUTH.getStatus ? window.IDEALAB_AUTH.getStatus() : null;
+ document.getElementById("backendStatus").textContent = authStatus && authStatus.configured ? "Supabase" : "Ulanmagan";
+ document.getElementById("authStatus").textContent = authStatus && authStatus.authenticated ? "Faol" : "Kirilmagan";
+ coreNotice.textContent = authStatus && authStatus.configured
+   ? "Supabase backend ulangan. Server katalogi va arizalar markazi mavjud; ayrim eski kabinet ko‘rsatkichlari hali mahalliy keshdan olinadi."
+   : "Supabase konfiguratsiyasi yoki SDK yuklanmadi. Server ma’lumotlari hozircha olinmaydi.";
  ideaCore.emit("dashboard:opened", { openedAt: new Date().toISOString() });
  ideaCore.subscribe(ideaCore.events.error, (event) => {
    coreNotice.textContent = "Tizim ogohlantirishi: " + String(event.message || "Noma’lum xato");
@@ -181,6 +186,53 @@ if(projects.length){
  list.innerHTML=recent.map(p=>{const title=String(p.title||p.name||p.projectName||"Nomsiz loyiha");const desc=String(p.description||p.direction||"Loyiha tafsilotlari");return '<div class="d-device"><div><strong></strong><small></small></div><a class="d-link" href="projects.html">Ko‘rish</a></div>'}).join("");
  [...list.querySelectorAll(".d-device")].forEach((el,i)=>{el.querySelector("strong").textContent=String(recent[i].title||recent[i].name||recent[i].projectName||"Nomsiz loyiha");el.querySelector("small").textContent=String(recent[i].direction||recent[i].description||"Loyiha")});
 }
+async function refreshServerDashboard(){
+ const data=window.IDEALAB_DATA;
+ const auth=window.IDEALAB_AUTH;
+ if(!data||!auth||!auth.getStatus().configured)return;
+ try{
+  const projectResult=await data.listPublicProjects({limit:50});
+  if(projectResult&&projectResult.ok){
+   const serverProjects=projectResult.data||[];
+   document.getElementById("projectCount").textContent=String(serverProjects.length);
+   const target=document.getElementById("recentProjects");
+   target.replaceChildren();
+   if(!serverProjects.length){
+    target.className="d-empty";
+    const strong=document.createElement("b");strong.textContent="Hozircha ommaviy loyihalar yo‘q";
+    target.append(strong,document.createTextNode("Loyiha e’lon qilinganda shu yerda ko‘rinadi."));
+   }else{
+    target.className="";target.style.marginTop="12px";
+    serverProjects.slice(0,4).forEach(project=>{
+     const item=document.createElement("div");item.className="d-device";
+     const info=document.createElement("div");const title=document.createElement("strong");
+     const detail=document.createElement("small");const link=document.createElement("a");
+     title.textContent=String(project.title||"Nomsiz loyiha");
+     detail.textContent=String(project.summary||project.category||"Ommaviy loyiha");
+     link.className="d-link";link.href=project.slug?"project.html?slug="+encodeURIComponent(project.slug):"projects.html";link.textContent="Ko‘rish";
+     info.append(title,detail);item.append(info,link);target.append(item);
+    });
+   }
+  }
+  await auth.getSession();
+  const current=auth.getStatus();
+  document.getElementById("authStatus").textContent=current.authenticated?"Faol":"Kirilmagan";
+  if(current.authenticated){
+   const applicationResult=await data.listApplicationCenter({limit:50});
+   if(applicationResult&&applicationResult.ok){
+    const rows=applicationResult.data||[];
+    document.getElementById("applicationCount").textContent=String(rows.length);
+    document.getElementById("collaborationCount").textContent=String(rows.filter(row=>["team","resource","partnership","specialist"].includes(String(row.source_type||"").toLowerCase())).length);
+    coreNotice.textContent="Supabase bilan faol sessiya mavjud. Loyiha katalogi va arizalar soni serverdan yuklandi.";
+   }
+  }else{
+   coreNotice.textContent="Supabase backend ulangan. Ommaviy loyihalar serverdan yuklandi; shaxsiy arizalarni ko‘rish uchun akkauntga kiring.";
+  }
+ }catch(_){
+  coreNotice.textContent="Server ma’lumotlarini yangilashda xatolik. Sahifani yangilang yoki backend ulanishini tekshiring.";
+ }
+}
+refreshServerDashboard();
 window.addEventListener("storage",()=>location.reload());
 })();
 </script>
