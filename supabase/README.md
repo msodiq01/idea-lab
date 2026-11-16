@@ -27,7 +27,7 @@ Bu papkadagi SQL — IDEA LAB umumiy backendini tayyorlash uchun. Ulangan Supaba
 - `idea_app` Data API'ga expose qilinmagan. Frontend `offline-demo` rejimida qoladi.
 - Qo'llashdan oldin staging, backup/restore, metadata va ikki foydalanuvchili RLS sinovlari shart.
 
-- `migrations/20261116170000_idea_app_specialists_resources_partnerships.sql` — mutaxassislar katalogi, loyiha mutaxassis so'rovlari, resurs takliflari/so'rovlari va mentorlik/hamkorlik/homiylik/grant-yordam imkoniyatlari. Faqat repository draft; jonli bazaga qo'llanmagan.
+- `migrations/20261116190000_idea_app_project_commands.sql` — loyiha yaratish/tahrirlash va jamoa so‘rovlarini auth.uid() asosida bajaradigan cheklangan SECURITY INVOKER buyruqlari. Faqat repository draft; jonli bazaga qo‘llanmagan.\n- `migrations/20261116170000_idea_app_specialists_resources_partnerships.sql` — mutaxassislar katalogi, loyiha mutaxassis so'rovlari, resurs takliflari/so'rovlari va mentorlik/hamkorlik/homiylik/grant-yordam imkoniyatlari. Faqat repository draft; jonli bazaga qo'llanmagan.
 - `migrations/20261116200000_idea_app_application_center.sql` — loyiha investitsiya arizalarini serverga yozish, holatini serverda boshqarish va loyiha/resurs/hamkorlik/mutaxassis so‘rovlarini bitta ishtirokchi-filtrlangan markazda o‘qish. Public API wrapper va view'lar SECURITY INVOKER; `idea_app` sxemasi Data API'ga expose qilinmaydi. Faqat repository draft; jonli bazaga qo‘llanmagan.
 - Mutaxassis profili faqat egasi `public` qilganda katalogda ko'rinadi; telefon, email va Telegram kontaktlari ochiq katalogga kiritilmaydi.
 - Resurs va hamkorlik arizalari faqat tegishli so'rovchi hamda e'lon egasiga ko'rinadi; holat o'tishlari SECURITY INVOKER triggerlari bilan cheklanadi.
@@ -42,7 +42,8 @@ Bu papkadagi SQL — IDEA LAB umumiy backendini tayyorlash uchun. Ulangan Supaba
 4. `migrations/20261116150000_idea_app_project_member_commands.sql`
 5. `migrations/20261116160000_idea_app_listings_applications.sql`
 6. `migrations/20261116170000_idea_app_specialists_resources_partnerships.sql`
-7. `migrations/20261116200000_idea_app_application_center.sql`
+7. `migrations/20261116190000_idea_app_project_commands.sql`
+8. `migrations/20261116200000_idea_app_application_center.sql`
 
 Bu ketma-ketlik jonli bazaga qo'llash uchun ruxsat emas. `idea_app` Data API exposure o'chirilgan holda qoladi; avval staging'da migration, RLS, grants va anon/authenticated two-user qabul sinovlari o'tishi shart.
 
