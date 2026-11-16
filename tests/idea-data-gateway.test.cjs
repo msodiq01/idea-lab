@@ -337,8 +337,9 @@ test("project detail and Applications Centre activate real storage only from exp
 test("live project pages have syntactically valid inline JavaScript", () => {
   for (const file of ["index.html", "projects.html", "project-detail.html", "applications.html"]) {
     const html = fs.readFileSync(path.join(root, file), "utf8");
-    const scripts = [...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/gi)]
-      .map(match => match[1].trim()).filter(Boolean);
+    const scripts = html.split("<script").slice(1)
+      .map(chunk => chunk.split("</script>")[0].replace(/^[^>]*>/, "").trim())
+      .filter(Boolean);
     assert.ok(scripts.length > 0, file + " should contain application scripts");
     scripts.forEach((source, index) => {
       assert.doesNotThrow(() => new vm.Script(source, { filename: file + "#inline-" + index }), file + " inline script " + index);
