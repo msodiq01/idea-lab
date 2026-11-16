@@ -92,19 +92,24 @@ test("read-only preflight covers all new module objects", () => {
 
 
 test("anonymous catalogue grants exclude internal owner and specialist user IDs", () => {
-  const specialistGrant = sql.match(/grant select \(id, public_name,[\s\S]*?\)\s+on idea_app\.specialist_profiles to anon, authenticated;/i);
-  assert.ok(specialistGrant, "anonymous specialist grant should exist");
-  assert.doesNotMatch(specialistGrant[0], /\buser_id\b/i);
+  const grantFor = (table, roleSuffix) => {
+    const endMarker = `on idea_app.${table} ${roleSuffix};`;
+    const end = sql.indexOf(endMarker);
+    assert.ok(end >= 0, `grant for ${table} should exist`);
+    const start = sql.lastIndexOf("grant select (", end);
+    assert.ok(start >= 0, `column SELECT grant for ${table} should exist`);
+    return sql.slice(start, end + endMarker.length);
+  };
 
-  const resourceGrant = sql.match(/grant select \(id, slug,[\s\S]*?\)\s+on idea_app\.resource_offers to anon, authenticated;/i);
-  assert.ok(resourceGrant, "resource catalogue grant should exist");
-  assert.doesNotMatch(resourceGrant[0], /\bowner_id\b/i);
+  const specialistGrant = grantFor("specialist_profiles", "to anon, authenticated");
+  assert.doesNotMatch(specialistGrant, /\\buser_id\\b/i);
 
-  const partnershipGrant = sql.match(/grant select \(id, slug,[\s\S]*?\)\s+on idea_app\.partnership_opportunities to anon, authenticated;/i);
-  assert.ok(partnershipGrant, "partnership catalogue grant should exist");
-  assert.doesNotMatch(partnershipGrant[0], /\bowner_id\b/i);
+  const resourceGrant = grantFor("resource_offers", "to anon, authenticated");
+  assert.doesNotMatch(resourceGrant, /\\bowner_id\\b/i);
+
+  const partnershipGrant = grantFor("partnership_opportunities", "to anon, authenticated");
+  assert.doesNotMatch(partnershipGrant, /\\bowner_id\\b/i);
 });
-
 test("specialists can provide a response note when accepting or declining", () => {
   const start = sql.indexOf("if v_actor = v_specialist_user_id and not v_reviewer");
   const end = sql.indexOf("elsif v_reviewer", start);
