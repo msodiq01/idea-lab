@@ -40,6 +40,23 @@ function load(options = {}) {
       };
     }
   };
+  client.rpc = (name, args) => {
+    calls.push({ method: "rpc", name, args });
+    return Promise.resolve(options.rpcResponse || { data: options.rpcData || "123e4567-e89b-42d3-a456-426614174000", error: null });
+  };
+  client.from = (view) => {
+    calls.push({ method: "from", view });
+    const query = {
+      select(columns) { calls.push({ method: "select", columns }); return query; },
+      order(column, config) { calls.push({ method: "order", column, config }); return query; },
+      limit(value) { calls.push({ method: "limit", value }); return query; },
+      eq(column, value) { calls.push({ method: "eq", column, value }); return query; },
+      then(resolve, reject) {
+        return Promise.resolve(options.response || { data: options.data || [], error: null }).then(resolve, reject);
+      }
+    };
+    return query;
+  };
   const sdk = { createClient: () => client };
   const context = { console, URL, Promise, globalThis: null };
   context.window = context;
@@ -230,7 +247,7 @@ test("application migration uses invoker views, participant RLS and auth-derived
   assert.match(sql, /select auth\.uid\(\)/i);
   assert.match(sql, /submit_project_application/);
   assert.match(sql, /update_project_application/);
-  assert.match(sql, /application_center/);
+  assert.match(sql, /create or replace view public\\.application_center/i);\n  assert.match(sql, /public\\.submit_project_application/i);\n  assert.match(sql, /public\\.update_project_application/i);
   assert.match(sql, /union all/i);
   assert.match(sql, /revoke all on function/);
   assert.doesNotMatch(sql, /security definer/i);
