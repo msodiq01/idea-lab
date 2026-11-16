@@ -219,12 +219,18 @@ with check (
 create policy specialist_requests_update_participants
 on idea_app.specialist_requests for update to authenticated
 using (
-  specialist_id = (select auth.uid())
+  exists (
+    select 1 from idea_app.specialist_profiles sp
+    where sp.id = specialist_id and sp.user_id = (select auth.uid())
+  )
   or (select idea_private.is_project_owner(project_id))
   or (select idea_private.has_active_project_role(project_id, array['manager']::text[]))
 )
 with check (
-  specialist_id = (select auth.uid())
+  exists (
+    select 1 from idea_app.specialist_profiles sp
+    where sp.id = specialist_id and sp.user_id = (select auth.uid())
+  )
   or (select idea_private.is_project_owner(project_id))
   or (select idea_private.has_active_project_role(project_id, array['manager']::text[]))
 );
