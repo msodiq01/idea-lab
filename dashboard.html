@@ -97,6 +97,19 @@
 </section>
 </main>
 <script src="assets/idea-core.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js"></script>
+<script src="assets/idea-config.js"></script>
+<script src="assets/idea-auth.js"></script>
+<script src="assets/idea-data.js"></script>
+<script>
+(function(){
+  "use strict";
+  const config = window.IDEALAB_CONFIG;
+  if (config && config.mode === "supabase" && window.supabase && window.IDEALAB_AUTH) {
+    window.IDEALAB_AUTH.configure(config, window.supabase);
+  }
+})();
+</script>
 <script>
 (function(){
 const ideaCore = window.IDEALAB || null;
