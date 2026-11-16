@@ -94,7 +94,7 @@ Faqat frontend uchun mo'ljallangan publishable/anon key ishlatilishi mumkin. Ser
 - index.html serverga loyiha yaratadi; foydalanuvchi alohida belgilasa, loyiha ommaviy katalogga chiqariladi.
 - projects.html public katalogni Supabase'dan o'qiydi; project-detail.html?slug=... serverdagi loyihani ochadi va auth foydalanuvchisi slug orqali investitsiya arizasi yuboradi.
 - applications.html ishtirokchi uchun filtrlangan server arizalarini o‘qiydi.
-- GitHub Actions regressiya sinovlari: 456 passed, 0 failed; GitHub Pages deploy muvaffaqiyatli.
+- GitHub Actions regressiya sinovlari: 457 passed, 0 failed; GitHub Pages deploy muvaffaqiyatli.
 - Auth foydalanuvchilari hozircha 0 ta. Shu sababli real ikki akkauntli qabul sinovi hali o'tkazilmagan; RLS izolyatsiyasini yakuniy tasdiqlash uchun ikki alohida akkaunt kerak.
 - LocalStorage'dagi eski loyihalar va arizalar Supabase'ga avtomatik ko‘chirilmagan.
 - 20261122_application_activity_notifications.sql va supplier-verification keyingi migratsiyalari production'ga qo‘llanmagan.
