@@ -27,8 +27,9 @@ test("Auth entry page requires both public config and SDK before enabling action
 });
 
 test("all credential submissions are guarded by configured Auth state", () => {
-  const guarded = (html.match(/if\(!configured\)return;/g) || []).length;
-  assert.equal(guarded, 4);
+  const guarded = (html.match(/if\(!configured\|\|button\.disabled\)return;/g) || []).length;
+  assert.equal(guarded, 1);
+  assert.match(html, /withSubmitLock\(button,async\(\)=>/);
 });
 
 test("phone SMS signup and login controls are present and use the guarded adapter", () => {
@@ -74,4 +75,18 @@ test("Auth page exposes guarded session navigation and sign-out controls", () =>
 test("offline mode keeps session controls unavailable", () => {
   assert.match(html, /updateSessionControls\(null\);/);
   assert.match(html, /signOutButton\.disabled=!configured\|\|!active/);
+});
+
+
+test("Auth entry page prevents duplicate submissions and validates email domains before provider calls", () => {
+  assert.match(html, /async function withSubmitLock\(button,action\)/);
+  assert.match(html, /button\.disabled=true;button\.textContent="Kutilmoqda…"/);
+  assert.match(html, /finally\{button\.disabled=false;button\.textContent=original\}/);
+  assert.match(html, /"gamil\.com":"gmail\.com"/);
+  assert.match(html, /emailRedirectTo:new URL\("auth\.html",window\.location\.href\)\.toString\(\)/);
+});
+
+test("Auth page hides phone OTP while the Supabase phone provider is not enabled", () => {
+  assert.match(html, /const phoneTab=document\.querySelector\('\[data-channel="phone"\]'\);if\(phoneTab\)phoneTab\.hidden=true/);
+  assert.match(html, /\.tab\[hidden\]\{display:none!important\}/);
 });
