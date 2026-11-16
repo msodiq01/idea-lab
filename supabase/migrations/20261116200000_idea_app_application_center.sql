@@ -103,7 +103,7 @@ $function$;
 -- One participant-filtered read model for the existing Applications Centre.
 -- The underlying tables' RLS policies remain authoritative because this is an
 -- invoker view. The direction is calculated server-side for the current session.
-create or replace view idea_app.application_center
+create or replace view public.application_center
 with (security_invoker = true)
 as
 select
@@ -173,9 +173,51 @@ select
 from idea_app.specialist_requests s
 left join idea_app.specialist_profiles p on p.id = s.specialist_id;
 
+-- Public API wrappers keep the private idea_app schema unexposed through PostgREST.
+-- Both wrappers remain SECURITY INVOKER and the underlying functions enforce RLS.
+create or replace function public.submit_project_application(
+  p_project_id uuid,
+  p_applicant_note text,
+  p_offer_amount numeric,
+  p_currency_code text default 'UZS'
+)
+returns uuid
+language sql
+security invoker
+set search_path = ''
+as $function$
+  select idea_app.submit_project_application(
+    p_project_id, p_applicant_note, p_offer_amount, p_currency_code
+  );
+$function$;
+
+create or replace function public.update_project_application(
+  p_application_id uuid,
+  p_status text,
+  p_reviewer_note text default null
+)
+returns uuid
+language sql
+security invoker
+set search_path = ''
+as $function$
+  select idea_app.update_project_application(
+    p_application_id, p_status, p_reviewer_note
+  );
+$function$;
+
+revoke all on function public.submit_project_application(uuid, text, numeric, text)
+  from public, anon, authenticated;
+revoke all on function public.update_project_application(uuid, text, text)
+  from public, anon, authenticated;
+grant execute on function public.submit_project_application(uuid, text, numeric, text)
+  to authenticated;
+grant execute on function public.update_project_application(uuid, text, text)
+  to authenticated;
+
 -- Narrow access: no direct table writes from the browser; only reviewed invoker RPCs.
 grant usage on schema idea_app to authenticated;
-grant select on idea_app.application_center to authenticated;
+grant select on public.application_center to authenticated;
 grant select on idea_app.applications, idea_app.resource_requests,
   idea_app.partnership_enquiries, idea_app.specialist_requests to authenticated;
 grant select (id, title) on idea_app.projects to authenticated;
@@ -193,8 +235,8 @@ grant execute on function idea_app.submit_project_application(uuid, text, numeri
 grant execute on function idea_app.update_project_application(uuid, text, text)
   to authenticated;
 
-comment on view idea_app.application_center is
-  'Unified participant-filtered read model for project, resource, partnership, and specialist requests.';
+comment on view public.application_center is
+  'Unified participant-filtered read model in public schema; underlying idea_app tables remain RLS-protected and unexposed.';
 comment on function idea_app.submit_project_application(uuid, text, numeric, text) is
   'Creates a project application for auth.uid(); target owner and access are enforced by RLS.';
 comment on function idea_app.update_project_application(uuid, text, text) is
