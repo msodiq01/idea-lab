@@ -168,7 +168,7 @@ test("project edit and team actions use fixed RPC names and validated identifier
 
 test("project command migration uses invoker functions and grants no broad table access", () => {
   const sql = fs.readFileSync(path.join(root, "supabase/migrations/20261116190000_idea_app_project_commands.sql"), "utf8");
-  assert.equal((sql.match(/security invoker/gi) || []).length, 5);
+  assert.equal((sql.match(/security invoker/gi) || []).length, 6);
   assert.equal((sql.match(/set search_path = ''/gi) || []).length, 5);
   assert.match(sql, /revoke all on function idea_app\.create_project/);
   assert.match(sql, /grant execute on function idea_app\.create_project/);
