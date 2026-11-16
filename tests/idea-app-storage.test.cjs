@@ -29,8 +29,8 @@ test("Storage policies cover select, insert, update and delete for authenticated
   ]) {
     const start = sql.indexOf("create policy " + name);
     assert.notEqual(start, -1, name + " exists");
-    const end = executableSql.indexOf(";", start);
-    const statement = executableSql.slice(start, end);
+    const end = sql.indexOf(";", start);
+    const statement = sql.slice(start, end);
     assert.match(statement, new RegExp("for " + command, "i"));
     assert.match(statement, /to authenticated/i);
     assert.match(statement, /bucket_id = 'idea-user-assets'/i);
@@ -43,8 +43,8 @@ test("Storage policies cover select, insert, update and delete for authenticated
 
 test("Storage upsert policy constrains both existing and replacement object paths", () => {
   const start = sql.indexOf("create policy idea_user_assets_update_own");
-  const end = executableSql.indexOf(";", start);
-  const statement = executableSql.slice(start, end);
+  const end = sql.indexOf(";", start);
+  const statement = sql.slice(start, end);
   assert.match(statement, /using \([\s\S]*?bucket_id = 'idea-user-assets'/i);
   assert.match(statement, /with check \([\s\S]*?bucket_id = 'idea-user-assets'/i);
   assert.equal((statement.match(/storage\.foldername\(name\)\)\[1\]/g) || []).length, 2);
