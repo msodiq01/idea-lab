@@ -32,6 +32,7 @@ for select
 to authenticated
 using (
   bucket_id = 'idea-user-assets'
+  and cardinality(storage.foldername(name)) = 2
   and (storage.foldername(name))[1] = (select auth.uid()::text)
   and (storage.foldername(name))[2] in ('avatars', 'organization-logos', 'project-files')
   and storage.filename(name) ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpg|jpeg|png|webp|pdf)$'
@@ -43,6 +44,7 @@ for insert
 to authenticated
 with check (
   bucket_id = 'idea-user-assets'
+  and cardinality(storage.foldername(name)) = 2
   and (storage.foldername(name))[1] = (select auth.uid()::text)
   and (storage.foldername(name))[2] in ('avatars', 'organization-logos', 'project-files')
   and storage.filename(name) ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpg|jpeg|png|webp|pdf)$'
@@ -56,12 +58,14 @@ for update
 to authenticated
 using (
   bucket_id = 'idea-user-assets'
+  and cardinality(storage.foldername(name)) = 2
   and (storage.foldername(name))[1] = (select auth.uid()::text)
   and (storage.foldername(name))[2] in ('avatars', 'organization-logos', 'project-files')
   and storage.filename(name) ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpg|jpeg|png|webp|pdf)$'
 )
 with check (
   bucket_id = 'idea-user-assets'
+  and cardinality(storage.foldername(name)) = 2
   and (storage.foldername(name))[1] = (select auth.uid()::text)
   and (storage.foldername(name))[2] in ('avatars', 'organization-logos', 'project-files')
   and storage.filename(name) ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpg|jpeg|png|webp|pdf)$'
@@ -73,6 +77,7 @@ for delete
 to authenticated
 using (
   bucket_id = 'idea-user-assets'
+  and cardinality(storage.foldername(name)) = 2
   and (storage.foldername(name))[1] = (select auth.uid()::text)
   and (storage.foldername(name))[2] in ('avatars', 'organization-logos', 'project-files')
   and storage.filename(name) ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpg|jpeg|png|webp|pdf)$'
