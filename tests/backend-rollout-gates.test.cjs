@@ -101,6 +101,33 @@ test("frontend remains offline and has no embedded Supabase credentials", () => 
   assert.doesNotMatch(executableConfig, /(?:service_role|serviceRole|secret_key|password)\s*:/i);
 });
 
+test("idea_api design contract matches the reviewed public view projections and command set", () => {
+  const runbook = fs.readFileSync(path.join(root, "supabase/verification/backend-rollout-gates.md"), "utf8");
+  const source = [read(migrations[4]), read(migrations[5])].join("\\n");
+  const expectedViews = {
+    public_project_directory: ["slug", "title", "summary", "category", "project_type", "project_status", "start_date", "target_date", "published_at"],
+    public_project_updates: ["project_slug", "title", "body", "update_type", "published_at"],
+    public_specialist_directory: ["id", "public_name", "headline", "bio", "skill_tags", "specialist_categories", "city", "country_code", "portfolio_urls", "availability_status", "engagement_modes", "created_at"],
+    public_resource_catalogue: ["slug", "title", "category", "description", "quantity_label", "availability_label", "location_label", "public_terms", "published_at"],
+    public_partnership_directory: ["slug", "opportunity_type", "title", "summary", "details", "location_label", "published_at"]
+  };
+  for (const [view, columns] of Object.entries(expectedViews)) {
+    const definition = source.match(new RegExp("create view idea_app\\." + view + "[\\s\\S]*?\\bas\\s+select([\\s\\S]*?)\\s+from\\s+idea_app\\.", "i"));
+    assert.ok(definition, view + " must exist in the reviewed source migrations");
+    const actual = definition[1].split(",").map(part => {
+      const expression = part.trim().replace(/\\s+/g, " ");
+      const alias = expression.match(/\\bas\\s+([a-z_][a-z0-9_]*)$/i);
+      return alias ? alias[1] : expression.split(".").pop().trim();
+    });
+    assert.deepEqual(actual, columns, view + " API projection must match its source");
+    assert.ok(runbook.includes("| \`" + view + "\` | \`" + columns.join(", ") + "\` |"), view + " must be documented with exact columns");
+  }
+  for (const command of ["create_project", "update_project", "request_project_membership", "review_project_membership", "leave_project"]) {
+    assert.match(source, new RegExp("function idea_app\\." + command + "\\s*\\(", "i"), command + " must exist in the reviewed source migration");
+    assert.ok(runbook.includes("\`" + command + "\`"), command + " must be included in the API contract");
+  }
+});
+
 test("rollout runbook blocks production and requires the dedicated API boundary", () => {
   const doc = fs.readFileSync(path.join(root, "supabase/verification/backend-rollout-gates.md"), "utf8");
   assert.match(doc, /not deployed/i);
