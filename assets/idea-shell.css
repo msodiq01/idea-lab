@@ -521,3 +521,8 @@ footer{background:transparent!important;border-top:1px solid #e4e8f2!important;c
 @media(prefers-reduced-motion:reduce){
  .d-card,.d-panel,.d-module,.card,.project-card,.offer-card,.application-card,.investor-card,.specialist-card,.organization-card,.product-card,.item-card,.listing{transition:none!important}
 }
+
+#il-global .il-status{background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.14)!important;color:#cbd3e6!important}
+#il-global .il-status .il-dot{background:#f0b34c!important;box-shadow:0 0 0 3px rgba(240,179,76,.16)!important}
+#il-global .il-status[data-state="partial"]{color:#b9f4e8!important;border-color:rgba(90,211,188,.22)!important;background:rgba(14,159,154,.13)!important}
+#il-global .il-status[data-state="partial"] .il-dot{background:#56d6b8!important;box-shadow:0 0 0 3px rgba(86,214,184,.16)!important}
