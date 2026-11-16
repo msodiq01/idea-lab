@@ -30,6 +30,16 @@ test("public projections are invoker views and select only display fields", () =
   assert.ok(directory.includes("p.visibility = 'public'"));
 });
 
+test("anonymous listing reads require a published public project", () => {
+  const start = sql.indexOf("create policy project_listings_public_read");
+  const end = sql.indexOf("create policy project_listings_owner_read", start);
+  assert.notEqual(start, -1, "public listing policy exists");
+  const policy = sql.slice(start, end);
+  assert.match(policy, /listing_status = 'published'/i);
+  assert.match(policy, /p\.visibility = 'public'/i);
+  assert.match(policy, /p\.status in \('recruiting', 'active', 'completed'\)/i);
+});
+
 test("public update projection filters to published public updates", () => {
   const view = sql.slice(sql.indexOf("create view idea_app.public_project_updates"), sql.indexOf("-- The views are intentionally"));
   assert.ok(view.includes("u.visibility = 'public'"));
