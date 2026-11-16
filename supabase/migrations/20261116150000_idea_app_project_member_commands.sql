@@ -1,7 +1,7 @@
 -- IDEA LAB: guarded membership transitions and project task assignment
 -- Version: 20261116150000
 -- Depends on: 20261116120000, 20261116130000, 20261116140000
--- Status: applied to Supabase production project idea-lab on 2026-11-16.nly; NOT applied to any Supabase project.
+-- Status: applied to Supabase production project idea-lab on 2026-11-16.
 -- No schema exposure or table-wide browser grants are added.
 
 begin;
