@@ -10,7 +10,7 @@
 
 ## Allowed read operations
 
-The gateway is intentionally read-only and uses only the reviewed invoker views:
+The catalogue gateway reads only the reviewed invoker views. Signed-in write actions are routed through five narrow SECURITY INVOKER commands in the draft migration `20261116190000_idea_app_project_commands.sql`; those commands still rely on the existing RLS policies, column grants, and membership transition trigger.
 
 | Method | View | Purpose |
 | --- | --- | --- |
@@ -28,7 +28,20 @@ All list limits are clamped to 1–50. Project slugs are validated before a requ
 - No direct writes, updates, deletes, or upserts.
 - No service-role or secret key.
 - No access to private contact, owner, or Auth identity columns.
-- No project/team membership management from the browser yet.
+- No direct table writes from the browser. Project and membership changes use fixed RPC names only.
+- No invitations by raw Auth user ID; identity discovery and invitations require a separate safe server-side flow.
+
+## Available project and team commands
+
+| Client method | Database command | Guardrail |
+| --- | --- | --- |
+| createProject | create_project | Owner always comes from auth.uid(); new project is draft/private by default |
+| updateProject | update_project | Existing project RLS restricts the row to its owner |
+| requestProjectMembership | request_project_membership | Always creates a pending contributor request; caller ID comes from auth.uid() |
+| reviewProjectMembership | review_project_membership | Existing RLS and transition trigger decide owner/manager authority |
+| leaveProject | leave_project | Transition trigger permits only the member to leave their own active membership |
+
+The RPC migration is a repository draft only. It has not been applied to the hosted project. The UI does not yet call these commands; the next frontend stage is a validated project form and team-request/review screens.
 
 ## Activation prerequisites
 
