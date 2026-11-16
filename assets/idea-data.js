@@ -165,6 +165,22 @@
         p_target_date: input.targetDate || null
       });
     },
+    publishProjectListing(input = {}) {
+      if (!isUuid(input.projectId)) return Promise.resolve(fail("INVALID_PROJECT_ID", "Loyiha identifikatori noto‘g‘ri."));
+      const slug = typeof input.slug === "string" ? input.slug.trim() : "";
+      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || slug.length < 3 || slug.length > 100) return Promise.resolve(fail("INVALID_PROJECT_SLUG", "Ommaviy loyiha manzili noto‘g‘ri."));
+      if (!requiredText(input.title, 3, 160)) return Promise.resolve(fail("INVALID_PROJECT_TITLE", "Loyiha nomi 3–160 belgidan iborat bo‘lishi kerak."));
+      if (!requiredText(input.summary, 1, 600)) return Promise.resolve(fail("INVALID_PROJECT_SUMMARY", "Ommaviy qisqa tavsif 1–600 belgidan iborat bo‘lishi kerak."));
+      const categories = ["startup", "social", "research", "education", "technology", "creative", "community", "other"];
+      const category = categories.includes(input.category) ? input.category : "other";
+      return runCommand("publish_project_listing", {
+        p_project_id: input.projectId,
+        p_slug: slug,
+        p_title: input.title.trim(),
+        p_summary: input.summary.trim(),
+        p_category: category
+      });
+    },
     updateProject(input = {}) {
       if (!isUuid(input.projectId)) return Promise.resolve(fail("INVALID_PROJECT_ID", "Loyiha identifikatori noto‘g‘ri."));
       if (!requiredText(input.title, 3, 160)) return Promise.resolve(fail("INVALID_PROJECT_TITLE", "Loyiha nomi 3–160 belgidan iborat bo‘lishi kerak."));
