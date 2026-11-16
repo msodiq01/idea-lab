@@ -495,10 +495,16 @@ where status = 'published';
 grant usage on schema idea_app to anon, authenticated;
 grant usage on schema idea_private to authenticated;
 
+-- Public visitors receive profile content but never the Auth user identifier.
+grant select (public_name, headline, bio, skill_tags, specialist_categories,
+              city, country_code, portfolio_urls, availability_status, engagement_modes,
+              visibility, created_at)
+  on idea_app.specialist_profiles to anon;
+-- Signed-in users may read the specialist ID needed to submit a private request.
 grant select (user_id, public_name, headline, bio, skill_tags, specialist_categories,
               city, country_code, portfolio_urls, availability_status, engagement_modes,
               visibility, created_at)
-  on idea_app.specialist_profiles to anon, authenticated;
+  on idea_app.specialist_profiles to authenticated;
 grant insert (user_id, public_name, headline, bio, skill_tags, specialist_categories,
               city, country_code, portfolio_urls, availability_status, engagement_modes, visibility)
   on idea_app.specialist_profiles to authenticated;
@@ -507,7 +513,8 @@ grant update (public_name, headline, bio, skill_tags, specialist_categories,
   on idea_app.specialist_profiles to authenticated;
 grant select on idea_app.public_specialist_directory to anon, authenticated;
 
-grant select (id, owner_id, slug, title, category, description, quantity_label,
+-- Owner IDs are internal authorization data, not public catalogue fields.
+grant select (id, slug, title, category, description, quantity_label,
               availability_label, location_label, public_terms, status, published_at, created_at)
   on idea_app.resource_offers to anon, authenticated;
 grant insert (owner_id, project_id, slug, title, category, description, quantity_label,
@@ -519,7 +526,8 @@ grant update (project_id, slug, title, category, description, quantity_label,
 grant delete on idea_app.resource_offers to authenticated;
 grant select on idea_app.public_resource_catalogue to anon, authenticated;
 
-grant select (id, owner_id, slug, opportunity_type, title, summary, details,
+-- Owner IDs are internal authorization data, not public directory fields.
+grant select (id, slug, opportunity_type, title, summary, details,
               location_label, status, published_at, created_at)
   on idea_app.partnership_opportunities to anon, authenticated;
 grant insert (owner_id, project_id, slug, opportunity_type, title, summary, details,
