@@ -134,7 +134,7 @@ test("data gateway exposes no generic table or mutation methods", () => {
   assert.equal(typeof api.delete, "undefined");
 });
 
-test("dashboard loads the guarded data gateway but keeps backend activation opt-in", () => {
+test("dashboard loads the guarded data gateway but uses the live public Supabase configuration", () => {
   const dashboard = fs.readFileSync(path.join(root, "dashboard.html"), "utf8");
   const config = fs.readFileSync(path.join(root, "assets/idea-config.js"), "utf8");
   assert.ok(dashboard.includes("supabase-js@2.119.0"));
@@ -142,7 +142,7 @@ test("dashboard loads the guarded data gateway but keeps backend activation opt-
   assert.ok(dashboard.includes("assets/idea-auth.js"));
   assert.ok(dashboard.includes("assets/idea-data.js"));
   assert.ok(dashboard.includes('config.mode === "supabase"'));
-  assert.ok(config.includes('mode: "offline-demo"'));
+  assert.ok(config.includes('mode: "supabase"'));
   assert.ok(config.includes("sb_publishable_"));
 });
 
