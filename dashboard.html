@@ -203,8 +203,8 @@ async function refreshServerDashboard(){
   const projectResult=await data.listPublicProjects({limit:50});
   if(projectResult&&projectResult.ok){
    const serverProjects=Array.isArray(projectResult.data)?projectResult.data:[];
-   document.getElementById("projectCount").textContent=String(serverProjects.length);
-   document.getElementById("projectCountFoot").textContent="Platformada e’lon qilingan loyihalar";
+   document.getElementById("projectCount").textContent=serverProjects.length===50?"50+":String(serverProjects.length);
+   document.getElementById("projectCountFoot").textContent="Server katalogidan yuklangan (ko‘pi bilan 50 ta)";
    const target=document.getElementById("recentProjects");
    target.replaceChildren();
    if(!serverProjects.length){
@@ -228,6 +228,15 @@ async function refreshServerDashboard(){
    document.getElementById("projectCountFoot").textContent="Server katalogini yuklab bo‘lmadi";
   }
   const sessionResult=await auth.getSession();
+  if(!sessionResult.ok){
+   document.getElementById("authStatus").textContent="Tekshirib bo‘lmadi";
+   document.getElementById("applicationCount").textContent="—";
+   document.getElementById("applicationCountFoot").textContent="Sessiyani tekshirib bo‘lmadi";
+   document.getElementById("collaborationCount").textContent="—";
+   document.getElementById("collaborationCountFoot").textContent="Sessiya tekshiruvi talab qilinadi";
+   coreNotice.textContent="Supabase serveri ulangan, ammo foydalanuvchi sessiyasini tekshirish muvaffaqiyatsiz bo‘ldi.";
+   return;
+  }
   const current=auth.getStatus();
   document.getElementById("authStatus").textContent=current.authenticated?"Faol":"Kirilmagan";
   if(current.authenticated){
