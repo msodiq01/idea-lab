@@ -76,3 +76,11 @@ test("Arizalar markazi holat o‘tishlarini markaziy yadrodan oladi",()=>{
  assert.match(html,/const transitions=IDEALAB\.applications\.transitions/);
  assert.match(html,/all\[current\]\.status=next/);
 });
+
+
+test("Investor arizasi egasini bog‘lashda arizadagi maydonlar bo‘lmasa loyiha yozuvidan foydalanadi",()=>{
+ assert.match(html,/const projects=read\("projects"\)/);
+ assert.match(html,/projectForApplication=x=>projects\.find\(p=>String\(p\.id\)===String\(x\.projectId\)\)/);
+ assert.match(html,/incoming:x=>\{const p=projectForApplication\(x\);return same\(x\.projectOwnerId\|\|p\?\.ownerId,x\.projectOwnerEmail\|\|p\?\.ownerEmail\)\}/);
+ assert.match(html,/title:x=>x\.projectName\|\|\(projectForApplication\(x\)\?\.name\)\|\|"Loyiha"/);
+});
