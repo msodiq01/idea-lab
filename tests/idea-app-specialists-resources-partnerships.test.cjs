@@ -41,7 +41,7 @@ test("resource and partnership public views contain only published records", () 
 
 test("specialist requests are private to specialist and project reviewers", () => {
   const policy = sql.slice(sql.indexOf("create policy specialist_requests_select_participants"), sql.indexOf("create policy specialist_requests_insert_project_owner"));
-  assert.match(policy, /specialist_id = \(select auth\.uid\(\)\)/);
+  assert.match(policy, /sp\.id = specialist_id and sp\.user_id = \(select auth\.uid\(\)\)/);
   assert.match(policy, /is_project_owner/);
   assert.match(policy, /has_active_project_role/);
 });
@@ -113,4 +113,13 @@ test("specialists can provide a response note when accepting or declining", () =
   assert.match(branch, /new\.status in \('accepted','declined'\)/);
   assert.doesNotMatch(branch, /new\.response_note\s*=\s*old\.response_note/i);
   assert.match(sql, /grant update \(status, response_note, responded_at, updated_at\)\s+on idea_app\.specialist_requests to authenticated/i);
+});
+
+
+test("specialist Auth IDs are never selectable; public opaque profile IDs drive requests", () => {
+  assert.match(sql, /id uuid primary key default gen_random_uuid\(\),\s*user_id uuid not null unique references auth\.users/i);
+  assert.match(sql, /specialist_id uuid not null references idea_app\.specialist_profiles\(id\)/i);
+  assert.match(sql, /select id, public_name,[\s\S]*?from idea_app\.specialist_profiles/i);
+  assert.doesNotMatch(sql, /grant select \([^;]*\buser_id\b[^;]*\)\s+on idea_app\.specialist_profiles/i);
+  assert.match(sql, /select sp\.user_id into v_specialist_user_id[\s\S]*?where sp\.id = old\.specialist_id/i);
 });
