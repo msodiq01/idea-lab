@@ -92,7 +92,6 @@ begin
       target_date = p_target_date,
       updated_at = pg_catalog.now()
   where id = p_project_id
-    and created_by = v_actor
   returning id into v_project_id;
 
   if v_project_id is null then
@@ -201,7 +200,6 @@ begin
       updated_at = pg_catalog.now()
   where id = p_membership_id
     and membership_status = 'active'
-    and user_id = v_actor
   returning id into v_membership_id;
 
   if v_membership_id is null then
