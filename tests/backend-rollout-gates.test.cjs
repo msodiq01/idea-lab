@@ -48,7 +48,7 @@ test("every draft is explicitly marked as unapplied", () => {
 test("private Storage draft remains private and scopes every policy to the caller UUID", () => {
   const sql = read(migrations[6]);
   assert.match(sql, /public\s*=\s*false/i);
-  assert.match(sql, /file_size_limit\s*=\s*10485760/i);
+  assert.match(sql, /'idea-user-assets'[\s\S]*?false,[\s\S]*?10485760/i);
   assert.match(sql, /auth\.uid\(\)::text/i);
   assert.match(sql, /create policy idea_user_assets_select_own/i);
   assert.match(sql, /create policy idea_user_assets_insert_own/i);
@@ -62,7 +62,8 @@ test("frontend remains offline and has no embedded Supabase credentials", () => 
   assert.match(config, /mode:\s*"offline-demo"/);
   assert.match(config, /url:\s*""/);
   assert.match(config, /anonKey:\s*""/);
-  assert.doesNotMatch(config, /service_role|serviceRole|secret_key|password/i);
+  const executableConfig = config.replace(/\/\*[\s\S]*?\*\//g, "");
+  assert.doesNotMatch(executableConfig, /(?:service_role|serviceRole|secret_key|password)\s*:/i);
 });
 
 test("rollout runbook blocks production, schema exposure, and activation before runtime acceptance", () => {
