@@ -193,6 +193,11 @@ async function refreshServerDashboard(){
  document.getElementById("projectCountLabel").textContent="Ommaviy loyihalar";
  document.getElementById("projectCount").textContent="…";
  document.getElementById("projectCountFoot").textContent="Server katalogi yuklanmoqda";
+ const recentTarget=document.getElementById("recentProjects");
+ recentTarget.replaceChildren();
+ recentTarget.className="d-empty";
+ const loadingLabel=document.createElement("b");loadingLabel.textContent="Server katalogi yuklanmoqda";
+ recentTarget.append(loadingLabel,document.createTextNode("Ma’lumotlar serverdan olinmoqda."));
  document.getElementById("applicationCountLabel").textContent="Arizalar markazi";
  document.getElementById("applicationCount").textContent="…";
  document.getElementById("applicationCountFoot").textContent="Hisob sessiyasi tekshirilmoqda";
@@ -226,6 +231,10 @@ async function refreshServerDashboard(){
   }else{
    document.getElementById("projectCount").textContent="—";
    document.getElementById("projectCountFoot").textContent="Server katalogini yuklab bo‘lmadi";
+   const target=document.getElementById("recentProjects");
+   target.replaceChildren();target.className="d-empty";
+   const strong=document.createElement("b");strong.textContent="Loyihalarni yuklab bo‘lmadi";
+   target.append(strong,document.createTextNode("Internet yoki server ulanishini tekshiring."));
   }
   const sessionResult=await auth.getSession();
   if(!sessionResult.ok){
