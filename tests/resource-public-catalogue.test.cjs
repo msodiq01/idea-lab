@@ -31,7 +31,7 @@ test("resource page loads Supabase dependencies before configuring the data gate
 });
 
 test("resource page inline JavaScript parses without syntax errors", () => {
-  const scripts = [...html.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)].map(match => match[1]);
+  const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(match => match[1]);
   assert.ok(scripts.length > 0, "inline resource page script must exist");
   for (const source of scripts) new vm.Script(source);
 });
