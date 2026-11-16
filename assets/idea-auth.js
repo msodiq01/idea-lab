@@ -184,6 +184,61 @@
       }
       return invoke("updateUser", { password });
     },
+    async getProfileData() {
+      if (!status.authenticated) {
+        return resultError("AUTH_REQUIRED", "Profil ma’lumotlarini olish uchun akkauntga kirish kerak.");
+      }
+      const result = await invoke("getUser");
+      if (!result.ok) return result;
+      const user = result.data && result.data.user;
+      if (!user || !user.id) return resultError("PROFILE_UNAVAILABLE", "Akkaunt profilini olish imkoni bo‘lmadi.");
+      return {
+        ok: true,
+        data: {
+          id: user.id,
+          email: user.email || "",
+          metadata: user.user_metadata && typeof user.user_metadata === "object" ? user.user_metadata : {}
+        }
+      };
+    },
+    async updateProfileData(profile = {}) {
+      if (!status.authenticated) {
+        return resultError("AUTH_REQUIRED", "Profilni serverda saqlash uchun akkauntga kiring.");
+      }
+      const data = {};
+      const textFields = [
+        ["full_name", profile.fullName, 120],
+        ["phone", profile.phone, 32],
+        ["profile_goal", profile.primaryGoal, 100],
+        ["profile_bio", profile.bio, 2000]
+      ];
+      for (const [key, value, max] of textFields) {
+        if (value !== undefined) {
+          if (typeof value !== "string" || value.length > max) {
+            return resultError("INVALID_PROFILE", "Profil maydonlaridan biri noto‘g‘ri yoki juda uzun.");
+          }
+          data[key] = value.trim();
+        }
+      }
+      for (const [key, value, maxItems, maxLength] of [
+        ["profile_roles", profile.roles, 10, 40],
+        ["profile_skills", profile.skills, 30, 60]
+      ]) {
+        if (value !== undefined) {
+          if (!Array.isArray(value) || value.length > maxItems ||
+              value.some(item => typeof item !== "string" || item.trim().length > maxLength)) {
+            return resultError("INVALID_PROFILE", "Profil ro‘yxatlaridan biri noto‘g‘ri.");
+          }
+          data[key] = value.map(item => item.trim()).filter(Boolean);
+        }
+      }
+      if (!Object.keys(data).length) {
+        return resultError("INVALID_PROFILE", "Saqlash uchun profil ma’lumotlari topilmadi.");
+      }
+      // These fields are user-editable display metadata only. Never use them for
+      // authorization, roles, ownership, or RLS decisions.
+      return invoke("updateUser", { data });
+    },
     async signOut() {
       const result = await invoke("signOut");
       if (result.ok) {
