@@ -4,7 +4,7 @@ Global Project-to-Market Ecosystem
 
 ## Lokal ishga tushirish
 
-Loyiha oddiy HTML/CSS/JavaScript frontend prototipidir. Repository papkasida lokal HTTP server ishga tushiring, so'ng brauzerda `index.html` yoki `dashboard.html` sahifasini oching. Faylni bevosita ochish ayrim brauzer cheklovlariga sabab bo'lishi mumkin.
+Loyiha HTML/CSS/JavaScript frontend va qisman ulangan Supabase backenddan iborat. Lokal tekshiruv uchun repository papkasida HTTP server ishga tushiring, so‘ng `index.html` yoki `dashboard.html` sahifasini oching. Faylni bevosita ochish ayrim brauzer cheklovlariga sabab bo‘lishi mumkin.
 
 ## Organization Center
 
@@ -22,10 +22,13 @@ Testlar frontend yadro va Organization Center uchun avtomatik tekshiruvlarni baj
 
 ## Muhim cheklovlar
 
-- Server/Supabase hozircha ulanmagan.
-- Brauzer localStorage yozuvlari boshqa qurilmalar yoki foydalanuvchilar bilan ulashilmaydi.
-- To'lov, investitsiya, tashkilot verifikatsiyasi va maxfiy hujjatlar bilan bog'liq haqiqiy operatsiyalar mavjud emas.
-- Demo ma'lumotlariga shaxsiy maxfiy ma'lumotlarni kiritmang.
+- Supabase loyihasi faol va backend sxemasi/migratsiyalari mavjud. Dashboard, loyiha katalogi, loyiha yaratish/ariza yuborish oqimlari hamda ochiq resurs katalogining ayrim qismlari server bilan ishlaydi.
+- Ko‘plab eski bo‘limlar hali `localStorage` demo rejimida. Bunday yozuvlar boshqa qurilmalar yoki foydalanuvchilar bilan ulashilmaydi.
+- Resurslar sahifasidagi shaxsiy inventar mahalliy saqlanadi; server katalogi faqat ommaviy takliflarni o‘qiydi.
+- Investorlar bo‘limi namuna ma’lumotlar bilan ishlaydigan demo. Haqiqiy sarmoya, to‘lov yoki pul o‘tkazmasi amalga oshirilmaydi.
+- Supabase Auth’da hozircha foydalanuvchilar yo‘q; ikki akkauntli RLS sinovi va desktop/mobile brauzer sinovi hali bajarilishi kerak.
+- Profil sahifasi kirilgan Auth akkauntining shaxsiy user metadata maydonlariga profilni sinxronlay oladi. Eski localStorage profilini boshqa akkauntga ulash faqat foydalanuvchi aniq tasdiqlaganidan keyin bajariladi; avatar hozircha mahalliy saqlanadi.
+- Demo ma’lumotlariga maxfiy shaxsiy ma’lumotlarni kiritmang.
 
 
 ## Navigatsiya va accessibility
@@ -41,7 +44,7 @@ Tekshiruv: `node --test tests/*.test.cjs`. Bu avtomatik strukturaviy/regressiya 
 
 ## Backend va xavfsizlikka tayyorgarlik
 
-Backend hozircha **offline demo**. Supabase schema/migration tayyorlangan, lekin hech qanday loyiha credentials yoki server ulanishi tasdiqlanmagan. SQL'ni production'da ishga tushirmang.
+Supabase backendi **faol**, lekin platformaning barcha modullari serverga ko‘chirilmagan. Ommaviy kataloglar `security_invoker` viewlar orqali, shaxsiy ma’lumotlar esa RLS va autentifikatsiya orqali himoyalanadi. Mavjud production ma’lumotlarini o‘chirmang; schema o‘zgarishlarini migratsiya va alohida tekshiruvsiz qo‘llamang.
 
 - [Backend integratsiya shartnomasi](BACKEND-INTEGRATION-CONTRACT.md)
 - [Legacy profil egaligini tasdiqlash va xavfsiz import shartnomasi](LEGACY-PROFILE-OWNERSHIP-PROOF.md)
@@ -53,4 +56,11 @@ Backend hozircha **offline demo**. Supabase schema/migration tayyorlangan, lekin
 - [Read-only xavfsizlik auditi SQL](supabase/verification/security_audit.sql)
 - [Ikki foydalanuvchili RLS test rejasi](supabase/verification/rls-test-plan.md)
 
-Avtomatik tekshiruv: `node --test tests/*.test.cjs`. Bu statik/regressiya testlari; haqiqiy Supabase RLS sinovi staging loyihasida alohida bajariladi.
+Avtomatik tekshiruv: `node --test tests/*.test.cjs`. GitHub Actions PR #104 run #506 muvaffaqiyatli yakunlangan; yangi premium dizayn PR uchun alohida CI natijasi tekshiriladi. Haqiqiy Supabase RLS sinovi ikki alohida test akkaunti bilan, browser smoke test esa desktop va mobil qurilmada bajarilishi shart.
+
+
+## Modul zanjirlari va premium dizayn
+
+- Barcha asosiy sahifalar yagona premium vizual qatlam, navigatsiya, mobil moslashuv va fokus holatlaridan foydalanadi; kirish sahifasi o‘zining ixcham sarlavhasini saqlaydi.
+- Server belgisi backend konfiguratsiyasi mavjudligini va qolgan modullar demo ekanini alohida ko‘rsatadi; bu butun platforma serverga ulandi degani emas.
+- Har bir modulning haqiqiy ma’lumot manbasi, hozirgi integratsiya darajasi va keyingi bog‘lanish zanjiri [Modul va ma’lumotlar zanjiri xaritasi](MODULE-CONNECTION-MATRIX.md) hujjatida qayd etilgan.
