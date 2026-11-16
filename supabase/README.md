@@ -84,6 +84,7 @@ Faqat frontend uchun mo'ljallangan publishable/anon key ishlatilishi mumkin. Ser
 - Ulangan Supabase loyiha read-only audit uchun mavjud: ha; hozir idea-lab production project faol.
 - schema.sql jonli loyihaga qo‘llangan: yo‘q; production app schema alohida, tekshirilgan migrationlar orqali qo‘llangan.
 - Jonli loyihaning 9 ta avvalgi public jadvali alohida resurs/investitsiya poydevori bo‘lib qolmoqda; ular o‘zgartirilmagan.
+- 9 jadvali alohida resurs/investitsiya poydevori ekanligi saqlanadi; yangi idea_app sxemasi bunga qo‘shimcha qatlam.
 - Production Supabase project idea-lab faol; Free tier ishlatilmoqda.
 - idea_app private sxemasida 16 ta jadval bor; 16/16 jadvalda RLS yoqilgan; 68 ta RLS policy mavjud.
 - Public API: 7 ta xavfsiz katalog view'i va autentifikatsiyalangan application_center view'i.
