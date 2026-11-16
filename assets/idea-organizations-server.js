@@ -125,8 +125,10 @@
   }
   document.getElementById("osCreate").addEventListener("submit",async e=>{
     e.preventDefault();const btn=e.submitter;btn.disabled=true;message("osCreateMsg","Serverga saqlanmoqda…");
+    const website=document.getElementById("osWebsite").value.trim();
+    if(website && !/^https:\\/\\//i.test(website)){btn.disabled=false;message("osCreateMsg","Sayt manzili HTTPS bilan boshlanishi kerak.");return;}
     const r=await data.createOrganization({name:document.getElementById("osName").value.trim(),type:document.getElementById("osType").value,
-      location:document.getElementById("osLocation").value.trim(),websiteUrl:document.getElementById("osWebsite").value.trim()||null,
+      location:document.getElementById("osLocation").value.trim(),websiteUrl:website||null,
       description:document.getElementById("osDescription").value.trim(),visibility:"private"});
     btn.disabled=false;
     if(!r.ok){message("osCreateMsg",resultError(r));return;}
@@ -137,9 +139,11 @@
   });
   document.getElementById("osEdit").addEventListener("submit",async e=>{
     e.preventDefault();if(!current)return;const btn=e.submitter;btn.disabled=true;message("osEditMsg","Saqlanmoqda…");
+    const website=document.getElementById("osEditWebsite").value.trim();
+    if(website && !/^https:\\/\\//i.test(website)){btn.disabled=false;message("osEditMsg","Sayt manzili HTTPS bilan boshlanishi kerak.");return;}
     const r=await data.updateOrganization({organizationId:current.id,name:document.getElementById("osEditName").value.trim(),
       type:document.getElementById("osEditType").value,location:document.getElementById("osEditLocation").value.trim(),
-      websiteUrl:document.getElementById("osEditWebsite").value.trim()||null,description:document.getElementById("osEditDescription").value.trim(),
+      websiteUrl:website||null,description:document.getElementById("osEditDescription").value.trim(),
       visibility:current.visibility||"private",status:current.status||"draft"});
     btn.disabled=false;message("osEditMsg",r.ok?"Tashkilot ma’lumotlari serverda saqlandi.":resultError(r));if(r.ok)await loadOrganizations();
   });
