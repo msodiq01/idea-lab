@@ -20,6 +20,10 @@ function load(options = {}) {
     schema(name) {
       calls.push({ method: "schema", name });
       return {
+        rpc(name, args) {
+          calls.push({ method: "rpc", name, args });
+          return Promise.resolve(options.rpcResponse || { data: options.rpcData || "123e4567-e89b-42d3-a456-426614174000", error: null });
+        },
         from(view) {
           calls.push({ method: "from", view });
           const query = {
@@ -123,4 +127,55 @@ test("dashboard loads the guarded data gateway but keeps backend activation opt-
   assert.ok(dashboard.includes('config.mode === "supabase"'));
   assert.ok(config.includes('mode: "offline-demo"'));
   assert.ok(config.includes('anonKey: ""'));
+});
+
+
+test("project creation calls only the fixed invoker command and never accepts an owner ID", async () => {
+  const { api, calls } = load();
+  const invalid = await api.createProject({ title: "x" });
+  assert.equal(invalid.error.code, "INVALID_PROJECT_TITLE");
+  assert.equal(calls.length, 0);
+  const result = await api.createProject({ title: "My project", summary: "Summary" });
+  assert.equal(result.ok, true);
+  const call = calls.find(item => item.method === "rpc");
+  assert.equal(call.name, "create_project");
+  assert.equal(call.args.p_title, "My project");
+  assert.equal(call.args.p_summary, "Summary");
+  assert.equal(Object.hasOwn(call.args, "p_created_by"), false);
+  assert.equal(Object.hasOwn(call.args, "p_user_id"), false);
+});
+
+test("project edit and team actions use fixed RPC names and validated identifiers", async () => {
+  const { api, calls } = load();
+  const projectId = "123e4567-e89b-42d3-a456-426614174000";
+  const membershipId = "123e4567-e89b-42d3-a456-426614174001";
+  const bad = await api.updateProject({ projectId: "not-a-uuid", title: "Valid title" });
+  assert.equal(bad.error.code, "INVALID_PROJECT_ID");
+  assert.equal(calls.length, 0);
+  await api.updateProject({ projectId, title: "Valid title" });
+  await api.requestProjectMembership(projectId);
+  await api.reviewProjectMembership({ membershipId, approve: true, role: "contributor" });
+  await api.leaveProject(membershipId);
+  assert.deepEqual(calls.filter(item => item.method === "rpc").map(item => item.name), [
+    "update_project",
+    "request_project_membership",
+    "review_project_membership",
+    "leave_project"
+  ]);
+  const review = calls.find(item => item.name === "review_project_membership");
+  assert.equal(review.args.p_membership_role, "contributor");
+});
+
+test("project command migration uses invoker functions and grants no broad table access", () => {
+  const sql = fs.readFileSync(path.join(root, "supabase/migrations/20261116190000_idea_app_project_commands.sql"), "utf8");
+  assert.equal((sql.match(/security invoker/gi) || []).length, 5);
+  assert.equal((sql.match(/set search_path = ''/gi) || []).length, 5);
+  assert.match(sql, /revoke all on function idea_app\.create_project/);
+  assert.match(sql, /grant execute on function idea_app\.create_project/);
+  assert.match(sql, /grant select \(id\) on idea_app\.projects/);
+  assert.doesNotMatch(sql, /security definer/i);
+  assert.doesNotMatch(sql, /grant all on all tables/i);
+  assert.match(sql, /request_project_membership/);
+  assert.match(sql, /review_project_membership/);
+  assert.match(sql, /leave_project/);
 });
