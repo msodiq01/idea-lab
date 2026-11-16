@@ -1,0 +1,41 @@
+name: IDEA LAB local Supabase migration verification
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  local-supabase-migrations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Show CLI version and supported commands
+        run: |
+          supabase --version
+          supabase db reset --help
+
+      - name: Start isolated local Supabase stack
+        run: supabase start
+
+      - name: Rebuild disposable local database from every migration
+        run: supabase db reset --local
+
+      - name: Verify applied local migration history
+        run: supabase migration list --local
+
+      - name: Stop local Supabase stack
+        if: always()
+        run: supabase stop --no-backup
