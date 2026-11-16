@@ -25,11 +25,12 @@ test("compatibility gate records the nine live tables and migration baseline", (
   }
 });
 
-test("compatibility gate blocks unsafe schema application and frontend activation", () => {
+test("compatibility gate preserves baseline caution while live backend is enabled", () => {
   assert.match(audit, /to‘g‘ridan-to‘g‘ri qo‘llash mumkin emas/);
   assert.match(audit, /Hozir bajarilmasligi kerak bo‘lgan ishlar/);
   assert.match(audit, /ikki foydalanuvchili RLS sinovini ishlab turgan yagona loyiha ustida o‘tkazish/i);
-  assert.match(config, /mode: "offline-demo"/);
+  assert.match(config, /mode: "supabase"/);
+  assert.match(config, /Two-account isolation is the next required acceptance test/i);
   assert.match(config, /Never place service_role, database passwords, JWT secrets, or provider secrets here/i);
 });
 
