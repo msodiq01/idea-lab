@@ -174,6 +174,23 @@ test("project creation calls only the fixed invoker command and never accepts an
   assert.equal(Object.hasOwn(call.args, "p_user_id"), false);
 });
 
+test("public project publishing validates ownership command inputs and calls a fixed RPC", async () => {
+  const { api, calls } = load();
+  const bad = await api.publishProjectListing({ projectId: "bad", slug: "sample", title: "Valid title", summary: "Valid summary" });
+  assert.equal(bad.error.code, "INVALID_PROJECT_ID");
+  assert.equal(calls.length, 0);
+  const projectId = "123e4567-e89b-42d3-a456-426614174000";
+  const good = await api.publishProjectListing({
+    projectId, slug: "sample-project", title: "Sample project", summary: "A public project summary", category: "technology"
+  });
+  assert.equal(good.ok, true);
+  const call = calls.find(item => item.method === "rpc");
+  assert.equal(call.name, "idea_lab_publish_project_listing");
+  assert.equal(call.args.p_project_id, projectId);
+  assert.equal(call.args.p_slug, "sample-project");
+  assert.equal(call.args.p_category, "technology");
+});
+
 test("project edit and team actions use fixed RPC names and validated identifiers", async () => {
   const { api, calls } = load();
   const projectId = "123e4567-e89b-42d3-a456-426614174000";
@@ -283,6 +300,15 @@ test("application migration uses invoker views, participant RLS and auth-derived
   assert.match(sql, /union all/i);
   assert.match(sql, /revoke all on function/);
   assert.doesNotMatch(sql, /security definer/i);
+});
+
+test("homepage creates server projects and offers an explicit public listing choice", () => {
+  const home = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  assert.ok(home.includes("IDEALAB_DATA.createProject"));
+  assert.ok(home.includes("IDEALAB_DATA.publishProjectListing"));
+  assert.ok(home.includes('id="publishToCatalog"'));
+  assert.ok(home.includes("listPublicProjects"));
+  assert.ok(home.includes("IDEALAB_AUTH.getSession"));
 });
 
 test("project catalogue and detail page use live public slugs for server projects", () => {
