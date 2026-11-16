@@ -334,6 +334,18 @@ test("project detail and Applications Centre activate real storage only from exp
 });
 
 
+test("live project pages have syntactically valid inline JavaScript", () => {
+  for (const file of ["index.html", "projects.html", "project-detail.html", "applications.html"]) {
+    const html = fs.readFileSync(path.join(root, file), "utf8");
+    const scripts = [...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/gi)]
+      .map(match => match[1].trim()).filter(Boolean);
+    assert.ok(scripts.length > 0, file + " should contain application scripts");
+    scripts.forEach((source, index) => {
+      assert.doesNotThrow(() => new vm.Script(source, { filename: file + "#inline-" + index }), file + " inline script " + index);
+    });
+  }
+});
+
 test("account page offers separate Supabase sign-up and sign-in with live public backend config", () => {
   const account = fs.readFileSync(path.join(root, "account.html"), "utf8");
   const config = fs.readFileSync(path.join(root, "assets/idea-config.js"), "utf8");
