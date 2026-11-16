@@ -294,7 +294,7 @@ from idea_app.organizations
 where visibility = 'public' and status = 'active';
 
 -- Column-level grants only. Internal Auth IDs and storage paths stay private.
-grant select (id, display_name, username, headline, bio, city, country_code, visibility, created_at)
+grant select (display_name, username, headline, bio, city, country_code, visibility, created_at)
   on idea_app.profiles to anon, authenticated;
 grant insert (user_id, display_name, username, headline, bio, city, country_code, visibility)
   on idea_app.profiles to authenticated;
