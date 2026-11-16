@@ -1,0 +1,55 @@
+name: IDEA LAB local Supabase migration verification
+
+on:
+  push:
+    branches:
+      - chore/backend-rollout-gates
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  local-supabase-migrations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SUPABASE_WORKDIR: /tmp/idea-lab-local-supabase
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Prepare isolated IDEA LAB app migration workspace
+        run: |
+          mkdir -p "$SUPABASE_WORKDIR/supabase/migrations"
+          cp supabase/config.toml "$SUPABASE_WORKDIR/supabase/config.toml"
+          cp -R supabase/functions "$SUPABASE_WORKDIR/supabase/functions"
+          cp supabase/migrations/202611161[2-9]0000_idea_app_*.sql "$SUPABASE_WORKDIR/supabase/migrations/"
+          count=$(find "$SUPABASE_WORKDIR/supabase/migrations" -maxdepth 1 -name '*.sql' | wc -l)
+          test "$count" -eq 8
+          printf 'Prepared %s isolated IDEA LAB app migrations\n' "$count"
+          ls -1 "$SUPABASE_WORKDIR/supabase/migrations"
+
+      - name: Show CLI version
+        run: supabase --version
+
+      - name: Start isolated local Supabase stack
+        run: supabase start --workdir "$SUPABASE_WORKDIR"
+
+      - name: Rebuild disposable local database from IDEA LAB app migrations
+        run: supabase db reset --local --workdir "$SUPABASE_WORKDIR"
+
+      - name: Verify applied local migration history
+        run: supabase migration list --local --workdir "$SUPABASE_WORKDIR"
+
+      - name: Stop local Supabase stack
+        if: always()
+        run: supabase stop --no-backup --workdir "$SUPABASE_WORKDIR"
