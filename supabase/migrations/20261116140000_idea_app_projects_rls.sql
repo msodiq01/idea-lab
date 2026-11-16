@@ -84,6 +84,30 @@ comment on function idea_private.is_organization_owner(uuid) is
   'Non-exposed RLS helper: true only when auth.uid() owns the supplied organization.';
 
 -- IDENTITY AND ORGANIZATIONS
+create or replace function idea_private.touch_identity_updated_at()
+returns trigger
+language plpgsql
+security invoker
+set search_path = ''
+as $function$
+begin
+  new.updated_at := pg_catalog.now();
+  return new;
+end;
+$function$;
+revoke all on function idea_private.touch_identity_updated_at()
+  from public, anon, authenticated;
+
+create trigger profiles_touch_updated_at
+before update on idea_app.profiles
+for each row execute function idea_private.touch_identity_updated_at();
+create trigger profile_contacts_touch_updated_at
+before update on idea_app.profile_contacts
+for each row execute function idea_private.touch_identity_updated_at();
+create trigger organizations_touch_updated_at
+before update on idea_app.organizations
+for each row execute function idea_private.touch_identity_updated_at();
+
 -- Profile contact details remain private. Public views expose display fields only.
 create policy profiles_public_read
 on idea_app.profiles for select to anon, authenticated
