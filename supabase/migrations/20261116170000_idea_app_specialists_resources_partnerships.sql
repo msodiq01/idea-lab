@@ -1,7 +1,7 @@
 -- IDEA LAB: specialist directory, resource exchange, and partnership opportunities
 -- Version: 20261116170000
 -- Depends on: identity, project/team RLS, guarded project commands, and public listings.
--- Status: repository draft only; NOT applied to any Supabase project.
+-- Status: applied to Supabase production project idea-lab on 2026-11-16.nly; NOT applied to any Supabase project.
 -- Scope: additive objects in the private idea_app schema. Existing public schema is untouched.
 -- Important: opportunities are non-binding collaboration/support enquiries; no payment,
 -- investment execution, bank details, or financial transaction processing is introduced.
