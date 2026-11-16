@@ -163,8 +163,6 @@
       if (!isUuid(membershipId)) return Promise.resolve(fail("INVALID_MEMBERSHIP_ID", "A’zolik identifikatori noto‘g‘ri."));
       return runCommand("leave_project", { p_membership_id: membershipId });
     }
-  });
-
     listApplicationCenter(options = {}) {
       return queryView("application_center", query => query
         .order("created_at", { ascending: false })
@@ -196,6 +194,7 @@
         p_status: input.status,
         p_reviewer_note: input.reviewerNote === undefined ? null : input.reviewerNote
       });
-    },
+    }
+  });
   global.IDEALAB_DATA = api;
 })(typeof window !== "undefined" ? window : globalThis);
