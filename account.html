@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="IDEA LAB akkauntiga kirish va ro‘yxatdan o‘tish">
+<title>IDEA LAB | Akkaunt</title>
+<link rel="stylesheet" href="assets/idea-shell.css">
+<style>
+.account-wrap{width:min(560px,calc(100% - 28px));margin:42px auto 80px}
+.account-card{background:#fff;border:1px solid #e4e9f1;border-radius:20px;padding:28px;box-shadow:0 12px 36px rgba(24,39,75,.07)}
+.account-card h1{font-size:28px;margin:0 0 8px}.muted{color:#6d788c;font-size:13px;line-height:1.7}
+.account-form{display:grid;gap:12px;margin-top:22px}.account-form label{font-size:12px;font-weight:700;color:#344054}
+.account-form input{width:100%;box-sizing:border-box;margin-top:6px;padding:13px;border:1px solid #d8dfeb;border-radius:10px;font:inherit}
+.account-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:5px}.account-actions button{border:1px solid #5146e5;border-radius:10px;padding:12px 16px;background:#5146e5;color:#fff;font-weight:700;cursor:pointer}
+.account-actions button.secondary{background:#fff;color:#5146e5}.account-actions button:disabled{opacity:.5;cursor:not-allowed}
+.account-message{margin-top:16px;padding:12px;border-radius:10px;background:#f3f5f9;color:#46536a;font-size:12px;line-height:1.7;white-space:pre-wrap}
+.account-session{display:none;margin-top:16px;padding:14px;border-radius:12px;background:#eef8f2;color:#226847;font-size:13px}
+@media(max-width:520px){.account-card{padding:22px}.account-card h1{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="account-wrap">
+<section class="account-card">
+<div class="muted">IDEA LAB / FOYDALANUVCHI AKKAUNTI</div>
+<h1>Kirish yoki ro‘yxatdan o‘tish</h1>
+<p class="muted">Ikki alohida sinov foydalanuvchisi uchun ikki xil email manzilidan foydalaning. Akkauntlar Supabase Auth orqali boshqariladi.</p>
+<div id="backendNotice" class="account-message">Backend holati tekshirilmoqda…</div>
+<form id="accountForm" class="account-form">
+<label>Email manzil
+<input id="email" type="email" autocomplete="email" required maxlength="254" placeholder="email@example.com">
+</label>
+<label>Parol
+<input id="password" type="password" autocomplete="current-password" required minlength="8" maxlength="128" placeholder="Kamida 8 belgi">
+</label>
+<div class="account-actions">
+<button id="signIn" type="button">Kirish</button>
+<button id="signUp" class="secondary" type="button">Ro‘yxatdan o‘tish</button>
+</div>
+</form>
+<div id="sessionBox" class="account-session">
+<div id="sessionText"></div>
+<div class="account-actions"><button id="signOut" class="secondary" type="button">Akkauntdan chiqish</button></div>
+</div>
+<div id="message" class="account-message" role="status" aria-live="polite">Supabase sozlamasi tayyor bo‘lgach, shu sahifada test akkauntlarini yaratish va ularga kirish mumkin.</div>
+<p class="muted"><a href="applications.html">Arizalar markaziga qaytish</a></p>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
+<script src="assets/idea-config.js"></script>
+<script src="assets/idea-auth.js"></script>
+<script>
+"use strict";
+(()=>{
+ const $=id=>document.getElementById(id);
+ const message=(text)=>$("message").textContent=String(text||"");
+ const config=window.IDEALAB_CONFIG;
+ const setup=window.IDEALAB_AUTH&&window.IDEALAB_AUTH.configure(config,window.supabase);
+ const active=Boolean(setup&&setup.ok&&window.IDEALAB_AUTH.getStatus().configured);
+ if(!active){
+  $("backendNotice").textContent="Hozircha xavfsiz kutish rejimi: Supabase backend o‘chirilgan. Migratsiyalar tekshirilib, sinovga tayyor bo‘lgach faollashtiriladi.";
+  $("signIn").disabled=true;$("signUp").disabled=true;
+ }else{
+  $("backendNotice").textContent="Supabase Auth ulandi. Email tasdiqlash yoqilgan bo‘lsa, ro‘yxatdan o‘tgach emailingizni tasdiqlang.";
+ }
+ async function refresh(){
+  if(!active)return;
+  const result=await IDEALAB_AUTH.getSession();
+  const session=result.ok&&result.data&&result.data.session;
+  if(session&&session.user){
+   $("sessionBox").style.display="block";
+   $("sessionText").textContent="Kirilgan akkaunt: "+session.user.email+" · ID: "+session.user.id;
+   $("accountForm").style.display="none";
+  }else{
+   $("sessionBox").style.display="none";$("accountForm").style.display="grid";
+  }
+ }
+ async function run(action){
+  if(!active){message("Backend hali faollashtirilmagan. Hozircha akkaunt yaratish yoki kirish amalga oshmaydi.");return}
+  const email=$("email").value.trim(),password=$("password").value;
+  if(!email||password.length<8){message("Email va kamida 8 belgili parol kiriting.");return}
+  $("signIn").disabled=true;$("signUp").disabled=true;
+  const result=action==="signup"?await IDEALAB_AUTH.signUp(email,password,{emailRedirectTo:new URL("account.html",location.href).toString()}):await IDEALAB_AUTH.signIn(email,password);
+  $("signIn").disabled=false;$("signUp").disabled=false;
+  if(!result.ok){message(result.error&&result.error.message||"So‘rov bajarilmadi.");return}
+  if(action==="signup"&&!(result.data&&result.data.session)){
+   message("Ro‘yxatdan o‘tish so‘rovi qabul qilindi. Emailingizga tasdiqlash xati yuborilgan bo‘lsa, uni tasdiqlang, keyin shu sahifadan kiring.");
+  }else{
+   message(action==="signup"?"Akkaunt yaratildi.":"Tizimga muvaffaqiyatli kirdingiz.");
+  }
+  await refresh();
+ }
+ $("signIn").addEventListener("click",()=>run("signin"));
+ $("signUp").addEventListener("click",()=>run("signup"));
+ $("signOut").addEventListener("click",async()=>{
+  if(!active)return;
+  const result=await IDEALAB_AUTH.signOut();
+  message(result.ok?"Akkauntdan chiqildi.":"Chiqish amalga oshmadi.");
+  await refresh();
+ });
+ if(active){IDEALAB_AUTH.onAuthStateChange(()=>refresh());refresh();}
+})();
+</script>
+<script src="assets/idea-shell.js" defer></script>
+</body>
+</html>
