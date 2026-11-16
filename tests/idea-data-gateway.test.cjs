@@ -143,7 +143,7 @@ test("dashboard loads the guarded data gateway but keeps backend activation opt-
   assert.ok(dashboard.includes("assets/idea-data.js"));
   assert.ok(dashboard.includes('config.mode === "supabase"'));
   assert.ok(config.includes('mode: "offline-demo"'));
-  assert.ok(config.includes('anonKey: ""'));
+  assert.ok(config.includes("sb_publishable_"));
 });
 
 
