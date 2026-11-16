@@ -704,12 +704,19 @@ button, input, textarea {
 </footer>
 
 <script src="assets/idea-core.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
+<script src="assets/idea-config.js"></script>
+<script src="assets/idea-auth.js"></script>
+<script src="assets/idea-data.js"></script>
 <script src="assets/idea-investment-calculator.js"></script>
 <script src="assets/idea-project-finance.js"></script>
 <script>
 "use strict";
 
 const ideaCore = window.IDEALAB || null;
+if (window.IDEALAB_AUTH && window.IDEALAB_CONFIG) {
+    window.IDEALAB_AUTH.configure(window.IDEALAB_CONFIG, window.supabase);
+}
 
 // ========================================
 // 1. MA'LUMOTLARNI O'QISH
@@ -951,7 +958,7 @@ function showProject() {
 
 document.getElementById("offerAmount").addEventListener("input", renderEquityPreview);
 
-investmentForm.addEventListener("submit", function(event) {
+investmentForm.addEventListener("submit", async function(event) {
 
     event.preventDefault();
 
@@ -997,6 +1004,37 @@ investmentForm.addEventListener("submit", function(event) {
             "Investitsiya miqdorini to'g'ri kiriting.",
             "error-message"
         );
+        return;
+    }
+
+    // Real Supabase mode: server resolves applicant and project owner from auth.uid()/project data.
+    // Never trust owner IDs or fall back to localStorage after backend activation.
+    const backendStatus = window.IDEALAB_AUTH && window.IDEALAB_AUTH.getStatus();
+    if (backendStatus && backendStatus.configured) {
+        const sessionResult = await window.IDEALAB_AUTH.getSession();
+        const session = sessionResult.ok && sessionResult.data && sessionResult.data.session;
+        if (!session || !session.user || !session.user.id) {
+            showMessage("Haqiqiy ariza yuborish uchun avval IDEA LAB akkauntingizga kiring.", "error-message");
+            return;
+        }
+        if (!window.IDEALAB_DATA || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(project.id))) {
+            showMessage("Bu loyiha hali Supabase serveridagi loyiha bilan bog‘lanmagan. Serverdagi loyiha sahifasidan qayta urinib ko‘ring.", "error-message");
+            return;
+        }
+        submitButton.disabled = true;
+        const saved = await window.IDEALAB_DATA.submitProjectApplication({
+            projectId: String(project.id),
+            message: offerMessage,
+            amount: offerAmount,
+            currency: "UZS"
+        });
+        submitButton.disabled = false;
+        if (!saved.ok) {
+            showMessage(saved.error && saved.error.message ? saved.error.message : "Serverga saqlash amalga oshmadi.", "error-message");
+            return;
+        }
+        investmentForm.reset();
+        showMessage("Investitsiya taklifingiz Supabase serveriga saqlandi. Ariza ID: " + String(saved.data || "yaratildi"), "success-message");
         return;
     }
 
