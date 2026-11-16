@@ -487,9 +487,10 @@
             color: #53e6ad;
         }
 
-        .form-message.error {
-            color: #ff7c89;
-        }
+        .form-message.error { color: #ff7c89; }
+        .form-help{margin-top:7px;color:#78849b;font-size:11px;line-height:1.65}
+        .form-group input[type="file"]{padding:12px;background:#f8f9ff;border:1px dashed #cbd2e4;border-radius:14px;color:#536078}
+        .form-group input[type="file"]::file-selector-button{margin-right:12px;padding:8px 12px;border:0;border-radius:999px;background:#eeedff;color:#5146d5;font-weight:750;cursor:pointer}
 
         /* CTA */
 
@@ -852,8 +853,54 @@
     
         /* HOMEPAGE — one clear end-to-end workflow */
         .workflow-section {
-            background: linear-gradient(180deg, #0b192b 0%, #07111f 100%);
+            position: relative;
+            overflow: hidden;
+            background:
+              radial-gradient(ellipse at 8% 0%, rgba(104,91,239,.12), transparent 35%),
+              radial-gradient(ellipse at 92% 85%, rgba(14,159,154,.10), transparent 32%),
+              linear-gradient(180deg, #f8f9ff 0%, #f0f3fb 100%);
         }
+        .workflow-section .section-header { max-width: 850px; margin-bottom: 30px; }
+        .workflow-section .section-label {
+            display:inline-flex;align-items:center;padding:8px 13px;border-radius:999px;
+            color:#5548d7!important;background:#eeedff;border:1px solid #dfdcff;
+            letter-spacing:1.3px!important;
+        }
+        .workflow-section .section-title { color:#18223a!important;max-width:760px; }
+        .workflow-section .section-description { color:#64718a!important; }
+        .workflow-list { max-width:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px; }
+        .workflow-step {
+            min-width:0;grid-template-columns:48px minmax(0,1fr);align-items:start;gap:14px;
+            padding:20px;border:1px solid #e3e7f2;border-radius:22px;
+            background:rgba(255,255,255,.92);box-shadow:0 10px 28px rgba(29,40,78,.055);
+            transition:transform .2s,border-color .2s,box-shadow .2s;
+        }
+        .workflow-step:hover { transform:translateY(-3px);border-color:#c9c4ff;box-shadow:0 16px 34px rgba(40,43,100,.10); }
+        .workflow-number {
+            width:44px;height:44px;border-radius:15px;color:#fff;
+            background:linear-gradient(145deg,#7568f0,#5146d5 70%,#159c9b);
+            box-shadow:0 7px 17px rgba(81,70,229,.2);
+        }
+        .workflow-kicker { color:#5548d7!important;letter-spacing:1.1px; }
+        .workflow-copy h3 { color:#1b2540!important;font-size:17px; }
+        .workflow-copy p { color:#68758d!important; }
+        .workflow-step > .workflow-link,.workflow-step > .workflow-links { grid-column:2;margin-top:0; }
+        .workflow-links { flex-direction:row;flex-wrap:wrap;gap:8px; }
+        .workflow-link {
+            min-height:34px;padding:7px 12px;border:1px solid #e2e4f4;border-radius:999px;
+            background:#f7f7ff;color:#5146d5!important;font-size:11px;white-space:normal;
+            transition:background .18s,border-color .18s,transform .18s;
+        }
+        .workflow-link:hover { color:#fff!important;background:#5146d5;border-color:#5146d5;transform:translateY(-1px); }
+        .workflow-note {
+            max-width:none;margin-top:16px;padding:16px 19px;border:1px solid #dfe5f0;
+            border-left:1px solid #dfe5f0;border-radius:18px;background:#fff;color:#68758d;
+            box-shadow:0 8px 22px rgba(29,40,78,.045);
+        }
+        .workflow-note strong { color:#1b2540; }
+        .workflow-note .workflow-link { margin-left:auto; }
+        @media(max-width:760px){.workflow-list{grid-template-columns:1fr}.workflow-step{padding:17px;border-radius:18px}}
+
         .workflow-list {
             position: relative;
             display: grid;
@@ -959,7 +1006,55 @@
             .workflow-link { transition: none; }
         }
 
-    </style>
+    
+/* Final home-page contrast pass: keep the workflow and creation form readable */
+#ecosystem-map{
+ background:
+  radial-gradient(ellipse at 10% 5%,rgba(104,91,239,.11),transparent 34%),
+  radial-gradient(ellipse at 92% 88%,rgba(14,159,154,.09),transparent 32%),
+  linear-gradient(180deg,#f8f9ff 0%,#f0f3fb 100%)!important;
+ border-top:1px solid #e6e9f3!important;border-bottom:1px solid #e6e9f3!important;
+}
+#ecosystem-map .section-title{color:#18223a!important}
+#ecosystem-map .section-description{color:#64718a!important}
+#ecosystem-map .section-label{color:#5548d7!important;background:#eeedff!important;border-color:#dfdcff!important}
+#ecosystem-map .workflow-list{max-width:none!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:15px!important}
+#ecosystem-map .workflow-step{
+ min-width:0!important;grid-template-columns:48px minmax(0,1fr)!important;align-items:start!important;gap:14px!important;
+ padding:20px!important;border:1px solid #e3e7f2!important;border-radius:22px!important;
+ background:rgba(255,255,255,.94)!important;box-shadow:0 10px 28px rgba(29,40,78,.055)!important;
+}
+#ecosystem-map .workflow-number{width:44px!important;height:44px!important;border-radius:15px!important;color:#fff!important;background:linear-gradient(145deg,#7568f0,#5146d5 70%,#159c9b)!important}
+#ecosystem-map .workflow-step>.workflow-link,#ecosystem-map .workflow-step>.workflow-links{grid-column:2!important;margin-top:0!important}
+#ecosystem-map .workflow-links{display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;gap:8px!important}
+#ecosystem-map .workflow-link{min-height:34px!important;padding:7px 12px!important;border:1px solid #e2e4f4!important;border-radius:999px!important;background:#f7f7ff!important;color:#5146d5!important;font-size:11px!important}
+#ecosystem-map .workflow-link:hover{background:#5146d5!important;color:#fff!important;border-color:#5146d5!important}
+#ecosystem-map .workflow-step:hover{transform:translateY(-3px)!important;border-color:#c9c4ff!important;box-shadow:0 16px 34px rgba(40,43,100,.10)!important}
+#ecosystem-map .workflow-note{border:1px solid #dfe5f0!important;border-left:1px solid #dfe5f0!important;border-radius:18px!important;background:#fff!important;color:#68758d!important}
+@media(max-width:760px){
+ #ecosystem-map .workflow-list{grid-template-columns:1fr!important}
+ #ecosystem-map .workflow-step{grid-template-columns:42px minmax(0,1fr)!important;padding:17px!important;border-radius:18px!important}
+ #ecosystem-map .workflow-number{width:38px!important;height:38px!important}
+}
+#ecosystem-map .workflow-copy h3{color:#1b2540!important}
+#ecosystem-map .workflow-copy p{color:#68758d!important}
+#ecosystem-map .workflow-note{border:1px solid #dfe5f0!important;border-radius:18px!important;background:#fff!important;color:#68758d!important}
+#ecosystem-map .workflow-note strong{color:#1b2540!important}
+.create-section{background:linear-gradient(180deg,#f4f6fc,#eef1fa)!important}
+.create-info h2{color:#18223a!important}
+.create-info>p,.benefit-item{color:#68758d!important}
+.benefit-icon{background:#e9f8f6!important;color:#0e8f89!important}
+.create-form-card{background:#fff!important;border:1px solid #e3e7f1!important;border-radius:24px!important;box-shadow:0 16px 42px rgba(27,38,76,.08)!important}
+.form-heading h3{color:#18223a!important}
+.form-heading p{color:#68758d!important}
+.form-group input,.form-group select,.form-group textarea{
+ background:#fbfcff!important;color:#243047!important;border-color:#dce2ef!important;border-radius:13px!important;
+}
+.form-group input::placeholder,.form-group textarea::placeholder{color:#98a2b4!important}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#8e84f1!important}
+@media(max-width:700px){#ecosystem-map .workflow-note{padding:14px!important}.create-form-card{padding:22px!important}}
+
+</style>
     <link rel="stylesheet" href="assets/idea-shell.css">\n</head>
 
 <body>
@@ -1232,6 +1327,12 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="projectGoal">Loyihaning maqsadi *</label>
+                    <textarea id="projectGoal" rows="3" maxlength="1200" required
+                        placeholder="Qaysi muammoni hal qilmoqchisiz va qanday natijaga erishmoqchisiz?"></textarea>
+                </div>
+
+                <div class="form-group">
                     <label for="projectDescription">Loyiha haqida *</label>
                     <textarea
                         id="projectDescription"
@@ -1267,6 +1368,19 @@
                         rows="3"
                         placeholder="Loyiha uchun kerakli resurslar..."
                     ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="requiredSupport">Loyihaga yana nima kerak?</label>
+                    <textarea id="requiredSupport" rows="3" maxlength="1200"
+                        placeholder="Masalan: hamkor, joy, uskuna, maslahat, ruxsat yoki boshqa yordam..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="legalDocs">Qonuniy hujjatlar (PDF)</label>
+                    <input type="file" id="legalDocs" name="legalDocs" accept="application/pdf,.pdf" multiple
+                        aria-describedby="legalDocsHelp">
+                    <p id="legalDocsHelp" class="form-help">Ixtiyoriy: loyiha nizomi, ruxsatnoma yoki boshqa tegishli hujjatlar. 5 tagacha PDF, har biri 10 MB gacha. Fayllar shaxsiy saqlanadi va faqat loyiha egasiga ochiq.</p>
                 </div>
 
                 <div class="form-group">
@@ -1486,7 +1600,9 @@
     const projectDraftFields = [
         ["projectName", "name"],
         ["projectDirection", "direction"],
+        ["projectGoal", "goal"],
         ["projectDescription", "description"],
+        ["requiredSupport", "requiredSupport"],
         ["investment", "investment"],
         ["specialists", "specialists"],
         ["resources", "resources"]
@@ -1537,6 +1653,10 @@
         const description =
             document.getElementById("projectDescription").value.trim();
 
+        const goal = document.getElementById("projectGoal").value.trim();
+        const requiredSupport = document.getElementById("requiredSupport").value.trim();
+        const legalFiles = Array.from(document.getElementById("legalDocs").files || []);
+
         const investment =
             document.getElementById("investment").value;
 
@@ -1550,10 +1670,31 @@
             document.getElementById("ownerPhone").value.trim();
 
         const message = document.getElementById("formMessage");
-        if (!name || !direction|| !description) {
+        if (!name || !direction || !goal || !description) {
             message.className = "form-message error";
             message.textContent =
                 "Majburiy maydonlarni to‘ldiring.";
+            return;
+        }
+
+        if (legalFiles.length > 5 || legalFiles.some(file =>
+            file.type !== "application/pdf" || !file.name.toLowerCase().endsWith(".pdf") || file.size > 10 * 1024 * 1024
+        )) {
+            message.className = "form-message error";
+            message.textContent = "Hujjatlar faqat PDF bo‘lishi kerak: 5 tagacha fayl, har biri 10 MB dan oshmasin.";
+            return;
+        }
+
+        const projectDetails = [
+            description,
+            "Loyiha maqsadi: " + goal,
+            specialists ? "Kerakli mutaxassislar: " + specialists : "",
+            resources ? "Kerakli resurslar: " + resources : "",
+            requiredSupport ? "Qo‘shimcha ehtiyojlar: " + requiredSupport : ""
+        ].filter(Boolean).join("\n\n");
+        if (projectDetails.length > 6000) {
+            message.className = "form-message error";
+            message.textContent = "Loyiha tafsilotlari 6000 belgidan oshmasligi kerak. Matnni qisqartiring.";
             return;
         }
 
@@ -1585,8 +1726,8 @@
             const isPublic = document.getElementById("publishToCatalog").checked;
             const created = await window.IDEALAB_DATA.createProject({
                 title: name,
-                summary: description.slice(0, 320),
-                description: description,
+                summary: (goal || description).slice(0, 320),
+                description: projectDetails,
                 projectType: typeMap[direction] || "other",
                 visibility: isPublic ? "public" : "private"
             });
@@ -1594,6 +1735,16 @@
                 message.className = "form-message error";
                 message.textContent = created.error && created.error.message ? created.error.message : "Loyiha serverda yaratilolmadi.";
                 return;
+            }
+            let documentsUploaded = 0;
+            let documentWarning = "";
+            if (legalFiles.length) {
+                const uploadResult = await window.IDEALAB_DATA.uploadProjectLegalDocuments({
+                    projectId: String(created.data),
+                    files: legalFiles
+                });
+                if (uploadResult.ok) documentsUploaded = uploadResult.data.uploaded;
+                else documentWarning = " Hujjatlar yuklanmadi: " + uploadResult.error.message;
             }
             let published = false;
             if (isPublic) {
@@ -1613,7 +1764,7 @@
                     projectId: String(created.data),
                     slug: slug,
                     title: name,
-                    summary: description.slice(0, 600),
+                    summary: (goal || description).slice(0, 600),
                     category: categoryMap[direction] || "other"
                 });
                 if (!publishResult.ok) {
@@ -1635,9 +1786,11 @@
             updateProjectCount();
             showRecentProjects();
             message.className = "form-message success";
-            message.textContent = published
+            message.textContent = (published
                 ? "Loyiha serverga saqlandi va ommaviy katalogga chiqarildi."
-                : "Loyiha serverda shaxsiy qoralama sifatida saqlandi. Ommaviy katalogda ko‘rinmaydi.";
+                : "Loyiha serverda shaxsiy qoralama sifatida saqlandi. Ommaviy katalogda ko‘rinmaydi.")
+                + (documentsUploaded ? " " + documentsUploaded + " ta PDF hujjat shaxsiy saqlandi." : "")
+                + documentWarning;
             document.getElementById("recentProjects").scrollIntoView({ behavior: "smooth", block: "start" });
             return;
         }
@@ -1657,6 +1810,8 @@
             name: name,
             direction: direction,
             description: description,
+            goal: goal,
+            requiredSupport: requiredSupport,
             investment: investment,
             specialists: specialists,
             resources: resources,
@@ -1703,7 +1858,8 @@
 
         message.className = "form-message success";
         message.textContent =
-            "Loyiha ushbu brauzerda saqlandi. Hozircha boshqa foydalanuvchilarga ko‘rinmaydi.";
+            "Loyiha ushbu brauzerda saqlandi. Hozircha boshqa foydalanuvchilarga ko‘rinmaydi."
+            + (legalFiles.length ? " PDF hujjatlar esa faqat akkaunt bilan server rejimida saqlanadi." : "");
 
         updateProjectCount();
         showRecentProjects();
