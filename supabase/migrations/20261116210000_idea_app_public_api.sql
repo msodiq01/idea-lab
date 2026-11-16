@@ -1,5 +1,6 @@
 -- IDEA LAB: public PostgREST facade over private application schema
 -- Expose only safe read projections and narrow SECURITY INVOKER command wrappers.
+-- Status: applied to Supabase production project idea-lab on 2026-11-16.
 begin;
 
 create or replace view public.idea_lab_public_profile_directory
