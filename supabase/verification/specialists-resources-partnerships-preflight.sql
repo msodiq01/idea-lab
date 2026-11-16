@@ -24,6 +24,9 @@ from pg_catalog.pg_proc p
 join pg_catalog.pg_namespace n on n.oid = p.pronamespace
 where n.nspname = 'idea_private'
   and p.proname in (
+    'is_specialist_profile_owner',
+    'is_resource_offer_owner',
+    'is_partnership_opportunity_owner',
     'guard_specialist_request_transition',
     'guard_resource_request_transition',
     'guard_partnership_enquiry_transition'
