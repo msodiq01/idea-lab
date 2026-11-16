@@ -1270,6 +1270,13 @@
                 </div>
 
                 <div class="form-group">
+                    <label style="display:flex;gap:10px;align-items:flex-start;font-weight:600">
+                        <input type="checkbox" id="publishToCatalog" style="width:auto;margin-top:4px">
+                        <span>Loyihani ommaviy katalogda ko‘rsatish — investorlar va hamkorlar ko‘rishi uchun</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
                     <label for="ownerPhone">Bog‘lanish telefon raqami</label>
                     <input
                         type="tel"
@@ -1357,9 +1364,18 @@
 </footer>
 
 <script src="assets/idea-core.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
+<script src="assets/idea-config.js"></script>
+<script src="assets/idea-auth.js"></script>
+<script src="assets/idea-data.js"></script>
 <script>
     "use strict";
     const ideaCore = window.IDEALAB || null;
+    if (window.IDEALAB_AUTH && window.IDEALAB_CONFIG) {
+        window.IDEALAB_AUTH.configure(window.IDEALAB_CONFIG, window.supabase);
+    }
+    const liveBackend = Boolean(window.IDEALAB_AUTH && window.IDEALAB_AUTH.getStatus().configured);
+    let serverProjects = [];
 
     function readData(key, fallback = []) {
         if (ideaCore && ideaCore.legacy && ideaCore.legacy.keys.includes(key)) {
@@ -1378,6 +1394,7 @@
     }
 
     function getProjects() {
+        if (liveBackend) return serverProjects;
         const projects = readData("projects", []);
         return Array.isArray(projects) ? projects : [];
     }
@@ -1429,10 +1446,10 @@
 
             const tag = document.createElement("span");
             tag.className = "project-tag";
-            tag.textContent = project.direction || "Boshqa yo‘nalish";
+            tag.textContent = project.direction || project.category || "Boshqa yo‘nalish";
 
             const title = document.createElement("h3");
-            title.textContent = project.name || "Nomsiz loyiha";
+            title.textContent = project.name || project.title || "Nomsiz loyiha";
 
             const description = document.createElement("p");
             description.textContent =
@@ -1446,9 +1463,9 @@
             const link = document.createElement("a");
             link.className = "project-open";
             link.textContent = "Loyihani ko‘rish →";
-            link.href =
-                "project-detail.html?id=" +
-                encodeURIComponent(String(project.id));
+            link.href = project.slug
+                ? "project-detail.html?slug=" + encodeURIComponent(String(project.slug))
+                : "project-detail.html?id=" + encodeURIComponent(String(project.id));
 
             card.append(tag, title, description, meta, link);
             list.appendChild(card);
@@ -1498,7 +1515,7 @@
 
     restoreProjectDraft();
 
-    projectForm.addEventListener("submit", function(event) {
+    projectForm.addEventListener("submit", async function(event) {
         event.preventDefault();
 
         const name =
@@ -1537,6 +1554,81 @@
             message.className = "form-message error";
             message.textContent =
                 "Investitsiya miqdorini to‘g‘ri kiriting.";
+            return;
+        }
+
+        if (liveBackend) {
+            const sessionResult = await window.IDEALAB_AUTH.getSession();
+            const session = sessionResult.ok && sessionResult.data && sessionResult.data.session;
+            if (!session || !session.user) {
+                message.className = "form-message error";
+                message.textContent = "Loyiha yaratish uchun avval IDEA LAB akkauntingizga kiring.";
+                return;
+            }
+            const typeMap = {
+                "IT va texnologiya": "technology",
+                "Ta’lim": "education",
+                "Biznes": "startup",
+                "Ijtimoiy loyiha": "social",
+                "Ekologiya": "community"
+            };
+            const isPublic = document.getElementById("publishToCatalog").checked;
+            const created = await window.IDEALAB_DATA.createProject({
+                title: name,
+                summary: description.slice(0, 320),
+                description: description,
+                projectType: typeMap[direction] || "other",
+                visibility: isPublic ? "public" : "private"
+            });
+            if (!created.ok || !created.data) {
+                message.className = "form-message error";
+                message.textContent = created.error && created.error.message ? created.error.message : "Loyiha serverda yaratilolmadi.";
+                return;
+            }
+            let published = false;
+            if (isPublic) {
+                const slugBase = name.toLowerCase()
+                    .replace(/[ʻʼ’‘'\x60]/g, "")
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 65) || "idea";
+                const slug = slugBase + "-" + Date.now().toString(36);
+                const categoryMap = {
+                    "IT va texnologiya": "technology",
+                    "Ta’lim": "education",
+                    "Biznes": "startup",
+                    "Ijtimoiy loyiha": "social",
+                    "Ekologiya": "community"
+                };
+                const publishResult = await window.IDEALAB_DATA.publishProjectListing({
+                    projectId: String(created.data),
+                    slug: slug,
+                    title: name,
+                    summary: description.slice(0, 600),
+                    category: categoryMap[direction] || "other"
+                });
+                if (!publishResult.ok) {
+                    message.className = "form-message error";
+                    message.textContent = "Loyiha serverda qoralama sifatida saqlandi, ammo katalogga chiqarilmadi. " + (publishResult.error && publishResult.error.message ? publishResult.error.message : "Nashr qilishda xatolik.");
+                    return;
+                }
+                published = true;
+            }
+            projectForm.reset();
+            if (ideaCore && ideaCore.store) ideaCore.store.remove("projects.creationDraft");
+            const catalogue = await window.IDEALAB_DATA.listPublicProjects({ limit: 50 });
+            if (catalogue.ok) {
+                serverProjects = catalogue.data.map(item => ({
+                    slug: item.slug, name: item.title, direction: item.category,
+                    description: item.summary, createdAt: item.published_at
+                }));
+            }
+            updateProjectCount();
+            showRecentProjects();
+            message.className = "form-message success";
+            message.textContent = published
+                ? "Loyiha serverga saqlandi va ommaviy katalogga chiqarildi."
+                : "Loyiha serverda shaxsiy qoralama sifatida saqlandi. Ommaviy katalogda ko‘rinmaydi.";
+            document.getElementById("recentProjects").scrollIntoView({ behavior: "smooth", block: "start" });
             return;
         }
 
@@ -1612,8 +1704,21 @@
         });
     });
 
-    updateProjectCount();
-    showRecentProjects();
+    if (liveBackend) {
+        window.IDEALAB_DATA.listPublicProjects({ limit: 50 }).then(function(result) {
+            if (result.ok) {
+                serverProjects = result.data.map(item => ({
+                    slug: item.slug, name: item.title, direction: item.category,
+                    description: item.summary, createdAt: item.published_at
+                }));
+            }
+            updateProjectCount();
+            showRecentProjects();
+        });
+    } else {
+        updateProjectCount();
+        showRecentProjects();
+    }
 </script>
 
     <script src="assets/idea-shell.js" defer></script>
