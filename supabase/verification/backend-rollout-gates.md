@@ -47,6 +47,40 @@ This sequence is a dependency order, **not** permission to run these migrations 
 - **Important integration mismatch:** `assets/idea-data.js` currently calls RPCs and reads views in `idea_app`. That schema must not be exposed wholesale because it also contains base tables. Before activation, move the browser contract to a dedicated exposed `idea_api` schema: safe invoker views that read from unexposed `idea_app`, plus narrow `SECURITY INVOKER` wrappers for the five existing commands. Keep `idea_app` and `idea_private` out of the exposed-schema list. Update the frontend gateway to `idea_api` only after that migration is reviewed and tested.
 - Static review is not a SQL parser or runtime proof. PostgreSQL execution, grants as actually resolved by PostgREST, two-user JWT tests, and Storage tests remain mandatory.
 
+## Dedicated `idea_api` contract (design only; not implemented)
+
+The browser gateway contract was inspected against the current draft migrations. The intended public surface is limited to these five read-only views:
+
+| API view | Explicit output columns |
+|---|---|
+| `public_project_directory` | `slug, title, summary, category, project_type, project_status, start_date, target_date, published_at` |
+| `public_project_updates` | `project_slug, title, body, update_type, published_at` |
+| `public_specialist_directory` | `id, public_name, headline, bio, skill_tags, specialist_categories, city, country_code, portfolio_urls, availability_status, engagement_modes, created_at` |
+| `public_resource_catalogue` | `slug, title, category, description, quantity_label, availability_label, location_label, public_terms, published_at` |
+| `public_partnership_directory` | `slug, opportunity_type, title, summary, details, location_label, published_at` |
+
+The API should also expose only these five authenticated command RPCs, retaining the existing parameter names and types:
+
+| RPC | Signature |
+|---|---|
+| `create_project` | `(p_title text, p_summary text, p_description text, p_project_type text, p_visibility text, p_start_date date, p_target_date date) returns uuid` |
+| `update_project` | `(p_project_id uuid, p_title text, p_summary text, p_description text, p_project_type text, p_status text, p_visibility text, p_start_date date, p_target_date date) returns uuid` |
+| `request_project_membership` | `(p_project_id uuid) returns uuid` |
+| `review_project_membership` | `(p_membership_id uuid, p_approve boolean, p_membership_role text) returns uuid` |
+| `leave_project` | `(p_membership_id uuid) returns uuid` |
+
+Implementation requirements for the future migration:
+
+- Create `idea_api` with no browser `CREATE` privilege; revoke default `PUBLIC` access.
+- Each API view must be `WITH (security_invoker = true)`, select an explicit column list from its matching `idea_app.public_*` view, and receive only `SELECT` grants for `anon` and `authenticated`.
+- The underlying `idea_app` views are also invoker views. Keep their existing narrowly scoped grants and RLS-backed base-table access; do not grant browser roles broad table privileges.
+- Each API RPC must be a `SECURITY INVOKER` wrapper calling its fully qualified `idea_app` command. Revoke default `PUBLIC` and `anon` execution; grant `EXECUTE` only to `authenticated`.
+- Grant only `USAGE` on `idea_api` to the roles that need it. Keep `idea_app` and `idea_private` absent from the Data API exposed-schema list.
+- Only after the migration is reviewed and tested should `assets/idea-data.js` change both read and RPC calls from `client.schema("idea_app")` to `client.schema("idea_api")`. Keep the frontend in `offline-demo` until then.
+- Runtime tests must confirm PostgREST resolves the view chain as the caller, that anonymous catalogue reads expose only the listed columns, and that RPC calls work only for authenticated callers while preserving the existing RLS decisions.
+
+This is a contract for implementation, not executable SQL and not evidence that the boundary exists.
+
 ## Data API and frontend activation gate
 
 Do **not** expose `idea_app` as a whole. Some `security_invoker` views depend on underlying table grants; exposing the schema without a redesigned public API boundary could expose base-table identifiers and internal columns. Before activation:
@@ -70,6 +104,7 @@ Production changes require a separate explicit approval after staging passes, a 
 - No real two-user JWT RLS or Storage acceptance test has been performed.
 - Auth email/SMS provider configuration and CAPTCHA are not complete.
 - A dedicated safe API exposure boundary has not yet been implemented.
+- The Supabase CLI is not installed in the current work environment. Per the Supabase migration workflow, the API-boundary migration must first be created with `supabase migration new`; no migration file has been fabricated through the GitHub contents API.
 - The frontend remains intentionally offline.
 
 **Readiness conclusion:** repository architecture and draft migrations exist, but backend activation is **not yet safe or verified**. Static tests can catch regressions; they do not prove PostgreSQL migration correctness or runtime authorization.
