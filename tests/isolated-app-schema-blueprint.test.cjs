@@ -36,7 +36,9 @@ test("blueprint requires RLS, minimal grants, and deliberate Data API exposure",
 });
 
 test("blueprint preserves security boundaries while live config uses the public key", () => {
-  assert.match(config, /mode: "supabase"/);\n  assert.match(config, /sb_publishable_/);\n  assert.doesNotMatch(config, /service_role\\s*[:=]/i);
+  assert.match(config, /mode: "supabase"/);
+  assert.match(config, /sb_publishable_/);
+  assert.doesNotMatch(config, /service_role\s*[:=]/i);
   assert.match(blueprint, /Auth provider, SMTP, SMS, email confirmation yoki redirect sozlamalarini egasining tasdig'isiz o'zgartirish/);
   assert.match(blueprint, /hech qanday DDL bajarilmaydi/);
   assert.match(blueprint, /backend ulandi, Auth ishlayapti yoki migration qo'llandi/);
