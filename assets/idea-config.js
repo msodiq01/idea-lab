@@ -1,10 +1,10 @@
 /* IDEA LAB public browser configuration.
- * Keep this file in offline-demo until the project owner approves activation.
- * Only the Supabase project URL and publishable/anon key belong here.
+ * Publishable key is intentionally public. Backend remains OFF until the reviewed
+ * Supabase migrations are applied and two-account RLS checks pass.
  * Never place service_role, database passwords, JWT secrets, or provider secrets here.
  */
 window.IDEALAB_CONFIG = Object.freeze({
   mode: "offline-demo",
-  url: "",
-  anonKey: ""
+  url: "https://hfxkiudvlmibpffrppzc.supabase.co",
+  anonKey: "sb_publishable_KoLvG97lhYOuDGxTZH9D4A_Slz3gGjJ"
 });
