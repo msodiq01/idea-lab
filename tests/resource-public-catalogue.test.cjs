@@ -3,6 +3,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const vm = require("node:vm");
 
 const html = fs.readFileSync(path.join(__dirname, "..", "resources.html"), "utf8");
 
@@ -27,4 +28,10 @@ test("resource page loads Supabase dependencies before configuring the data gate
   const data = html.indexOf('src="assets/idea-data.js"');
   assert.ok(sdk >= 0 && config > sdk && auth > config && data > auth);
   assert.match(html, /auth\.configure\(window\.IDEALAB_CONFIG,window\.supabase\)/);
+});
+
+test("resource page inline JavaScript parses without syntax errors", () => {
+  const scripts = [...html.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)].map(match => match[1]);
+  assert.ok(scripts.length > 0, "inline resource page script must exist");
+  for (const source of scripts) new vm.Script(source);
 });
