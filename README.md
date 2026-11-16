@@ -27,6 +27,7 @@ Testlar frontend yadro va Organization Center uchun avtomatik tekshiruvlarni baj
 - Resurslar sahifasidagi shaxsiy inventar mahalliy saqlanadi; server katalogi faqat ommaviy takliflarni o‘qiydi.
 - Investorlar bo‘limi namuna ma’lumotlar bilan ishlaydigan demo. Haqiqiy sarmoya, to‘lov yoki pul o‘tkazmasi amalga oshirilmaydi.
 - Supabase Auth’da hozircha foydalanuvchilar yo‘q; ikki akkauntli RLS sinovi va desktop/mobile brauzer sinovi hali bajarilishi kerak.
+- Profil sahifasi kirilgan Auth akkauntining shaxsiy user metadata maydonlariga profilni sinxronlay oladi. Eski localStorage profilini boshqa akkauntga ulash faqat foydalanuvchi aniq tasdiqlaganidan keyin bajariladi; avatar hozircha mahalliy saqlanadi.
 - Demo ma’lumotlariga maxfiy shaxsiy ma’lumotlarni kiritmang.
 
 
