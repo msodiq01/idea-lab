@@ -82,6 +82,22 @@ test("organization membership invitations and transitions are owner-bound", () =
 test("each project table policy explicitly targets authenticated", () => {
   const names = [
     "projects_select_authorized", "projects_insert_owner", "projects_update_owner", "projects_delete_owner",
+    "profiles_public_read",
+    "profiles_owner_read",
+    "profiles_owner_insert",
+    "profiles_owner_update",
+    "profile_contacts_owner_read",
+    "profile_contacts_owner_insert",
+    "profile_contacts_owner_update",
+    "organizations_public_read",
+    "organizations_owner_read",
+    "organizations_owner_insert",
+    "organizations_owner_update",
+    "organizations_owner_delete",
+    "organization_members_select_participants",
+    "organization_members_insert_owner_invitation",
+    "organization_members_update_owner",
+    "organization_members_update_self",
     "project_members_select_participants", "project_members_insert_request_or_invitation", "project_members_delete_owner_or_manager",
     "project_tasks_select_team", "project_tasks_insert_team", "project_tasks_update_creator", "project_tasks_delete_owner_or_manager",
     "project_updates_select_team_or_public", "project_updates_insert_team", "project_updates_update_author", "project_updates_delete_author_or_manager"
@@ -91,6 +107,16 @@ test("each project table policy explicitly targets authenticated", () => {
     assert.notEqual(start, -1, name + " exists");
     const end = sql.indexOf(";", start);
     assert.match(sql.slice(start, end), /to authenticated/i, name + " is authenticated-only");
+  }
+});
+
+test("identity and organization tables retain RLS and server-owned timestamps", () => {
+  for (const table of ["profiles","profile_contacts","organizations","organization_members"]) {
+    assert.match(sql, new RegExp("alter table idea_app\\." + table + " enable row level security", "i"));
+  }
+  assert.match(sql, /function idea_private\.touch_identity_updated_at\(\)[\s\S]*?security invoker[\s\S]*?set search_path = ''/i);
+  for (const trigger of ["profiles_touch_updated_at","profile_contacts_touch_updated_at","organizations_touch_updated_at"]) {
+    assert.match(sql, new RegExp("create trigger " + trigger, "i"));
   }
 });
 
