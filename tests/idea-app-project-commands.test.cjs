@@ -12,8 +12,8 @@ const sql = fs.readFileSync(
 );
 const executableSql = sql.replace(/--.*$/gm, "");
 
-test("membership and task command migration is draft-only and additive", () => {
-  assert.match(sql, /NOT applied to any Supabase project/i);
+test("membership and task command migration is production-applied and additive", () => {
+  assert.match(sql, /applied to Supabase production project idea-lab/i);
   assert.doesNotMatch(executableSql, /alter\s+table\s+public\./i);
   assert.doesNotMatch(executableSql, /drop\s+(table|schema|function)/i);
   assert.doesNotMatch(executableSql, /create\s+table\s+public\./i);
