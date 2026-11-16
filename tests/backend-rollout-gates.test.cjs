@@ -14,7 +14,8 @@ const migrations = [
   "20261116150000_idea_app_project_member_commands.sql",
   "20261116160000_idea_app_listings_applications.sql",
   "20261116170000_idea_app_specialists_resources_partnerships.sql",
-  "20261116180000_idea_app_storage_private_assets.sql"
+  "20261116180000_idea_app_storage_private_assets.sql",
+  "20261116190000_idea_app_project_commands.sql"
 ];
 const read = (name) => fs.readFileSync(path.join(migrationDir, name), "utf8");
 
@@ -24,7 +25,7 @@ test("all seven app migrations exist in the documented dependency order", () => 
   }
   const readme = fs.readFileSync(path.join(root, "supabase/README.md"), "utf8");
   let previous = -1;
-  for (const name of migrations.slice(0, 6)) {
+  for (const name of migrations.slice(0, 7)) {
     const index = readme.indexOf(name);
     assert.ok(index > previous, name + " must be listed in order");
     previous = index;
@@ -73,5 +74,5 @@ test("rollout runbook blocks production, schema exposure, and activation before 
   assert.match(doc, /two independent authenticated users/i);
   assert.match(doc, /Do \*\*not\*\* expose `idea_app` as a whole/i);
   assert.match(doc, /Production changes require a separate explicit approval/i);
-  assert.match(doc, /frontend remains intentionally offline/i);
+  assert.match(doc, /frontend remains intentionally offline/i);\n  assert.match(doc, /20261116190000_idea_app_project_commands\\.sql/i);\n  assert.match(doc, /dedicated exposed `idea_api` schema/i);
 });
