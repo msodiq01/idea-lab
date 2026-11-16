@@ -78,3 +78,9 @@ test("Storage preflight is read-only and checks bucket, policies and role privil
     assert.doesNotMatch(statement, /^\s*(insert|update|delete|merge|alter|create|drop|truncate|grant|revoke)\b/im);
   }
 });
+
+
+test("Storage object filename regex matches a literal extension separator", () => {
+  assert.ok(sql.includes("\\."), "SQL regex uses an escaped literal dot");
+  assert.ok(!sql.includes("\\\\."), "SQL regex does not require a literal backslash in the filename");
+});
