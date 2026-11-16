@@ -1,7 +1,7 @@
 -- IDEA LAB: private user asset storage
 -- Version: 20261116180000
 -- Depends on: Supabase Storage being enabled for the project.
--- Status: repository draft only; NOT applied to any Supabase project.
+-- Status: applied to Supabase production project idea-lab on 2026-11-16.nly; NOT applied to any Supabase project.
 -- Access model: private bucket; each authenticated user can manage only objects
 -- under their own UUID prefix. Public delivery and cross-user sharing are deferred.
 
