@@ -117,7 +117,7 @@ test("each project table policy explicitly targets authenticated", () => {
 
 test("identity and organization tables retain RLS and server-owned timestamps", () => {
   for (const table of ["profiles","profile_contacts","organizations","organization_members"]) {
-    assert.match(sql, new RegExp("alter table idea_app\\." + table + " enable row level security", "i"));
+    assert.match(identitySql, new RegExp("alter table idea_app\\." + table + " enable row level security", "i"));
   }
   assert.match(sql, /function idea_private\.touch_identity_updated_at\(\)[\s\S]*?security invoker[\s\S]*?set search_path = ''/i);
   for (const trigger of ["profiles_touch_updated_at","profile_contacts_touch_updated_at","organizations_touch_updated_at"]) {
