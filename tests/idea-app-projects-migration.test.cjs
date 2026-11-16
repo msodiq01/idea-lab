@@ -61,8 +61,8 @@ test("updates cannot be published without a timestamp and use explicit visibilit
   assert.match(sql, /project_updates_published_at_check/i);
 });
 
-test("migration is documented as a draft and depends on the identity foundation", () => {
-  assert.match(sql, /NOT applied to any Supabase project/i);
+test("migration is production-applied and depends on the identity foundation", () => {
+  assert.match(sql, /applied to Supabase production project idea-lab/i);
   assert.match(sql, /Depends on: 20261116120000_idea_app_identity_organizations.sql/i);
   assert.match(sql, /Existing public schema is untouched/i);
 });
