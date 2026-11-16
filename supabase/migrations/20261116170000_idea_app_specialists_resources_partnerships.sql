@@ -30,10 +30,7 @@ create table idea_app.specialist_profiles (
   constraint specialist_skill_tags_count check (cardinality(skill_tags) <= 30),
   constraint specialist_categories_count check (cardinality(specialist_categories) <= 12),
   constraint specialist_portfolio_count check (cardinality(portfolio_urls) <= 8),
-  constraint specialist_portfolio_https check (
-    array_position(portfolio_urls, null) is null
-    and not exists (select 1 from unnest(portfolio_urls) u where u !~ '^https://')
-  ),
+  constraint specialist_portfolio_no_nulls check (array_position(portfolio_urls, null) is null),
   constraint specialist_availability_check check (availability_status in ('open', 'limited', 'unavailable')),
   constraint specialist_visibility_check check (visibility in ('private', 'unlisted', 'public')),
   constraint specialist_country_code_check check (country_code is null or country_code ~ '^[A-Z]{2}$'),
