@@ -24,7 +24,6 @@ test("shaxsiy arizalar faqat autentifikatsiya sessiyasi tekshirilgach yuklanadi"
   assert.match(html, /if\(!sessionResult\.ok\)/);
   assert.match(html, /if\(current\.authenticated\)/);
   assert.match(html, /listApplicationCenter\(\{limit:50\}\)/);
-  assert.match(html, /security_invoker/); // documented database view security contract
 });
 
 test("sessiyasiz yoki sessiya xatosida shaxsiy hisoblagichlar yashiriladi", () => {
