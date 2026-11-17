@@ -29,6 +29,10 @@
   const fieldTelegram = $("teamTelegram")?.closest(".field");
   if (fieldPhone) fieldPhone.remove();
   if (fieldTelegram) fieldTelegram.remove();
+  const legacyMyApplications = $("myApplications")?.closest(".section");
+  const legacyTeamManager = $("teamManagerApplications")?.closest(".section");
+  if (legacyMyApplications) legacyMyApplications.hidden = true;
+  if (legacyTeamManager) legacyTeamManager.hidden = true;
 
   const oldJobsTitle = document.querySelector("#career-section .section-heading p");
   if (oldJobsTitle) oldJobsTitle.textContent = "Vakansiya joylashtirish va arizalar hozircha demo rejimida; serverga yuborilmaydi.";
@@ -140,6 +144,7 @@
         actions.append(approve,reject);card.append(h,p,actions);box.append(card);
       });
     }
+    if($("teamApplicationCount")) $("teamApplicationCount").textContent=String(count);
     if(!count)emptyCard(box,"Sizning jamoalaringizga yangi a’zolik so‘rovlari yo‘q.");
   }
   async function createTeam(event) {
