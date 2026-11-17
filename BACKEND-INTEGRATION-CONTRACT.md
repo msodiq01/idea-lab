@@ -1,13 +1,15 @@
 # IDEA LAB — backend integratsiya shartnomasi
 
-Versiya: 1.0 · Sana: 2026-11-15  
-Holat: texnik shartnoma; real backend ulanmagan.
+Versiya: 1.1 · Sana: 2026-11-17  
+Holat: Supabase konfiguratsiyasi va asosiy server adapteri ulangan; to‘liq qabul sinovlari hali yakunlanmagan.
 
 ## 1. Maqsad va chegaralar
 
-Frontend sahifalari server bilan faqat yagona data-access qatlam orqali ishlashi kerak. Sahifa Supabase jadvaliga o'zboshimchalik bilan yozmaydi. Hozirgi IDEA LAB frontend demo rejimida: `assets/idea-core.js` `offline-demo` va `authenticated: false` holatini bildiradi.
+Frontend server bilan `assets/idea-data.js` va `assets/idea-auth.js` orqali ishlaydi. `assets/idea-config.js` Supabase project URL va faqat ommaviy publishable keyni beradi; service-role/secret key brauzerga joylanmagan. Auth sahifasi va bosh sahifa Supabase JS v2 SDK ni yuklaydi va Auth adapterini ishga tushiradi.
 
-**Bu hujjat backendni yoqmaydi, akkaunt yaratmaydi va ma'lumot ko'chirmaydi.** Supabase URL, anon key, auth provider va tasdiqlangan loyiha hali ulanmagan.
+**Tekshiruv natijasi (2026-11-17):** Supabase loyihasi `hfxkiudvlmibpffrppzc` `ACTIVE_HEALTHY`; 7 ta public katalog view `security_invoker=true` va anon/authenticated SELECT ruxsatlariga ega; 20 ta `idea_lab_*` RPC funksiyasi `SECURITY INVOKER` va faqat authenticated roliga EXECUTE ruxsatiga ega. `auth.users`, `idea_app.profiles`, `idea_app.projects` va `idea_app.applications` hozircha bo‘sh. Shu sababli haqiqiy foydalanuvchi bilan kirish/yozish va ikki akkauntli RLS sinovi hali bajarilmagan.
+
+Bu hujjat backendni yoqmaydi, akkaunt yaratmaydi va ma'lumot ko'chirmaydi. Legacy localStorage ma'lumotlari avtomatik import qilinmaydi.
 
 ## 2. Ma'lumotlar manbalari
 
@@ -76,13 +78,17 @@ Machine qiymatlar inglizcha saqlanadi; UI o'zbekcha ko'rsatadi.
 | Application status update | Target owner | Ruxsatli status transition |
 | Application withdraw | Applicant | Faqat o'z arizasi |
 
-## 8. Qabul mezonlari
+## 8. Hozirgi holat va qabul mezonlari
 
-- [ ] Test Supabase loyihasi va egasi tasdiqlangan.
-- [ ] Zaxira nusxa va tiklash sinovi mavjud.
-- [ ] Schema va security migration staging'da qo'llangan.
-- [ ] Ikki test foydalanuvchi bilan RLS sinovlari o'tgan.
-- [ ] Ommaviy view'larda maxfiy ustun yo'q.
-- [ ] Frontend faqat anon/publishable key ishlatadi; service key yo'q.
-- [ ] Offline demo va real backend holatlari aniq ajratilgan.
-- [ ] Legacy import oldidan preview, backup, duplicate report va rollback mavjud.
+- [x] Supabase loyihasi mavjud va `ACTIVE_HEALTHY`.
+- [x] Frontendda public URL va publishable key konfiguratsiyasi mavjud; service-role key yo'q.
+- [x] Auth adapter va markaziy data gateway mavjud.
+- [x] Ommaviy katalog view'lari `security_invoker=true` bilan himoyalangan.
+- [x] Server RPC funksiyalari `SECURITY INVOKER`; anon EXECUTE ruxsati berilmagan.
+- [ ] Ikki alohida test foydalanuvchi bilan kirish, profil, loyiha, ariza va RLS izolyatsiyasi sinovi.
+- [ ] Real foydalanuvchi bilan CRUD amallarining mobil/desktop qabul sinovi.
+- [ ] Zaxira nusxa va tiklash sinovi.
+- [ ] `20261122_application_activity_notifications.sql` migrationini alohida ko‘rib chiqish va qo‘llash.
+- [ ] Legacy import oldidan preview, backup, duplicate report va rollback.
+
+`public.audit_logs` jadvalida RLS yoqilgan va policy yo‘q. Bu jadval hozircha client rollariga yopiq; audit yozuvlari uchun server-side yozish modeli alohida tekshirilmaguncha unga umumiy SELECT/INSERT policy qo‘shilmaydi.
