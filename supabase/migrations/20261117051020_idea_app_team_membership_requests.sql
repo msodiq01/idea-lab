@@ -6,6 +6,7 @@ begin;
 
 grant usage on schema idea_app to anon, authenticated;
 grant select on table idea_app.organizations to anon, authenticated;
+grant insert, update on table idea_app.organizations to authenticated;
 grant insert, update on table idea_app.organization_members to authenticated;
 
 drop policy if exists organization_members_insert_self_team_request on idea_app.organization_members;
