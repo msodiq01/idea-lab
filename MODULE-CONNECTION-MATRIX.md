@@ -43,7 +43,7 @@ Tekshiruv turi: GitHub main kodini va Supabase sxemasini o‘qib tekshirish. Bra
 - Frontend konfiguratsiyasida faqat Supabase public publishable key ishlatiladi; service-role yoki boshqa maxfiy kalit brauzerga joylashtirilmasligi shart.
 - Repo ichidagi kelajak migratsiyasi avtomatik qo‘llanmagan. DB o‘zgarishlari zaxira, staging tekshiruvi va alohida tasdiqsiz bajarilmaydi.
 - 2026-11-17: `idea_app_team_membership_requests` va `idea_app_organization_write_grants` migratsiyalari qo‘llandi. Jamoa a’zoligi uchun 3 ta SECURITY INVOKER RPC qo‘shildi; anon EXECUTE ruxsatisiz.
-- 2026-11-17: `idea_app_career_center`, `idea_app_closed_job_read_for_applicants` va `idea_app_job_organization_publish_guard` migratsiyalari qo‘llandi. `job_posts` / `job_applications` jadvallari, RLS siyosatlari, ommaviy `security_invoker` vakansiya view’i va 7 ta SECURITY INVOKER RPC qo‘shildi. Anon vakansiyalarni faqat ommaviy view orqali ko‘radi; arizalar jadvali va ariza RPC’lari anon uchun yopiq. Vakansiya joylash faqat egasi bo‘lgan, faol va ommaviy (team bo‘lmagan) tashkilotga ruxsat etiladi.
+- 2026-11-17: `idea_app_career_center`, `idea_app_closed_job_read_for_applicants`, `idea_app_job_organization_publish_guard` va `idea_app_job_column_grants` migratsiyalari qo‘llandi. `job_posts` / `job_applications` jadvallari, RLS siyosatlari, ommaviy `security_invoker` vakansiya view’i va 7 ta SECURITY INVOKER RPC qo‘shildi. Anon vakansiyalarni faqat ommaviy view orqali ko‘radi; arizalar jadvali va ariza RPC’lari anon uchun yopiq. Vakansiya joylash faqat egasi bo‘lgan, faol va ommaviy (team bo‘lmagan) tashkilotga ruxsat etiladi.
 
 ## Hozir ishlayotgan asosiy zanjir
 
