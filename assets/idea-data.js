@@ -347,6 +347,46 @@
     listMyTeamMemberships() {
       return runPublicCommand("idea_lab_list_my_team_memberships", {});
     },
+    listPublicJobPosts(options = {}) {
+      return queryView("idea_lab_public_job_directory", query => query
+        .order("published_at", { ascending: false })
+        .limit(limitValue(options.limit)));
+    },
+    createJobPost(input = {}) {
+      const types = ["full_time", "part_time", "remote", "internship", "freelance"];
+      if (!isUuid(input.organizationId) || !requiredText(input.title, 3, 100) ||
+          !requiredText(input.description, 10, 3000) || !requiredText(input.location, 2, 120) ||
+          (input.salary || "").length > 120 || !types.includes(input.employmentType)) {
+        return Promise.resolve(fail("INVALID_JOB_POST", "Vakansiya maydonlari noto‘g‘ri."));
+      }
+      return runPublicCommand("idea_lab_create_job_post", {
+        p_organization_id: input.organizationId, p_title: input.title.trim(),
+        p_description: input.description.trim(), p_salary_label: input.salary || "",
+        p_location_label: input.location.trim(), p_employment_type: input.employmentType
+      });
+    },
+    listMyJobPosts() {
+      return runPublicCommand("idea_lab_list_my_job_posts", {});
+    },
+    updateJobPostStatus(jobPostId, status) {
+      if (!isUuid(jobPostId) || !["published", "closed"].includes(status)) return Promise.resolve(fail("INVALID_JOB_STATUS", "Vakansiya holati noto‘g‘ri."));
+      return runPublicCommand("idea_lab_update_job_post_status", { p_job_post_id: jobPostId, p_status: status });
+    },
+    applyJobPost(jobPostId, message) {
+      if (!isUuid(jobPostId) || !requiredText(message, 10, 2000)) return Promise.resolve(fail("INVALID_JOB_APPLICATION", "Ariza matni 10–2000 belgidan iborat bo‘lishi kerak."));
+      return runPublicCommand("idea_lab_apply_job_post", { p_job_post_id: jobPostId, p_message: message.trim() });
+    },
+    listMyJobApplications() {
+      return runPublicCommand("idea_lab_list_my_job_applications", {});
+    },
+    listJobPostApplications(jobPostId) {
+      if (!isUuid(jobPostId)) return Promise.resolve(fail("INVALID_JOB_POST_ID", "Vakansiya identifikatori noto‘g‘ri."));
+      return runPublicCommand("idea_lab_list_job_post_applications", { p_job_post_id: jobPostId });
+    },
+    reviewJobApplication(applicationId, status) {
+      if (!isUuid(applicationId) || !["accepted", "declined"].includes(status)) return Promise.resolve(fail("INVALID_JOB_REVIEW", "Ariza qarori noto‘g‘ri."));
+      return runPublicCommand("idea_lab_review_job_application", { p_application_id: applicationId, p_status: status });
+    },
     createResourceOffer(input = {}) {
       if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(String(input.slug || "")) || !requiredText(input.title, 3, 160) ||
           !requiredText(input.category, 1, 40) || (input.description || "").length > 3000) {

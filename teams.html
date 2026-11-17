@@ -622,8 +622,10 @@ button, input, textarea, select {
                 <div class="form-grid">
 
                     <div class="field">
-                        <label>Korxona yoki ish beruvchi *</label>
-                        <input type="text" id="companyName" required maxlength="100">
+                        <label>Ish beruvchi tashkilot *</label>
+                        <select id="jobOrganization" required>
+                            <option value="">Tashkilotni tanlang</option>
+                        </select>
                     </div>
 
                     <div class="field">
@@ -643,10 +645,6 @@ button, input, textarea, select {
                                placeholder="Samarqand shahri">
                     </div>
 
-                    <div class="field">
-                        <label>Aloqa telefon raqami *</label>
-                        <input type="tel" id="employerPhone" required>
-                    </div>
 
                     <div class="field">
                         <label>Bandlik turi</label>
@@ -1424,6 +1422,7 @@ initializePage();
 
 </script>
     <script src="assets/idea-teams-server.js"></script>
+<script src="assets/idea-careers-server.js"></script>
 <script src="assets/idea-shell.js" defer></script>
 </body>
 </html>
