@@ -3,8 +3,7 @@ name: IDEA LAB automated tests
 on:
   push:
     branches:
-      - main
-      - feature/unified-applications-stage-2
+      - "**"
   pull_request:
     branches:
       - main
