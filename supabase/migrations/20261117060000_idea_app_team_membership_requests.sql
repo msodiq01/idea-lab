@@ -4,6 +4,8 @@
 
 begin;
 
+grant usage on schema idea_app to anon, authenticated;
+grant select on table idea_app.organizations to anon, authenticated;
 grant insert, update on table idea_app.organization_members to authenticated;
 
 drop policy if exists organization_members_insert_self_team_request on idea_app.organization_members;
@@ -59,6 +61,32 @@ begin
 end;
 $function$;
 
+create or replace function public.idea_lab_list_my_team_memberships()
+returns table (
+  membership_id uuid,
+  organization_id uuid,
+  team_name text,
+  team_description text,
+  membership_status text,
+  created_at timestamptz,
+  updated_at timestamptz
+)
+language sql
+stable
+security invoker
+set search_path = ''
+as $function$
+  select m.id, o.id, o.name, o.description, m.membership_status, m.created_at, m.updated_at
+  from idea_app.organization_members m
+  join idea_app.organizations o on o.id = m.organization_id
+  where m.user_id = auth.uid()
+    and o.organization_type = 'team'
+    and o.visibility = 'public'
+    and o.status = 'active'
+  order by m.created_at desc
+  limit 100;
+$function$;
+
 create or replace function public.idea_lab_review_team_membership(
   p_membership_id uuid, p_approve boolean
 )
@@ -91,7 +119,9 @@ $function$;
 
 revoke all on function public.idea_lab_request_team_membership(uuid) from public, anon;
 revoke all on function public.idea_lab_review_team_membership(uuid, boolean) from public, anon;
+revoke all on function public.idea_lab_list_my_team_memberships() from public, anon;
 grant execute on function public.idea_lab_request_team_membership(uuid) to authenticated;
 grant execute on function public.idea_lab_review_team_membership(uuid, boolean) to authenticated;
+grant execute on function public.idea_lab_list_my_team_memberships() to authenticated;
 
 commit;
