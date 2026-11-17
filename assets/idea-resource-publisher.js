@@ -46,7 +46,8 @@
   }
   $("serverResourceForm").addEventListener("submit", async event => {
     event.preventDefault();
-    const submit = event.currentTarget.querySelector("button[type=submit]");
+    const form = event.currentTarget;
+    const submit = form.querySelector("button[type=submit]");
     if (!await refreshAuth()) return;
     const title = $("srTitle").value.trim();
     const baseSlug = slugify(title);
@@ -69,7 +70,7 @@
       return;
     }
     const published = $("srPublish").checked;
-    event.currentTarget.reset();
+    form.reset();
     status.textContent = published ? "Resurs taklifi serverda saqlandi. Ommaviy katalog yangilanmoqda." : "Qoralama serverda saqlandi. Uni keyinroq tahrirlash mumkin.";
     if (published) {
       const count = document.getElementById("publicResourceCount");
