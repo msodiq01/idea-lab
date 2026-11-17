@@ -12,7 +12,8 @@
     updates: "idea_lab_public_project_updates",
     specialists: "idea_lab_public_specialist_directory",
     resources: "idea_lab_public_resource_catalogue",
-    partnerships: "idea_lab_public_partnership_directory"
+    partnerships: "idea_lab_public_partnership_directory",
+    teams: "idea_lab_public_organization_directory"
   });
   const DEFAULT_LIMIT = 20;
   const MAX_LIMIT = 50;
@@ -138,6 +139,12 @@
     },
     listPublicSpecialists(options = {}) {
       return queryView(VIEWS.specialists, query => query
+        .order("created_at", { ascending: false })
+        .limit(limitValue(options.limit)));
+    },
+    listPublicTeams(options = {}) {
+      return queryView(VIEWS.teams, query => query
+        .eq("organization_type", "team")
         .order("created_at", { ascending: false })
         .limit(limitValue(options.limit)));
     },
@@ -328,6 +335,14 @@
     acceptOrganizationInvite(membershipId) {
       if (!isUuid(membershipId)) return Promise.resolve(fail("INVALID_MEMBERSHIP_ID", "A’zolik identifikatori noto‘g‘ri."));
       return runPublicCommand("idea_lab_accept_organization_invite", { p_membership_id: membershipId });
+    },
+    requestTeamMembership(organizationId) {
+      if (!isUuid(organizationId)) return Promise.resolve(fail("INVALID_ORGANIZATION_ID", "Jamoa identifikatori noto‘g‘ri."));
+      return runPublicCommand("idea_lab_request_team_membership", { p_organization_id: organizationId });
+    },
+    reviewTeamMembership(membershipId, approve) {
+      if (!isUuid(membershipId) || typeof approve !== "boolean") return Promise.resolve(fail("INVALID_MEMBERSHIP_REVIEW", "A’zolik qarori noto‘g‘ri."));
+      return runPublicCommand("idea_lab_review_team_membership", { p_membership_id: membershipId, p_approve: approve });
     },
     createResourceOffer(input = {}) {
       if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(String(input.slug || "")) || !requiredText(input.title, 3, 160) ||
