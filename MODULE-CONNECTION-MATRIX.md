@@ -20,7 +20,7 @@ Tekshiruv turi: GitHub main kodini va Supabase sxemasini o‘qib tekshirish. Bra
 | Arizalar markazi | applications.html | **Qisman server.** Sahifa serverdagi application-center view’dan o‘qiydi; serverdagi holatni yangilash hozir faqat project/investment turidagi ayrim arizalar uchun. Boshqa turdagi arizalar va eski yozuvlar localStorage yo‘lidan kelishi mumkin. | Barcha ariza turlarini bitta server modeli/RPC’ga o‘tkazish → tomonlar bo‘yicha RLS → status tarixi → bildirishnoma |
 | Ochiq resurslar | resources.html | Ommaviy server katalogi o‘qish uchun; shaxsiy inventar va buyurtma oqimining bir qismi local/demo. | Resurs egasi → buyurtma → tasdiq → yetkazish/holat |
 | Investorlar | investors.html, investor-portfolio.html | Demo-only; haqiqiy sarmoya, to‘lov yoki pul o‘tkazmasi yo‘q. | Qonuniy va xavfsiz hamkorlik/tekshiruv oqimi alohida loyihalanadi |
-| Jamoalar va vakansiyalar | teams.html | **Demo/local.** Jamoa yaratish, ro‘yxat va qo‘shilish arizalari localStorage/legacy storage’da. Tekshiruvda idea_app sxemasida jamoalar uchun alohida server jadvali aniqlanmadi. | Avval jamoa va vakansiya ma’lumot modeli → egasi/ishtirokchi RLS → yaratish/tahrirlash → ariza → egasi qarori |
+| Jamoalar va vakansiyalar | teams.html | **Qisman server.** Jamoa katalogi, yaratish va a’zolik so‘rovlari `organizations` / `organization_members` hamda RLS/RPC orqali serverda. Vakansiyalar va ishga arizalar hali local/demo. Jamoa telefon/Telegram kontaktlari ommaviy katalogga yozilmaydi. | Vakansiyalar uchun alohida e’lon/ariza modeli → egasi/ishtirokchi RLS → server CRUD → ariza holati → bildirishnoma |
 | Mutaxassislar | specialists.html | **Qisman server.** Ommaviy katalog server view’dan o‘qiladi va kirgan foydalanuvchi profilini server RPC orqali saqlash yo‘li mavjud; backend ishlamasa local demo fallback bor. | Profilni yagona profil modeli bilan bog‘lash → qidiruv/filtr → loyiha taklifi va ariza |
 | Takliflar va xabarlar | offers.html | Demo/local; ishtirokchi doirasidagi server xabar almashinuvi tasdiqlanmagan. | E’lon → ariza → faqat ishtirokchilar uchun xabarlar → kelishuv holati |
 | Talab va taklif almashinuvi | exchange.html | Demo/local. | E’lon turi → egasi → ariza/so‘rov → buyurtma |
@@ -42,6 +42,7 @@ Tekshiruv turi: GitHub main kodini va Supabase sxemasini o‘qib tekshirish. Bra
 - public.audit_logs uchun RLS yoqilgan va policy yo‘q. Bu holatni ochiq policy bilan “tuzatish” mumkin emas; audit yozish modeli alohida ko‘rib chiqilishi kerak.
 - Frontend konfiguratsiyasida faqat Supabase public publishable key ishlatiladi; service-role yoki boshqa maxfiy kalit brauzerga joylashtirilmasligi shart.
 - Repo ichidagi kelajak migratsiyasi avtomatik qo‘llanmagan. DB o‘zgarishlari zaxira, staging tekshiruvi va alohida tasdiqsiz bajarilmaydi.
+- 2026-11-17: `idea_app_team_membership_requests` migratsiyasi qo‘llandi va migration history’da qayd etildi. Uchta SECURITY INVOKER RPC jamoaga so‘rov yuborish, foydalanuvchining o‘z so‘rovlarini ko‘rish va jamoa egasining so‘rovni ko‘rib chiqishi uchun qo‘shildi. Anon rolida ushbu RPC’larni bajarish ruxsati yo‘q.
 
 ## Hozir ishlayotgan asosiy zanjir
 
@@ -69,7 +70,7 @@ Bu zanjirning ayrim bosqichlari server bilan ishlaydi. Biroq foydalanuvchi akkau
 ## Keyingi texnik ustuvorlik
 
 1. Auth → loyiha → ariza oqimini foydalanuvchi yaratgan ikki test akkauntida tekshirish. Parol yoki maxfiy kalitlar hech kimga yuborilmaydi.
-2. Jamoalar uchun schema, owner/member modeli, RLS va RPC’larni loyihalash; shundan keyingina teams.html localStorage oqimini server adapteriga ko‘chirish.
+2. Vakansiyalar va ishga arizalar uchun alohida server modeli/RLS/RPC yaratish; teams.html dagi qolgan localStorage oqimlarini olib tashlash.
 3. Mutaxassislar profilidagi maydonlar va profil jadvali o‘rtasidagi yagona modelni mustahkamlash; local fallback faqat demo sifatida aniq ko‘rsatilsin.
 4. Arizalar markazidagi barcha turdagi yozuvlarni yagona server oqimiga o‘tkazish; serverda qo‘llanmagan status update’larni “server saqlandi” deb ko‘rsatmaslik.
 5. Takliflar/xabarlar va resurs buyurtmalarini ishtirokchi/egalik RLS bilan ulash.
