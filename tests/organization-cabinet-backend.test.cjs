@@ -22,8 +22,8 @@ test("organization read RPCs are SECURITY INVOKER and authenticated-only",()=>{
 test("organization data adapter exposes server reads and validated writes",()=>{
  for(const method of ["listMyOrganizations","listOrganizationMembers","createOrganization","updateOrganization","inviteOrganizationMember","acceptOrganizationInvite"])
   assert.ok(data.includes(method+"("),method+" adapter missing");
- assert.ok(data.includes('runPublicCommand("list_my_organizations"'));
- assert.ok(data.includes('runPublicCommand("list_organization_members"'));
+ assert.ok(data.includes('runPublicCommand("idea_lab_list_my_organizations"'));
+ assert.ok(data.includes('runPublicCommand("idea_lab_list_organization_members"'));
 });
 
 test("organization page loads Auth, data adapter and server cabinet",()=>{

@@ -15,7 +15,7 @@ test("module map distinguishes partial integration from demo-only modules", () =
 });
 
 test("main server-backed user journey is documented without claiming full platform rollout", () => {
-  assert.ok(matrix.includes("Akkaunt (Auth) → Profil → Loyiha yaratish"));
-  assert.ok(matrix.includes("ikki alohida test akkauntida RLS izolyatsiyasi"));
+  assert.ok(matrix.includes("Auth → loyiha yaratish → ommaviy loyiha katalogi → loyiha tafsiloti → ariza yuborish → arizalar markazi."));
+  assert.ok(matrix.includes("ikki alohida akkauntda RLS izolyatsiyasi"));
   assert.ok(matrix.includes("butun platforma to‘liq serverga ulangan deb hisoblanmaydi"));
 });

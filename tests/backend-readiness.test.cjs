@@ -24,8 +24,10 @@ test("Supabase README distinguishes the connected finance project from unapplied
   assert.match(supabaseReadme, /BACKEND-SECURITY-REVIEW\.md/);
 });
 
-test("Backend remains explicitly disabled until credentials and project are confirmed", () => {
-  assert.match(contract, /backend ulanmagan/);
+test("Backend contract accurately records the configured adapter and pending acceptance tests", () => {
+  assert.match(contract, /Supabase konfiguratsiyasi va asosiy server adapteri ulangan/);
+  assert.match(contract, /to‘liq qabul sinovlari hali yakunlanmagan/);
+  assert.match(contract, /service-role\/secret key brauzerga joylanmagan/);
   assert.match(env, /IDEA_LAB_BACKEND_MODE=offline-demo/);
   assert.match(env, /SUPABASE_URL=\s*$/m);
   assert.match(env, /SUPABASE_ANON_KEY=\s*$/m);
@@ -93,8 +95,8 @@ test("Two-account RLS plan and legacy mapping cover unresolved ownership", () =>
 });
 test("Live Supabase audit records the empty public view set and restricted trigger functions", () => {
   assert.match(review, /public.*SQL view topilmadi/);
-  assert.match(review, /faqat `auth\.users` insert triggeriga biriktirilgan/);
-  assert.match(review, /anon` va `authenticated` uchun EXECUTE huquqi yo‘q/);
+  assert.match(review, /faqat \`auth\.users\` insert triggeriga biriktirilgan/);
+  assert.match(review, /anon\` va \`authenticated\` uchun EXECUTE huquqi yo‘q/);
   assert.match(review, /search_path/);
 });
 
