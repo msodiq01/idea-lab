@@ -42,7 +42,7 @@ Tekshiruv turi: GitHub main kodini va Supabase sxemasini o‘qib tekshirish. Bra
 - public.audit_logs uchun RLS yoqilgan va policy yo‘q. Bu holatni ochiq policy bilan “tuzatish” mumkin emas; audit yozish modeli alohida ko‘rib chiqilishi kerak.
 - Frontend konfiguratsiyasida faqat Supabase public publishable key ishlatiladi; service-role yoki boshqa maxfiy kalit brauzerga joylashtirilmasligi shart.
 - Repo ichidagi kelajak migratsiyasi avtomatik qo‘llanmagan. DB o‘zgarishlari zaxira, staging tekshiruvi va alohida tasdiqsiz bajarilmaydi.
-- 2026-11-17: `idea_app_team_membership_requests` migratsiyasi qo‘llandi va migration history’da qayd etildi. Uchta SECURITY INVOKER RPC jamoaga so‘rov yuborish, foydalanuvchining o‘z so‘rovlarini ko‘rish va jamoa egasining so‘rovni ko‘rib chiqishi uchun qo‘shildi. Anon rolida ushbu RPC’larni bajarish ruxsati yo‘q.
+- 2026-11-17: `idea_app_team_membership_requests` va `idea_app_organization_write_grants` migratsiyalari qo‘llandi va migration history’da qayd etildi. Uchta SECURITY INVOKER RPC jamoaga so‘rov yuborish, foydalanuvchining o‘z so‘rovlarini ko‘rish va jamoa egasining so‘rovni ko‘rib chiqishi uchun qo‘shildi. Anon rolida ushbu RPC’larni bajarish ruxsati yo‘q. Tashkilot yaratish/tahrirlash uchun authenticated INSERT/UPDATE grantlari mavjud owner RLS siyosatlari bilan cheklangan.
 
 ## Hozir ishlayotgan asosiy zanjir
 
