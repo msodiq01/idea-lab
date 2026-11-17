@@ -7,7 +7,7 @@ Holat: Supabase konfiguratsiyasi va asosiy server adapteri ulangan; to‘liq qab
 
 Frontend server bilan `assets/idea-data.js` va `assets/idea-auth.js` orqali ishlaydi. `assets/idea-config.js` Supabase project URL va faqat ommaviy publishable keyni beradi; service-role/secret key brauzerga joylanmagan. Auth sahifasi va bosh sahifa Supabase JS v2 SDK ni yuklaydi va Auth adapterini ishga tushiradi.
 
-**Tekshiruv natijasi (2026-11-17):** Supabase loyihasi `hfxkiudvlmibpffrppzc` `ACTIVE_HEALTHY`; 7 ta public katalog view `security_invoker=true` va anon/authenticated SELECT ruxsatlariga ega; 20 ta `idea_lab_*` RPC funksiyasi `SECURITY INVOKER` va faqat authenticated roliga EXECUTE ruxsatiga ega. `auth.users`, `idea_app.profiles`, `idea_app.projects` va `idea_app.applications` hozircha bo‘sh. Shu sababli haqiqiy foydalanuvchi bilan kirish/yozish va ikki akkauntli RLS sinovi hali bajarilmagan.
+**Tekshiruv natijasi (2026-11-17):** Supabase loyihasi `hfxkiudvlmibpffrppzc` `ACTIVE_HEALTHY`; 8 ta public katalog view `security_invoker=true` va anon/authenticated SELECT ruxsatlariga ega; 30 ta `idea_lab_*` RPC funksiyasi `SECURITY INVOKER` va faqat authenticated roliga EXECUTE ruxsatiga ega. `auth.users`, `idea_app.profiles`, `idea_app.projects` va `idea_app.applications` hozircha bo‘sh. Shu sababli haqiqiy foydalanuvchi bilan kirish/yozish va ikki akkauntli RLS sinovi hali bajarilmagan.
 
 Bu hujjat backendni yoqmaydi, akkaunt yaratmaydi va ma'lumot ko'chirmaydi. Legacy localStorage ma'lumotlari avtomatik import qilinmaydi.
 
@@ -18,7 +18,7 @@ Bu hujjat backendni yoqmaydi, akkaunt yaratmaydi va ma'lumot ko'chirmaydi. Legac
 | Shaxs profili | `profiles` — faqat o'z profili |
 | Ommaviy loyihalar | `projects_public` |
 | Ommaviy jamoalar | `teams_public` |
-| Vakansiyalar | `job_posts_public` |
+| Vakansiyalar | `public.idea_lab_public_job_directory` (security_invoker) |
 | Mutaxassislar | `specialist_profiles_public` |
 | Takliflar | `offers_public` |
 | Investor katalogi | `investors_public` |
@@ -36,7 +36,7 @@ Frontenddagi 5 oqim dastlab alohida jadval bilan moslanadi:
 |---|---|---|
 | Investitsiya | `project_investment_applications` | `project_id` |
 | Jamoa | `team_applications` | `team_id` |
-| Ish | `job_applications` | `job_id` |
+| Ish | `idea_app.job_applications` | `job_post_id` |
 | Taklif | `offer_applications` | `offer_id` |
 | Resurs | `resource_orders` | `resource_id` |
 
@@ -54,7 +54,7 @@ Machine qiymatlar inglizcha saqlanadi; UI o'zbekcha ko'rsatadi.
 
 ## 5. Server-side ariza tarixi va bildirishnomalar
 
-`supabase/migrations/20261122_application_activity_notifications.sql` arizalar uchun server audit jadvali va triggerlarini tayyorlaydi. U investitsiya, jamoa, ish va taklif arizalarida yuborish/status o‘zgarishini qayd etadi. Yozuvni brauzer emas, DB trigger yaratadi; foydalanuvchi faqat ishtirokchi bo‘lgan arizalar tarixini o‘qiydi. Jadvalga client INSERT/UPDATE/DELETE berilmagan. Ushbu migration repository'da tayyorlangan, lekin Supabase loyihasiga qo‘llanmagan. Frontend hali `offline-demo` rejimida; real-time subscription va server adapter alohida integratsiya bosqichidir.
+`supabase/migrations/20261122_application_activity_notifications.sql` arizalar uchun server audit jadvali va triggerlarini tayyorlaydi. U investitsiya, jamoa va taklif arizalaridagi yuborish/status o‘zgarishlarini qayd etish uchun tayyorlangan. Bu migration hali Supabase loyihasiga qo‘llanmagan. Karyera markazi esa alohida `idea_app.job_posts` / `idea_app.job_applications` jadvallari va SECURITY INVOKER RPC’lari orqali ishlaydi; eski audit migrationi yangi ish arizalarini avtomatik qamrab olmaydi. Real-time subscription alohida bosqich.
 
 ## 6. Frontend data adapter talablari
 
@@ -85,8 +85,9 @@ Machine qiymatlar inglizcha saqlanadi; UI o'zbekcha ko'rsatadi.
 - [x] Auth adapter va markaziy data gateway mavjud.
 - [x] Ommaviy katalog view'lari `security_invoker=true` bilan himoyalangan.
 - [x] Server RPC funksiyalari `SECURITY INVOKER`; anon EXECUTE ruxsati berilmagan.
-- [ ] Ikki alohida test foydalanuvchi bilan kirish, profil, loyiha, ariza va RLS izolyatsiyasi sinovi.
+- [ ] Ikki alohida test foydalanuvchi bilan kirish, profil, loyiha, jamoa, vakansiya, ish arizasi va RLS izolyatsiyasi sinovi.
 - [ ] Real foydalanuvchi bilan CRUD amallarining mobil/desktop qabul sinovi.
+- [x] Karyera markazi uchun vakansiya va ish arizasi jadvallari, RLS, public invoker view va 7 ta authenticated RPC qo‘llandi; anon arizalarni o‘qiy olmaydi yoki yubora olmaydi.
 - [ ] Zaxira nusxa va tiklash sinovi.
 - [ ] `20261122_application_activity_notifications.sql` migrationini alohida ko‘rib chiqish va qo‘llash.
 - [ ] Legacy import oldidan preview, backup, duplicate report va rollback.
