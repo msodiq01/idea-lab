@@ -298,11 +298,11 @@
       });
     },
     listMyOrganizations() {
-      return runPublicCommand("list_my_organizations", {});
+      return runPublicCommand("idea_lab_list_my_organizations", {});
     },
     listOrganizationMembers(organizationId) {
       if (!isUuid(organizationId)) return Promise.resolve(fail("INVALID_ORGANIZATION_ID", "Tashkilot identifikatori noto‘g‘ri."));
-      return runPublicCommand("list_organization_members", { p_organization_id: organizationId });
+      return runPublicCommand("idea_lab_list_organization_members", { p_organization_id: organizationId });
     },
     createOrganization(input = {}) {
       if (!requiredText(input.name, 2, 120) || (input.description || "").length > 2400) return Promise.resolve(fail("INVALID_ORGANIZATION", "Tashkilot nomi yoki tavsifi noto‘g‘ri."));
