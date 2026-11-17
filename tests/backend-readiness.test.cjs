@@ -19,58 +19,58 @@ const supabaseReadme = read("supabase/README.md");
 
 test("Supabase README distinguishes the connected finance project from unapplied application schema", () => {
   assert.match(supabaseReadme, /Ulangan Supabase loyiha read-only audit uchun mavjud: ha/);
-  assert.match(supabaseReadme, /schema\\.sql jonli loyihaga qo‘llangan: yo‘q/);
-  assert.match(supabaseReadme, /9 jadvali alohida resurs\\/investitsiya poydevori/);
-  assert.match(supabaseReadme, /BACKEND-SECURITY-REVIEW\\.md/);
+  assert.match(supabaseReadme, /schema\.sql jonli loyihaga qo‘llangan: yo‘q/);
+  assert.match(supabaseReadme, /9 jadvali alohida resurs\/investitsiya poydevori/);
+  assert.match(supabaseReadme, /BACKEND-SECURITY-REVIEW\.md/);
 });
 
 test("Backend contract accurately records the configured adapter and pending acceptance tests", () => {
   assert.match(contract, /Supabase konfiguratsiyasi va asosiy server adapteri ulangan/);
   assert.match(contract, /to‘liq qabul sinovlari hali yakunlanmagan/);
-  assert.match(contract, /service-role\\/secret key brauzerga joylanmagan/);
+  assert.match(contract, /service-role\/secret key brauzerga joylanmagan/);
   assert.match(env, /IDEA_LAB_BACKEND_MODE=offline-demo/);
-  assert.match(env, /SUPABASE_URL=\\s*$/m);
-  assert.match(env, /SUPABASE_ANON_KEY=\\s*$/m);
+  assert.match(env, /SUPABASE_URL=\s*$/m);
+  assert.match(env, /SUPABASE_ANON_KEY=\s*$/m);
 });
 test("Public directory contract uses the restricted views", () => {
   for (const view of ["projects_public","teams_public","job_posts_public","specialist_profiles_public","offers_public","investors_public","resources_public"]) {
     assert.ok(migration.includes("public."+view), view);
   }
-  assert.match(migration, /grant select on public\\.projects_public to authenticated/i);
-  assert.match(migration, /revoke all on public\\.projects_public from anon/i);
+  assert.match(migration, /grant select on public\.projects_public to authenticated/i);
+  assert.match(migration, /revoke all on public\.projects_public from anon/i);
 });
 test("Public projections do not select private contact and resume fields", () => {
-  const viewBlocks = migration.split(/create or replace view public\\./i).slice(1);
+  const viewBlocks = migration.split(/create or replace view public\./i).slice(1);
   assert.equal(viewBlocks.length, 7);
   for (const block of viewBlocks) {
-    const select = block.split(/from public\\./i)[0];
+    const select = block.split(/from public\./i)[0];
     for (const privateField of ["phone","email","telegram","resume_path","owner_id"]) {
-      assert.doesNotMatch(select, new RegExp("\\\\b"+privateField+"\\\\b","i"), privateField);
+      assert.doesNotMatch(select, new RegExp("\\b"+privateField+"\\b","i"), privateField);
     }
   }
 });
 test("Role escalation guard is present in the security migration", () => {
   assert.match(migration, /prevent_self_role_escalation/);
-  assert.match(migration, /new\\.roles is distinct from old\\.roles/);
+  assert.match(migration, /new\.roles is distinct from old\.roles/);
 });
 test("Applications are tied to the authenticated applicant and active target", () => {
   for (const table of ["project_investment_applications","team_applications","job_applications","offer_applications","resource_orders"]) {
     assert.ok(migration.includes("on public."+table), table);
   }
-  assert.match(migration, /investor_user_id = auth\\.uid\\(\\)/);
-  assert.match(migration, /applicant_id = auth\\.uid\\(\\)/);
-  assert.match(migration, /requester_id = auth\\.uid\\(\\)/);
-  assert.match(migration, /j\\.status = 'active'/);
-  assert.match(migration, /o\\.status = 'active'/);
+  assert.match(migration, /investor_user_id = auth\.uid\(\)/);
+  assert.match(migration, /applicant_id = auth\.uid\(\)/);
+  assert.match(migration, /requester_id = auth\.uid\(\)/);
+  assert.match(migration, /j\.status = 'active'/);
+  assert.match(migration, /o\.status = 'active'/);
 });
 test("Project task identity guard protects project and creator linkage", () => {
   assert.match(migration, /guard_project_task_identity/);
-  assert.match(migration, /new\\.project_id is distinct from old\\.project_id/);
-  assert.match(migration, /new\\.created_by is distinct from old\\.created_by/);
+  assert.match(migration, /new\.project_id is distinct from old\.project_id/);
+  assert.match(migration, /new\.created_by is distinct from old\.created_by/);
 });
 test("Base schema enables RLS on core account and application tables", () => {
   for (const table of ["profiles","projects","teams","job_posts","offer_applications","resource_orders","project_tasks"]) {
-    assert.match(schema, new RegExp("alter table public\\\\."+table+" enable row level security","i"), table);
+    assert.match(schema, new RegExp("alter table public\\."+table+" enable row level security","i"), table);
   }
 });
 test("Migration guide requires staging, backup, and forbids premature import", () => {
@@ -81,11 +81,11 @@ test("Migration guide requires staging, backup, and forbids premature import", (
 });
 test("Security verification SQL is read-only and checks RLS, views, grants, and policies", () => {
   assert.match(audit, /pg_class/);
-  assert.match(audit, /information_schema\\.columns/);
+  assert.match(audit, /information_schema\.columns/);
   assert.match(audit, /role_table_grants/);
   assert.match(audit, /pg_policies/);
   assert.match(audit, /pg_views/);
-  assert.doesNotMatch(audit, /^\\s*(insert|update|delete|drop|alter|create)\\b/im);
+  assert.doesNotMatch(audit, /^\s*(insert|update|delete|drop|alter|create)\b/im);
 });
 test("Two-account RLS plan and legacy mapping cover unresolved ownership", () => {
   for (const id of ["RLS-01","RLS-08","RLS-09","RLS-14","RLS-15"]) assert.ok(rlsPlan.includes(id), id);
@@ -95,24 +95,24 @@ test("Two-account RLS plan and legacy mapping cover unresolved ownership", () =>
 });
 test("Live Supabase audit records the empty public view set and restricted trigger functions", () => {
   assert.match(review, /public.*SQL view topilmadi/);
-  assert.match(review, /faqat `auth\\.users` insert triggeriga biriktirilgan/);
-  assert.match(review, /anon` va `authenticated` uchun EXECUTE huquqi yo‘q/);
+  assert.match(review, /faqat \`auth\.users\` insert triggeriga biriktirilgan/);
+  assert.match(review, /anon\` va \`authenticated\` uchun EXECUTE huquqi yo‘q/);
   assert.match(review, /search_path/);
 });
 
 test("Live Supabase audit distinguishes the finance schema from repository application migrations", () => {
   assert.match(review, /profiles.*user_roles.*resource_types.*resources.*resource_accounts.*investments.*money_transfers.*transfer_allocations.*audit_logs/);
-  assert.match(review, /client INSERT\\/UPDATE\\/DELETE grantlari berilmagan/);
+  assert.match(review, /client INSERT\/UPDATE\/DELETE grantlari berilmagan/);
   assert.match(review, /faqat o‘z foydalanuvchisiga SELECT bilan ochiq/);
   assert.match(review, /20261116.*20261122/s);
-  assert.match(review, /kengroq loyiha\\/jamoa\\/vakansiya modeli jonli 9-jadval moliyaviy-resurs sxemasiga hali qo‘shilmagan/);
+  assert.match(review, /kengroq loyiha\/jamoa\/vakansiya modeli jonli 9-jadval moliyaviy-resurs sxemasiga hali qo‘shilmagan/);
 });
 
 test("Finance audit flags investor destination-account visibility as an unresolved RLS gap", () => {
   assert.match(review, /Investorning o‘z investments yozuvini o‘qish policy'si mavjud/);
   assert.match(review, /Investor o‘z investitsiyasiga tegishli manzil hisobini hozir bevosita o‘qiy olmaydi/);
   assert.match(review, /faqat o‘z investitsiyasiga bog‘langan, faol va aynan tanlangan destination account/);
-  assert.match(review, /masked_identifier\\/display_label/);
+  assert.match(review, /masked_identifier\/display_label/);
   assert.match(review, /Hozir bu ruxsat qo‘shilmagan/);
 });
 
@@ -127,7 +127,7 @@ test("Live Supabase audit documents the read-only state and remaining Auth setup
 });
 
 test("Security review states what remains unverified", () => {
-  assert.match(review, /statik kod ko'rigi \\+ jonli read-only audit/);
-  assert.match(review, /jonli audit faqat metadata\\/read-only so'rovlar bilan cheklangan/i);
+  assert.match(review, /statik kod ko'rigi \+ jonli read-only audit/);
+  assert.match(review, /jonli audit faqat metadata\/read-only so'rovlar bilan cheklangan/i);
   assert.match(review, /penetration test emas/);
 });
