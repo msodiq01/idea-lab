@@ -90,3 +90,13 @@ test("Auth page hides phone OTP while the Supabase phone provider is not enabled
   assert.match(html, /const phoneTab=document\.querySelector\('\[data-channel="phone"\]'\);if\(phoneTab\)phoneTab\.hidden=true/);
   assert.match(html, /\.tab\[hidden\]\{display:none!important\}/);
 });
+
+test("Auth provider guidance is domain-agnostic and reused for login, signup, reset and phone errors", () => {
+  assert.match(html, /function formatAuthError\\(error\\)/);
+  assert.match(html, /jo‘natuvchi domeni va SMTP\\/API sozlamalarini tekshirishi kerak/);
+  assert.doesNotMatch(html, /idealab\\.uz|Resend’da/);
+  assert.match(html, /auth\\.signIn\\([\\s\\S]*?formatAuthError\\(result\\.error\\)/);
+  assert.match(html, /auth\\.signUp\\([\\s\\S]*?formatAuthError\\(result\\.error\\)/);
+  assert.match(html, /auth\\.resetPassword\\([\\s\\S]*?formatAuthError\\(result\\.error\\)/);
+  assert.match(html, /auth\\.sendPhoneSignupOtp\\(phone\\)[\\s\\S]*?formatAuthError\\(result\\.error\\)/);
+});
