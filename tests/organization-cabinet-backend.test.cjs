@@ -11,10 +11,10 @@ const ui=fs.readFileSync(path.join(root,"assets/idea-organizations-server.js"),"
 
 test("organization read RPCs are SECURITY INVOKER and authenticated-only",()=>{
  for(const name of ["idea_lab_list_my_organizations","idea_lab_list_organization_members"]){
-  assert.match(migration,new RegExp("create\\\\s+or\\\\s+replace\\\\s+function\\\\s+public\\\\."+name+"\\\\b","i"));
-  assert.match(migration,new RegExp("function\\\\s+public\\\\."+name+"[\\\\s\\\\S]*?security\\\\s+invoker","i"));
-  assert.match(migration,new RegExp("revoke\\\\s+all\\\\s+on\\\\s+function\\\\s+public\\\\."+name+"[\\\\s\\\\S]*?from\\\\s+public,\\\\s*anon","i"));
-  assert.match(migration,new RegExp("grant\\\\s+execute\\\\s+on\\\\s+function\\\\s+public\\\\."+name+"[\\\\s\\\\S]*?to\\\\s+authenticated","i"));
+  assert.match(migration,new RegExp("create\\s+or\\s+replace\\s+function\\s+public\\."+name+"\\b","i"));
+  assert.match(migration,new RegExp("function\\s+public\\."+name+"[\\s\\S]*?security\\s+invoker","i"));
+  assert.match(migration,new RegExp("revoke\\s+all\\s+on\\s+function\\s+public\\."+name+"[\\s\\S]*?from\\s+public,\\s*anon","i"));
+  assert.match(migration,new RegExp("grant\\s+execute\\s+on\\s+function\\s+public\\."+name+"[\\s\\S]*?to\\s+authenticated","i"));
  }
  assert.equal(migration.toLowerCase().includes("security definer"),false);
 });
@@ -31,5 +31,5 @@ test("organization page loads Auth, data adapter and server cabinet",()=>{
  assert.ok(page.indexOf('src="assets/idea-data.js"')<page.indexOf('src="assets/idea-organizations-server.js"'));
  for(const needle of ["auth.configure(","data.listMyOrganizations(","data.createOrganization(","data.updateOrganization(","data.inviteOrganizationMember(","data.listOrganizationMembers(","HTTPS bilan boshlanishi kerak"])
   assert.ok(ui.includes(needle),needle+" missing");
- assert.equal(/localStorage|IDEALAB\\.store/.test(ui),false);
+ assert.equal(/localStorage|IDEALAB\.store/.test(ui),false);
 });
