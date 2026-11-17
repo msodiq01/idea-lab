@@ -12,6 +12,9 @@
   let userId=null,jobs=[],ownedJobs=[],selectedJob=null;
   const section=$("career-section"),jobList=$("jobList"),form=$("jobForm");
   if(!section||!jobList||!form)return;
+  jobList.replaceChildren();
+  const legacyEmployerPanel=$("employerApplications")?.closest(".section");
+  if(legacyEmployerPanel)legacyEmployerPanel.hidden=true;
 
   const notice=document.createElement("p");
   notice.className="notice";
@@ -62,7 +65,6 @@
   }
   function updateCounts(){
     if($("jobCount"))$("jobCount").textContent=String(jobs.length);
-    if($("jobApplicationCount"))$("jobApplicationCount").textContent=String(ownedJobs.reduce((n,x)=>n+Number(x.application_count||0),0));
   }
   function renderJobs(){
     jobList.replaceChildren();
@@ -108,9 +110,10 @@
   }
   async function loadMyApplications(){
     const box=$("ilMyJobApplications");box.replaceChildren();
-    if(!userId){empty(box,"Arizalaringizni ko‘rish uchun akkauntga kiring.");return;}
+    if(!userId){if($("jobApplicationCount"))$("jobApplicationCount").textContent="0";empty(box,"Arizalaringizni ko‘rish uchun akkauntga kiring.");return;}
     const r=await data.listMyJobApplications();
-    if(!r.ok){empty(box,errorText(r));return;}
+    if(!r.ok){if($("jobApplicationCount"))$("jobApplicationCount").textContent="0";empty(box,errorText(r));return;}
+    if($("jobApplicationCount"))$("jobApplicationCount").textContent=String((r.data||[]).length);
     if(!r.data?.length){empty(box,"Hozircha ish vakansiyalariga ariza yubormagansiz.");return;}
     r.data.forEach(item=>{
       const node=card(item.job_title,[item.company_name,"Holat: "+(statusLabels[item.status]||item.status),"Yuborilgan: "+new Date(item.submitted_at).toLocaleString("uz-UZ")]);
