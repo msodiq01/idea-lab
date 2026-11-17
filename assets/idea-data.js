@@ -344,6 +344,9 @@
       if (!isUuid(membershipId) || typeof approve !== "boolean") return Promise.resolve(fail("INVALID_MEMBERSHIP_REVIEW", "A’zolik qarori noto‘g‘ri."));
       return runPublicCommand("idea_lab_review_team_membership", { p_membership_id: membershipId, p_approve: approve });
     },
+    listMyTeamMemberships() {
+      return runPublicCommand("idea_lab_list_my_team_memberships", {});
+    },
     createResourceOffer(input = {}) {
       if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(String(input.slug || "")) || !requiredText(input.title, 3, 160) ||
           !requiredText(input.category, 1, 40) || (input.description || "").length > 3000) {
