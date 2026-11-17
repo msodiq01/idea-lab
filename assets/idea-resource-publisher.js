@@ -49,7 +49,8 @@
     const submit = event.currentTarget.querySelector("button[type=submit]");
     if (!await refreshAuth()) return;
     const title = $("srTitle").value.trim();
-    const slug = slugify(title);
+    const baseSlug = slugify(title);
+    const slug = baseSlug ? (baseSlug.slice(0, 78) + "-" + Date.now().toString(36)) : "";
     if (slug.length < 3) { status.textContent = "Nomdan to‘g‘ri e’lon manzili yasab bo‘lmadi."; return; }
     submit.disabled = true;
     status.textContent = "Serverga saqlanmoqda…";
