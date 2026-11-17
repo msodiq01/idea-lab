@@ -88,7 +88,6 @@ Machine qiymatlar inglizcha saqlanadi; UI o'zbekcha ko'rsatadi.
 - [ ] Ikki alohida test foydalanuvchi bilan kirish, profil, loyiha, jamoa, vakansiya, ish arizasi va RLS izolyatsiyasi sinovi.
 - [ ] Real foydalanuvchi bilan CRUD amallarining mobil/desktop qabul sinovi.
 - [x] Karyera markazi uchun vakansiya va ish arizasi jadvallari, RLS, public invoker view va 7 ta authenticated RPC qo‘llandi; anon arizalarni o‘qiy olmaydi yoki yubora olmaydi. Vakansiya egasining user ID ustuni anon SELECT huquqiga ega emas.
-- [x] Karyera markazi uchun vakansiya va ish arizasi jadvallari, RLS, public invoker view va 7 ta authenticated RPC qo‘llandi; anon arizalarni o‘qiy olmaydi yoki yubora olmaydi.
 - [ ] Zaxira nusxa va tiklash sinovi.
 - [ ] `20261122_application_activity_notifications.sql` migrationini alohida ko‘rib chiqish va qo‘llash.
 - [ ] Legacy import oldidan preview, backup, duplicate report va rollback.
