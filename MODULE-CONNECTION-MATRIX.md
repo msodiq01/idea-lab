@@ -1,64 +1,77 @@
 # IDEA LAB — modul va ma’lumotlar zanjiri xaritasi
 
-Tekshiruv sanasi: 2026-11-16
+Tekshiruv sanasi: 2026-11-17
 Kod bazasi: msodiq01/idea-lab
-Asos: fix/internal-dashboard-live-data ustidagi integratsiya va dizayn ishlari.
+Tekshiruv turi: GitHub main kodini va Supabase sxemasini o‘qib tekshirish. Brauzerda end-to-end sinov hali bajarilmagan.
 
 ## Holatlarni qanday tushunish kerak?
 
-- **Server bilan ishlaydi** — sahifa tasdiqlangan Supabase Auth / xavfsiz view / RPC oqimidan foydalanadi.
-- **Qisman server** — faqat ko‘rsatilgan qismi serverga ulangan; qolgan amallar mahalliy.
+- **Server bilan ishlaydi** — tegishli oqim Auth, xavfsiz view yoki RPC orqali serverga yozadi/o‘qiydi; alohida qabul sinovi baribir talab qilinadi.
+- **Qisman server** — faqat aniq ko‘rsatilgan amallar serverda; qolgan amallar mahalliy.
 - **Demo / localStorage** — yozuvlar shu brauzerda qoladi; boshqa foydalanuvchi yoki qurilmaga avtomatik uzatilmaydi.
 - **Demo-only** — haqiqiy moliyaviy, investitsion yoki tashqi operatsiya bajarilmaydi.
 
 ## Modul holatlari
 
-| Modul | Sahifa(lar) | Hozirgi holat | Keyingi ulanish zanjiri |
+| Modul | Sahifa(lar) | 2026-11-17 kod tekshiruvidagi holat | Keyingi ulanish zanjiri |
 |---|---|---|---|
-| Identifikatsiya | auth.html, profile.html | Auth sessiyasi va profil user-metadata sinxroni mavjud; avatar local | Auth UID → profil → tashkilot a’zoligi → ruxsatlar |
-| Loyihalar | index.html, projects.html, project-detail.html, project-workspace.html | Yaratish, ommaviy katalog, tafsilot va ayrim a’zolik amallari server adapter/RPC orqali | Auth egasi → loyiha → katalog → tafsilot → jamoa/a’zolar → yangilanishlar |
-| Arizalar markazi | applications.html | Ishtirokchi doirasidagi server view va mavjud RPC oqimlari | Arizachi → ariza → maqsad egasi → status o‘zgarishi → audit/bildirishnoma |
-| Ochiq resurslar | resources.html | Ommaviy server katalogi faqat o‘qish uchun; shaxsiy inventar local | Resurs → egasi → buyurtma → tasdiq → yetkazish/holat |
-| Investorlar | investors.html, investor-portfolio.html | Demo-only; haqiqiy sarmoya, to‘lov yoki pul o‘tkazmasi yo‘q | Faqat qonuniy va xavfsiz hamkorlik/tekshiruv oqimi alohida loyihalanadi |
-| Jamoalar va vakansiyalar | teams.html | Demo/local | Auth egasi → jamoa → vakansiya → ariza → egasi qarori |
-| Mutaxassislar | specialists.html | Demo/local | Profil → ko‘nikma → qidiruv/moslashtirish → loyiha taklifi |
-| Takliflar va xabarlar | offers.html | Demo/local | E’lon → ariza → faqat ishtirokchilar uchun xabarlar → kelishuv holati |
-| Talab va taklif almashinuvi | exchange.html | Demo/local | E’lon turi → egasi → ariza/so‘rov → buyurtma |
-| Marketplace | marketplace.html | Cheklangan demo; to‘liq savdo/order tizimi emas | Sotuvchi → mahsulot/xizmat → narx → buyurtma → yetkazish |
-| Moliya va xarajatlar | finance.html, project-expenses.html | Demo/local; bank yoki to‘lov provayderi ulanmagan | Loyiha → xarajat hujjati → tasdiq → buxgalteriya integratsiyasi |
-| Analitika | analytics.html, dashboard.html | Dashboardda ayrim server ma’lumotlari; boshqa ko‘rsatkichlar cheklangan/demo | Faqat serverdan tasdiqlangan ma’lumot → metrika → hisobot |
-| Bildirishnoma va faoliyat | notifications.html, activity.html | Demo/local; real-time server xabarlari tasdiqlanmagan | Server hodisasi → foydalanuvchi → ruxsatli bildirishnoma → o‘qildi holati |
-| Tashkilotlar va ruxsatlar | organizations.html, access.html, management.html | Demo/local; haqiqiy RBAC emas | Auth UID → tashkilot a’zoligi → server roli → ruxsat tekshiruvi |
-| Yetkazib beruvchi tekshiruvi | suppliers.html, supplier-verification.html, supplier-reviewer.html, supplier-verification-admin.html | Demo/local | Yetkazib beruvchi → hujjat → tekshiruvchi → qaror → audit |
-| Zaxira va to‘plamlar | backup.html, collection.html | Brauzer darajasidagi prototip | Foydalanuvchi roziligi → eksport/zaxira → saqlash siyosati → tiklash sinovi |
+| Identifikatsiya | auth.html, profile.html | Supabase Auth konfiguratsiyasi va sessiya oqimi mavjud; ayrim profil ko‘rsatkichlari user-metadata orqali, avatar local. Real signup/login brauzer sinovi ochiq. | Auth UID → profil jadvali → tashkilot a’zoligi → server ruxsatlari |
+| Loyihalar | index.html, projects.html, project-detail.html, project-workspace.html | Yaratish, ommaviy katalog, tafsilot va ayrim a’zolik amallari data adapter/RPC orqali. Ikki akkauntli RLS sinovi bajarilmagan. | Auth egasi → loyiha → katalog → tafsilot → jamoa/a’zolar → yangilanishlar |
+| Arizalar markazi | applications.html | **Qisman server.** Sahifa serverdagi application-center view’dan o‘qiydi; serverdagi holatni yangilash hozir faqat project/investment turidagi ayrim arizalar uchun. Boshqa turdagi arizalar va eski yozuvlar localStorage yo‘lidan kelishi mumkin. | Barcha ariza turlarini bitta server modeli/RPC’ga o‘tkazish → tomonlar bo‘yicha RLS → status tarixi → bildirishnoma |
+| Ochiq resurslar | resources.html | Ommaviy server katalogi o‘qish uchun; shaxsiy inventar va buyurtma oqimining bir qismi local/demo. | Resurs egasi → buyurtma → tasdiq → yetkazish/holat |
+| Investorlar | investors.html, investor-portfolio.html | Demo-only; haqiqiy sarmoya, to‘lov yoki pul o‘tkazmasi yo‘q. | Qonuniy va xavfsiz hamkorlik/tekshiruv oqimi alohida loyihalanadi |
+| Jamoalar va vakansiyalar | teams.html | **Demo/local.** Jamoa yaratish, ro‘yxat va qo‘shilish arizalari localStorage/legacy storage’da. Tekshiruvda idea_app sxemasida jamoalar uchun alohida server jadvali aniqlanmadi. | Avval jamoa va vakansiya ma’lumot modeli → egasi/ishtirokchi RLS → yaratish/tahrirlash → ariza → egasi qarori |
+| Mutaxassislar | specialists.html | **Qisman server.** Ommaviy katalog server view’dan o‘qiladi va kirgan foydalanuvchi profilini server RPC orqali saqlash yo‘li mavjud; backend ishlamasa local demo fallback bor. | Profilni yagona profil modeli bilan bog‘lash → qidiruv/filtr → loyiha taklifi va ariza |
+| Takliflar va xabarlar | offers.html | Demo/local; ishtirokchi doirasidagi server xabar almashinuvi tasdiqlanmagan. | E’lon → ariza → faqat ishtirokchilar uchun xabarlar → kelishuv holati |
+| Talab va taklif almashinuvi | exchange.html | Demo/local. | E’lon turi → egasi → ariza/so‘rov → buyurtma |
+| Marketplace | marketplace.html | Cheklangan demo; to‘liq savdo/order tizimi emas. | Sotuvchi → mahsulot/xizmat → narx → buyurtma → yetkazish |
+| Moliya va xarajatlar | finance.html, project-expenses.html | Demo/local; bank yoki to‘lov provayderi ulanmagan. | Loyiha → xarajat hujjati → tasdiq → buxgalteriya integratsiyasi |
+| Analitika | analytics.html, dashboard.html | Dashboardda ayrim server ma’lumotlari; boshqa ko‘rsatkichlar cheklangan/demo. | Faqat serverdan tasdiqlangan ma’lumot → metrika → hisobot |
+| Bildirishnoma va faoliyat | notifications.html, activity.html | Demo/local; real-time server xabarlari tasdiqlanmagan. | Server hodisasi → foydalanuvchi → ruxsatli bildirishnoma → o‘qildi holati |
+| Tashkilotlar va ruxsatlar | organizations.html, access.html, management.html | Demo/local; haqiqiy RBAC emas. | Auth UID → tashkilot a’zoligi → server roli → ruxsat tekshiruvi |
+| Yetkazib beruvchi tekshiruvi | suppliers.html, supplier-verification.html, supplier-reviewer.html, supplier-verification-admin.html | Demo/local. | Yetkazib beruvchi → hujjat → tekshiruvchi → qaror → audit |
+| Zaxira va to‘plamlar | backup.html, collection.html | Brauzer darajasidagi prototip. | Foydalanuvchi roziligi → eksport/zaxira → saqlash siyosati → tiklash sinovi |
+
+## Tasdiqlangan backend kuzatuvlari
+
+- Supabase loyihasi tekshiruv vaqtida faol/healthy holatda.
+- Public kataloglar uchun 7 ta idea_lab_public_* view mavjud; tekshiruvda security_invoker=true va anon/authenticated uchun SELECT ruxsati tasdiqlangan.
+- Public RPC qatlamida 20 ta idea_lab_* funksiya tekshirilgan; ular SECURITY INVOKER sifatida sozlangan va authenticated roliga EXECUTE berilgan, anon roliga emas.
+- idea_app.specialist_profiles, idea_app.projects, idea_app.applications va idea_app.profiles jadvallari mavjud. Tekshiruvda idea_app.teams jadvali topilmadi.
+- Hozirgi hisobda auth.users, idea_app.profiles, idea_app.projects va idea_app.applications jadvallarida yozuvlar soni 0. Shu sababli real foydalanuvchilar o‘rtasidagi ma’lumot izolyatsiyasi hali amalda tasdiqlanmagan.
+- public.audit_logs uchun RLS yoqilgan va policy yo‘q. Bu holatni ochiq policy bilan “tuzatish” mumkin emas; audit yozish modeli alohida ko‘rib chiqilishi kerak.
+- Frontend konfiguratsiyasida faqat Supabase public publishable key ishlatiladi; service-role yoki boshqa maxfiy kalit brauzerga joylashtirilmasligi shart.
+- Repo ichidagi kelajak migratsiyasi avtomatik qo‘llanmagan. DB o‘zgarishlari zaxira, staging tekshiruvi va alohida tasdiqsiz bajarilmaydi.
 
 ## Hozir ishlayotgan asosiy zanjir
 
-Akkaunt (Auth) → Profil → Loyiha yaratish → Ommaviy loyiha katalogi → Loyiha tafsiloti → Ariza yuborish → Arizalar markazi.
+Auth → loyiha yaratish → ommaviy loyiha katalogi → loyiha tafsiloti → ariza yuborish → arizalar markazi.
 
-Bu zanjirning ayrim bosqichlari server bilan ishlaydi. Biroq ikki alohida test akkauntida RLS izolyatsiyasi va barcha rol/egalik ssenariylari hali qabul sinovidan o‘tmagan. Shuning uchun butun platforma to‘liq serverga ulangan deb hisoblanmaydi.
+Bu zanjirning ayrim bosqichlari server bilan ishlaydi. Biroq foydalanuvchi akkauntlari yo‘qligi sababli ikki alohida akkauntda RLS izolyatsiyasi, rol/egalik ssenariylari va brauzer oqimi qabul sinovidan o‘tmagan. Shuning uchun butun platforma to‘liq serverga ulangan deb hisoblanmaydi.
 
 ## Dizayn va navigatsiya
 
-- assets/idea-shell.css barcha asosiy sahifalarda umumiy dizayn qatlami sifatida ishlatiladi.
-- assets/idea-shell.js umumiy navigatsiya, kabinet havolasi va sahifa kontekstini beradi.
+- assets/idea-shell.css umumiy dizayn qatlamini beradi.
+- assets/idea-shell.js umumiy navigatsiya, kabinet havolasi va sahifa kontekstini boshqaradi.
 - auth.html alohida kirish sahifasi bo‘lib, unda takroriy asosiy navigatsiya ko‘rsatilmaydi.
-- Premium vizual qatlam ranglar, tipografika, hero, kartalar, formalar, jadvallar va mobil ko‘rinishni bir xil tizimga keltiradi.
-- Yuqori paneldagi holat belgisi server konfiguratsiyasi borligini bildiradi; “qisman integratsiya” yozuvi barcha modullar serverda ishlaydi degani emas.
+- Umumiy vizual qatlam ranglar, tipografika, hero, kartalar, formalar, jadvallar va mobil ko‘rinishni bir xil tizimga keltiradi.
+- Yuqori paneldagi backend belgisi faqat konfiguratsiya borligini ko‘rsatishi mumkin; bu barcha modullar serverda ishlashini anglatmaydi.
 
 ## Har bir modul uchun yakuniy qabul mezonlari
 
-1. Kirish huquqi va ma’lumot egasi serverda aniqlanadi.
-2. CRUD amallari serverga saqlanadi; brauzer yuborgan user_id egani belgilamaydi.
+1. Kirish huquqi va ma’lumot egasi serverda aniqlanadi; brauzer yuborgan user_id egani belgilamaydi.
+2. CRUD amallari serverga saqlanadi yoki local/demo ekani foydalanuvchiga ochiq ko‘rsatiladi.
 3. Loading, bo‘sh natija, xato va muvaffaqiyat holatlari mavjud.
 4. Boshqa foydalanuvchi ma’lumotini ko‘rish/o‘zgartirishga urinish RLS bilan to‘siladi.
 5. Desktop va mobil brauzerda asosiy foydalanuvchi oqimi sinovdan o‘tadi.
 6. Avtomatik testlar va kamida ikki akkauntli izolyatsiya sinovi o‘tadi.
 
-## Keyingi ustuvorlik
+## Keyingi texnik ustuvorlik
 
-1. Hozirgi Auth → loyiha → ariza zanjirini ikki akkaunt bilan to‘liq tekshirish.
-2. Jamoa/vakansiya/mutaxassis modullarini bitta identifikatsiya va ariza modeliga ulash.
-3. Takliflar/xabarlar va resurs buyurtmalarini ishtirokchi/egalik RLS bilan ulash.
-4. Bildirishnoma va faoliyatni server hodisalari bilan bog‘lash.
-5. Moliya, marketplace va tekshiruv modullarini alohida xavfsizlik hamda qonuniy talablar asosida loyihalash.
+1. Auth → loyiha → ariza oqimini foydalanuvchi yaratgan ikki test akkauntida tekshirish. Parol yoki maxfiy kalitlar hech kimga yuborilmaydi.
+2. Jamoalar uchun schema, owner/member modeli, RLS va RPC’larni loyihalash; shundan keyingina teams.html localStorage oqimini server adapteriga ko‘chirish.
+3. Mutaxassislar profilidagi maydonlar va profil jadvali o‘rtasidagi yagona modelni mustahkamlash; local fallback faqat demo sifatida aniq ko‘rsatilsin.
+4. Arizalar markazidagi barcha turdagi yozuvlarni yagona server oqimiga o‘tkazish; serverda qo‘llanmagan status update’larni “server saqlandi” deb ko‘rsatmaslik.
+5. Takliflar/xabarlar va resurs buyurtmalarini ishtirokchi/egalik RLS bilan ulash.
+6. Bildirishnoma va faoliyatni server hodisalari bilan bog‘lash.
+7. Moliya, marketplace va tekshiruv modullarini alohida xavfsizlik hamda qonuniy talablar asosida loyihalash.
