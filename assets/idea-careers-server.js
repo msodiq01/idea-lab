@@ -100,12 +100,12 @@
     if(!userId){select.disabled=true;return;}
     const r=await data.listMyOrganizations();
     if(!r.ok){select.disabled=true;setStatus(errorText(r),true);return;}
-    const organizations=(r.data||[]).filter(x=>x.organization_type!=="team");
+    const organizations=(r.data||[]).filter(x=>x.organization_type!=="team"&&x.visibility==="public"&&x.status==="active");
     organizations.forEach(org=>select.add(new Option(org.name,org.id)));
     select.disabled=false;
     if(!organizations.length){
       select.add(new Option("Avval tashkilot yarating",""));
-      formHint.textContent="Vakansiya joylashtirish uchun avval kompaniya yoki tashkilot profilingizni yarating.";
+      formHint.textContent="Vakansiya joylashtirish uchun avval kompaniya yoki tashkilot profilingizni yarating va uni ommaviy, faol holatga o‘tkazing.";
     }
   }
   async function loadMyApplications(){
