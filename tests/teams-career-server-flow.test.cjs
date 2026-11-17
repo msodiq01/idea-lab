@@ -49,8 +49,8 @@ test("team membership requests and owner decisions are authenticated invoker RPC
 });
 
 test("team page removes private contact inputs and hides legacy local application panels", () => {
-  assert.match(teams, /\$\("teamPhone"\).*?remove\(\)/);
-  assert.match(teams, /\$\("teamTelegram"\).*?remove\(\)/);
+  assert.match(teams, /fieldPhone[\s\S]*?fieldPhone\.remove\(\)/);
+  assert.match(teams, /fieldTelegram[\s\S]*?fieldTelegram\.remove\(\)/);
   assert.match(teams, /legacyMyApplications\) legacyMyApplications\.hidden = true/);
   assert.match(teams, /legacyTeamManager\) legacyTeamManager\.hidden = true/);
 });
