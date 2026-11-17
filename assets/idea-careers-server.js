@@ -191,8 +191,12 @@
     }
   },true);
   $("ilApplyCancel").addEventListener("click",()=>{applicationPanel.hidden=true;selectedJob=null;});
-  $("jobSearch")?.addEventListener("input",renderJobs);
-  $("jobFilter")?.addEventListener("change",renderJobs);
+  document.addEventListener("input",event=>{
+    if(event.target?.id==="jobSearch"){event.stopImmediatePropagation();renderJobs();}
+  },true);
+  document.addEventListener("change",event=>{
+    if(event.target?.id==="jobFilter"){event.stopImmediatePropagation();renderJobs();}
+  },true);
 
   async function start(){
     if(!auth||!data){setStatus("Backend modullari yuklanmagan. Sahifani yangilang.",true);return;}
