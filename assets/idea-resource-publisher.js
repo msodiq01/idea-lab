@@ -67,12 +67,14 @@
       status.textContent = result && result.error && result.error.message ? result.error.message : "Saqlash amalga oshmadi. Maydonlarni tekshirib qayta urinib ko‘ring.";
       return;
     }
+    const published = $("srPublish").checked;
     event.currentTarget.reset();
-    status.textContent = "Resurs taklifi serverda saqlandi.";
-    if ($("srPublish").checked) status.textContent = "Resurs taklifi serverda saqlandi. Ommaviy katalog yangilanmoqda.";
-    const count = document.getElementById("publicResourceCount");
-    if (count) count.textContent = "Yangilanmoqda…";
-    window.location.reload();
+    status.textContent = published ? "Resurs taklifi serverda saqlandi. Ommaviy katalog yangilanmoqda." : "Qoralama serverda saqlandi. Uni keyinroq tahrirlash mumkin.";
+    if (published) {
+      const count = document.getElementById("publicResourceCount");
+      if (count) count.textContent = "Yangilanmoqda…";
+      window.location.reload();
+    }
   });
   refreshAuth();
 })();
