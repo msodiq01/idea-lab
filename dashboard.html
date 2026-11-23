@@ -136,7 +136,7 @@ button,input{font:inherit}
 <article class="nx-card"><div class="nx-kpi-top"><span id="exchangeCountLabel">Ochiq takliflar</span><i class="nx-kpi-dot" style="background:#e8b86b"></i></div><div class="nx-kpi-value" id="exchangeCount">—</div><div class="nx-kpi-foot" id="exchangeCountFoot">Server katalogi tekshirilmoqda</div></article>
 </section>
 <section class="nx-section"><div class="nx-section-head"><div><h2>Innovatsion faollik</h2><p>Platforma analitikasi va muhim ko‘rsatkichlar</p></div><a class="nx-link" href="analytics.html">Batafsil tahlil →</a></div>
-<div class="nx-analytics"><article class="nx-panel"><div class="nx-panel-head"><div><h3>Faollik tendensiyasi</h3><small>12 oylik vizual ko‘rinish</small></div><span class="nx-overline">IDEA LAB</span></div><div class="nx-chart" aria-label="Faollik grafigi namunaviy vizualizatsiya"><div class="nx-bar-wrap"><div class="nx-bar" style="--h:38%"></div><span class="nx-month">YAN</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:52%"></div><span class="nx-month">FEV</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:45%"></div><span class="nx-month">MAR</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:63%"></div><span class="nx-month">APR</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:57%"></div><span class="nx-month">MAY</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:72%"></div><span class="nx-month">IYN</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:66%"></div><span class="nx-month">IYL</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:82%"></div><span class="nx-month">AVG</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:71%"></div><span class="nx-month">SEN</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:91%"></div><span class="nx-month">OKT</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:84%"></div><span class="nx-month">NOY</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:100%"></div><span class="nx-month">DEK</span></div></div><p class="nx-chart-note">Grafik hozircha dizayn namunasi; haqiqiy oylik tarixiy analitika keyingi integratsiyada ulanadi.</p></article>
+<div class="nx-analytics"><article class="nx-panel"><div class="nx-panel-head"><div><h3>Faollik tendensiyasi</h3><small>12 oylik vizual ko‘rinish</small></div><span class="nx-overline">IDEA LAB</span></div><div class="nx-chart" id="activityChart" aria-label="So‘nggi 12 oyda e’lon qilingan ommaviy loyihalar grafigi"><div class="nx-chart-note">Server statistikasi yuklanmoqda…</div></div><p class="nx-chart-note" id="activityChartNote">Grafik Supabase katalogidagi loyiha sanalaridan hisoblanadi.</p></article>
 <aside class="nx-panel"><div class="nx-panel-head"><h3>Tezkor ko‘rsatkichlar</h3><small>Workspace</small></div><div class="nx-insights"><div class="nx-insight"><small>✦ PLATFORM HOLATI</small><strong id="backendStatus">Tekshirilmoqda</strong><p id="coreNotice">Markaziy tizim va server aloqasi tekshirilmoqda.</p></div><div class="nx-insight-stat"><div><strong id="coreVersion">—</strong><small>Yadro versiyasi</small></div><div><strong id="authStatus">—</strong><small>Akkaunt holati</small></div></div><div class="nx-insight-stat"><div><strong id="storageStatus">—</strong><small>Brauzer xotirasi</small></div><div><strong>24/7</strong><small>Platforma kirish</small></div></div></div></aside></div>
 </section>
 <section class="nx-section"><div class="nx-section-head"><div><h2>Faol loyihalar</h2><p>Loyiha portfelingizdagi so‘nggi tashabbuslar</p></div><a class="nx-link" href="projects.html">Barcha loyihalar →</a></div><div class="nx-projects" id="recentProjects"><div class="d-empty"><b>Hozircha loyiha topilmadi</b>Yangi loyiha yaratganingizdan keyin shu yerda ko‘rinadi.</div></div></section>
@@ -235,6 +235,38 @@ if(projects.length){
  list.innerHTML=recent.map(p=>{const title=String(p.title||p.name||p.projectName||"Nomsiz loyiha");const desc=String(p.description||p.direction||"Loyiha tafsilotlari");return '<div class="d-device"><div><strong></strong><small></small></div><a class="d-link" href="projects.html">Ko‘rish</a></div>'}).join("");
  [...list.querySelectorAll(".d-device")].forEach((el,i)=>{el.querySelector("strong").textContent=String(recent[i].title||recent[i].name||recent[i].projectName||"Nomsiz loyiha");el.querySelector("small").textContent=String(recent[i].direction||recent[i].description||"Loyiha")});
 }
+function renderProjectActivity(projects){
+ const chart=document.getElementById("activityChart");
+ const note=document.getElementById("activityChartNote");
+ if(!chart||!note)return;
+ const now=new Date();
+ const buckets=[];
+ for(let offset=11;offset>=0;offset--){
+  const date=new Date(now.getFullYear(),now.getMonth()-offset,1);
+  buckets.push({year:date.getFullYear(),month:date.getMonth(),label:new Intl.DateTimeFormat("uz-UZ",{month:"short"}).format(date).replace(".","").toLocaleUpperCase("uz-UZ"),count:0});
+ }
+ (Array.isArray(projects)?projects:[]).forEach(project=>{
+  const raw=project&&project.published_at;
+  if(!raw)return;
+  const date=new Date(raw);
+  if(Number.isNaN(date.getTime()))return;
+  const bucket=buckets.find(item=>item.year===date.getFullYear()&&item.month===date.getMonth());
+  if(bucket)bucket.count++;
+ });
+ const max=Math.max(1,...buckets.map(item=>item.count));
+ chart.replaceChildren();
+ buckets.forEach(bucket=>{
+  const wrap=document.createElement("div");wrap.className="nx-bar-wrap";
+  const bar=document.createElement("div");bar.className="nx-bar";
+  bar.style.setProperty("--h",Math.max(2,Math.round(bucket.count/max*100))+"%");
+  bar.title=bucket.count+" ta loyiha";
+  bar.setAttribute("aria-label",bucket.label+": "+bucket.count+" ta loyiha");
+  const label=document.createElement("span");label.className="nx-month";label.textContent=bucket.label;
+  wrap.append(bar,label);chart.append(wrap);
+ });
+ const total=buckets.reduce((sum,item)=>sum+item.count,0);
+ note.textContent="So‘nggi 12 oy: "+total+" ta ommaviy loyiha e’loni (oxirgi 50 ta katalog yozuvi doirasida).";
+}
 async function refreshServerDashboard(){
  const data=window.IDEALAB_DATA;
  const auth=window.IDEALAB_AUTH;
@@ -257,6 +289,7 @@ async function refreshServerDashboard(){
   const projectResult=await data.listPublicProjects({limit:50});
   if(projectResult&&projectResult.ok){
    const serverProjects=Array.isArray(projectResult.data)?projectResult.data:[];
+   renderProjectActivity(serverProjects);
    document.getElementById("projectCount").textContent=serverProjects.length===50?"50+":String(serverProjects.length);
    document.getElementById("projectCountFoot").textContent="Server katalogidan yuklangan (ko‘pi bilan 50 ta)";
    const target=document.getElementById("recentProjects");
