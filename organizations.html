@@ -70,6 +70,20 @@
 .oc-count{font-size:10px;color:#91a5bd;margin:8px 0}
 @media(max-width:520px){.oc-edit-grid{grid-template-columns:1fr}.oc-edit-grid .wide{grid-column:auto}.oc-org-head{align-items:center}.oc-tools{flex-direction:column}.oc-tools input,.oc-tools select{width:100%;flex:auto}.oc-member{align-items:flex-start}.oc-member-actions{justify-content:flex-end}}
 
+
+/* IDEA LAB — organization center neon system */
+.oc-hero{background:radial-gradient(ellipse at 82% 0%,rgba(144,70,255,.22),transparent 42%),linear-gradient(125deg,#100e2a,#070914 75%);border-color:rgba(158,126,255,.2);box-shadow:0 22px 60px rgba(0,0,0,.3)}
+.oc-kicker{color:#70ddff}
+.oc-panel,.oc-org,.oc-member,.oc-project,.oc-stat{background:linear-gradient(145deg,rgba(19,18,40,.94),rgba(7,9,18,.97));border-color:rgba(155,126,255,.17);box-shadow:0 12px 34px rgba(0,0,0,.24)}
+.oc-btn{background:linear-gradient(115deg,#5c69ff,#a349f2 58%,#37cfff);box-shadow:0 7px 22px rgba(100,72,255,.15)}
+.oc-btn.secondary{background:rgba(129,100,255,.11);border-color:rgba(160,128,255,.21);color:#c4adff}
+.oc-badge,.oc-chip,.oc-status{background:rgba(139,92,246,.13);color:#c5a9ff;border-color:rgba(155,126,255,.2)}
+.oc-field input,.oc-field textarea,.oc-field select{background:#070914!important;color:#f5f5ff!important;border-color:rgba(148,126,255,.19)!important}
+.oc-field input:focus,.oc-field textarea:focus,.oc-field select:focus{border-color:#8f70ff!important;box-shadow:0 0 0 3px rgba(139,92,246,.13)!important}
+.oc-org:hover,.oc-member:hover,.oc-project:hover{border-color:rgba(163,118,255,.46);box-shadow:0 16px 40px rgba(90,57,210,.13)}
+.oc-message{border-color:rgba(80,215,255,.18)}
+@media(prefers-reduced-motion:no-preference){.oc-org,.oc-member,.oc-project,.oc-stat{animation:org-neon-in .42s ease-out both}@keyframes org-neon-in{from{opacity:.75;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}}
+
 </style>
 </head>
 <body>
