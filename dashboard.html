@@ -183,8 +183,17 @@ const list=document.getElementById("recentProjects");
 if(projects.length){
  list.className="";list.style.marginTop="12px";
  const recent=projects.slice(-4).reverse();
- list.innerHTML=recent.map(p=>{const title=String(p.title||p.name||p.projectName||"Nomsiz loyiha");const desc=String(p.description||p.direction||"Loyiha tafsilotlari");return '<div class="d-device"><div><strong></strong><small></small></div><a class="d-link" href="projects.html">Ko‘rish</a></div>'}).join("");
- [...list.querySelectorAll(".d-device")].forEach((el,i)=>{el.querySelector("strong").textContent=String(recent[i].title||recent[i].name||recent[i].projectName||"Nomsiz loyiha");el.querySelector("small").textContent=String(recent[i].direction||recent[i].description||"Loyiha")});
+ recent.forEach(project=>{
+  const row=document.createElement("div");row.className="d-device";
+  const info=document.createElement("div");
+  const title=document.createElement("strong");
+  const detail=document.createElement("small");
+  const link=document.createElement("a");link.className="d-link";
+  title.textContent=String(project.title||project.name||project.projectName||"Nomsiz loyiha");
+  detail.textContent=String(project.direction||project.description||"Loyiha");
+  link.href="projects.html";link.textContent="Ko‘rish";
+  info.append(title,detail);row.append(info,link);list.append(row);
+ });
 }
 async function refreshServerDashboard(){
  const data=window.IDEALAB_DATA;
