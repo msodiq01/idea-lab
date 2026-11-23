@@ -45,3 +45,15 @@ test("offline statistikalar mahalliy ma’lumot deb aniq belgilangan", () => {
   assert.match(html, /Mahalliy arizalar/);
   assert.match(html, /Faqat ushbu brauzerda saqlangan/);
 });
+
+
+test("dashboard server kataloglari va ochiq takliflar jonli gateway orqali olinadi", () => {
+  assert.match(html, /listPublicResources\(\{limit:50\}\)/);
+  assert.match(html, /listPublicPartnerships\(\{limit:50\}\)/);
+  assert.match(html, /Server katalogi: resurslar va hamkorlik/);
+  assert.doesNotMatch(html, /read\("ideaLabExchangeItems"\)/);
+});
+
+test("namunaviy analitika haqiqiy tarixiy ma’lumot sifatida ko‘rsatilmaydi", () => {
+  assert.match(html, /Grafik hozircha dizayn namunasi/);
+});
