@@ -57,3 +57,18 @@ test("dashboard server kataloglari va ochiq takliflar jonli gateway orqali olina
 test("namunaviy analitika haqiqiy tarixiy ma’lumot sifatida ko‘rsatilmaydi", () => {
   assert.match(html, /Grafik hozircha dizayn namunasi/);
 });
+
+
+test("faollik grafigi soxta qiymatlar emas, serverdagi published_at sanalaridan tuziladi", () => {
+  assert.match(html, /function renderProjectActivity\(projects\)/);
+  assert.match(html, /project\.published_at/);
+  assert.match(html, /renderProjectActivity\(serverProjects\)/);
+  assert.match(html, /oxirgi 50 ta katalog yozuvi doirasida/);
+  assert.doesNotMatch(html, /--h:38%|--h:52%|--h:100%/);
+});
+
+test("grafik oylar bo‘yicha DOM API orqali qayta quriladi", () => {
+  assert.match(html, /chart\.replaceChildren\(\)/);
+  assert.match(html, /document\.createElement\("div"\)/);
+  assert.match(html, /bar\.setAttribute\("aria-label"/);
+});
