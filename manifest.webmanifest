@@ -1,13 +1,18 @@
 {
-  "name": "IDEA LAB — Ideas Into Reality",
+  "name": "IDEA LAB — G‘oyalar va loyihalar platformasi",
   "short_name": "IDEA LAB",
-  "description": "A space for bold ideas and meaningful projects.",
+  "description": "G‘oyalar, loyihalar, jamoalar, investorlar va imkoniyatlar yagona innovatsion platformada.",
   "start_url": "./app.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
   "orientation": "portrait",
   "background_color": "#09090f",
   "theme_color": "#09090f",
+  "lang": "uz",
   "icons": [
     {
       "src": "./icon.svg",
