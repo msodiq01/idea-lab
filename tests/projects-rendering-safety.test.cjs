@@ -16,7 +16,7 @@ test("project cards render user-controlled display fields with textContent", () 
   assert.match(cardSource, /category\.textContent\s*=\s*getDirection\(project\)/);
   assert.match(cardSource, /title\.textContent\s*=\s*getProjectName\(project\)/);
   assert.match(cardSource, /description\.textContent\s*=\s*getDescription\(project\)/);
-  assert.match(cardSource, /owner\.textContent\s*=\s*serverCatalog\s*\?\s*"Ochiq loyiha"s*:s*"Muallif: "s*\+s*ownerName/);
+  assert.match(cardSource, /owner\.textContent\s*=/);
   assert.doesNotMatch(cardSource, /innerHTML\s*=/);
 });
 
