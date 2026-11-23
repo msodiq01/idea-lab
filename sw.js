@@ -1,4 +1,4 @@
-const CACHE_NAME = 'idea-lab-mobile-v3';
+const CACHE_NAME = 'idea-lab-mobile-v4';
 const APP_SHELL = [
   "./app.html",
   "./manifest.webmanifest",
@@ -48,6 +48,7 @@ const APP_SHELL = [
   "./assets/idea-data.js",
   "./assets/idea-shell.js",
   "./assets/idea-shell.css",
+  "./assets/idea-nextgen.css",
   "./assets/workspace.css"
 ];
 
