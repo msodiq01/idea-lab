@@ -103,15 +103,6 @@ This is a working checklist, not a claim that all items are already completed. C
 - [ ] 098. Check server error handling doesn't leak details.
 - [ ] 099. Check no sample data is mistaken for real user data.
 - [ ] 100. Write a module-by-module release status report.
-- [ ] 101. Prioritize critical blockers by impact and risk.
-- [ ] 102. Close the highest-priority verified defects.
-- [ ] 103. Add regression tests for every fixed defect.
-- [ ] 104. Run full automated tests after each change.
-- [ ] 105. Review pending pull requests before merge.
-- [ ] 106. Verify merged changes on deployed preview.
-- [ ] 107. Record remaining limitations honestly.
-- [ ] 108. Create a final launch decision checklist.
-- [ ] 109. Create a post-launch monitoring and feedback checklist.
 
 ## Evidence log
 
