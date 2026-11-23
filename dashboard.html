@@ -317,6 +317,8 @@ async function refreshServerDashboard(){
    target.replaceChildren();target.className="d-empty";
    const strong=document.createElement("b");strong.textContent="Loyihalarni yuklab bo‘lmadi";
    target.append(strong,document.createTextNode("Internet yoki server ulanishini tekshiring."));
+   document.getElementById("activityChart").replaceChildren();
+   document.getElementById("activityChartNote").textContent="Haqiqiy analitika serverdan olinmadi; qayta urinib ko‘ring.";
   }
   const [resourceResult, partnershipResult]=await Promise.all([
    data.listPublicResources({limit:50}),
@@ -372,6 +374,8 @@ async function refreshServerDashboard(){
   document.getElementById("projectCountFoot").textContent="Server bilan aloqa xatosi";
   document.getElementById("applicationCount").textContent="—";
   document.getElementById("collaborationCount").textContent="—";
+  document.getElementById("activityChart").replaceChildren();
+  document.getElementById("activityChartNote").textContent="Haqiqiy analitika serverdan olinmadi; qayta urinib ko‘ring.";
   coreNotice.textContent="Server ma’lumotlarini yangilashda xatolik. Sahifani yangilang yoki backend ulanishini tekshiring.";
  }
 }
