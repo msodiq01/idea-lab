@@ -1,0 +1,120 @@
+# IDEA LAB — 100-point execution checklist
+
+This is a working checklist, not a claim that all items are already completed. Check off items only after evidence (test result, code review, or manual verification) exists. Keep demo modules clearly labeled and never perform destructive data migrations without review.
+
+
+- [ ] 001. Map every public route and page to its owning module.
+- [ ] 002. Identify duplicate routes and dead-end navigation.
+- [ ] 003. Record each page's server/local/demo data source.
+- [ ] 004. Mark each module's authentication requirement.
+- [ ] 005. Mark each module's data owner and access boundary.
+- [ ] 006. Inventory forms and their validation rules.
+- [ ] 007. Inventory upload/download flows and storage locations.
+- [ ] 008. Inventory all localStorage keys and owning modules.
+- [ ] 009. Inventory Supabase tables, views, RPCs, and storage buckets.
+- [ ] 010. Record baseline Node test results.
+- [ ] 011. Review CI workflows and required checks.
+- [ ] 012. Check Pages deployment configuration and asset paths.
+- [ ] 013. Check links in README and internal documentation.
+- [ ] 014. Create a route smoke-test checklist.
+- [ ] 015. Create a mobile smoke-test checklist.
+- [ ] 016. Create an accessibility checklist.
+- [ ] 017. Define standard loading state behavior.
+- [ ] 018. Define standard empty-state behavior.
+- [ ] 019. Define standard error-state behavior.
+- [ ] 020. Define standard retry behavior.
+- [ ] 021. Define safe offline behavior.
+- [ ] 022. Check sign-in and sign-out UX.
+- [ ] 023. Check session expiry UX.
+- [ ] 024. Check recovery/reset-password route and configuration.
+- [ ] 025. Ensure private profile fields are not exposed publicly.
+- [ ] 026. Review public profile DTO field allowlists.
+- [ ] 027. Review Supabase view security-invoker settings.
+- [ ] 028. Review RPC execute grants and parameter validation.
+- [ ] 029. Review RLS policies for anonymous access.
+- [ ] 030. Review RLS policies for authenticated owners.
+- [ ] 031. Review cross-user read isolation.
+- [ ] 032. Review cross-user write isolation.
+- [ ] 033. Review storage bucket visibility.
+- [ ] 034. Review upload MIME and size validation.
+- [ ] 035. Review private file ownership rules.
+- [ ] 036. Check whether service-role secrets are absent from frontend.
+- [ ] 037. Check committed files for accidental credentials.
+- [ ] 038. Document test-account setup without real personal data.
+- [ ] 039. Define two-account RLS test cases.
+- [ ] 040. Test project create journey as owner.
+- [ ] 041. Test project edit journey as owner.
+- [ ] 042. Test project publish/unpublish visibility.
+- [ ] 043. Test project discovery as another account.
+- [ ] 044. Test project application submit journey.
+- [ ] 045. Test application status update by owner.
+- [ ] 046. Test applicant can only view own application.
+- [ ] 047. Test project owner cannot access unrelated private records.
+- [ ] 048. Test project form field validation.
+- [ ] 049. Test project empty-state and error-state behavior.
+- [ ] 050. Test project application duplicate prevention.
+- [ ] 051. Test team opportunity creation journey.
+- [ ] 052. Test team opportunity public listing.
+- [ ] 053. Test team application journey.
+- [ ] 054. Test team owner application review.
+- [ ] 055. Test team applicant status visibility.
+- [ ] 056. Test public team card privacy.
+- [ ] 057. Test career vacancy creation.
+- [ ] 058. Test career vacancy publication and withdrawal.
+- [ ] 059. Test career application submission.
+- [ ] 060. Test employer application review.
+- [ ] 061. Test applicant status privacy.
+- [ ] 062. Test vacancy validation and required fields.
+- [ ] 063. Test duplicate career application handling.
+- [ ] 064. Clarify Organization Center prototype status in UI.
+- [ ] 065. Design organization server-sync data contract.
+- [ ] 066. Define organization role and permission model.
+- [ ] 067. Define organization verification workflow without false claims.
+- [ ] 068. Clarify local resource inventory versus shared catalog.
+- [ ] 069. Test public resource listing privacy.
+- [ ] 070. Test resource listing filters and empty states.
+- [ ] 071. Clarify investor module is demo-only.
+- [ ] 072. Remove UI language that implies real investment/payment.
+- [ ] 073. Document safe migration approach for localStorage data.
+- [ ] 074. Define user consent step for legacy data import.
+- [ ] 075. Ensure imported legacy data is tied to the correct account.
+- [ ] 076. Add schema migration review checklist.
+- [ ] 077. Add migration rollback/recovery notes.
+- [ ] 078. Document database backup expectations.
+- [ ] 079. Document storage backup/recovery expectations.
+- [ ] 080. Document deploy/rollback procedure.
+- [ ] 081. Document release notes template.
+- [ ] 082. Define production readiness gate.
+- [ ] 083. Check small-screen overflow on core pages.
+- [ ] 084. Check touch target sizing on core forms.
+- [ ] 085. Check keyboard navigation on main navigation.
+- [ ] 086. Check focus visibility on forms and dialogs.
+- [ ] 087. Check aria labels for icon-only controls.
+- [ ] 088. Check active-route aria-current state.
+- [ ] 089. Check skip-link behavior.
+- [ ] 090. Check reduced-motion behavior.
+- [ ] 091. Check contrast of text and controls.
+- [ ] 092. Check modal/dialog escape and focus behavior.
+- [ ] 093. Check error messages are actionable and non-sensitive.
+- [ ] 094. Check success feedback after submissions.
+- [ ] 095. Check date/time inputs for locale handling.
+- [ ] 096. Check pagination or list performance for growing datasets.
+- [ ] 097. Check repeated submit handling and loading lock.
+- [ ] 098. Check server error handling doesn't leak details.
+- [ ] 099. Check no sample data is mistaken for real user data.
+- [ ] 100. Write a module-by-module release status report.
+- [ ] 101. Prioritize critical blockers by impact and risk.
+- [ ] 102. Close the highest-priority verified defects.
+- [ ] 103. Add regression tests for every fixed defect.
+- [ ] 104. Run full automated tests after each change.
+- [ ] 105. Review pending pull requests before merge.
+- [ ] 106. Verify merged changes on deployed preview.
+- [ ] 107. Record remaining limitations honestly.
+- [ ] 108. Create a final launch decision checklist.
+- [ ] 109. Create a post-launch monitoring and feedback checklist.
+
+## Evidence log
+
+| Date | Items completed | Evidence (PR, test, screenshot, issue) | Notes |
+|---|---:|---|---|
+| 2026-11-23 | 0 verified checklist items | Checklist created in PR #121 | Roadmap and task inventory only; implementation and testing are not implied |
