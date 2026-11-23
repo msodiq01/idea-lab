@@ -1,0 +1,12 @@
+{
+  "name": "IDEA LAB — Ideas Into Reality",
+  "short_name": "IDEA LAB",
+  "description": "A space for bold ideas and meaningful projects.",
+  "start_url": "./app.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#09090f",
+  "theme_color": "#09090f",
+  "icons": []
+}
