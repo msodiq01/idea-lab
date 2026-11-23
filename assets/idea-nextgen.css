@@ -1,0 +1,47 @@
+/* IDEA LAB NEXT GEN — shared visual layer. Keeps each module's markup and behavior intact. */
+:root{color-scheme:dark;--il-nx-bg:#090b12;--il-nx-panel:#121827;--il-nx-panel2:#171f31;--il-nx-line:#273249;--il-nx-text:#f5f6fb;--il-nx-muted:#929db2;--il-nx-purple:#8b5cf6;--il-nx-cyan:#43d9ce}
+html{background:var(--il-nx-bg)!important;color-scheme:dark}
+body{background:radial-gradient(ellipse at 82% 0%,rgba(139,92,246,.10),transparent 32%),radial-gradient(ellipse at 8% 92%,rgba(67,217,206,.045),transparent 28%),var(--il-nx-bg)!important;color:var(--il-nx-text)!important;font-family:Manrope,Inter,system-ui,sans-serif!important}
+body:before{opacity:.12!important;background-image:radial-gradient(#8290ae .65px,transparent .65px)!important}
+body>header:not(#il-global):not(.il-legacy-nav-shell){background:linear-gradient(135deg,#151b2b,#111725)!important;color:var(--il-nx-text)!important;border:1px solid var(--il-nx-line)!important;box-shadow:0 18px 45px #0004!important}
+body>header:not(#il-global):not(.il-legacy-nav-shell) h1,main h1,main h2,main h3{color:var(--il-nx-text)!important}
+body>header:not(#il-global):not(.il-legacy-nav-shell) p{color:var(--il-nx-muted)!important}
+#il-global{background:rgba(10,13,23,.94)!important;border-bottom:1px solid rgba(255,255,255,.09)!important;box-shadow:0 12px 32px #0005!important;color:var(--il-nx-text)!important}
+#il-global .il-top{width:min(1360px,calc(100% - 48px))!important;min-height:72px!important}
+#il-global .il-brand,#il-global .il-brand b{color:#f5f3ff!important}
+#il-global .il-brand b{color:#b49aff!important}
+#il-global .il-brand-mark{background:linear-gradient(145deg,#a78bfa,#713be0)!important;box-shadow:0 8px 22px #8b5cf644!important;color:white!important}
+#il-global .il-links>a,#il-global .il-all-menu>summary{color:#b5bfd2!important}
+#il-global .il-links>a:hover,#il-global .il-links>a[aria-current=page],#il-global .il-all-menu[open]>summary{color:#e8ddff!important;background:#29213e!important;border-color:#49376d!important}
+#il-global .il-quick-action{background:linear-gradient(110deg,#9569ff,#713be0)!important;color:white!important}
+#il-global .il-profile-link{background:#171f31!important;border-color:#303b52!important;color:#f5f6fb!important}
+#il-global .il-menu-panel{background:#121827!important;border-color:#303b52!important;box-shadow:0 24px 70px #0009!important}
+#il-global .il-menu-group a{color:#c1c9d8!important}
+#il-global .il-menu-group a:hover,#il-global .il-menu-group a[aria-current=page]{background:#29213e!important;color:#d9c8ff!important}
+.il-page-tools{background:transparent!important;color:#98a4ba!important}
+.il-page-tools a{color:#b49aff!important}
+#il-global .il-status{background:#242039!important;border-color:#49376d!important;color:#d8cbff!important}
+#il-global .il-status[data-state=partial]{background:#12302f!important;border-color:#245f5a!important;color:#a8f1e7!important}
+:is(.op-panel,.f-panel,.f-card,.m-panel,.m-card,.d-panel,.d-card,.d-module,.panel,.side-card,.stat,.stat-card,.card,.project-card,.offer-card,.application-card,.investor-card,.specialist-card,.organization-card,.product-card,.item-card,.listing,.oc-panel,.oc-card,.op-item,.f-empty,.m-empty){background:linear-gradient(145deg,#151d2c,#111724)!important;border-color:var(--il-nx-line)!important;color:var(--il-nx-text)!important;box-shadow:0 12px 30px #0003!important}
+:is(.op-panel,.f-panel,.m-panel,.panel,.side-card,.oc-panel) :is(h1,h2,h3,h4,strong,b){color:var(--il-nx-text)!important}
+:is(.op-muted,.f-intro,.f-label,.f-sub,.m-panel-intro,.m-label,.m-sub,.tip,.hero p,.hero-description,.stat-label,.stat-description,.op-head p,.f-head p,.m-head p){color:var(--il-nx-muted)!important}
+:is(.op-field input,.op-field select,.op-field textarea,.f-field input,.f-field select,.m-field input,.m-field select,.m-field textarea,.f-toolbar select,.m-toolbar select,input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea){background:#0d1421!important;color:#eef1fa!important;border-color:#344057!important}
+:is(.op-field label,.f-field label,.m-field label){color:#b7c1d3!important}
+:is(.op-btn,.f-btn,.m-btn,.btn-primary,.primary-button,.nav-button){background:linear-gradient(110deg,#9569ff,#713be0)!important;color:#fff!important;border-color:transparent!important}
+:is(.op-btn.alt,.f-btn.secondary,.m-btn.secondary,.btn-secondary,.secondary-button){background:#20253a!important;color:#d8ccff!important;border-color:#3a3657!important}
+:is(.op-item,.m-item,.m-goal,.f-note,.oc-stat,.oc-member,.oc-project){background:#111a29!important;border-color:#2b364c!important;color:#e9edf6!important}
+:is(.op-pill,.m-pill){background:#2b2442!important;color:#d9c8ff!important}
+:is(.op-table,.f-table,table){background:#111a29!important;color:#e8edf7!important;border-color:#2c374d!important}
+:is(.op-table, .f-table, table) :is(th,td){border-color:#2c374d!important;color:#d7deeb!important}
+:is(.op-table, .f-table, table) th{background:#1a2334!important;color:#aeb9cc!important}
+:is(.op-empty,.d-empty,.m-empty,.f-empty){color:#a5b0c3!important;border-color:#39465e!important}
+:is(.hero,.intro){background:radial-gradient(ellipse at 85% 5%,#8b5cf622,transparent 36%),linear-gradient(135deg,#151d2d,#0f1725)!important;border-color:#2c3850!important}
+:is(.eyebrow,.f-kicker,.m-kicker,.op-kicker){color:#b49aff!important}
+:is(.gradient-text,.gradient){background:linear-gradient(90deg,#b49aff,#43d9ce)!important;background-clip:text!important;-webkit-background-clip:text!important}
+a{color:#b49aff}
+a:hover{color:#d4c5ff}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #8b5cf677!important;outline-offset:2px}
+hr{border-color:#2b364b!important}
+footer{border-color:#273249!important;color:#8996ad!important}
+@media(max-width:760px){#il-global .il-top{width:calc(100% - 24px)!important;gap:10px!important}#il-global .il-links{overflow-x:auto;scrollbar-width:none}#il-global .il-actions{gap:6px!important}.il-page-tools{padding-inline:12px!important}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
