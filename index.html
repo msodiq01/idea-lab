@@ -959,7 +959,32 @@
             .workflow-link { transition: none; }
         }
 
-    </style>
+    
+        /* IDEA LAB — NEON COMMAND CENTER DESIGN SYSTEM */
+        :root { --bg:#03040a; --bg-light:#070811; --card:#0b0d1b; --blue:#536dff; --cyan:#42d7ff; --white:#f5f6ff; --muted:#a0a5bd; --border:rgba(160,170,255,.13); --violet:#9a5bff; }
+        body { background:radial-gradient(ellipse at 12% 5%,rgba(77,65,190,.13),transparent 36%),radial-gradient(ellipse at 88% 55%,rgba(145,53,226,.09),transparent 34%),#03040a; }
+        .navbar { background:rgba(3,4,10,.82); border-bottom-color:rgba(140,110,255,.16); box-shadow:0 10px 35px rgba(0,0,0,.24); }
+        .logo span,.feature-link,.footer-links a:hover { color:#a77cff; }
+        .nav-button,.btn-primary { background:linear-gradient(120deg,#5268ff,#a447f5 55%,#35cfff); color:#fff; box-shadow:0 8px 28px rgba(101,73,255,.24); }
+        .hero { background:radial-gradient(circle at 75% 18%,rgba(129,62,255,.21),transparent 32%),radial-gradient(circle at 18% 70%,rgba(54,122,255,.15),transparent 35%),linear-gradient(180deg,#03040a,#070812); }
+        .gradient-text { background-image:linear-gradient(100deg,#64a4ff,#b16aff 48%,#46e2ff); }
+        .stat-card,.feature-card,.project-card,.create-form-card { background:linear-gradient(145deg,rgba(19,20,43,.92),rgba(8,9,19,.95)); border-color:rgba(151,122,255,.18); box-shadow:0 14px 36px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.035); }
+        .stat-number,.project-meta { color:#a98aff; }
+        .feature-icon,.benefit-icon,.project-tag { background:rgba(126,87,255,.13); color:#c2a3ff; border:1px solid rgba(157,122,255,.18); }
+        .feature-card:hover,.project-card:hover { border-color:rgba(162,112,255,.52); box-shadow:0 18px 42px rgba(82,48,210,.17); }
+        .btn-outline { border-color:rgba(165,143,255,.25); }
+        .btn-outline:hover { border-color:#9670ff; box-shadow:0 0 22px rgba(128,87,255,.12); }
+        .form-group input,.form-group select,.form-group textarea { background:#070914; border-color:rgba(148,126,255,.18); }
+        #ecosystem-map { background:radial-gradient(ellipse at 12% 12%,rgba(110,76,255,.16),transparent 34%),radial-gradient(ellipse at 88% 78%,rgba(52,190,255,.09),transparent 32%),linear-gradient(180deg,#05050d 0%,#03040a 100%); }
+        #ecosystem-map .module-card { border-color:rgba(167,134,255,.18); background:linear-gradient(145deg,rgba(22,19,45,.9),rgba(7,9,18,.96)); }
+        #ecosystem-map .module-card::before { background:linear-gradient(90deg,transparent,rgba(159,110,255,.72),transparent); }
+        #ecosystem-map .module-card:hover { border-color:rgba(167,114,255,.55); box-shadow:0 22px 52px rgba(0,0,0,.32),0 0 28px rgba(124,77,255,.12); }
+        #ecosystem-map .module-status.available { color:#67e5ff; border-color:rgba(66,215,255,.24); background:rgba(66,215,255,.07); }
+        .footer { background:#02030a; }
+        @media (prefers-reduced-motion:no-preference) { .stat-card,.feature-card,.project-card,.module-card { animation:neon-rise .65s both; } @keyframes neon-rise { from {opacity:.72;transform:translateY(10px)} to {opacity:1;transform:translateY(0)} } }
+        @media (max-width:600px) { .nav-button,.btn-primary { box-shadow:0 6px 20px rgba(101,73,255,.2); } }
+
+</style>
     <link rel="stylesheet" href="assets/idea-shell.css">
 </head>
 
