@@ -133,7 +133,7 @@ button,input{font:inherit}
 <article class="nx-card"><div class="nx-kpi-top"><span id="projectCountLabel">Faol loyihalar</span><i class="nx-kpi-dot"></i></div><div class="nx-kpi-value" id="projectCount">0</div><div class="nx-kpi-foot" id="projectCountFoot">Server katalogi va mahalliy yozuvlar</div></article>
 <article class="nx-card"><div class="nx-kpi-top"><span id="applicationCountLabel">Arizalar</span><i class="nx-kpi-dot" style="background:var(--nx-purple)"></i></div><div class="nx-kpi-value" id="applicationCount">0</div><div class="nx-kpi-foot" id="applicationCountFoot">Sizning arizalaringiz</div></article>
 <article class="nx-card"><div class="nx-kpi-top"><span id="collaborationCountLabel">Hamkorlik so‘rovlari</span><i class="nx-kpi-dot" style="background:var(--nx-green)"></i></div><div class="nx-kpi-value" id="collaborationCount">0</div><div class="nx-kpi-foot" id="collaborationCountFoot">Jamoa va resurs so‘rovlari</div></article>
-<article class="nx-card"><div class="nx-kpi-top"><span>Talab va takliflar</span><i class="nx-kpi-dot" style="background:#e8b86b"></i></div><div class="nx-kpi-value" id="exchangeCount">0</div><div class="nx-kpi-foot">Mahalliy e’lonlar soni</div></article>
+<article class="nx-card"><div class="nx-kpi-top"><span id="exchangeCountLabel">Ochiq takliflar</span><i class="nx-kpi-dot" style="background:#e8b86b"></i></div><div class="nx-kpi-value" id="exchangeCount">—</div><div class="nx-kpi-foot" id="exchangeCountFoot">Server katalogi tekshirilmoqda</div></article>
 </section>
 <section class="nx-section"><div class="nx-section-head"><div><h2>Innovatsion faollik</h2><p>Platforma analitikasi va muhim ko‘rsatkichlar</p></div><a class="nx-link" href="analytics.html">Batafsil tahlil →</a></div>
 <div class="nx-analytics"><article class="nx-panel"><div class="nx-panel-head"><div><h3>Faollik tendensiyasi</h3><small>12 oylik vizual ko‘rinish</small></div><span class="nx-overline">IDEA LAB</span></div><div class="nx-chart" aria-label="Faollik grafigi namunaviy vizualizatsiya"><div class="nx-bar-wrap"><div class="nx-bar" style="--h:38%"></div><span class="nx-month">YAN</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:52%"></div><span class="nx-month">FEV</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:45%"></div><span class="nx-month">MAR</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:63%"></div><span class="nx-month">APR</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:57%"></div><span class="nx-month">MAY</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:72%"></div><span class="nx-month">IYN</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:66%"></div><span class="nx-month">IYL</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:82%"></div><span class="nx-month">AVG</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:71%"></div><span class="nx-month">SEN</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:91%"></div><span class="nx-month">OKT</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:84%"></div><span class="nx-month">NOY</span></div><div class="nx-bar-wrap"><div class="nx-bar" style="--h:100%"></div><span class="nx-month">DEK</span></div></div><p class="nx-chart-note">Grafik hozircha dizayn namunasi; haqiqiy oylik tarixiy analitika keyingi integratsiyada ulanadi.</p></article>
@@ -221,12 +221,12 @@ const investment=read("investmentApplications");
 const jobs=read("jobApplications");
 const teams=read("teamApplications");
 const resources=read("resourceOrders");
-const exchange=read("ideaLabExchangeItems");
-const legacyOffers=read("offers");
+
 document.getElementById("projectCount").textContent=projects.length;
 document.getElementById("applicationCount").textContent=investment.length+jobs.length+teams.length+resources.length;
 document.getElementById("collaborationCount").textContent=teams.length+resources.length;
-document.getElementById("exchangeCount").textContent=exchange.length+legacyOffers.length;
+document.getElementById("exchangeCount").textContent="—";
+document.getElementById("exchangeCountFoot").textContent="Server katalogi ulanishi kutilmoqda";
 document.getElementById("todayLabel").textContent=new Intl.DateTimeFormat("uz-UZ",{dateStyle:"full"}).format(new Date());
 const list=document.getElementById("recentProjects");
 if(projects.length){
@@ -284,6 +284,19 @@ async function refreshServerDashboard(){
    target.replaceChildren();target.className="d-empty";
    const strong=document.createElement("b");strong.textContent="Loyihalarni yuklab bo‘lmadi";
    target.append(strong,document.createTextNode("Internet yoki server ulanishini tekshiring."));
+  }
+  const [resourceResult, partnershipResult]=await Promise.all([
+   data.listPublicResources({limit:50}),
+   data.listPublicPartnerships({limit:50})
+  ]);
+  if(resourceResult&&resourceResult.ok&&partnershipResult&&partnershipResult.ok){
+   const resourceRows=Array.isArray(resourceResult.data)?resourceResult.data:[];
+   const partnershipRows=Array.isArray(partnershipResult.data)?partnershipResult.data:[];
+   document.getElementById("exchangeCount").textContent=String(resourceRows.length+partnershipRows.length);
+   document.getElementById("exchangeCountFoot").textContent="Server katalogi: resurslar va hamkorlik (ko‘pi bilan 100 ta)";
+  }else{
+   document.getElementById("exchangeCount").textContent="—";
+   document.getElementById("exchangeCountFoot").textContent="Server katalogini yuklab bo‘lmadi";
   }
   const sessionResult=await auth.getSession();
   if(!sessionResult.ok){
