@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#09090f"><meta name="description" content="IDEA LAB — ideas into reality. Discover ideas, build projects, and create with others.">
+<title>IDEA LAB — Mobile</title>
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./assets/favicon.ico">
+<style>
+:root{color-scheme:dark;--bg:#09090f;--panel:#12121b;--panel2:#181824;--line:#292939;--text:#f4f3fb;--muted:#9998ad;--purple:#a78bfa;--violet:#7c3aed;--cyan:#7dd3fc}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+.app{max-width:520px;margin:auto;min-height:100vh;padding:0 18px 100px;background:radial-gradient(ellipse at 80% 0%,#2c174b55,transparent 38%)}
+header{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff0c}
+.brand{font-weight:900;letter-spacing:.12em;font-size:18px}.brand span{color:var(--purple)}.avatar{width:38px;height:38px;border:1px solid #3c2e57;border-radius:14px;display:grid;place-items:center;background:#1a1427;color:var(--purple);font-weight:800}
+.eyebrow{color:var(--purple);letter-spacing:.18em;font-size:10px;font-weight:800;text-transform:uppercase;margin:26px 0 10px}
+h1{font-size:36px;line-height:1.08;letter-spacing:-.045em;margin:0;font-weight:850}h1 .shine{background:linear-gradient(90deg,#c4b5fd,#8b5cf6,#67e8f9);background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:14px;line-height:1.6;margin:13px 0 22px}
+.hero{padding:24px 20px 22px;border:1px solid #ffffff12;border-radius:24px;background:linear-gradient(140deg,#171324,#101019 75%);position:relative;overflow:hidden}
+.hero:after{content:"";width:180px;height:180px;border-radius:50%;background:#7c3aed20;filter:blur(30px);position:absolute;right:-65px;top:-40px;pointer-events:none}
+.cta{border:0;border-radius:13px;padding:14px 16px;background:linear-gradient(100deg,#8b5cf6,#6d28d9);color:white;font-weight:750;width:100%;cursor:pointer}
+.ghost{border:1px solid var(--line);background:#ffffff05;color:var(--text);border-radius:12px;padding:12px;width:100%;cursor:pointer}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:28px 0 14px}.section-head h2{font-size:18px;margin:0}.section-head button{background:none;border:0;color:var(--purple);font-weight:700}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tile{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:16px;min-height:132px}.tile .ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#8b5cf620;color:#c4b5fd;font-size:18px;margin-bottom:12px}.tile h3{font-size:14px;margin:0 0 6px}.tile p{font-size:12px;color:var(--muted);line-height:1.5;margin:0}
+.project{border:1px solid var(--line);background:var(--panel);padding:16px;border-radius:16px;margin-bottom:10px}.project strong{display:block;margin-bottom:5px}.project small{color:var(--muted)}
+.view{display:none}.view.active{display:block}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:#0c0c13ee;backdrop-filter:blur(18px);border-top:1px solid #ffffff12;display:grid;grid-template-columns:repeat(4,1fr);z-index:4}
+.nav{border:0;background:none;color:#8c8ba0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 2px;font-size:10px;cursor:pointer}.nav .nicon{font-size:19px}.nav.active{color:#c4b5fd}
+.field{width:100%;border:1px solid var(--line);background:#0d0d15;color:var(--text);padding:13px;border-radius:12px;margin:8px 0 14px;font:inherit}.empty{border:1px dashed #3b354b;border-radius:15px;padding:20px;color:var(--muted);text-align:center;font-size:13px}
+footer{text-align:center;color:#67667a;font-size:10px;margin:30px 0 10px;letter-spacing:.1em}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="brand">IDEA <span>LAB</span></div><div class="avatar">IL</div></header>
+<main>
+<section class="view active" id="home">
+<div class="eyebrow">IDEAS INTO REALITY</div>
+<div class="hero"><h1>Think beyond.<br><span class="shine">Build what's next.</span></h1><p class="sub">A space for bold ideas, meaningful projects, and people ready to create a better future.</p><button class="cta" data-go="ideas">Start with an idea ↗</button></div>
+<div class="section-head"><h2>Explore the Lab</h2></div>
+<div class="grid">
+<div class="tile" data-go="ideas"><div class="ico">✦</div><h3>Idea Space</h3><p>Capture a thought and turn it into a concept.</p></div>
+<div class="tile" data-go="projects"><div class="ico">◈</div><h3>Projects</h3><p>Track projects from concept to action.</p></div>
+<div class="tile" data-go="discover"><div class="ico">⌕</div><h3>Discover</h3><p>Explore themes and new opportunities.</p></div>
+<div class="tile" data-go="profile"><div class="ico">◎</div><h3>Your Lab</h3><p>Your personal creative workspace.</p></div>
+</div>
+<div class="section-head"><h2>Made for momentum</h2></div><div class="tile"><h3>Ideas are only the beginning.</h3><p>Make a plan, connect people, test the next step, and keep moving.</p></div>
+</section>
+<section class="view" id="projects"><div class="eyebrow">YOUR WORKSPACE</div><h1>Projects</h1><p class="sub">Keep ideas organized and move them forward.</p><button class="cta" id="new-project">＋ Create project</button><div class="section-head"><h2>Your projects</h2></div><div id="project-list"><div class="empty">Your projects will appear here when you create one.</div></div></section>
+<section class="view" id="ideas"><div class="eyebrow">IDEA SPACE</div><h1>Catch the <span class="shine">spark.</span></h1><p class="sub">Write down a new thought. Start small—clarity comes from shaping it.</p><textarea id="idea-text" class="field" rows="5" placeholder="What are you thinking about?"></textarea><button class="cta" id="save-idea">Save idea</button><div class="section-head"><h2>Saved ideas</h2></div><div id="idea-list"><div class="empty">Ideas you save will be listed here.</div></div></section>
+<section class="view" id="discover"><div class="eyebrow">EXPLORE</div><h1>Discover</h1><p class="sub">Explore the themes that inspire creation.</p><div class="grid"><div class="tile"><div class="ico">✧</div><h3>Technology</h3><p>Tools that reshape possibilities.</p></div><div class="tile"><div class="ico">◉</div><h3>Social impact</h3><p>Ideas for stronger communities.</p></div><div class="tile"><div class="ico">↗</div><h3>Entrepreneurship</h3><p>Build sustainable ventures.</p></div><div class="tile"><div class="ico">⌘</div><h3>Creative</h3><p>New perspectives and expression.</p></div></div></section>
+<section class="view" id="profile"><div class="eyebrow">PERSONAL SPACE</div><h1>Your Lab</h1><p class="sub">A personal space for your ideas and projects. This first preview saves items locally on this device.</p><div class="tile"><h3>IDEA LAB preview</h3><p>Mobile-first interface • local demo storage • early access foundation</p></div><div class="section-head"><h2>Next steps</h2></div><div class="project"><strong>Account system</strong><small>Sign-in and cloud syncing will be added in a later release.</small></div><div class="project"><strong>Team collaboration</strong><small>Shared projects and member roles planned.</small></div></section>
+</main>
+<footer>IDEA LAB · IDEAS INTO REALITY</footer>
+</div>
+<nav class="bottom" aria-label="App navigation"><button class="nav active" data-go="home"><span class="nicon">⌂</span>Home</button><button class="nav" data-go="discover"><span class="nicon">⌕</span>Discover</button><button class="nav" data-go="projects"><span class="nicon">◈</span>Projects</button><button class="nav" data-go="profile"><span class="nicon">◎</span>Profile</button></nav>
+<script>
+const views=[...document.querySelectorAll('.view')], nav=[...document.querySelectorAll('.nav')];
+function go(id){views.forEach(v=>v.classList.toggle('active',v.id===id));nav.forEach(n=>n.classList.toggle('active',n.dataset.go===id));window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click',()=>go(el.dataset.go)));
+function render(key,container,emptyText){let data=JSON.parse(localStorage.getItem(key)||'[]');container.innerHTML=data.length?data.map(x=>'<div class="project"><strong>'+escapeHtml(x.title)+'</strong><small>'+escapeHtml(x.date||'')+'</small></div>').join():'<div class="empty">'+emptyText+'</div>'}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+const projects=document.getElementById('project-list'),ideas=document.getElementById('idea-list');
+render('il-projects',projects,'Your projects will appear here when you create one.');
+render('il-ideas',ideas,'Ideas you save will be listed here.');
+document.getElementById('new-project').onclick=()=>{let title=prompt('Project name');if(!title?.trim())return;let d=JSON.parse(localStorage.getItem('il-projects')||'[]');d.unshift({title:title.trim(),date:new Date().toLocaleDateString()});localStorage.setItem('il-projects',JSON.stringify(d));render('il-projects',projects,'Your projects will appear here when you create one.')};
+document.getElementById('save-idea').onclick=()=>{let title=document.getElementById('idea-text').value.trim();if(!title){alert('Write your idea first.');return}let d=JSON.parse(localStorage.getItem('il-ideas')||'[]');d.unshift({title,date:new Date().toLocaleDateString()});localStorage.setItem('il-ideas',JSON.stringify(d));document.getElementById('idea-text').value='';render('il-ideas',ideas,'Ideas you save will be listed here.')};
+if('serviceWorker'in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body></html>
