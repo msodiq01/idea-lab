@@ -4,8 +4,8 @@ This workstream is tracked on `feature/100-practical-improvements`. Only changes
 
 ## 01–10 — Architecture and foundations
 - [x] 01. Create isolated implementation branch for the 100-practice workstream.
-- [ ] 02. Map page entry points and shared navigation dependencies.
-- [ ] 03. Inventory frontend scripts/styles and duplicate responsibilities.
+- [x] 02. Map page entry points and shared navigation dependencies. (Verified repository HTML inventory and shared-shell injection points.)
+- [x] 03. Inventory frontend scripts/styles and duplicate responsibilities. (Verified shared shell/core scripts, feature-specific assets, and existing test suites.)
 - [ ] 04. Define a clear frontend module-loading contract.
 - [ ] 05. Add a consistent environment/config validation helper.
 - [ ] 06. Centralize user-facing error normalization.
