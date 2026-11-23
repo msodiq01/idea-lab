@@ -45,3 +45,11 @@ test("offline statistikalar mahalliy ma’lumot deb aniq belgilangan", () => {
   assert.match(html, /Mahalliy arizalar/);
   assert.match(html, /Faqat ushbu brauzerda saqlangan/);
 });
+
+test("local projects are rendered with DOM text nodes, not HTML parsing", () => {
+  assert.match(html, /recent\.forEach\(project=>\{/);
+  assert.match(html, /title\.textContent=String\(project\.title/);
+  assert.match(html, /detail\.textContent=String\(project\.direction/);
+  assert.match(html, /info\.append\(title,detail\);row\.append\(info,link\);list\.append\(row\)/);
+  assert.doesNotMatch(html, /list\.innerHTML\s*=/);
+});
