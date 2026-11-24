@@ -2,7 +2,7 @@
 (()=>{
  "use strict";
  if(document.getElementById("il-global")) return;
- const primary=[["Bosh sahifa","index.html"],["Loyihalar","projects.html"],["Global bozor","marketplace.html"],["Jamoalar","teams.html"],["Qidiruv","search.html"]];
+ const primary=[["Core","core.html"],["Bosh sahifa","index.html"],["Loyihalar","projects.html"],["Global bozor","marketplace.html"],["Jamoalar","teams.html"],["Qidiruv","search.html"]];
  const groups=[
   ["Kabinet va boshqaruv",[["Shaxsiy kabinet","profile.html"],["Boshqaruv paneli","dashboard.html"],["Arizalar markazi","applications.html"],["Bildirishnomalar","notifications.html"],["Faoliyatlar tarixi","activity.html"],["Tashkilotlar","organizations.html"],["Boshqaruv markazi","management.html"],["Moliya markazi","finance.html"],["Analitika va hisobotlar","analytics.html"],["Rollar va ruxsatlar","access.html"],["Ma’lumotlar zaxirasi","backup.html"],["Mening to‘plamim","collection.html"]]],
   ["G‘oya va loyihalar",[["Kelajak loyihalari","portfolio.html"],["Loyiha xarajatlari","project-expenses.html"],["Tadbirlar","events.html"],["Yo‘l xaritasi","roadmap.html"]]],
