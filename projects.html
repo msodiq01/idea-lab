@@ -1027,6 +1027,7 @@ function createEmptyState(isCompletelyEmpty) {
 /* RENDER PROJECTS */
 
 function renderProjects() {
+    window.IDEALAB_PROJECTS = projects;
     const filteredProjects = getFilteredProjects();
 
     projectList.replaceChildren();
@@ -1047,6 +1048,7 @@ function renderProjects() {
     filteredProjects.forEach(function(project) {
         projectList.appendChild(createProjectCard(project));
     });
+    window.dispatchEvent(new Event("ideaLab:projects-updated"));
 }
 
 /* CENTRAL CORE — filter preferences */
