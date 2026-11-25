@@ -266,6 +266,11 @@
     if(!r.data?.length){empty(box,"Hozircha ish vakansiyalariga ariza yubormagansiz.");return;}
     r.data.forEach(item=>{
       const node=card(item.job_title,[item.company_name,"Holat: "+(statusLabels[item.status]||item.status),"Yuborilgan: "+new Date(item.submitted_at).toLocaleString("uz-UZ")]);
+      if(item.status==="submitted"){
+        const button=document.createElement("button");button.className="btn secondary";button.type="button";button.textContent="Arizani qaytarib olish";
+        button.addEventListener("click",async()=>{button.disabled=true;const x=await data.withdrawJobApplication(item.application_id);if(!x.ok||x.data!==true){alert(errorText(x));button.disabled=false;return;}await loadMyApplications();await loadMyActivity();});
+        node.append(button);
+      }
       box.append(node);
     });
   }
