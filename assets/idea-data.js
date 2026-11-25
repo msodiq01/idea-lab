@@ -426,6 +426,13 @@
       if (!isUuid(jobPostId) || !requiredText(message, 10, 2000)) return Promise.resolve(fail("INVALID_JOB_APPLICATION", "Ariza matni 10–2000 belgidan iborat bo‘lishi kerak."));
       return runPublicCommand("idea_lab_apply_job_post", { p_job_post_id: jobPostId, p_message: message.trim() });
     },
+    listMyJobActivity() {
+      return runPublicCommand("idea_lab_list_my_job_activity", {});
+    },
+    markJobActivityRead(activityId) {
+      if (!isUuid(activityId)) return Promise.resolve(fail("INVALID_ACTIVITY_ID", "Bildirishnoma identifikatori noto‘g‘ri."));
+      return runPublicCommand("idea_lab_mark_job_activity_read", { p_activity_id: activityId });
+    },
     listMyJobApplications() {
       return runPublicCommand("idea_lab_list_my_job_applications", {});
     },
