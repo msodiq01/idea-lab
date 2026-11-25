@@ -62,7 +62,7 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}
 <div class="hero-actions"><button class="btn green" type="submit">Rezyumeni saqlash</button><span id="resumeSaveStatus" class="notice" role="status">Rezyume hali saqlanmagan.</span></div>
 </form>
 </div>
-<div class="section" id="matching-section"><div class="section-head"><div><h2>Sizga mos vakansiyalar</h2><p>Moslik kasb, ko‘nikma, hudud va bandlik turiga qarab hisoblanadi. Tajriba va maosh istagi saqlanadi, ammo hozircha moslik foiziga kiritilmaydi. Foiz ishga qabul qilinish kafolati emas.</p></div><button class="btn secondary" id="refreshMatches" type="button">Qayta moslashtirish</button></div><div class="cards" id="matchingJobs"></div></div>
+<div class="section" id="matching-section"><div class="section-head"><div><h2>Sizga mos vakansiyalar</h2><p>Moslik kasb, ko‘nikma, hudud va bandlik turiga qarab hisoblanadi. Tajriba talabi hisobga olinadi. Maosh istagi saqlanadi, ammo hozircha moslik foiziga kiritilmaydi. Foiz ishga qabul qilinish kafolati emas.</p></div><button class="btn secondary" id="refreshMatches" type="button">Qayta moslashtirish</button></div><div class="cards" id="matchingJobs"></div></div>
 </section>
 <section class="section" id="career-section">
 <div class="section-head"><div><h2>Faol vakansiyalar</h2><p>Faqat serverdagi e’lon qilingan vakansiyalar ko‘rsatiladi.</p></div><button class="btn green" type="button" onclick="document.getElementById('jobFormPanel').hidden=!document.getElementById('jobFormPanel').hidden">+ Vakansiya joylashtirish</button></div>
@@ -87,6 +87,9 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}
 <div class="field"><label for="jobSalary">Maosh</label><input id="jobSalary" maxlength="120" placeholder="Kelishiladi yoki maosh oralig‘i"></div>
 <div class="field"><label for="jobLocation">Ish joyi *</label><input id="jobLocation" required maxlength="120" placeholder="Shahar yoki tuman"></div>
 <div class="field"><label for="jobType">Bandlik turi</label><select id="jobType"><option>To‘liq ish kuni</option><option>Yarim stavka</option><option>Masofaviy</option><option>Amaliyot</option><option>Frilans</option></select></div>
+<div class="field"><label for="jobExperienceYears">Eng kam tajriba (yil)</label><input id="jobExperienceYears" type="number" min="0" max="50" value="0"></div>
+<div class="field"><label for="jobSchedule">Ish jadvali</label><input id="jobSchedule" maxlength="160" placeholder="Masalan, 09:00–18:00, 5/2"></div>
+<div class="field full"><label for="jobSkills">Kerakli ko‘nikmalar (vergul bilan)</label><input id="jobSkills" maxlength="1600" placeholder="Excel, muloqot, rus tili"></div>
 <div class="field full"><label for="jobDescription">Vazifalar va talablar *</label><textarea id="jobDescription" required minlength="10" maxlength="3000" placeholder="Ish vazifalari, malaka talablari va shartlarini aniq yozing."></textarea></div>
 </div><div class="hero-actions"><button class="btn green" type="submit">Vakansiyani joylashtirish</button><button class="btn secondary" type="button" onclick="document.getElementById('jobFormPanel').hidden=true">Bekor qilish</button></div>
 </form></div>
