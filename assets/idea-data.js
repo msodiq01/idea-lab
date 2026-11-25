@@ -297,6 +297,16 @@
         p_engagement_modes: modes, p_visibility: visibility
       });
     },
+    isJobModerator() {
+      return runPublicCommand("idea_lab_is_job_moderator", {});
+    },
+    listPendingOrganizations() {
+      return runPublicCommand("idea_lab_list_pending_organizations", {});
+    },
+    reviewOrganization(organizationId, approve) {
+      if (!isUuid(organizationId) || typeof approve !== "boolean") return Promise.resolve(fail("INVALID_ORGANIZATION_REVIEW", "Tashkilot tekshiruvi ma’lumoti noto‘g‘ri."));
+      return runPublicCommand("idea_lab_review_organization", { p_organization_id: organizationId, p_approve: approve });
+    },
     listMyOrganizations() {
       return runPublicCommand("idea_lab_list_my_organizations", {});
     },
