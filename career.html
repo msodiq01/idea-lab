@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="IDEA LAB ichidagi ish imkoniyatlari markazi. Haqiqiy vakansiyalarni toping va ariza yuboring.">
+<title>IDEA LAB | Ish imkoniyatlari</title>
+<link rel="stylesheet" href="assets/idea-shell.css">
+<link rel="stylesheet" href="assets/idea-nextgen.css">
+<style>
+:root{--career-bg:#080d19;--career-panel:#111a2d;--career-panel2:#17233a;--career-primary:#7565ff;--career-secondary:#16c7b5;--career-text:#f4f6ff;--career-muted:#9ba8c2;--career-border:rgba(255,255,255,.09)}
+*{box-sizing:border-box}body{margin:0;background:var(--career-bg);color:var(--career-text);font-family:Inter,Arial,sans-serif}
+a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(8,13,25,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--career-border)}
+.topbar-inner{max-width:1180px;margin:auto;padding:15px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-weight:900;letter-spacing:.8px;font-size:21px}.brand span{color:var(--career-primary)}
+.navlinks{display:flex;gap:8px;flex-wrap:wrap}.navlinks a{font-size:13px;color:var(--career-muted);padding:9px 11px;border-radius:9px}.navlinks a:hover,.navlinks a.active{background:var(--career-panel2);color:white}
+.wrap{width:min(1120px,92%);margin:30px auto 70px}
+.hero{padding:34px;border:1px solid var(--career-border);border-radius:22px;background:radial-gradient(circle at 90% 10%,rgba(117,101,255,.24),transparent 35%),linear-gradient(130deg,#17233c,#10182a)}
+.eyebrow{color:var(--career-secondary);font-size:11px;letter-spacing:1.8px;font-weight:800}.hero h1{font-size:clamp(28px,4vw,42px);line-height:1.12;margin:13px 0}.hero p{color:var(--career-muted);line-height:1.7;max-width:720px;margin:0}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.btn{border:0;border-radius:10px;padding:12px 17px;background:var(--career-primary);color:white;font-weight:700;cursor:pointer}.btn.secondary{background:var(--career-panel2);border:1px solid var(--career-border)}.btn.green{background:#087e72}.btn:disabled{opacity:.55;cursor:not-allowed}
+.section{margin-top:28px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px}.section-head h2{font-size:22px;margin:0}.section-head p{color:var(--career-muted);font-size:13px;margin:6px 0 0}
+.panel{background:var(--career-panel);border:1px solid var(--career-border);border-radius:16px;padding:20px;margin-top:14px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:13px;color:var(--career-muted)}.field input,.field textarea,.field select,.search{width:100%;padding:12px 13px;border-radius:9px;border:1px solid var(--career-border);background:#0b1323;color:white;outline:none}.field textarea{min-height:115px;resize:vertical}
+.searchrow{display:grid;grid-template-columns:1fr 220px;gap:10px;margin:16px 0}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{background:var(--career-panel);border:1px solid var(--career-border);border-radius:15px;padding:18px;min-width:0}.card h3{margin:0 0 9px;font-size:18px}.card p{color:var(--career-muted);font-size:13px;line-height:1.65;overflow-wrap:anywhere}.card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.empty{grid-column:1/-1;padding:30px;text-align:center;border:1px dashed var(--career-border);border-radius:14px;color:var(--career-muted);background:var(--career-panel)}
+.notice{margin:14px 0;padding:12px 14px;border:1px solid rgba(22,199,181,.3);border-radius:10px;color:var(--career-muted);font-size:12px;line-height:1.6}
+.hidden,[hidden]{display:none!important}
+@media(max-width:680px){.topbar-inner{align-items:flex-start;flex-direction:column}.navlinks{width:100%}.wrap{margin-top:18px}.hero{padding:24px}.form-grid,.cards,.searchrow{grid-template-columns:1fr}.section-head h2{font-size:20px}}
+</style>
+</head>
+<body>
+<header class="topbar"><nav class="topbar-inner">
+<a class="brand" href="index.html">IDEA <span>LAB</span></a>
+<div class="navlinks"><a href="index.html">Bosh sahifa</a><a href="projects.html">Loyihalar</a><a href="teams.html">Jamoalar</a><a class="active" href="career.html">Ish imkoniyatlari</a><a href="profile.html">Kabinet</a></div>
+</nav></header>
+<main class="wrap">
+<section class="hero">
+<div class="eyebrow">IDEA LAB FUNKSIYASI</div>
+<h1>Ish toping. Xodim toping.</h1>
+<p>Haqiqiy ish beruvchilar joylashtirgan faol vakansiyalarni ko‘ring, mos ishga ariza yuboring yoki tashkilotingiz nomidan vakansiya e’lon qiling.</p>
+<div class="hero-actions"><a class="btn green" href="#career-section">Vakansiyalarni ko‘rish</a><button class="btn secondary" type="button" onclick="document.getElementById('jobFormPanel').hidden=!document.getElementById('jobFormPanel').hidden">Vakansiya joylashtirish</button></div>
+</section>
+<section class="section" id="career-section">
+<div class="section-head"><div><h2>Faol vakansiyalar</h2><p>Faqat serverdagi e’lon qilingan vakansiyalar ko‘rsatiladi.</p></div><button class="btn green" type="button" onclick="document.getElementById('jobFormPanel').hidden=!document.getElementById('jobFormPanel').hidden">+ Vakansiya joylashtirish</button></div>
+<p class="notice" id="careerNotice">Vakansiya tafsilotlari va ish beruvchi ma’lumotlarini tekshiring. Shaxsiy ma’lumotlaringizni ochiq ariza matniga yozmang.</p>
+<div class="panel" id="jobFormPanel" hidden>
+<h3>Yangi vakansiya</h3>
+<form id="jobForm">
+<div class="form-grid">
+<div class="field"><label for="jobOrganization">Tashkilot *</label><select id="jobOrganization" required><option value="">Tashkilotni tanlang</option></select></div>
+<div class="field"><label for="jobTitle">Lavozim *</label><input id="jobTitle" required maxlength="100" placeholder="Masalan, administrator"></div>
+<div class="field"><label for="jobSalary">Maosh</label><input id="jobSalary" maxlength="120" placeholder="Kelishiladi yoki maosh oralig‘i"></div>
+<div class="field"><label for="jobLocation">Ish joyi *</label><input id="jobLocation" required maxlength="120" placeholder="Shahar yoki tuman"></div>
+<div class="field"><label for="jobType">Bandlik turi</label><select id="jobType"><option>To‘liq ish kuni</option><option>Yarim stavka</option><option>Masofaviy</option><option>Amaliyot</option><option>Frilans</option></select></div>
+<div class="field full"><label for="jobDescription">Vazifalar va talablar *</label><textarea id="jobDescription" required minlength="10" maxlength="3000" placeholder="Ish vazifalari, malaka talablari va shartlarini aniq yozing."></textarea></div>
+</div><div class="hero-actions"><button class="btn green" type="submit">Vakansiyani joylashtirish</button><button class="btn secondary" type="button" onclick="document.getElementById('jobFormPanel').hidden=true">Bekor qilish</button></div>
+</form></div>
+<div class="searchrow"><input class="search" id="jobSearch" type="search" placeholder="Lavozim, tashkilot yoki hudud bo‘yicha qidirish"><select class="search" id="jobFilter"><option value="">Barcha ish turlari</option><option>To‘liq ish kuni</option><option>Yarim stavka</option><option>Masofaviy</option><option>Amaliyot</option><option>Frilans</option></select></div>
+<div class="cards" id="jobList"></div>
+</section>
+</main>
+<footer class="wrap" style="color:var(--career-muted);font-size:12px;text-align:center;border-top:1px solid var(--career-border);padding-top:20px">IDEA LAB © 2026 — G‘oya. Jamoa. Harakat. Natija.</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js"></script>
+<script src="assets/idea-config.js"></script>
+<script src="assets/idea-auth.js"></script>
+<script src="assets/idea-data.js"></script>
+<script>window.showForm=function(id){const el=document.getElementById(id);if(el)el.hidden=!el.hidden;};</script>
+<script src="assets/idea-careers-server.js"></script>
+</body></html>
