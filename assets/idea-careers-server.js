@@ -147,6 +147,9 @@
       employmentTypes:types.length?types:["full_time"],
       availabilityStatus:$("resumeAvailability").value
     };
+    if(!input.desiredRoles.length){$("resumeSaveStatus").textContent="Kamida bitta kasb yoki lavozimni kiriting.";return;}
+    const min=Number(input.minSalary||0),max=Number(input.maxSalary||0);
+    if(input.minSalary!==""&&input.maxSalary!==""&&min>max){$("resumeSaveStatus").textContent="Maosh oralig‘ida eng kam qiymat yuqori qiymatdan oshmasligi kerak.";return;}
     const button=resumeForm.querySelector('[type="submit"]');button.disabled=true;
     $("resumeSaveStatus").textContent="Rezyume saqlanmoqda…";
     const r=await data.upsertJobSeekerProfile(input);
