@@ -440,6 +440,10 @@
       if (!isUuid(activityId)) return Promise.resolve(fail("INVALID_ACTIVITY_ID", "Bildirishnoma identifikatori noto‘g‘ri."));
       return runPublicCommand("idea_lab_mark_job_activity_read", { p_activity_id: activityId });
     },
+    withdrawJobApplication(applicationId) {
+      if (!isUuid(applicationId)) return Promise.resolve(fail("INVALID_APPLICATION_ID", "Ariza identifikatori noto‘g‘ri."));
+      return runPublicCommand("idea_lab_withdraw_job_application", { p_application_id: applicationId });
+    },
     listMyJobApplications() {
       return runPublicCommand("idea_lab_list_my_job_applications", {});
     },
