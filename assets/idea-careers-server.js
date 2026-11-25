@@ -158,6 +158,32 @@
       actions.append(apply);node.append(actions);matchBox.append(node);
     });
   }
+  async function loadModeration(){
+    const panel=$("moderationPanel"),box=$("moderationOrganizations");
+    if(!panel||!box||!userId)return;
+    const access=await data.isJobModerator();
+    if(!access.ok||access.data!==true){panel.hidden=true;return;}
+    panel.hidden=false;
+    const result=await data.listPendingOrganizations();
+    if(!result.ok){empty(box,errorText(result));return;}
+    box.replaceChildren();
+    if(!result.data?.length){empty(box,"Tekshiruv navbatida tashkilot yo‘q.");return;}
+    result.data.forEach(org=>{
+      const node=card(org.name,[org.organization_type,org.location_label||"Hudud ko‘rsatilmagan",org.description,org.website_url||"", "Yuborilgan: "+new Date(org.created_at).toLocaleString("uz-UZ")]);
+      const actions=document.createElement("div");actions.className="card-actions";
+      [["Tasdiqlash",true],["Rad etish",false]].forEach(([label,approve])=>{
+        const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
+        button.addEventListener("click",async()=>{
+          button.disabled=true;
+          const reviewed=await data.reviewOrganization(org.organization_id,approve);
+          if(!reviewed.ok||reviewed.data!==true){alert(errorText(reviewed));button.disabled=false;return;}
+          await loadModeration();await loadOrganizations();
+        });
+        actions.append(button);
+      });
+      node.append(actions);box.append(node);
+    });
+  }
   async function loadJobs(){
     const r=await data.listPublicJobPosts({limit:50});
     if(!r.ok){setStatus(errorText(r),true);jobs=[];renderJobs();return;}
@@ -178,7 +204,7 @@
     if(statusBox){
       if(!all.length)empty(statusBox,"Hali ish beruvchi tashkilot profilingiz yo‘q.");
       all.forEach(org=>{
-        const labels={draft:"Qoralama",pending_review:"Tekshiruvda",active:"Tasdiqlangan",archived:"Arxivlangan"};
+        const labels={draft:"Qoralama",pending_review:"Tekshiruvda",active:"Tasdiqlangan",rejected:"Rad etilgan",archived:"Arxivlangan"};
         statusBox.append(card(org.name,["Holat: "+(labels[org.status]||org.status),org.location_label||"Hudud ko‘rsatilmagan"]));
       });
     }
@@ -319,7 +345,7 @@
     if(!configured.ok){setStatus("Supabase konfiguratsiyasi yoki SDK yuklanmadi.",true);return;}
     const session=await auth.getSession();
     userId=session.ok?session.data?.session?.user?.id||null:null;
-    await loadOrganizations();await loadJobs();await loadOwnedJobs();await loadMyApplications();await loadResume();await loadMatches();
+    await loadOrganizations();await loadJobs();await loadOwnedJobs();await loadMyApplications();await loadResume();await loadMatches();await loadModeration();
   }
   start().catch(()=>setStatus("Karyera markazini yuklashda xatolik yuz berdi.",true));
 })();
