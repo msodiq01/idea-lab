@@ -80,7 +80,7 @@
       const actions=document.createElement("div");actions.className="card-actions";
       const apply=document.createElement("button");apply.className="btn btn-green";apply.type="button";apply.textContent=userId?"Ariza yuborish":"Kirish orqali ariza yuborish";
       apply.addEventListener("click",()=>{
-        if(!userId){location.href="auth.html?next=teams.html";return;}
+        if(!userId){location.href="auth.html?next=career.html";return;}
         selectedJob=job;$("ilApplyTitle").textContent=job.title+" — ariza";
         $("ilApplyMessage").value="";applicationPanel.hidden=false;applicationPanel.scrollIntoView({behavior:"smooth",block:"center"});
       });
@@ -158,7 +158,7 @@
   }
   async function createJob(event){
     event.preventDefault();
-    if(!userId){alert("Vakansiya joylashtirish uchun avval akkauntga kiring.");location.href="auth.html?next=teams.html";return;}
+    if(!userId){alert("Vakansiya joylashtirish uchun avval akkauntga kiring.");location.href="auth.html?next=career.html";return;}
     const input={
       organizationId:clean($("jobOrganization")?.value),
       title:clean($("jobTitle")?.value),
