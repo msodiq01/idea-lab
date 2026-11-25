@@ -73,7 +73,8 @@ begin
  get diagnostics v_count=row_count;return v_count=1;
 end;$function$;
 
-create or replace function public.idea_lab_list_pending_job_posts()
+drop function if exists public.idea_lab_list_pending_job_posts();
+create function public.idea_lab_list_pending_job_posts()
 returns table(job_post_id uuid,organization_id uuid,company_name text,title text,description text,salary_label text,location_label text,employment_type text,created_at timestamptz)
 language sql stable security invoker set search_path=''
 as $function$
