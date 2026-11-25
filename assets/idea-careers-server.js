@@ -105,7 +105,7 @@
     $("resumeMaxSalary").value=profile.max_salary_uzs??"";
     $("resumeAvailability").value=profile.availability_status||"open";
     const selected=new Set(profile.employment_types||["full_time"]);
-    Array.from($("resumeEmploymentTypes").options).forEach(option=>option.selected=selected.has(option.value));
+    Array.from($("resumeEmploymentTypes").querySelectorAll('input[type="checkbox"]')).forEach(option=>option.checked=selected.has(option.value));
   }
   async function loadResume(){
     if(!resumeForm)return;
@@ -119,7 +119,7 @@
   async function saveResume(event){
     event.preventDefault();
     if(!userId){location.href="auth.html?next=career.html";return;}
-    const types=Array.from($("resumeEmploymentTypes").selectedOptions).map(x=>x.value);
+    const types=Array.from($("resumeEmploymentTypes").querySelectorAll('input[type="checkbox"]:checked')).map(x=>x.value);
     const input={
       fullName:clean($("resumeFullName").value),
       city:clean($("resumeCity").value),
