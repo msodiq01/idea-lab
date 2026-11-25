@@ -31,6 +31,10 @@
   myApps.className="section";
   myApps.innerHTML='<div class="section-heading"><div><h2>Mening ish arizalarim</h2><p>Yuborgan arizalaringiz holati.</p></div></div><div id="ilMyJobApplications" class="cards"></div>';
   section.append(myApps);
+  const myActivity=document.createElement("section");
+  myActivity.className="section";
+  myActivity.innerHTML='<div class="section-heading"><div><h2>Bildirishnomalar</h2><p>Ish beruvchi arizangiz holatini o‘zgartirganda xabar shu yerda chiqadi.</p></div></div><div id="ilMyJobActivity" class="cards"></div>';
+  section.append(myActivity);
 
   const oldCompany=$("companyName");
   if(oldCompany){
@@ -256,6 +260,24 @@
       box.append(node);
     });
   }
+  async function loadMyActivity(){
+    const box=$("ilMyJobActivity");if(!box)return;
+    box.replaceChildren();
+    if(!userId){empty(box,"Bildirishnomalarni ko‘rish uchun akkauntga kiring.");return;}
+    const r=await data.listMyJobActivity();
+    if(!r.ok){empty(box,errorText(r));return;}
+    if(!r.data?.length){empty(box,"Hozircha yangi bildirishnoma yo‘q.");return;}
+    r.data.forEach(item=>{
+      const labels={submitted:"Yangi ariza kelib tushdi",accepted:"Arizangiz qabul qilindi",declined:"Arizangiz rad etildi",withdrawn:"Ariza qaytarib olindi"};
+      const node=card(item.job_title||"Ish arizasi",[item.company_name||"Ish beruvchi",labels[item.to_status]||"Ariza holati: "+item.to_status,new Date(item.created_at).toLocaleString("uz-UZ"),item.read_at?"O‘qilgan":"Yangi bildirishnoma"]);
+      if(!item.read_at){
+        const button=document.createElement("button");button.className="btn secondary";button.type="button";button.textContent="O‘qildi deb belgilash";
+        button.addEventListener("click",async()=>{button.disabled=true;const x=await data.markJobActivityRead(item.activity_id);if(!x.ok){alert(errorText(x));button.disabled=false;return;}await loadMyActivity();});
+        node.append(button);
+      }
+      box.append(node);
+    });
+  }
   async function loadOwnedJobs(){
     const box=$("ilMyJobPosts"),requests=$("ilJobOwnerApplications");box.replaceChildren();requests.replaceChildren();
     if(!userId){empty(box,"Vakansiyalarni boshqarish uchun akkauntga kiring.");empty(requests,"Ish beruvchi kabineti uchun akkauntga kiring.");ownedJobs=[];updateCounts();return;}
@@ -324,7 +346,7 @@
       data.applyJobPost(selectedJob.id,message).then(async r=>{
         button.disabled=false;
         if(!r.ok){alert(errorText(r));return;}
-        applicationPanel.hidden=true;selectedJob=null;alert("Arizangiz yuborildi.");await loadMyApplications();
+        applicationPanel.hidden=true;selectedJob=null;alert("Arizangiz yuborildi.");await loadMyApplications();await loadMyActivity();
       });
     }
   },true);
@@ -345,7 +367,7 @@
     if(!configured.ok){setStatus("Supabase konfiguratsiyasi yoki SDK yuklanmadi.",true);return;}
     const session=await auth.getSession();
     userId=session.ok?session.data?.session?.user?.id||null:null;
-    await loadOrganizations();await loadJobs();await loadOwnedJobs();await loadMyApplications();await loadResume();await loadMatches();await loadModeration();
+    await loadOrganizations();await loadJobs();await loadOwnedJobs();await loadMyApplications();await loadMyActivity();await loadResume();await loadMatches();await loadModeration();
   }
   start().catch(()=>setStatus("Karyera markazini yuklashda xatolik yuz berdi.",true));
 })();
