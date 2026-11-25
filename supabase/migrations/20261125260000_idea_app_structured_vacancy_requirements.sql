@@ -17,6 +17,7 @@ where j.status='published' and o.status='active' and o.visibility='public';
 grant select on public.idea_lab_public_job_directory to anon,authenticated;
 
 drop function if exists public.idea_lab_create_job_post(uuid,text,text,text,text,text);
+drop function if exists public.idea_lab_create_job_post(uuid,text,text,text,text,text,text[],smallint,text);
 create function public.idea_lab_create_job_post(p_organization_id uuid,p_title text,p_description text,p_salary_label text,p_location_label text,p_employment_type text,p_required_skills text[],p_experience_years_min smallint,p_schedule_label text)
 returns uuid language plpgsql security invoker set search_path=''
 as $function$
