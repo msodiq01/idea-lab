@@ -365,6 +365,46 @@
         p_location_label: input.location.trim(), p_employment_type: input.employmentType
       });
     },
+    getMyJobSeekerProfile() {
+      return runPublicCommand("idea_lab_get_my_job_seeker_profile", {});
+    },
+    upsertJobSeekerProfile(input = {}) {
+      const list = (value, maxItems, maxLength) => Array.isArray(value) && value.length <= maxItems &&
+        value.every(item => typeof item === "string" && item.trim().length > 0 && item.trim().length <= maxLength);
+      const roles = input.desiredRoles || [], skills = input.skills || [];
+      const types = input.employmentTypes || ["full_time"];
+      if (!requiredText(input.fullName, 2, 120) || !list(roles, 8, 80) || !list(skills, 30, 80) ||
+          !Number.isInteger(Number(input.experienceYears)) || Number(input.experienceYears) < 0 || Number(input.experienceYears) > 50 ||
+          (input.experienceSummary || "").length > 3000 || (input.educationSummary || "").length > 1600 ||
+          (input.city || "").length > 120 || !list(types, 5, 20) ||
+          types.some(x => !["full_time","part_time","remote","internship","freelance"].includes(x))) {
+        return Promise.resolve(fail("INVALID_JOB_SEEKER_PROFILE", "Rezyume maydonlari noto‘g‘ri yoki belgilangan hajmdan oshdi."));
+      }
+      const min = input.minSalary === "" || input.minSalary == null ? null : Number(input.minSalary);
+      const max = input.maxSalary === "" || input.maxSalary == null ? null : Number(input.maxSalary);
+      if ((min !== null && (!Number.isSafeInteger(min) || min < 0)) ||
+          (max !== null && (!Number.isSafeInteger(max) || max < 0)) ||
+          (min !== null && max !== null && min > max)) {
+        return Promise.resolve(fail("INVALID_JOB_SEEKER_SALARY", "Maosh oralig‘i noto‘g‘ri."));
+      }
+      const availability = ["open","limited","unavailable"].includes(input.availabilityStatus) ? input.availabilityStatus : "open";
+      return runPublicCommand("idea_lab_upsert_job_seeker_profile", {
+        p_full_name: input.fullName.trim(),
+        p_desired_roles: roles.map(x => x.trim()),
+        p_skill_tags: skills.map(x => x.trim()),
+        p_experience_years: Number(input.experienceYears),
+        p_experience_summary: input.experienceSummary || "",
+        p_education_summary: input.educationSummary || "",
+        p_city: input.city || null,
+        p_employment_types: types,
+        p_min_salary_uzs: min,
+        p_max_salary_uzs: max,
+        p_availability_status: availability
+      });
+    },
+    listMatchingJobs() {
+      return runPublicCommand("idea_lab_list_matching_jobs", {});
+    },
     listMyJobPosts() {
       return runPublicCommand("idea_lab_list_my_job_posts", {});
     },
