@@ -14,7 +14,7 @@
   function setCareerMode(mode){
     const active=mode==="employer"?"employer":"seeker";activeMode=active;
     document.querySelectorAll("[data-career-flow]").forEach(node=>{node.hidden=node.dataset.careerFlow!==active;});document.querySelectorAll(".career-apply-action").forEach(button=>{button.hidden=active==="employer";});
-    if(active==="seeker"){$("employerOrgPanel").hidden=true;$("jobFormPanel").hidden=true;}
+    if(active==="seeker"){$("employerOrgPanel").hidden=true;$("jobFormPanel").hidden=true;}else if(typeof applicationPanel!=="undefined"){applicationPanel.hidden=true;selectedJob=null;}
     $("modeSeeker").className=active==="seeker"?"btn green":"btn secondary";
     $("modeEmployer").className=active==="employer"?"btn green":"btn secondary";
   }
