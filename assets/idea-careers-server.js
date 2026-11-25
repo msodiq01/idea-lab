@@ -11,7 +11,7 @@
   const statusLabels={submitted:"Ko‘rib chiqilmoqda",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"};
   let userId=null,jobs=[],ownedJobs=[],selectedJob=null;
   const section=$("career-section"),jobList=$("jobList"),form=$("jobForm");
-  const resumeForm=$("jobSeekerResumeForm"),matchBox=$("matchingJobs");
+  const resumeForm=$("jobSeekerResumeForm"),matchBox=$("matchingJobs"),employerOrgForm=$("employerOrgForm");
   if(!section||!jobList||!form)return;
   jobList.replaceChildren();
   const legacyEmployerPanel=$("employerApplications")?.closest(".section");
@@ -167,16 +167,56 @@
   async function loadOrganizations(){
     const select=$("jobOrganization");if(!select)return;
     select.replaceChildren(new Option("Tashkilotni tanlang",""));
-    if(!userId){select.disabled=true;return;}
+    const statusBox=$("employerOrgStatus");if(statusBox)statusBox.replaceChildren();
+    if(!userId){select.disabled=true;if(statusBox)empty(statusBox,"Tashkilot holatini ko‘rish uchun akkauntga kiring.");return;}
     const r=await data.listMyOrganizations();
-    if(!r.ok){select.disabled=true;setStatus(errorText(r),true);return;}
-    const organizations=(r.data||[]).filter(x=>x.organization_type!=="team"&&x.visibility==="public"&&x.status==="active");
+    if(!r.ok){select.disabled=true;setStatus(errorText(r),true);if(statusBox)empty(statusBox,errorText(r));return;}
+    const all=Array.isArray(r.data)?r.data:[];
+    const organizations=all.filter(x=>x.organization_type!=="team"&&x.visibility==="public"&&x.status==="active");
     organizations.forEach(org=>select.add(new Option(org.name,org.id)));
     select.disabled=false;
-    if(!organizations.length){
-      select.add(new Option("Avval tashkilot yarating",""));
-      formHint.textContent="Vakansiya joylashtirish uchun avval kompaniya yoki tashkilot profilingizni yarating va uni ommaviy, faol holatga o‘tkazing.";
+    if(statusBox){
+      if(!all.length)empty(statusBox,"Hali ish beruvchi tashkilot profilingiz yo‘q.");
+      all.forEach(org=>{
+        const labels={draft:"Qoralama",pending_review:"Tekshiruvda",active:"Tasdiqlangan",archived:"Arxivlangan"};
+        statusBox.append(card(org.name,["Holat: "+(labels[org.status]||org.status),org.location_label||"Hudud ko‘rsatilmagan"]));
+      });
     }
+    if(!organizations.length){
+      select.add(new Option("Tasdiqlangan tashkilot yo‘q",""));
+      formHint.textContent=all.some(x=>x.status==="pending_review")
+        ?"Tashkilot profilingiz tekshiruvda. Tasdiqlangach vakansiya joylashtira olasiz."
+        :"Avval ish beruvchi tashkilot profilini yarating va tekshiruvga yuboring.";
+    }
+  }
+  async function createEmployerOrganization(event){
+    event.preventDefault();
+    if(!userId){location.href="auth.html?next=career.html";return;}
+    const input={
+      name:clean($("employerOrgName").value),
+      location:clean($("employerOrgLocation").value),
+      description:clean($("employerOrgDescription").value),
+      websiteUrl:clean($("employerOrgWebsite").value),
+      type:"company",visibility:"public"
+    };
+    const button=employerOrgForm.querySelector('[type="submit"]');button.disabled=true;
+    setStatus("Tashkilot ma’lumotlari saqlanmoqda…");
+    const created=await data.createOrganization(input);
+    if(!created.ok){button.disabled=false;setStatus(errorText(created),true);return;}
+    const organizationId=typeof created.data==="string"?created.data:created.data?.id;
+    if(!organizationId){button.disabled=false;setStatus("Tashkilot yaratildi, ammo identifikatorni o‘qib bo‘lmadi. Qayta yubormang; kabinetdan tekshiring.",true);return;}
+    const submitted=await data.updateOrganization({
+      organizationId,name:input.name,type:input.type,description:input.description,
+      location:input.location,websiteUrl:input.websiteUrl,visibility:"public",status:"pending_review"
+    });
+    button.disabled=false;
+    if(!submitted.ok||submitted.data!==true){
+      setStatus("Tashkilot profili yaratildi, lekin tekshiruvga yuborilmadi. Kabinetdagi holatini tekshiring.",true);
+      await loadOrganizations();return;
+    }
+    employerOrgForm.reset();
+    setStatus("Tashkilot tekshiruvga yuborildi. Tasdiqlanmaguncha vakansiyalar ommaviy chiqmaydi.");
+    await loadOrganizations();
   }
   async function loadMyApplications(){
     const box=$("ilMyJobApplications");box.replaceChildren();
@@ -247,6 +287,7 @@
     await loadJobs();await loadOwnedJobs();
   }
   document.addEventListener("submit",event=>{
+    if(event.target?.id==="employerOrgForm"){event.preventDefault();event.stopImmediatePropagation();createEmployerOrganization(event);}
     if(event.target?.id==="jobSeekerResumeForm"){event.preventDefault();event.stopImmediatePropagation();saveResume(event);}
     if(event.target?.id==="jobForm"){event.preventDefault();event.stopImmediatePropagation();createJob(event);}
     if(event.target?.id==="ilApplyForm"){
@@ -262,6 +303,8 @@
     }
   },true);
   $("ilApplyCancel").addEventListener("click",()=>{applicationPanel.hidden=true;selectedJob=null;});
+  $("openEmployerOrg")?.addEventListener("click",()=>{if(!userId){location.href="auth.html?next=career.html";return;}$("employerOrgPanel").hidden=!$("employerOrgPanel").hidden;loadOrganizations();});
+  $("cancelEmployerOrg")?.addEventListener("click",()=>{$("employerOrgPanel").hidden=true;});
   $("refreshMatches")?.addEventListener("click",loadMatches);
   document.addEventListener("input",event=>{
     if(event.target?.id==="jobSearch"){event.stopImmediatePropagation();renderJobs();}
