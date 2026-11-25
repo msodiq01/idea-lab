@@ -11,6 +11,13 @@
   const statusLabels={submitted:"Ko‘rib chiqilmoqda",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"};
   let userId=null,jobs=[],ownedJobs=[],selectedJob=null;
   const section=$("career-section"),jobList=$("jobList"),form=$("jobForm");
+  function setCareerMode(mode){
+    const active=mode==="employer"?"employer":"seeker";
+    document.querySelectorAll("[data-career-flow]").forEach(node=>{node.hidden=node.dataset.careerFlow!==active;});
+    if(active==="seeker"){$("employerOrgPanel").hidden=true;$("jobFormPanel").hidden=true;}
+    $("modeSeeker").className=active==="seeker"?"btn green":"btn secondary";
+    $("modeEmployer").className=active==="employer"?"btn green":"btn secondary";
+  }
   const resumeForm=$("jobSeekerResumeForm"),matchBox=$("matchingJobs"),employerOrgForm=$("employerOrgForm");
   if(!section||!jobList||!form)return;
   jobList.replaceChildren();
@@ -25,14 +32,17 @@
 
   const myPosts=document.createElement("section");
   myPosts.className="section";
+  myPosts.dataset.careerFlow="employer";
   myPosts.innerHTML='<div class="section-heading"><div><h2>Mening vakansiyalarim</h2><p>Joylashtirgan e’lonlaringizni boshqaring va arizalarni ko‘rib chiqing.</p></div></div><div id="ilMyJobPosts" class="cards"></div><div id="ilJobOwnerApplications" class="cards" style="margin-top:16px"></div>';
   section.append(myPosts);
   const myApps=document.createElement("section");
   myApps.className="section";
+  myApps.dataset.careerFlow="seeker";
   myApps.innerHTML='<div class="section-heading"><div><h2>Mening ish arizalarim</h2><p>Yuborgan arizalaringiz holati.</p></div></div><div id="ilMyJobApplications" class="cards"></div>';
   section.append(myApps);
   const myActivity=document.createElement("section");
   myActivity.className="section";
+  myActivity.dataset.careerFlow="seeker";
   myActivity.innerHTML='<div class="section-heading"><div><h2>Bildirishnomalar</h2><p>Ish beruvchi arizangiz holatini o‘zgartirganda xabar shu yerda chiqadi.</p></div></div><div id="ilMyJobActivity" class="cards"></div>';
   section.append(myActivity);
 
@@ -393,6 +403,9 @@
     }
   },true);
   $("ilApplyCancel").addEventListener("click",()=>{applicationPanel.hidden=true;selectedJob=null;});
+  $("modeSeeker")?.addEventListener("click",()=>setCareerMode("seeker"));
+  $("modeEmployer")?.addEventListener("click",()=>setCareerMode("employer"));
+  setCareerMode("seeker");
   $("openEmployerOrg")?.addEventListener("click",()=>{if(!userId){location.href="auth.html?next=career.html";return;}$("employerOrgPanel").hidden=!$("employerOrgPanel").hidden;loadOrganizations();});
   $("cancelEmployerOrg")?.addEventListener("click",()=>{$("employerOrgPanel").hidden=true;});
   $("refreshMatches")?.addEventListener("click",loadMatches);
