@@ -39,7 +39,7 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}
 <div class="eyebrow">IDEA LAB FUNKSIYASI</div>
 <h1>Ish toping. Xodim toping.</h1>
 <p>Haqiqiy ish beruvchilar joylashtirgan faol vakansiyalarni ko‘ring, mos ishga ariza yuboring yoki tashkilotingiz nomidan vakansiya e’lon qiling.</p>
-<div class="hero-actions"><a class="btn green" href="#career-section">Vakansiyalarni ko‘rish</a><button class="btn secondary" type="button" onclick="document.getElementById('jobFormPanel').hidden=!document.getElementById('jobFormPanel').hidden">Vakansiya joylashtirish</button></div>
+<div class="hero-actions"><a class="btn green" href="#career-section">Vakansiyalarni ko‘rish</a><button class="btn secondary" id="openEmployerOrg" type="button">Ish beruvchi profilini yaratish</button><button class="btn secondary" type="button" onclick="document.getElementById('jobFormPanel').hidden=!document.getElementById('jobFormPanel').hidden">Vakansiya joylashtirish</button></div>
 </section>
 <section class="section" id="resume-section">
 <div class="section-head"><div><h2>Mening rezyumem</h2><p>Ma’lumotlaringiz shaxsiy saqlanadi. Ish beruvchiga faqat o‘zingiz ariza yuborganingizda ariza matni ko‘rinadi.</p></div></div>
@@ -67,6 +67,17 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}
 <section class="section" id="career-section">
 <div class="section-head"><div><h2>Faol vakansiyalar</h2><p>Faqat serverdagi e’lon qilingan vakansiyalar ko‘rsatiladi.</p></div><button class="btn green" type="button" onclick="document.getElementById('jobFormPanel').hidden=!document.getElementById('jobFormPanel').hidden">+ Vakansiya joylashtirish</button></div>
 <p class="notice" id="careerNotice">Vakansiya tafsilotlari va ish beruvchi ma’lumotlarini tekshiring. Shaxsiy ma’lumotlaringizni ochiq ariza matniga yozmang.</p>
+<div class="panel" id="employerOrgPanel" hidden>
+<h3>Ish beruvchi tashkilot profili</h3>
+<p style="color:var(--career-muted);font-size:13px;line-height:1.6">Tashkilot ma’lumotlarini yuboring. Tekshiruvdan o‘tmaguncha tashkilot va vakansiyalar ommaviy ko‘rinmaydi.</p>
+<form id="employerOrgForm"><div class="form-grid">
+<div class="field"><label for="employerOrgName">Tashkilot nomi *</label><input id="employerOrgName" required maxlength="120" placeholder="Kompaniya yoki tashkilot nomi"></div>
+<div class="field"><label for="employerOrgLocation">Manzil (shahar / hudud) *</label><input id="employerOrgLocation" required maxlength="120" placeholder="Shahar, tuman"></div>
+<div class="field"><label for="employerOrgWebsite">Rasmiy sayt (ixtiyoriy)</label><input id="employerOrgWebsite" type="url" maxlength="500" placeholder="https://example.uz"></div>
+<div class="field full"><label for="employerOrgDescription">Tashkilot haqida *</label><textarea id="employerOrgDescription" required minlength="10" maxlength="2400" placeholder="Faoliyat yo‘nalishi va tashkilot haqida qisqacha ma’lumot"></textarea></div>
+</div><div class="hero-actions"><button class="btn green" type="submit">Tekshiruvga yuborish</button><button class="btn secondary" id="cancelEmployerOrg" type="button">Bekor qilish</button></div></form>
+<div id="employerOrgStatus" class="cards" style="margin-top:14px"></div>
+</div>
 <div class="panel" id="jobFormPanel" hidden>
 <h3>Yangi vakansiya</h3>
 <form id="jobForm">
