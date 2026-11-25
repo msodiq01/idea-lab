@@ -8,6 +8,7 @@ const path = require("node:path");
 const root = path.join(__dirname, "..");
 const read = (name) => fs.readFileSync(path.join(root, name), "utf8");
 const page = read("teams.html");
+const careerPage = read("career.html");
 const data = read("assets/idea-data.js");
 const teams = read("assets/idea-teams-server.js");
 const careers = read("assets/idea-careers-server.js");
@@ -67,7 +68,13 @@ test("vacancy UI disables legacy employer application panel and protects contact
   assert.match(careers, /legacyEmployerPanel\)legacyEmployerPanel\.hidden=true/);
   assert.match(careers, /Shaxsiy telefon raqamlar ochiq katalogda ko‘rsatilmaydi/);
   assert.match(careers, /Aloqa telefonini ochiq e’longa kiritmang/);
-  assert.match(careers, /auth\.html\?next=teams\.html/);
+  assert.match(careers, /auth\.html\?next=career\.html/);
+  const careerScripts = scriptSources(careerPage);
+  assert.ok(careerScripts.includes("assets/idea-auth.js"));
+  assert.ok(careerScripts.includes("assets/idea-data.js"));
+  assert.ok(careerScripts.includes("assets/idea-careers-server.js"));
+  assert.match(careerPage, /id="modeSeeker"/);
+  assert.match(careerPage, /id="modeEmployer"/);
 });
 
 test("career migration creates private applications with participant-scoped RLS", () => {
