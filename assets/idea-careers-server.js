@@ -50,7 +50,7 @@
   const applicationPanel=document.createElement("div");
   applicationPanel.className="form-panel";
   applicationPanel.hidden=true;
-  applicationPanel.innerHTML='<h3 id="ilApplyTitle">Vakansiyaga ariza</h3><form id="ilApplyForm"><div class="field"><label for="ilApplyMessage">Ish beruvchiga xabar (10–2000 belgi)</label><textarea id="ilApplyMessage" required minlength="10" maxlength="2000" rows="5" placeholder="Tajriba, qiziqish va mosligingiz haqida yozing. Telefon, manzil yoki boshqa maxfiy ma’lumotlarni kiritmang."></textarea></div><button class="btn btn-green" type="submit">Ariza yuborish</button><button class="btn btn-secondary" id="ilApplyCancel" type="button">Bekor qilish</button></form>';
+  applicationPanel.innerHTML='<h3 id="ilApplyTitle">Vakansiyaga ariza</h3><p class="notice">Ariza yuborilganda ism-familiya, kasb yo‘nalishi, ko‘nikmalar, ta’lim va tajriba ma’lumotlaringiz ushbu ish beruvchiga ko‘rinadi. Telefon, pasport yoki uy manzilingizni kiritmang.</p><form id="ilApplyForm"><div class="field"><label for="ilApplyMessage">Ish beruvchiga xabar (10–2000 belgi)</label><textarea id="ilApplyMessage" required minlength="10" maxlength="2000" rows="5" placeholder="Tajriba, qiziqish va mosligingiz haqida yozing. Telefon, manzil yoki boshqa maxfiy ma’lumotlarni kiritmang."></textarea></div><button class="btn btn-green" type="submit">Ariza yuborish</button><button class="btn btn-secondary" id="ilApplyCancel" type="button">Bekor qilish</button></form>';
   jobList.insertAdjacentElement("afterend",applicationPanel);
 
   function card(title,lines=[]){
@@ -323,7 +323,17 @@
     const pending=(r.data||[]).filter(x=>x.status==="submitted");
     if(!pending.length){empty(box,"Bu vakansiya uchun yangi arizalar yo‘q.");return;}
     pending.forEach(item=>{
-      const node=card("Yangi ariza",[item.job_title,item.message,new Date(item.submitted_at).toLocaleString("uz-UZ")]);
+      const candidateLines=[
+        item.candidate_city||"",
+        item.candidate_roles?.length?"Kasblar: "+item.candidate_roles.join(", "):"",
+        item.candidate_skills?.length?"Ko‘nikmalar: "+item.candidate_skills.join(", "):"",
+        item.candidate_experience_years!=null?"Tajriba: "+item.candidate_experience_years+" yil":"",
+        item.candidate_experience_summary||"",
+        item.candidate_education_summary||"",
+        "Ariza xabari: "+item.message,
+        "Yuborilgan: "+new Date(item.submitted_at).toLocaleString("uz-UZ")
+      ];
+      const node=card(item.candidate_name||"Nomzod",candidateLines);
       const actions=document.createElement("div");actions.className="card-actions";
       [["Qabul qilish","accepted"],["Rad etish","declined"]].forEach(([label,status])=>{
         const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
