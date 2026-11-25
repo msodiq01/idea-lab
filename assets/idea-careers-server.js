@@ -9,10 +9,10 @@
   const clean=value=>String(value??"").trim();
   const typeLabels={full_time:"To‘liq ish kuni",part_time:"Yarim stavka",remote:"Masofaviy",internship:"Amaliyot",freelance:"Frilans"};
   const statusLabels={submitted:"Ko‘rib chiqilmoqda",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"};
-  let userId=null,jobs=[],ownedJobs=[],selectedJob=null;
+  let userId=null,jobs=[],ownedJobs=[],selectedJob=null,activeMode="seeker";
   const section=$("career-section"),jobList=$("jobList"),form=$("jobForm");
   function setCareerMode(mode){
-    const active=mode==="employer"?"employer":"seeker";
+    const active=mode==="employer"?"employer":"seeker";activeMode=active;
     document.querySelectorAll("[data-career-flow]").forEach(node=>{node.hidden=node.dataset.careerFlow!==active;});
     if(active==="seeker"){$("employerOrgPanel").hidden=true;$("jobFormPanel").hidden=true;}
     $("modeSeeker").className=active==="seeker"?"btn green":"btn secondary";
@@ -93,7 +93,7 @@
     visible.forEach(job=>{
       const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",job.description]);
       const actions=document.createElement("div");actions.className="card-actions";
-      const apply=document.createElement("button");apply.className="btn btn-green";apply.type="button";apply.textContent=userId?"Ariza yuborish":"Kirish orqali ariza yuborish";
+      const apply=document.createElement("button");apply.className="btn btn-green";apply.type="button";apply.textContent=userId?"Ariza yuborish":"Kirish orqali ariza yuborish";apply.hidden=activeMode==="employer";
       apply.addEventListener("click",()=>{
         if(!userId){location.href="auth.html?next=career.html";return;}
         selectedJob=job;$("ilApplyTitle").textContent=job.title+" — ariza";
