@@ -415,11 +415,18 @@
     listMatchingJobs() {
       return runPublicCommand("idea_lab_list_matching_jobs", {});
     },
+    listPendingJobPosts() {
+      return runPublicCommand("idea_lab_list_pending_job_posts", {});
+    },
+    reviewJobPost(jobPostId, approve) {
+      if (!isUuid(jobPostId) || typeof approve !== "boolean") return Promise.resolve(fail("INVALID_JOB_REVIEW", "Vakansiya tekshiruvi ma’lumoti noto‘g‘ri."));
+      return runPublicCommand("idea_lab_review_job_post", { p_job_post_id: jobPostId, p_approve: approve });
+    },
     listMyJobPosts() {
       return runPublicCommand("idea_lab_list_my_job_posts", {});
     },
     updateJobPostStatus(jobPostId, status) {
-      if (!isUuid(jobPostId) || !["published", "closed"].includes(status)) return Promise.resolve(fail("INVALID_JOB_STATUS", "Vakansiya holati noto‘g‘ri."));
+      if (!isUuid(jobPostId) || !["pending_review", "closed"].includes(status)) return Promise.resolve(fail("INVALID_JOB_STATUS", "Vakansiya holati noto‘g‘ri."));
       return runPublicCommand("idea_lab_update_job_post_status", { p_job_post_id: jobPostId, p_status: status });
     },
     applyJobPost(jobPostId, message) {
