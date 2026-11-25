@@ -81,7 +81,7 @@
     });
     if(!visible.length){empty(jobList,"Hozircha mos ochiq vakansiya yo‘q.");updateCounts();return;}
     visible.forEach(job=>{
-      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.salary_label||"Maosh: kelishiladi",job.description]);
+      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",job.description]);
       const actions=document.createElement("div");actions.className="card-actions";
       const apply=document.createElement("button");apply.className="btn btn-green";apply.type="button";apply.textContent=userId?"Ariza yuborish":"Kirish orqali ariza yuborish";
       apply.addEventListener("click",()=>{
@@ -154,7 +154,7 @@
     if(!r.data?.length){empty(matchBox,"Hozircha rezyumengizga mos haqiqiy vakansiya topilmadi. Yangi e’lonlar joylashtirilganda shu yerda ko‘rinadi.");return;}
     r.data.forEach(job=>{
       const reasons=Array.isArray(job.match_reasons)?job.match_reasons.join(" • "):"";
-      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.salary_label||"Maosh: kelishiladi",reasons]);
+      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Kerakli ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",reasons]);
       const score=document.createElement("p");score.className="notice";score.textContent="Moslik: "+Number(job.match_score||0)+"% — bu yo‘naltiruvchi baho, ishga qabul qilish kafolati emas.";node.append(score);
       const actions=document.createElement("div");actions.className="card-actions";
       const apply=document.createElement("button");apply.className="btn green";apply.type="button";apply.textContent="Ariza yuborish";
@@ -187,7 +187,7 @@
     if(!jobResult.ok)empty(jobBox,errorText(jobResult));
     else if(!jobResult.data?.length)empty(jobBox,"Tekshiruv navbatida vakansiya yo‘q.");
     else jobResult.data.forEach(job=>{
-      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.salary_label||"Maosh: kelishiladi",job.description,"Yuborilgan: "+new Date(job.created_at).toLocaleString("uz-UZ")]);
+      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",job.description,"Yuborilgan: "+new Date(job.created_at).toLocaleString("uz-UZ")]);
       const actions=document.createElement("div");actions.className="card-actions";
       [["Vakansiyani tasdiqlash",true],["Rad etish",false]].forEach(([label,approve])=>{
         const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
@@ -301,7 +301,7 @@
     if(!ownedJobs.length)empty(box,"Siz hali vakansiya joylashtirmagansiz.");
     for(const job of ownedJobs){
       const labels={pending_review:"Tekshiruvda",published:"Ochiq",closed:"Yopilgan",rejected:"Rad etilgan"};
-      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),"Holat: "+(labels[job.status]||job.status)]);
+      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"","Holat: "+(labels[job.status]||job.status)]);
       const actions=document.createElement("div");actions.className="card-actions";
       if(job.status!=="pending_review"&&job.status!=="rejected"){
         const toggle=document.createElement("button");toggle.className="btn";toggle.type="button";
@@ -362,6 +362,9 @@
       salary:clean($("jobSalary")?.value),
       location:clean($("jobLocation")?.value),
       employmentType:({ "To‘liq ish kuni":"full_time","Yarim stavka":"part_time","Masofaviy":"remote","Amaliyot":"internship","Frilans":"freelance" })[clean($("jobType")?.value)]||"full_time",
+      requiredSkills:splitTags($("jobSkills")?.value,20),
+      experienceYearsMin:Number($("jobExperienceYears")?.value||0),
+      schedule:clean($("jobSchedule")?.value),
       description:clean($("jobDescription")?.value)
     };
     if(!input.organizationId){alert("Avval o‘zingizga tegishli tashkilotni tanlang.");return;}
