@@ -163,29 +163,38 @@
     });
   }
   async function loadModeration(){
-    const panel=$("moderationPanel"),box=$("moderationOrganizations");
-    if(!panel||!box||!userId)return;
+    const panel=$("moderationPanel"),orgBox=$("moderationOrganizations"),jobBox=$("moderationJobs");
+    if(!panel||!orgBox||!jobBox||!userId)return;
     const access=await data.isJobModerator();
     if(!access.ok||access.data!==true){panel.hidden=true;return;}
     panel.hidden=false;
-    const result=await data.listPendingOrganizations();
-    if(!result.ok){empty(box,errorText(result));return;}
-    box.replaceChildren();
-    if(!result.data?.length){empty(box,"Tekshiruv navbatida tashkilot yo‘q.");return;}
-    result.data.forEach(org=>{
+    const orgResult=await data.listPendingOrganizations();
+    orgBox.replaceChildren();
+    if(!orgResult.ok)empty(orgBox,errorText(orgResult));
+    else if(!orgResult.data?.length)empty(orgBox,"Tekshiruv navbatida tashkilot yo‘q.");
+    else orgResult.data.forEach(org=>{
       const node=card(org.name,[org.organization_type,org.location_label||"Hudud ko‘rsatilmagan",org.description,org.website_url||"", "Yuborilgan: "+new Date(org.created_at).toLocaleString("uz-UZ")]);
       const actions=document.createElement("div");actions.className="card-actions";
       [["Tasdiqlash",true],["Rad etish",false]].forEach(([label,approve])=>{
         const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
-        button.addEventListener("click",async()=>{
-          button.disabled=true;
-          const reviewed=await data.reviewOrganization(org.organization_id,approve);
-          if(!reviewed.ok||reviewed.data!==true){alert(errorText(reviewed));button.disabled=false;return;}
-          await loadModeration();await loadOrganizations();
-        });
+        button.addEventListener("click",async()=>{button.disabled=true;const reviewed=await data.reviewOrganization(org.organization_id,approve);if(!reviewed.ok||reviewed.data!==true){alert(errorText(reviewed));button.disabled=false;return;}await loadModeration();await loadOrganizations();});
         actions.append(button);
       });
-      node.append(actions);box.append(node);
+      node.append(actions);orgBox.append(node);
+    });
+    const jobResult=await data.listPendingJobPosts();
+    jobBox.replaceChildren();
+    if(!jobResult.ok)empty(jobBox,errorText(jobResult));
+    else if(!jobResult.data?.length)empty(jobBox,"Tekshiruv navbatida vakansiya yo‘q.");
+    else jobResult.data.forEach(job=>{
+      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.salary_label||"Maosh: kelishiladi",job.description,"Yuborilgan: "+new Date(job.created_at).toLocaleString("uz-UZ")]);
+      const actions=document.createElement("div");actions.className="card-actions";
+      [["Vakansiyani tasdiqlash",true],["Rad etish",false]].forEach(([label,approve])=>{
+        const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
+        button.addEventListener("click",async()=>{button.disabled=true;const reviewed=await data.reviewJobPost(job.job_post_id,approve);if(!reviewed.ok||reviewed.data!==true){alert(errorText(reviewed));button.disabled=false;return;}await loadModeration();await loadJobs();await loadOwnedJobs();});
+        actions.append(button);
+      });
+      node.append(actions);jobBox.append(node);
     });
   }
   async function loadJobs(){
@@ -286,13 +295,23 @@
     ownedJobs=Array.isArray(r.data)?r.data:[];
     if(!ownedJobs.length)empty(box,"Siz hali vakansiya joylashtirmagansiz.");
     for(const job of ownedJobs){
-      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),"Holat: "+(job.status==="published"?"Ochiq":"Yopilgan")]);
+      const labels={pending_review:"Tekshiruvda",published:"Ochiq",closed:"Yopilgan",rejected:"Rad etilgan"};
+      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),"Holat: "+(labels[job.status]||job.status)]);
       const actions=document.createElement("div");actions.className="card-actions";
-      const toggle=document.createElement("button");toggle.className="btn";toggle.type="button";toggle.textContent=job.status==="published"?"Vakansiyani yopish":"Qayta ochish";
-      toggle.addEventListener("click",async()=>{toggle.disabled=true;const x=await data.updateJobPostStatus(job.job_post_id,job.status==="published"?"closed":"published");if(!x.ok||x.data!==true){alert(errorText(x));toggle.disabled=false;return;}await loadJobs();await loadOwnedJobs();});
-      const view=document.createElement("button");view.className="btn btn-secondary";view.type="button";view.textContent="Arizalarni ko‘rish";
-      view.addEventListener("click",async()=>{view.disabled=true;await loadApplicationsFor(job,requests);view.disabled=false;});
-      actions.append(toggle,view);node.append(actions);box.append(node);
+      if(job.status!=="pending_review"&&job.status!=="rejected"){
+        const toggle=document.createElement("button");toggle.className="btn";toggle.type="button";
+        toggle.textContent=job.status==="published"?"Vakansiyani yopish":"Tekshiruvga qayta yuborish";
+        toggle.addEventListener("click",async()=>{toggle.disabled=true;const x=await data.updateJobPostStatus(job.job_post_id,job.status==="published"?"closed":"pending_review");if(!x.ok||x.data!==true){alert(errorText(x));toggle.disabled=false;return;}await loadJobs();await loadOwnedJobs();});
+        actions.append(toggle);
+      } else if(job.status==="pending_review") {
+        const waiting=document.createElement("span");waiting.className="notice";waiting.textContent="Moderator tekshiruvi kutilmoqda";actions.append(waiting);
+      }
+      if(job.status==="published"||job.status==="closed"){
+        const view=document.createElement("button");view.className="btn secondary";view.type="button";view.textContent="Arizalarni ko‘rish";
+        view.addEventListener("click",async()=>{view.disabled=true;await loadApplicationsFor(job,requests);view.disabled=false;});
+        actions.append(view);
+      }
+      if(actions.childNodes.length)node.append(actions);box.append(node);
     }
     updateCounts();
     if(!ownedJobs.length)empty(requests,"Hozircha ko‘rib chiqiladigan arizalar yo‘q.");
@@ -331,7 +350,7 @@
     const r=await data.createJobPost(input);
     if(!r.ok){setStatus(errorText(r),true);if(submit)submit.disabled=false;return;}
     form.reset();$("jobFormPanel")?.classList.add("hidden");if(submit)submit.disabled=false;
-    setStatus("Vakansiya serverga joylandi.");
+    setStatus("Vakansiya moderator tekshiruviga yuborildi. Tasdiqlangach katalogda ko‘rinadi.");
     await loadJobs();await loadOwnedJobs();
   }
   document.addEventListener("submit",event=>{
