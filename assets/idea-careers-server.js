@@ -11,6 +11,7 @@
   const statusLabels={submitted:"Ko‘rib chiqilmoqda",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"};
   let userId=null,jobs=[],ownedJobs=[],selectedJob=null;
   const section=$("career-section"),jobList=$("jobList"),form=$("jobForm");
+  const resumeForm=$("jobSeekerResumeForm"),matchBox=$("matchingJobs");
   if(!section||!jobList||!form)return;
   jobList.replaceChildren();
   const legacyEmployerPanel=$("employerApplications")?.closest(".section");
@@ -87,6 +88,75 @@
       actions.append(apply);node.append(actions);jobList.append(node);
     });
     updateCounts();
+  }
+  function splitTags(value,max){
+    return clean(value).split(",").map(x=>x.trim()).filter(Boolean).slice(0,max);
+  }
+  function fillResume(profile){
+    if(!resumeForm||!profile)return;
+    $("resumeFullName").value=profile.full_name||"";
+    $("resumeCity").value=profile.city||"";
+    $("resumeRoles").value=(profile.desired_roles||[]).join(", ");
+    $("resumeSkills").value=(profile.skill_tags||[]).join(", ");
+    $("resumeYears").value=String(profile.experience_years??0);
+    $("resumeExperience").value=profile.experience_summary||"";
+    $("resumeEducation").value=profile.education_summary||"";
+    $("resumeMinSalary").value=profile.min_salary_uzs??"";
+    $("resumeMaxSalary").value=profile.max_salary_uzs??"";
+    $("resumeAvailability").value=profile.availability_status||"open";
+    const selected=new Set(profile.employment_types||["full_time"]);
+    Array.from($("resumeEmploymentTypes").options).forEach(option=>option.selected=selected.has(option.value));
+  }
+  async function loadResume(){
+    if(!resumeForm)return;
+    if(!userId){resumeForm.querySelectorAll("input,textarea,select,button").forEach(x=>x.disabled=true);$("resumeSaveStatus").textContent="Rezyumeni yaratish uchun avval IDEA LAB akkauntiga kiring.";return;}
+    const r=await data.getMyJobSeekerProfile();
+    if(!r.ok){$("resumeSaveStatus").textContent=errorText(r);return;}
+    const profile=Array.isArray(r.data)?r.data[0]:r.data;
+    if(profile){fillResume(profile);$("resumeSaveStatus").textContent="Saqlangan rezyume yuklandi.";}
+    else $("resumeSaveStatus").textContent="Rezyumeni to‘ldirib saqlang — mos vakansiyalar shundan keyin ko‘rinadi.";
+  }
+  async function saveResume(event){
+    event.preventDefault();
+    if(!userId){location.href="auth.html?next=career.html";return;}
+    const types=Array.from($("resumeEmploymentTypes").selectedOptions).map(x=>x.value);
+    const input={
+      fullName:clean($("resumeFullName").value),
+      city:clean($("resumeCity").value),
+      desiredRoles:splitTags($("resumeRoles").value,8),
+      skills:splitTags($("resumeSkills").value,30),
+      experienceYears:Number($("resumeYears").value||0),
+      experienceSummary:clean($("resumeExperience").value),
+      educationSummary:clean($("resumeEducation").value),
+      minSalary:$("resumeMinSalary").value,
+      maxSalary:$("resumeMaxSalary").value,
+      employmentTypes:types.length?types:["full_time"],
+      availabilityStatus:$("resumeAvailability").value
+    };
+    const button=resumeForm.querySelector('[type="submit"]');button.disabled=true;
+    $("resumeSaveStatus").textContent="Rezyume saqlanmoqda…";
+    const r=await data.upsertJobSeekerProfile(input);
+    button.disabled=false;
+    if(!r.ok){$("resumeSaveStatus").textContent=errorText(r);return;}
+    $("resumeSaveStatus").textContent="Rezyume muvaffaqiyatli saqlandi.";
+    await loadMatches();
+  }
+  async function loadMatches(){
+    if(!matchBox)return;
+    matchBox.replaceChildren();
+    if(!userId){empty(matchBox,"Mos vakansiyalarni ko‘rish uchun tizimga kiring va rezyume yarating.");return;}
+    const r=await data.listMatchingJobs();
+    if(!r.ok){empty(matchBox,errorText(r));return;}
+    if(!r.data?.length){empty(matchBox,"Hozircha rezyumengizga mos haqiqiy vakansiya topilmadi. Yangi e’lonlar joylashtirilganda shu yerda ko‘rinadi.");return;}
+    r.data.forEach(job=>{
+      const reasons=Array.isArray(job.match_reasons)?job.match_reasons.join(" • "):"";
+      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.salary_label||"Maosh: kelishiladi",reasons]);
+      const score=document.createElement("p");score.className="notice";score.textContent="Moslik: "+Number(job.match_score||0)+"% — bu yo‘naltiruvchi baho, ishga qabul qilish kafolati emas.";node.append(score);
+      const actions=document.createElement("div");actions.className="card-actions";
+      const apply=document.createElement("button");apply.className="btn green";apply.type="button";apply.textContent="Ariza yuborish";
+      apply.addEventListener("click",()=>{selectedJob=job;$("ilApplyTitle").textContent=job.title+" — ariza";$("ilApplyMessage").value="";applicationPanel.hidden=false;applicationPanel.scrollIntoView({behavior:"smooth",block:"center"});});
+      actions.append(apply);node.append(actions);matchBox.append(node);
+    });
   }
   async function loadJobs(){
     const r=await data.listPublicJobPosts({limit:50});
@@ -177,6 +247,7 @@
     await loadJobs();await loadOwnedJobs();
   }
   document.addEventListener("submit",event=>{
+    if(event.target?.id==="jobSeekerResumeForm"){event.preventDefault();event.stopImmediatePropagation();saveResume(event);}
     if(event.target?.id==="jobForm"){event.preventDefault();event.stopImmediatePropagation();createJob(event);}
     if(event.target?.id==="ilApplyForm"){
       event.preventDefault();event.stopImmediatePropagation();
@@ -191,6 +262,7 @@
     }
   },true);
   $("ilApplyCancel").addEventListener("click",()=>{applicationPanel.hidden=true;selectedJob=null;});
+  $("refreshMatches")?.addEventListener("click",loadMatches);
   document.addEventListener("input",event=>{
     if(event.target?.id==="jobSearch"){event.stopImmediatePropagation();renderJobs();}
   },true);
@@ -204,7 +276,7 @@
     if(!configured.ok){setStatus("Supabase konfiguratsiyasi yoki SDK yuklanmadi.",true);return;}
     const session=await auth.getSession();
     userId=session.ok?session.data?.session?.user?.id||null:null;
-    await loadOrganizations();await loadJobs();await loadOwnedJobs();await loadMyApplications();
+    await loadOrganizations();await loadJobs();await loadOwnedJobs();await loadMyApplications();await loadResume();await loadMatches();
   }
   start().catch(()=>setStatus("Karyera markazini yuklashda xatolik yuz berdi.",true));
 })();
