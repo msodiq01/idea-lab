@@ -398,11 +398,16 @@
       if(!selectedJob)return;
       const message=clean($("ilApplyMessage").value);
       const button=event.target.querySelector('[type="submit"]');button.disabled=true;
-      data.applyJobPost(selectedJob.id,message).then(async r=>{
-        button.disabled=false;
+      const originalText=button.textContent;button.textContent="Yuborilmoqda…";
+      try{
+        const r=await data.applyJobPost(selectedJob.id,message);
         if(!r.ok){alert(errorText(r));return;}
-        applicationPanel.hidden=true;selectedJob=null;alert("Arizangiz yuborildi.");await loadMyApplications();await loadMyActivity();
-      });
+        applicationPanel.hidden=true;selectedJob=null;event.target.reset();alert("Arizangiz yuborildi.");await loadMyApplications();await loadMyActivity();
+      }catch(error){
+        alert("Ariza yuborishda vaqtinchalik xatolik yuz berdi. Internetni tekshirib, qayta urinib ko‘ring.");
+      }finally{
+        button.disabled=false;button.textContent=originalText;
+      }
     }
   },true);
   $("ilApplyCancel").addEventListener("click",()=>{applicationPanel.hidden=true;selectedJob=null;});
