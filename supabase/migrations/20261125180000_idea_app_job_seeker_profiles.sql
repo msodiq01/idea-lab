@@ -72,7 +72,8 @@ as $function$
  from idea_app.job_seeker_profiles p where p.user_id=(select auth.uid()) limit 1;
 $function$;
 
-create or replace function public.idea_lab_list_matching_jobs()
+drop function if exists public.idea_lab_list_matching_jobs();
+create function public.idea_lab_list_matching_jobs()
 returns table(id uuid,company_name text,title text,description text,salary_label text,location_label text,employment_type text,published_at timestamptz,match_score integer,match_reasons text[])
 language sql stable security invoker set search_path=''
 as $function$
