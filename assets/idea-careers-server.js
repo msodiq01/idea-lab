@@ -320,9 +320,10 @@
     box.replaceChildren();
     const r=await data.listJobPostApplications(job.job_post_id);
     if(!r.ok){empty(box,errorText(r));return;}
-    const pending=(r.data||[]).filter(x=>x.status==="submitted");
-    if(!pending.length){empty(box,"Bu vakansiya uchun yangi arizalar yo‘q.");return;}
-    pending.forEach(item=>{
+    const applications=Array.isArray(r.data)?r.data:[];
+    if(!applications.length){empty(box,"Bu vakansiya uchun hali ariza kelib tushmagan.");return;}
+    applications.forEach(item=>{
+      const statusLabels={submitted:"Ko‘rib chiqilmoqda",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"};
       const candidateLines=[
         item.candidate_city||"",
         item.candidate_roles?.length?"Kasblar: "+item.candidate_roles.join(", "):"",
@@ -330,17 +331,21 @@
         item.candidate_experience_years!=null?"Tajriba: "+item.candidate_experience_years+" yil":"",
         item.candidate_experience_summary||"",
         item.candidate_education_summary||"",
+        "Ariza holati: "+(statusLabels[item.status]||item.status),
         "Ariza xabari: "+item.message,
         "Yuborilgan: "+new Date(item.submitted_at).toLocaleString("uz-UZ")
       ];
       const node=card(item.candidate_name||"Nomzod",candidateLines);
-      const actions=document.createElement("div");actions.className="card-actions";
-      [["Qabul qilish","accepted"],["Rad etish","declined"]].forEach(([label,status])=>{
-        const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
-        button.addEventListener("click",async()=>{button.disabled=true;const x=await data.reviewJobApplication(item.application_id,status);if(!x.ok||x.data!==true){alert(errorText(x));button.disabled=false;return;}await loadApplicationsFor(job,box);});
-        actions.append(button);
-      });
-      node.append(actions);box.append(node);
+      if(item.status==="submitted"){
+        const actions=document.createElement("div");actions.className="card-actions";
+        [["Qabul qilish","accepted"],["Rad etish","declined"]].forEach(([label,status])=>{
+          const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
+          button.addEventListener("click",async()=>{button.disabled=true;const x=await data.reviewJobApplication(item.application_id,status);if(!x.ok||x.data!==true){alert(errorText(x));button.disabled=false;return;}await loadApplicationsFor(job,box);});
+          actions.append(button);
+        });
+        node.append(actions);
+      }
+      box.append(node);
     });
   }
   async function createJob(event){
