@@ -70,9 +70,9 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}
 <div class="section" id="matching-section"><div class="section-head"><div><h2>Sizga mos vakansiyalar</h2><p>Moslik kasb, ko‘nikma, hudud va bandlik turiga qarab hisoblanadi. Tajriba talabi hisobga olinadi. Maosh istagi saqlanadi, ammo hozircha moslik foiziga kiritilmaydi. Foiz ishga qabul qilinish kafolati emas.</p></div><button class="btn secondary" id="refreshMatches" type="button">Qayta moslashtirish</button></div><div class="cards" id="matchingJobs"></div></div>
 </section>
 <section class="section" id="career-section">
-<div class="section-head"><div><h2>Faol vakansiyalar</h2><p>Faqat serverdagi e’lon qilingan vakansiyalar ko‘rsatiladi.</p></div><button class="btn green" type="button" onclick="document.getElementById('jobFormPanel').hidden=!document.getElementById('jobFormPanel').hidden">+ Vakansiya joylashtirish</button></div>
+<div class="section-head"><div><h2>Faol vakansiyalar</h2><p>Faqat serverdagi e’lon qilingan vakansiyalar ko‘rsatiladi.</p></div><button class="btn green" data-career-flow="employer" type="button onclick="document.getElementById('jobFormPanel').hidden=!document.getElementById('jobFormPanel').hidden">+ Vakansiya joylashtirish</button></div>
 <p class="notice" id="careerNotice">Vakansiya tafsilotlari va ish beruvchi ma’lumotlarini tekshiring. Shaxsiy ma’lumotlaringizni ochiq ariza matniga yozmang.</p>
-<div class="panel" id="employerOrgPanel" data-career-flow="employer" hidden>
+<div class="panel" id="employerOrgPanel" hidden>
 <h3>Ish beruvchi tashkilot profili</h3>
 <p style="color:var(--career-muted);font-size:13px;line-height:1.6">Tashkilot ma’lumotlarini yuboring. Tekshiruvdan o‘tmaguncha tashkilot va vakansiyalar ommaviy ko‘rinmaydi.</p>
 <form id="employerOrgForm"><div class="form-grid">
@@ -83,7 +83,7 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}
 </div><div class="hero-actions"><button class="btn green" type="submit">Tekshiruvga yuborish</button><button class="btn secondary" id="cancelEmployerOrg" type="button">Bekor qilish</button></div></form>
 <div id="employerOrgStatus" class="cards" style="margin-top:14px"></div>
 </div>
-<div class="panel" id="jobFormPanel" data-career-flow="employer" hidden>
+<div class="panel" id="jobFormPanel" hidden>
 <h3>Yangi vakansiya</h3>
 <form id="jobForm">
 <div class="form-grid">
