@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="IDEA LAB — g‘oyalar, loyihalar, investorlar va hamkorlarni birlashtiruvchi innovatsion platforma.">
-    <title>IDEA LAB | G‘oyalar platformasi</title>
+    <title>IDEA LAB | G‘oyalar platformasi</title>\n    <link rel="icon" type="image/svg+xml" href="assets/idea-lab-logo.svg">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
@@ -71,14 +71,18 @@
         }
 
         .logo {
-            font-size: 25px;
-            font-weight: 900;
-            letter-spacing: -1.5px;
+            display: inline-flex;
+            align-items: center;
+            flex: 0 0 auto;
             white-space: nowrap;
         }
 
-        .logo span {
-            color: var(--cyan);
+        .logo img {
+            display: block;
+            width: 154px;
+            height: 44px;
+            object-fit: contain;
+            object-position: left center;
         }
 
         .nav-links {
@@ -973,8 +977,8 @@
 <header class="navbar">
     <div class="container nav-content">
 
-        <a href="index.html" class="logo">
-            IDEA<span>LAB</span>
+        <a href="index.html" class="logo" aria-label="IDEA LAB — bosh sahifa">
+            <img src="assets/idea-lab-logo.svg" alt="IDEA LAB">
         </a>
 
         <nav class="nav-links">
