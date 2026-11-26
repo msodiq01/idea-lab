@@ -86,7 +86,7 @@
     const q=clean($("jobSearch")?.value).toLocaleLowerCase("uz-UZ");
     const f=clean($("jobFilter")?.value);
     const visible=jobs.filter(job=>{
-      const hay=[job.title,job.company_name,job.location_label,job.description].join(" ").toLocaleLowerCase("uz-UZ");
+      const hay=[job.title,job.company_name,job.location_label,job.description,job.schedule_label,employmentType(job.employment_type),...(job.required_skills||[])].join(" ").toLocaleLowerCase("uz-UZ");
       return hay.includes(q)&&(!f||employmentType(job.employment_type)===f);
     });
     if(!visible.length){empty(jobList,"Hozircha mos ochiq vakansiya yo‘q.");updateCounts();return;}
