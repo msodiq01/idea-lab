@@ -41,3 +41,14 @@ test("career server module parses and its submit handler supports async operatio
   assert.doesNotThrow(() => new vm.Script(source));
   assert.match(source, /document\.addEventListener\("submit",\s*async\s+event\s*=>/);
 });
+
+test("shared IDEA LAB logo is wired into homepage and IDEA JOB header", () => {
+  const logo = read("assets/idea-lab-logo.svg");
+  assert.match(logo, /<svg[^>]+viewBox="0 0 240 64"/);
+  assert.match(logo, /<title[^>]*>IDEA LAB<\\/title>/);
+  for (const file of ["index.html", "career.html"]) {
+    const page = read(file);
+    assert.match(page, /rel="icon" type="image\\/svg\\+xml" href="assets\\/idea-lab-logo\\.svg"/);
+    assert.match(page, /<img src="assets\\/idea-lab-logo\\.svg" alt="IDEA LAB">/);
+  }
+});
