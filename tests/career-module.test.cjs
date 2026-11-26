@@ -191,5 +191,5 @@ test("vacancy edit includes schedule, experience and required skills", () => {
   assert.match(data, /p_schedule_label: input\.scheduleLabel\.trim\(\)/);
   assert.match(ownerEditMigration, /required_skills=coalesce\(p_required_skills,'\{\}'\)/);
   assert.match(ownerEditMigration, /experience_years_min=coalesce\(p_experience_years_min,0\)/);
-  assert.match(ownerEditMigration, /schedule_label=coalesce\(btrim\(p_schedule_label\),'\'\'\)/);
+  assert.match(ownerEditMigration, /schedule_label=coalesce\(btrim\(p_schedule_label\),''\)/);
 });
