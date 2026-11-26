@@ -1,0 +1,25 @@
+"use strict";
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const root = path.join(__dirname, "..");
+const read = (name) => fs.readFileSync(path.join(root, name), "utf8");
+test("homepage makes IDEA JOB the primary product", () => {
+  const page = read("index.html");
+  assert.match(page, /id="idea-job-priority"/);
+  assert.match(page, /Ish izlayapman/);
+  assert.match(page, /Xodim izlayapman/);
+  assert.match(page, /career\.html#career-section/);
+  assert.ok(page.indexOf('id="idea-job-priority"') < page.indexOf('id="ecosystem-map"'));
+});
+test("GSAP motion layer is loaded on homepage and career centre", () => {
+  for (const page of [read("index.html"), read("career.html")]) {
+    assert.match(page, /gsap@3\.13\.0/);
+    assert.match(page, /assets\/idea-motion\.js/);
+  }
+  assert.match(read("assets/idea-motion.js"), /prefers-reduced-motion/);
+});
+test("job experience stylesheet is shared between homepage and career centre", () => {
+  for (const file of ["index.html", "career.html"]) assert.match(read(file), /assets\/idea-job-experience\.css/);
+});
