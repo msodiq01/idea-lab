@@ -257,6 +257,7 @@
     const all=Array.isArray(r.data)?r.data:[];
     const organizations=all.filter(x=>x.organization_type!=="team"&&x.visibility==="public"&&x.status==="active");
     organizations.forEach(org=>select.add(new Option(org.name,org.id)));
+    restoreJobOrganizationDraft();
     select.disabled=false;
     if(statusBox){
       if(!all.length)empty(statusBox,"Hali ish beruvchi tashkilot profilingiz yo‘q.");
@@ -404,9 +405,12 @@
   }
   let jobSubmitInFlight=false;
   const jobDraftKey="idea_lab_job_draft_v1";
-  function readJobDraft(){try{const raw=localStorage.getItem(jobDraftKey);if(!raw)return;const draft=JSON.parse(raw);["jobOrganization","jobTitle","jobSalary","jobLocation","jobType","jobExperienceYears","jobSchedule","jobSkills","jobDescription"].forEach(id=>{const el=$(id);if(el&&draft[id]!==undefined)el.value=draft[id];});}catch(_){}}
-  function saveJobDraft(){try{const draft={};["jobOrganization","jobTitle","jobSalary","jobLocation","jobType","jobExperienceYears","jobSchedule","jobSkills","jobDescription"].forEach(id=>{const el=$(id);if(el)draft[id]=el.value;});localStorage.setItem(jobDraftKey,JSON.stringify(draft));}catch(_){}}
-  function clearJobDraft(){try{localStorage.removeItem(jobDraftKey);}catch(_){}}
+  let pendingJobDraft=null;
+  const jobDraftFields=["jobTitle","jobSalary","jobLocation","jobType","jobExperienceYears","jobSchedule","jobSkills","jobDescription"];
+  function readJobDraft(){try{const raw=localStorage.getItem(jobDraftKey);if(!raw)return;pendingJobDraft=JSON.parse(raw);jobDraftFields.forEach(id=>{const el=$(id);if(el&&pendingJobDraft[id]!==undefined)el.value=pendingJobDraft[id];});}catch(_){pendingJobDraft=null;}}
+  function restoreJobOrganizationDraft(){const select=$("jobOrganization");if(!select||!pendingJobDraft||!pendingJobDraft.jobOrganization)return;if(Array.from(select.options).some(option=>option.value===pendingJobDraft.jobOrganization)){select.value=pendingJobDraft.jobOrganization;pendingJobDraft=null;}}
+  function saveJobDraft(){try{const draft={};["jobOrganization",...jobDraftFields].forEach(id=>{const el=$(id);if(el)draft[id]=el.value;});localStorage.setItem(jobDraftKey,JSON.stringify(draft));}catch(_){}}
+  function clearJobDraft(){try{localStorage.removeItem(jobDraftKey);pendingJobDraft=null;}catch(_){}}
   readJobDraft();
   form.addEventListener("input",saveJobDraft);
   form.addEventListener("change",saveJobDraft);
