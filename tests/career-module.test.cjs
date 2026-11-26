@@ -97,6 +97,17 @@ test("closed vacancies are visible only to applicants, owners and moderators", (
   assert.match(closedJobAccessMigration, /drop policy if exists job_posts_select_closed_for_authenticated/i);
 });
 
+test("vacancy form prevents duplicate submits and preserves drafts locally", () => {
+  assert.match(server, /if\(jobSubmitInFlight\)return/);
+  assert.match(server, /jobSubmitInFlight=true/);
+  assert.match(server, /jobSubmitInFlight=false/);
+  assert.match(server, /localStorage\.setItem\(jobDraftKey/);
+  assert.match(server, /localStorage\.getItem\(jobDraftKey/);
+  assert.match(server, /clearJobDraft\(\)/);
+  assert.match(server, /pendingJobDraft/);
+  assert.match(server, /restoreJobOrganizationDraft\(\)/);
+});
+
 test("async employer, resume and vacancy form handlers await actions and recover from errors", () => {
   assert.match(server, /try\s*\{\s*await createEmployerOrganization\(event\);\s*\}\s*catch/);
   assert.match(server, /try\s*\{\s*await saveResume\(event\);\s*\}\s*catch/);
