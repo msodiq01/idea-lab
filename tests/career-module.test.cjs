@@ -137,9 +137,9 @@ test("candidate resume access ends when the candidate withdraws an application",
 const applicationTransitions = read("supabase/migrations/20261126171000_idea_app_job_application_status_transitions.sql");
 
 test("job application status transitions are one-way and participant-authorized", () => {
-  assert.match(applicationTransitions, /old\\.status\\s*<>\\s*'submitted'/i);
-  assert.match(applicationTransitions, /v_actor\\s*=\\s*old\\.applicant_id\\s+and\\s+new\\.status\\s*=\\s*'withdrawn'/i);
-  assert.match(applicationTransitions, /v_actor\\s*=\\s*v_owner\\s+and\\s+new\\.status\\s+in\\s*\\('accepted',\\s*'declined'\\)/i);
-  assert.match(applicationTransitions, /before update of status on idea_app\\.job_applications/i);
+  assert.match(applicationTransitions, /old\.status\s*<>\s*'submitted'/i);
+  assert.match(applicationTransitions, /v_actor\s*=\s*old\.applicant_id\s+and\s+new\.status\s*=\s*'withdrawn'/i);
+  assert.match(applicationTransitions, /v_actor\s*=\s*v_owner\s+and\s+new\.status\s+in\s*\('accepted',\s*'declined'\)/i);
+  assert.match(applicationTransitions, /before update of status on idea_app\.job_applications/i);
   assert.match(applicationTransitions, /security definer/i);
 });
