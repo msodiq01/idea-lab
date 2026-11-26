@@ -39,5 +39,5 @@ test("clarity-first visual system is shared and accessible", () => {
 test("career server module parses and its submit handler supports async operations", () => {
   const source = read("assets/idea-careers-server.js");
   assert.doesNotThrow(() => new vm.Script(source));
-  assert.match(source, /document\\.addEventListener\\("submit",\\s*async\\s+event\\s*=>/);
+  assert.match(source, /document\.addEventListener\("submit",\s*async\s+event\s*=>/);
 });
