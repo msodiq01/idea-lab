@@ -113,6 +113,7 @@ button,input{font:inherit}
 <a class="nx-nav-link" aria-current="page" href="dashboard.html"><span class="nx-nav-ico">◫</span>Umumiy ko‘rinish</a>
 <a class="nx-nav-link" href="search.html"><span class="nx-nav-ico">⌕</span>G‘oyalarni izlash</a>
 <a class="nx-nav-link" href="projects.html"><span class="nx-nav-ico">◇</span>Loyihalar</a>
+<a class="nx-nav-link" href="project-workspace.html"><span class="nx-nav-ico">▣</span>Loyiha ish maydoni</a>
 <a class="nx-nav-link" href="teams.html"><span class="nx-nav-ico">♧</span>Jamoalar va iste’dodlar</a>
 <a class="nx-nav-link" href="events.html"><span class="nx-nav-ico">◷</span>Tanlovlar va tadbirlar</a>
 <a class="nx-nav-link" href="resources.html"><span class="nx-nav-ico">▤</span>Bilim va resurslar</a>
@@ -130,13 +131,13 @@ button,input{font:inherit}
 <div class="nx-content">
 <section class="nx-welcome"><div><div class="nx-overline" style="color:var(--nx-lilac);margin-bottom:7px">YOUR INNOVATION HQ</div><h1 id="welcomeTitle">Katta g‘oyalar shu yerdan boshlanadi.</h1><p id="welcomeDescription">G‘oyalar, jamoalar va natijalarni bir joyda boshqaring.</p><div id="welcomeRoles" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"></div><a id="welcomeAction" class="nx-link" href="profile.html" style="display:inline-block;margin-top:10px">Profilni sozlash →</a></div><div class="nx-date" id="todayLabel">Bugungi sana</div></section>
 <section class="nx-kpis" aria-label="Asosiy ko‘rsatkichlar">
-<article class="nx-card"><div class="nx-kpi-top"><span id="projectCountLabel">Faol loyihalar</span><i class="nx-kpi-dot"></i></div><div class="nx-kpi-value" id="projectCount">0</div><div class="nx-kpi-foot" id="projectCountFoot">Server katalogi va mahalliy yozuvlar</div></article>
-<article class="nx-card"><div class="nx-kpi-top"><span id="applicationCountLabel">Arizalar</span><i class="nx-kpi-dot" style="background:var(--nx-purple)"></i></div><div class="nx-kpi-value" id="applicationCount">0</div><div class="nx-kpi-foot" id="applicationCountFoot">Sizning arizalaringiz</div></article>
-<article class="nx-card"><div class="nx-kpi-top"><span id="collaborationCountLabel">Hamkorlik so‘rovlari</span><i class="nx-kpi-dot" style="background:var(--nx-green)"></i></div><div class="nx-kpi-value" id="collaborationCount">0</div><div class="nx-kpi-foot" id="collaborationCountFoot">Jamoa va resurs so‘rovlari</div></article>
+<article class="nx-card"><div class="nx-kpi-top"><span id="projectCountLabel">Mahalliy loyihalar</span><i class="nx-kpi-dot"></i></div><div class="nx-kpi-value" id="projectCount">0</div><div class="nx-kpi-foot" id="projectCountFoot">Faqat ushbu brauzerda saqlangan</div></article>
+<article class="nx-card"><div class="nx-kpi-top"><span id="applicationCountLabel">Mahalliy arizalar</span><i class="nx-kpi-dot" style="background:var(--nx-purple)"></i></div><div class="nx-kpi-value" id="applicationCount">0</div><div class="nx-kpi-foot" id="applicationCountFoot">Faqat ushbu brauzerda saqlangan</div></article>
+<article class="nx-card"><div class="nx-kpi-top"><span id="collaborationCountLabel">Mahalliy hamkorlik</span><i class="nx-kpi-dot" style="background:var(--nx-green)"></i></div><div class="nx-kpi-value" id="collaborationCount">0</div><div class="nx-kpi-foot" id="collaborationCountFoot">Jamoa va resurs so‘rovlari</div></article>
 <article class="nx-card"><div class="nx-kpi-top"><span id="exchangeCountLabel">Ochiq takliflar</span><i class="nx-kpi-dot" style="background:#e8b86b"></i></div><div class="nx-kpi-value" id="exchangeCount">—</div><div class="nx-kpi-foot" id="exchangeCountFoot">Server katalogi tekshirilmoqda</div></article>
 </section>
 <section class="nx-section"><div class="nx-section-head"><div><h2>Innovatsion faollik</h2><p>Platforma analitikasi va muhim ko‘rsatkichlar</p></div><a class="nx-link" href="analytics.html">Batafsil tahlil →</a></div>
-<div class="nx-analytics"><article class="nx-panel"><div class="nx-panel-head"><div><h3>Faollik tendensiyasi</h3><small>12 oylik vizual ko‘rinish</small></div><span class="nx-overline">IDEA LAB</span></div><div class="nx-chart" id="activityChart" aria-label="So‘nggi 12 oyda e’lon qilingan ommaviy loyihalar grafigi"><div class="nx-chart-note">Server statistikasi yuklanmoqda…</div></div><p class="nx-chart-note" id="activityChartNote">Grafik Supabase katalogidagi loyiha sanalaridan hisoblanadi.</p></article>
+<div class="nx-analytics"><article class="nx-panel"><div class="nx-panel-head"><div><h3>Faollik tendensiyasi</h3><small>12 oylik vizual ko‘rinish</small></div><span class="nx-overline">IDEA LAB</span></div><div class="nx-chart" id="activityChart" aria-label="So‘nggi 12 oyda e’lon qilingan ommaviy loyihalar grafigi"><div class="nx-chart-note">Server statistikasi yuklanmoqda…</div></div><p class="nx-chart-note" id="activityChartNote">Grafik hozircha dizayn namunasi; serverdagi sanalar yuklanmoqda.</p></article>
 <aside class="nx-panel"><div class="nx-panel-head"><h3>Tezkor ko‘rsatkichlar</h3><small>Workspace</small></div><div class="nx-insights"><div class="nx-insight"><small>✦ PLATFORM HOLATI</small><strong id="backendStatus">Tekshirilmoqda</strong><p id="coreNotice">Markaziy tizim va server aloqasi tekshirilmoqda.</p></div><div class="nx-insight-stat"><div><strong id="coreVersion">—</strong><small>Yadro versiyasi</small></div><div><strong id="authStatus">—</strong><small>Akkaunt holati</small></div></div><div class="nx-insight-stat"><div><strong id="storageStatus">—</strong><small>Brauzer xotirasi</small></div><div><strong>24/7</strong><small>Platforma kirish</small></div></div></div></aside></div>
 </section>
 <section class="nx-section"><div class="nx-section-head"><div><h2>Faol loyihalar</h2><p>Loyiha portfelingizdagi so‘nggi tashabbuslar</p></div><a class="nx-link" href="projects.html">Barcha loyihalar →</a></div><div class="nx-projects" id="recentProjects"><div class="d-empty"><b>Hozircha loyiha topilmadi</b>Yangi loyiha yaratganingizdan keyin shu yerda ko‘rinadi.</div></div></section>
@@ -272,6 +273,7 @@ async function refreshServerDashboard(){
  const auth=window.IDEALAB_AUTH;
  if(!data||!auth||!auth.getStatus().configured)return;
  document.getElementById("projectCountLabel").textContent="Ommaviy loyihalar";
+ document.getElementById("projectCountFoot").textContent="Server katalogi yuklanmoqda";
  document.getElementById("projectCount").textContent="…";
  document.getElementById("projectCountFoot").textContent="Server katalogi yuklanmoqda";
  const recentTarget=document.getElementById("recentProjects");
