@@ -120,9 +120,9 @@
       const actions=document.createElement("div");actions.className="card-actions";
       const apply=document.createElement("button");apply.className="btn btn-green";apply.type="button";
       const alreadyApplied=appliedJobIds.has(job.id);
-      apply.textContent=alreadyApplied?"Avval ariza yuborilgан":userId?"Ariza yuborish":"Kirish orqali ariza yuborish";
+      apply.textContent=alreadyApplied?"Avval ariza yuborilgan":userId?"Ariza yuborish":"Kirish orqali ariza yuborish";
       apply.disabled=alreadyApplied;
-      apply.setAttribute("aria-label",alreadyApplied?job.title+" vakansiyasiga avval ariza yuborilgан":job.title+" vakansiyasiga ariza yuborish");
+      apply.setAttribute("aria-label",alreadyApplied?job.title+" vakansiyasiga avval ariza yuborilgan":job.title+" vakansiyasiga ariza yuborish");
       apply.classList.add("career-apply-action");apply.hidden=activeMode==="employer";
       apply.addEventListener("click",()=>{
         if(!userId){location.href="auth.html?next=career.html";return;}
