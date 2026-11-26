@@ -390,6 +390,10 @@
       const labels={pending_review:"Tekshiruvda",published:"Ochiq",closed:"Yopilgan",rejected:"Rad etilgan"};
       const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"","Holat: "+(labels[job.status]||job.status)]);
       const actions=document.createElement("div");actions.className="card-actions";
+      if(["published","closed","pending_review"].includes(job.status)){
+        const edit=document.createElement("button");edit.className="btn secondary";edit.type="button";edit.textContent="Tahrirlash";
+        edit.addEventListener("click",()=>openJobEditor(job));actions.append(edit);
+      }
       if(job.status!=="pending_review"&&job.status!=="rejected"){
         const toggle=document.createElement("button");toggle.className="btn";toggle.type="button";
         toggle.textContent=job.status==="published"?"Vakansiyani yopish":"Tekshiruvga qayta yuborish";
