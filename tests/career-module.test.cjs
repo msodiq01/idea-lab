@@ -89,3 +89,10 @@ test("closed vacancies are visible only to applicants, owners and moderators", (
   assert.match(closedJobAccessMigration, /a\.applicant_id\s*=\s*\(select auth\.uid\(\)\)/i);
   assert.match(closedJobAccessMigration, /drop policy if exists job_posts_select_closed_for_authenticated/i);
 });
+
+test("async employer, resume and vacancy form handlers await actions and recover from errors", () => {
+  assert.match(server, /try\s*\{\s*await createEmployerOrganization\(event\);\s*\}\s*catch/);
+  assert.match(server, /try\s*\{\s*await saveResume\(event\);\s*\}\s*catch/);
+  assert.match(server, /try\s*\{\s*await createJob\(event\);\s*\}\s*catch/);
+  assert.match(server, /resumeSaveStatus.*Rezyumeni saqlashda xatolik/s);
+});
