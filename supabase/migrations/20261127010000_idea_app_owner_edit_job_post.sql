@@ -12,7 +12,7 @@ begin
   or p_description is null or char_length(btrim(p_description)) not between 10 and 3000
   or p_location_label is null or char_length(btrim(p_location_label)) not between 2 and 120
   or coalesce(char_length(p_salary_label),0)>120
-  or p_employment_type not in ('full_time','part_time','remote','internship','freelance') then
+  or p_employment_type is null or p_employment_type not in ('full_time','part_time','remote','internship','freelance') then
   raise exception 'Invalid job post fields' using errcode='22023';
  end if;
  update idea_app.job_posts
