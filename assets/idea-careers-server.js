@@ -9,7 +9,7 @@
   const clean=value=>String(value??"").trim();
   const typeLabels={full_time:"To‘liq ish kuni",part_time:"Yarim stavka",remote:"Masofaviy",internship:"Amaliyot",freelance:"Frilans"};
   const statusLabels={submitted:"Ko‘rib chiqilmoqda",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"};
-  let userId=null,jobs=[],ownedJobs=[],selectedJob=null,activeMode="seeker";
+  let userId=null,jobs=[],ownedJobs=[],selectedJob=null,activeMode="seeker",appliedJobIds=new Set();
   const section=$("career-section"),jobList=$("jobList"),form=$("jobForm");
   function setCareerMode(mode){
     const active=mode==="employer"?"employer":"seeker";activeMode=active;
@@ -118,7 +118,12 @@
       if(skills.length){const skillLine=document.createElement("p");skillLine.textContent="Ko‘nikmalar: "+skills.join(", ");node.append(skillLine);}
       node.insertBefore(meta,node.children[1]||null);
       const actions=document.createElement("div");actions.className="card-actions";
-      const apply=document.createElement("button");apply.className="btn btn-green";apply.type="button";apply.textContent=userId?"Ariza yuborish":"Kirish orqali ariza yuborish";apply.classList.add("career-apply-action");apply.hidden=activeMode==="employer";
+      const apply=document.createElement("button");apply.className="btn btn-green";apply.type="button";
+      const alreadyApplied=appliedJobIds.has(job.id);
+      apply.textContent=alreadyApplied?"Avval ariza yuborilgan":userId?"Ariza yuborish":"Kirish orqali ariza yuborish";
+      apply.disabled=alreadyApplied;
+      apply.setAttribute("aria-label",alreadyApplied?job.title+" vakansiyasiga avval ariza yuborilgan":job.title+" vakansiyasiga ariza yuborish");
+      apply.classList.add("career-apply-action");apply.hidden=activeMode==="employer";
       apply.addEventListener("click",()=>{
         if(!userId){location.href="auth.html?next=career.html";return;}
         selectedJob=job;$("ilApplyTitle").textContent=job.title+" — ariza";
@@ -304,6 +309,8 @@
     if(!userId){if($("jobApplicationCount"))$("jobApplicationCount").textContent="0";empty(box,"Arizalaringizni ko‘rish uchun akkauntga kiring.");return;}
     const r=await data.listMyJobApplications();
     if(!r.ok){if($("jobApplicationCount"))$("jobApplicationCount").textContent="0";empty(box,errorText(r));return;}
+    appliedJobIds=new Set((Array.isArray(r.data)?r.data:[]).map(item=>item.job_post_id).filter(Boolean));
+    renderJobs();
     if($("jobApplicationCount"))$("jobApplicationCount").textContent=String((r.data||[]).length);
     if(!r.data?.length){empty(box,"Hozircha ish vakansiyalariga ariza yubormagansiz.");return;}
     r.data.forEach(item=>{

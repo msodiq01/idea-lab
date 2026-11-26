@@ -74,6 +74,13 @@ test("job applications create private notifications for participants", () => {
   assert.match(data, /markJobActivityRead\s*\(/);
 });
 
+test("vacancies with an existing application cannot be applied to again", () => {
+  assert.match(server, /appliedJobIds=new Set\(\)/);
+  assert.match(server, /appliedJobIds\.has\(job\.id\)/);
+  assert.match(server, /apply\.disabled=alreadyApplied/);
+  assert.match(server, /appliedJobIds=new Set\(\(Array\.isArray\(r\.data\)\?r\.data:\[\]\)\.map\(item=>item\.job_post_id\)/);
+});
+
 test("candidate resumes are visible to employers only after application", () => {
   assert.match(candidateAccess, /job_seeker_profiles_applied_employer_read/i);
   assert.match(candidateAccess, /a\.applicant_id=job_seeker_profiles\.user_id/i);
