@@ -124,4 +124,32 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}
 <script>window.showForm=function(id){const el=document.getElementById(id);if(el)el.hidden=!el.hidden;};</script>
 <script src="assets/idea-careers-server.js"></script>
 <script src="assets/idea-shell.js" defer></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script>
+window.addEventListener('DOMContentLoaded',function(){
+  if(!window.gsap) return;
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce) return;
+  const g=window.gsap;
+  g.from('.job-hero-copy .eyebrow',{y:14,opacity:0,duration:.55,ease:'power2.out'});
+  g.from('.job-hero-copy h1',{y:28,opacity:0,duration:.8,ease:'power3.out'},'-=.25');
+  g.from('.job-hero-copy p',{y:18,opacity:0,duration:.65,ease:'power2.out'},'-=.42');
+  g.from('.job-hero-copy .hero-actions .btn',{y:14,opacity:0,duration:.45,stagger:.09,ease:'power2.out'},'-=.3');
+  g.from('.job-float',{scale:.86,opacity:0,duration:.7,stagger:.16,ease:'back.out(1.5)'},'-=.35');
+  g.from('.job-network path',{strokeDashoffset:150,opacity:0,duration:1.5,stagger:.18,ease:'power2.out'},'-=.7');
+  g.from('.job-trust-item',{y:18,opacity:0,duration:.55,stagger:.12,ease:'power2.out',clearProps:'transform'},'-=.35');
+  if(g.registerPlugin && window.ScrollTrigger){
+    g.registerPlugin(window.ScrollTrigger);
+    g.utils.toArray('.section').forEach(function(section){
+      g.from(section.querySelectorAll('.section-head,.panel,.card'),{
+        y:18,opacity:0,duration:.55,stagger:.07,ease:'power2.out',
+        scrollTrigger:{trigger:section,start:'top 88%',once:true}
+      });
+    });
+  }
+});
+</script>
+
 </body></html>
