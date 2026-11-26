@@ -3,6 +3,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const vm = require("node:vm");
 const root = path.join(__dirname, "..");
 const read = (name) => fs.readFileSync(path.join(root, name), "utf8");
 
@@ -19,6 +20,15 @@ const candidateAccess = read("supabase/migrations/20261125240000_idea_app_candid
 function scriptSources(html) {
   return Array.from(html.matchAll(/<script[^>]*src=["']([^"']+)["'][^>]*>/g), match => match[1]);
 }
+
+
+test("all local JavaScript assets loaded by career page parse without syntax errors", () => {
+  const localScripts = scriptSources(page).filter(source => source.startsWith("assets/") && source.endsWith(".js"));
+  assert.ok(localScripts.length > 0, "career page must load local JavaScript modules");
+  for (const source of localScripts) {
+    assert.doesNotThrow(() => new vm.Script(read(source)), source + " must parse");
+  }
+});
 
 test("career route loads shared auth, data and career server modules in order", () => {
   const scripts = scriptSources(page);
