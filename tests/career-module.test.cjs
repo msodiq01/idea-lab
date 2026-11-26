@@ -171,3 +171,12 @@ test("owner vacancy edit RPC validates fields, scopes by creator and requeues pu
   assert.match(data, /updateJobPost\(jobPostId, input\)/);
   assert.match(data, /idea_lab_update_job_post/);
 });
+
+test("employer dashboard exposes a prefilled vacancy editor and validated save flow", () => {
+  assert.match(server, /const editPanel=document\.createElement\("section"\)/);
+  assert.match(server, /function openJobEditor\(job\)/);
+  assert.match(server, /ilEditTitle.*job\.title/);
+  assert.match(server, /data\.updateJobPost\(editingJobId,input\)/);
+  assert.match(server, /ilJobEditCancel/);
+  assert.match(server, /textContent="Tahrirlash"/);
+});
