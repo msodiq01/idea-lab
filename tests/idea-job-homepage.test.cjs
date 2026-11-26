@@ -23,3 +23,14 @@ test("GSAP motion layer is loaded on homepage and career centre", () => {
 test("job experience stylesheet is shared between homepage and career centre", () => {
   for (const file of ["index.html", "career.html"]) assert.match(read(file), /assets\/idea-job-experience\.css/);
 });
+
+test("clarity-first visual system is shared and accessible", () => {
+  for (const file of ["index.html", "career.html"]) {
+    assert.match(read(file), /assets\/idea-visual-system\.css/);
+  }
+  const styles = read("assets/idea-visual-system.css");
+  assert.match(styles, /:focus-visible/);
+  assert.match(styles, /prefers-reduced-motion/);
+  assert.match(styles, /--il-copy:#d3deed/);
+  assert.match(styles, /--il-white:#f7faff/);
+});
