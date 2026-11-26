@@ -180,3 +180,16 @@ test("employer dashboard exposes a prefilled vacancy editor and validated save f
   assert.match(server, /ilJobEditCancel/);
   assert.match(server, /textContent="Tahrirlash"/);
 });
+
+test("vacancy edit includes schedule, experience and required skills", () => {
+  assert.match(server, /ilEditSchedule/);
+  assert.match(server, /ilEditExperience/);
+  assert.match(server, /ilEditSkills/);
+  assert.match(server, /requiredSkills:clean\(\$\("ilEditSkills"\)\.value\)\.split\(","\)/);
+  assert.match(data, /p_required_skills: input\.requiredSkills\.map/);
+  assert.match(data, /p_experience_years_min: input\.experienceYearsMin/);
+  assert.match(data, /p_schedule_label: input\.scheduleLabel\.trim\(\)/);
+  assert.match(ownerEditMigration, /required_skills=coalesce\(p_required_skills,'\{\}'\)/);
+  assert.match(ownerEditMigration, /experience_years_min=coalesce\(p_experience_years_min,0\)/);
+  assert.match(ownerEditMigration, /schedule_label=coalesce\(btrim\(p_schedule_label\),'\'\'\)/);
+});
