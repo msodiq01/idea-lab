@@ -245,7 +245,8 @@
     const select=$("jobOrganization");if(!select)return;
     select.replaceChildren(new Option("Tashkilotni tanlang",""));
     const statusBox=$("employerOrgStatus");if(statusBox)statusBox.replaceChildren();
-    if(!userId){select.disabled=true;if(statusBox)empty(statusBox,"Tashkilot holatini ko‘rish uchun akkauntga kiring.");return;}
+    const orgHelp=$("jobOrganizationHelp");if(orgHelp){orgHelp.hidden=false;orgHelp.textContent="Vakansiya joylash uchun tasdiqlangan tashkilot kerak. Tashkilotingiz bo‘lmasa, avval tashkilot profilini yarating."; }
+    if(!userId){select.disabled=true;if(statusBox)empty(statusBox,"Tashkilot holatini ko‘rish uchun akkauntga kiring.");if(orgHelp)orgHelp.textContent="Avval akkauntga kiring, keyin tashkilot profilini yarating.";return;}
     const r=await data.listMyOrganizations();
     if(!r.ok){select.disabled=true;setStatus(errorText(r),true);if(statusBox)empty(statusBox,errorText(r));return;}
     const all=Array.isArray(r.data)?r.data:[];
@@ -261,10 +262,13 @@
     }
     if(!organizations.length){
       select.add(new Option("Tasdiqlangan tashkilot yo‘q",""));
-      formHint.textContent=all.some(x=>x.status==="pending_review")
-        ?"Tashkilot profilingiz tekshiruvda. Tasdiqlangach vakansiya joylashtira olasiz."
-        :"Avval ish beruvchi tashkilot profilini yarating va tekshiruvga yuboring.";
-    }
+      select.disabled=true;
+      const message=all.some(x=>x.status==="pending_review")
+        ?"Tashkilot profilingiz tekshiruvda. Moderator tasdiqlagach vakansiya joylashtirish ochiladi."
+        :"Avval tashkilot profilini yarating va moderator tekshiruviga yuboring.";
+      formHint.textContent=message;
+      if(orgHelp)orgHelp.textContent=message+" Quyidagi “Tashkilot yaratish” tugmasi orqali davom eting.";
+    }else{select.disabled=false;if(orgHelp)orgHelp.textContent="Tashkilotni tanlang, keyin vakansiya ma’lumotlarini to‘ldiring.";}
   }
   async function createEmployerOrganization(event){
     event.preventDefault();
