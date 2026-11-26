@@ -181,6 +181,12 @@ test("employer dashboard exposes a prefilled vacancy editor and validated save f
   assert.match(server, /textContent="Tahrirlash"/);
 });
 
+test("employer dashboard shows vacancy and application analytics", () => {
+  assert.match(server, /Ish beruvchi statistikasi/);
+  assert.match(server, /listJobPostApplications\(job\.job_post_id\)/);
+  assert.match(server, /Ko‘rinadigan arizalar/);
+  assert.match(server, /statsData\.accepted\+\+/);
+});
 test("vacancy edit includes schedule, experience and required skills", () => {
   assert.match(server, /ilEditSchedule/);
   assert.match(server, /ilEditExperience/);
