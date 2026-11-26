@@ -85,9 +85,11 @@
     jobList.replaceChildren();
     const q=clean($("jobSearch")?.value).toLocaleLowerCase("uz-UZ");
     const f=clean($("jobFilter")?.value);
+    const locationQuery=clean($("jobLocationFilter")?.value).toLocaleLowerCase("uz-UZ");
     const visible=jobs.filter(job=>{
       const hay=[job.title,job.company_name,job.location_label,job.description,job.schedule_label,employmentType(job.employment_type),...(job.required_skills||[])].join(" ").toLocaleLowerCase("uz-UZ");
-      return hay.includes(q)&&(!f||employmentType(job.employment_type)===f);
+      const location=clean(job.location_label).toLocaleLowerCase("uz-UZ");
+      return hay.includes(q)&&(!locationQuery||location.includes(locationQuery))&&(!f||employmentType(job.employment_type)===f);
     });
     if(!visible.length){empty(jobList,"Hozircha mos ochiq vakansiya yo‘q.");updateCounts();return;}
     visible.forEach(job=>{
@@ -418,7 +420,7 @@
   $("cancelEmployerOrg")?.addEventListener("click",()=>{$("employerOrgPanel").hidden=true;});
   $("refreshMatches")?.addEventListener("click",loadMatches);
   document.addEventListener("input",event=>{
-    if(event.target?.id==="jobSearch"){event.stopImmediatePropagation();renderJobs();}
+    if(event.target?.id==="jobSearch"||event.target?.id==="jobLocationFilter"){event.stopImmediatePropagation();renderJobs();}
   },true);
   document.addEventListener("change",event=>{
     if(event.target?.id==="jobFilter"){event.stopImmediatePropagation();renderJobs();}
