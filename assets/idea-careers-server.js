@@ -40,7 +40,7 @@
   editPanel.className="section form-panel";
   editPanel.dataset.careerFlow="employer";
   editPanel.hidden=true;
-  editPanel.innerHTML='<div class="section-heading"><div><h2>Vakansiyani tahrirlash</h2><p>Saqlangan o‘zgarishlar vakansiya holatiga qarab tekshiruvga qaytarilishi mumkin.</p></div></div><form id="ilJobEditForm"><div class="form-grid"><div class="field"><label for="ilEditTitle">Vakansiya nomi</label><input id="ilEditTitle" required minlength="3" maxlength="100"></div><div class="field"><label for="ilEditLocation">Ish joyi</label><input id="ilEditLocation" required minlength="2" maxlength="120"></div><div class="field"><label for="ilEditSalary">Maosh</label><input id="ilEditSalary" maxlength="120" placeholder="Masalan, 3–5 mln so‘m"></div><div class="field"><label for="ilEditType">Ish turi</label><select id="ilEditType" required><option value="full_time">To‘liq ish kuni</option><option value="part_time">Yarim stavka</option><option value="remote">Masofaviy</option><option value="internship">Amaliyot</option><option value="freelance">Frilans</option></select></div><div class="field" style="grid-column:1/-1"><label for="ilEditDescription">Vakansiya tavsifi</label><textarea id="ilEditDescription" required minlength="10" maxlength="3000" rows="6"></textarea></div></div><p id="ilJobEditFeedback" class="notice" role="status" aria-live="polite"></p><div class="card-actions"><button class="btn" type="submit">O‘zgarishlarni saqlash</button><button class="btn secondary" id="ilJobEditCancel" type="button">Bekor qilish</button></div></form>';
+  editPanel.innerHTML='<div class="section-heading"><div><h2>Vakansiyani tahrirlash</h2><p>Saqlangan o‘zgarishlar vakansiya holatiga qarab tekshiruvga qaytarilishi mumkin.</p></div></div><form id="ilJobEditForm"><div class="form-grid"><div class="field"><label for="ilEditTitle">Vakansiya nomi</label><input id="ilEditTitle" required minlength="3" maxlength="100"></div><div class="field"><label for="ilEditLocation">Ish joyi</label><input id="ilEditLocation" required minlength="2" maxlength="120"></div><div class="field"><label for="ilEditSalary">Maosh</label><input id="ilEditSalary" maxlength="120" placeholder="Masalan, 3–5 mln so‘m"></div><div class="field"><label for="ilEditType">Ish turi</label><select id="ilEditType" required><option value="full_time">To‘liq ish kuni</option><option value="part_time">Yarim stavka</option><option value="remote">Masofaviy</option><option value="internship">Amaliyot</option><option value="freelance">Frilans</option></select></div><div class="field"><label for="ilEditSchedule">Ish jadvali</label><input id="ilEditSchedule" maxlength="160" placeholder="Masalan, 09:00–18:00"></div><div class="field"><label for="ilEditExperience">Minimal tajriba (yil)</label><input id="ilEditExperience" type="number" min="0" max="50" step="1" required></div><div class="field" style="grid-column:1/-1"><label for="ilEditSkills">Talab qilinadigan ko‘nikmalar (vergul bilan, 20 tagacha)</label><input id="ilEditSkills" maxlength="1600" placeholder="Muloqot, Excel, savdo"></div><div class="field" style="grid-column:1/-1"><label for="ilEditDescription">Vakansiya tavsifi</label><textarea id="ilEditDescription" required minlength="10" maxlength="3000" rows="6"></textarea></div></div><p id="ilJobEditFeedback" class="notice" role="status" aria-live="polite"></p><div class="card-actions"><button class="btn" type="submit">O‘zgarishlarni saqlash</button><button class="btn secondary" id="ilJobEditCancel" type="button">Bekor qilish</button></div></form>';
   section.append(editPanel);
   let editingJobId=null;
   const editForm=$("ilJobEditForm"),editFeedback=$("ilJobEditFeedback");
@@ -50,6 +50,9 @@
     $("ilEditLocation").value=job.location_label||"";
     $("ilEditSalary").value=job.salary_label||"";
     $("ilEditType").value=job.employment_type||"full_time";
+    $("ilEditSchedule").value=job.schedule_label||"";
+    $("ilEditExperience").value=Number(job.experience_years_min||0);
+    $("ilEditSkills").value=Array.isArray(job.required_skills)?job.required_skills.join(", "):"";
     $("ilEditDescription").value=job.description||"";
     editFeedback.textContent="";
     editPanel.hidden=false;
@@ -61,7 +64,7 @@
   editForm.addEventListener("submit",async event=>{
     event.preventDefault();
     if(!editingJobId)return;
-    const input={title:clean($("ilEditTitle").value),locationLabel:clean($("ilEditLocation").value),salaryLabel:clean($("ilEditSalary").value),employmentType:$("ilEditType").value,description:clean($("ilEditDescription").value)};
+    const input={title:clean($("ilEditTitle").value),locationLabel:clean($("ilEditLocation").value),salaryLabel:clean($("ilEditSalary").value),employmentType:$("ilEditType").value,description:clean($("ilEditDescription").value),scheduleLabel:clean($("ilEditSchedule").value),experienceYearsMin:Number($("ilEditExperience").value),requiredSkills:clean($("ilEditSkills").value).split(",").map(skill=>skill.trim()).filter(Boolean)};
     const button=editForm.querySelector('[type="submit"]');button.disabled=true;editFeedback.textContent="O‘zgarishlar saqlanmoqda…";
     try{
       const result=await data.updateJobPost(editingJobId,input);
