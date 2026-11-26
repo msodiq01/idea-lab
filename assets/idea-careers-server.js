@@ -414,7 +414,7 @@
     setStatus("Vakansiya serverga joylanmoqda…");
     const r=await data.createJobPost(input);
     if(!r.ok){setStatus(errorText(r),true);if(submit)submit.disabled=false;return;}
-    form.reset();$("jobFormPanel")?.classList.add("hidden");if(submit)submit.disabled=false;
+    form.reset();if($("jobFormPanel"))$("jobFormPanel").hidden=true;if(submit)submit.disabled=false;
     setStatus("Vakansiya moderator tekshiruviga yuborildi. Tasdiqlangach katalogda ko‘rinadi.");
     await loadJobs();await loadOwnedJobs();
   }
