@@ -105,3 +105,14 @@ test("career foreign keys have covering indexes", () => {
   assert.match(careerIndexMigration, /job_application_activity_actor_idx/i);
   assert.match(careerIndexMigration, /create index if not exists/i);
 });
+
+test("homepage and career page contain no duplicate IDs or broken local anchors", () => {
+  for (const [name, html] of [["index.html", read("index.html")], ["career.html", page]]) {
+    const ids = [...html.matchAll(/\\bid=["']([^"']+)["']/g)].map(match => match[1]);
+    const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);
+    assert.deepEqual([...new Set(duplicates)], [], name + " must not contain duplicate IDs");
+    const anchors = [...html.matchAll(/\\bhref=["']#([^"']+)["']/g)].map(match => match[1]);
+    const missing = [...new Set(anchors.filter(anchor => !ids.includes(anchor)))];
+    assert.deepEqual(missing, [], name + " must not contain broken local anchors");
+  }
+});
