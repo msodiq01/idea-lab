@@ -418,10 +418,25 @@
     setStatus("Vakansiya moderator tekshiruviga yuborildi. Tasdiqlangach katalogda ko‘rinadi.");
     await loadJobs();await loadOwnedJobs();
   }
-  document.addEventListener("submit",event=>{
-    if(event.target?.id==="employerOrgForm"){event.preventDefault();event.stopImmediatePropagation();createEmployerOrganization(event);}
-    if(event.target?.id==="jobSeekerResumeForm"){event.preventDefault();event.stopImmediatePropagation();saveResume(event);}
-    if(event.target?.id==="jobForm"){event.preventDefault();event.stopImmediatePropagation();createJob(event);}
+  document.addEventListener("submit",async event=>{
+    if(event.target?.id==="employerOrgForm"){
+      event.preventDefault();event.stopImmediatePropagation();
+      try{await createEmployerOrganization(event);}
+      catch(error){const button=employerOrgForm.querySelector('[type="submit"]');if(button)button.disabled=false;setStatus("Tashkilot yuborilmadi. Internetni tekshirib, qayta urinib ko‘ring.",true);}
+      return;
+    }
+    if(event.target?.id==="jobSeekerResumeForm"){
+      event.preventDefault();event.stopImmediatePropagation();
+      try{await saveResume(event);}
+      catch(error){const button=resumeForm.querySelector('[type="submit"]');if(button)button.disabled=false;$("resumeSaveStatus").textContent="Rezyumeni saqlashda xatolik yuz berdi. Qayta urinib ko‘ring.";}
+      return;
+    }
+    if(event.target?.id==="jobForm"){
+      event.preventDefault();event.stopImmediatePropagation();
+      try{await createJob(event);}
+      catch(error){const button=form.querySelector('[type="submit"]');if(button)button.disabled=false;setStatus("Vakansiya joylanmadi. Internetni tekshirib, qayta urinib ko‘ring.",true);}
+      return;
+    }
     if(event.target?.id==="ilApplyForm"){
       event.preventDefault();event.stopImmediatePropagation();
       if(!selectedJob)return;

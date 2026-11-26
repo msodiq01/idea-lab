@@ -1,0 +1,43 @@
+/* IDEA LAB / IDEA JOB — clarity-first next-generation visual system */
+:root{--il-ink:#07111f;--il-panel:#101f36;--il-white:#f7faff;--il-copy:#d3deed;--il-muted:#a9b9ce;--il-line:rgba(190,213,244,.18);--il-glow:0 24px 70px rgba(0,0,0,.28)}
+html{scroll-padding-top:100px}body{color:var(--il-white)}p{color:var(--il-copy)}a{text-underline-offset:4px}
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid #a9d5ff!important;outline-offset:3px!important}
+::selection{background:#8bbcff;color:#07111f}
+.navbar,.topbar{background:rgba(5,13,27,.94)!important;border-bottom:1px solid var(--il-line)!important;box-shadow:0 12px 34px rgba(0,0,0,.18)}
+.nav-content{gap:18px}.nav-links a,.navlinks a{color:#c0cde0!important}.nav-links a:hover,.navlinks a:hover,.navlinks a.active{color:#fff!important;background:rgba(121,167,255,.12)}
+.nav-button,.btn-primary,.job-role-link{background:linear-gradient(112deg,#8eacff,#63e1d8)!important;color:#061321!important;box-shadow:0 10px 28px rgba(82,164,224,.2)!important}
+.btn-outline,.btn.secondary{background:rgba(255,255,255,.055)!important;color:#f4f8ff!important;border:1px solid rgba(194,216,246,.25)!important}
+.hero{isolation:isolate}.hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(177,204,242,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(177,204,242,.035) 1px,transparent 1px);background-size:54px 54px;mask-image:linear-gradient(90deg,black,transparent 82%)}
+.hero::after{border-color:rgba(124,187,255,.28)!important;box-shadow:0 0 100px rgba(73,134,255,.15),inset 0 0 80px rgba(72,164,232,.09)!important}
+.hero-content{max-width:920px!important}.hero-label,.section-label,.job-priority-eyebrow{color:#9bece7!important}
+.hero h1{max-width:900px;text-wrap:balance}.hero-description,.section-description{color:#c0cde0!important;line-height:1.8}
+.stats{position:relative;z-index:2}.stat-card{border:1px solid var(--il-line)!important;background:linear-gradient(145deg,rgba(22,42,69,.94),rgba(10,24,43,.92))!important;box-shadow:var(--il-glow),inset 0 1px 0 rgba(255,255,255,.07)!important}.stat-label{color:#c1cee0!important}
+.section-title,.section-header h2{color:#f7faff}.feature-card,.project-card,.create-form-card{background:linear-gradient(145deg,#142944,#0d1c31)!important;border:1px solid var(--il-line)!important;box-shadow:0 16px 42px rgba(0,0,0,.2)!important}
+.feature-card p,.project-card p,.create-info>p,.benefit-item{color:#bdcbe0!important}
+#idea-job-priority{background:radial-gradient(ellipse at 8% 45%,rgba(69,124,255,.19),transparent 34%),radial-gradient(ellipse at 92% 18%,rgba(44,220,204,.14),transparent 31%),linear-gradient(180deg,#09182b,#071321)!important}
+#idea-job-priority .job-priority-title{color:#f8fbff!important;text-wrap:balance}#idea-job-priority .job-priority-lead{color:#c0cfe2!important}
+#idea-job-priority .job-role-card{background:linear-gradient(145deg,rgba(28,51,80,.94),rgba(12,27,47,.97))!important;border-color:rgba(190,215,247,.2)!important;box-shadow:0 22px 54px rgba(0,0,0,.27),inset 0 1px 0 rgba(255,255,255,.07)!important}
+#idea-job-priority .job-role-card h3{color:#fff!important}#idea-job-priority .job-role-card p{color:#c0cde0!important}
+#idea-job-priority .job-proof{color:#d0dced!important;background:rgba(255,255,255,.055)!important;border-color:rgba(190,215,247,.16)!important}#idea-job-priority .job-proof b{color:#fff!important}
+.workflow-step{background:linear-gradient(145deg,rgba(22,42,69,.92),rgba(11,25,44,.95))!important;border-color:var(--il-line)!important;box-shadow:0 12px 32px rgba(0,0,0,.15)}
+.workflow-copy h3{color:#fff!important}.workflow-copy p,.workflow-note{color:#c0cde0!important}.workflow-number{background:rgba(121,167,255,.17)!important;color:#b9d4ff!important}.workflow-kicker,.workflow-link{color:#8ce8e1!important}
+.workflow-note{background:rgba(75,199,197,.08)!important;border-left-color:#66e4dc!important}.footer{background:#040b16!important}.footer-links a,.footer-brand p{color:#b1bfd2!important}
+/* Career centre */
+body:has(.topbar){background:radial-gradient(ellipse at 90% 0%,rgba(73,120,255,.14),transparent 34%),radial-gradient(ellipse at 0% 60%,rgba(48,208,193,.07),transparent 30%),#07111f!important;color:#f7faff!important}
+.topbar-inner{max-width:1240px!important}.brand{color:#f7faff!important}.brand span{color:#8de7e0!important}.wrap{max-width:1240px!important}
+body:has(.topbar) .hero{padding:clamp(28px,4vw,48px)!important;border:1px solid var(--il-line)!important;border-radius:26px!important;background:radial-gradient(ellipse at 88% 0%,rgba(86,131,255,.24),transparent 38%),linear-gradient(135deg,#142943,#0c1a2d)!important;box-shadow:var(--il-glow)!important}
+body:has(.topbar) .hero h1{color:#fff!important;font-size:clamp(32px,5vw,52px)!important;letter-spacing:-.045em!important}body:has(.topbar) .hero p{color:#d0dced!important}
+body:has(.topbar) .section-head h2,body:has(.topbar) h3{color:#f7faff!important}body:has(.topbar) .section-head p{color:#bdcbe0!important}
+body:has(.topbar) .panel,body:has(.topbar) .card,body:has(.topbar) .empty{background:linear-gradient(145deg,#142943,#0d1c31)!important;border:1px solid var(--il-line)!important;color:#f7faff!important;box-shadow:0 16px 42px rgba(0,0,0,.2)!important}
+body:has(.topbar) .field label,body:has(.topbar) .employment-choices label{color:#d3deed!important}
+body:has(.topbar) .field input,body:has(.topbar) .field textarea,body:has(.topbar) .field select,body:has(.topbar) .search{background:#081629!important;color:#f7faff!important;border:1px solid rgba(190,213,244,.25)!important;min-height:46px}
+body:has(.topbar) input::placeholder,body:has(.topbar) textarea::placeholder{color:#9bacc3!important;opacity:1}
+body:has(.topbar) .field input:focus,body:has(.topbar) .field textarea:focus,body:has(.topbar) .field select:focus,body:has(.topbar) .search:focus{border-color:#82dcd9!important;box-shadow:0 0 0 4px rgba(102,228,220,.13)!important}
+body:has(.topbar) .card p,body:has(.topbar) .notice,body:has(.topbar) .career-chip{color:#c3d0e2!important}
+body:has(.topbar) .career-chip{background:#1a304b!important;border-color:rgba(190,213,244,.18)!important}body:has(.topbar) .career-salary{color:#8ff0d7!important;background:rgba(37,188,154,.12)!important}
+body:has(.topbar) .notice{background:rgba(102,228,220,.07)!important;border-color:rgba(102,228,220,.25)!important}
+body:has(.topbar) .btn.green{background:linear-gradient(110deg,#1aa995,#63dfc8)!important;color:#041b1a!important}body:has(.topbar) .btn.secondary{background:#1a2b43!important;color:#eff6ff!important;border:1px solid rgba(190,213,244,.2)!important}
+body:has(.topbar) footer{background:transparent!important;color:#9eafc5!important;border-color:var(--il-line)!important}
+@media(max-width:900px){.nav-content{flex-wrap:wrap}.nav-links{width:100%;order:3;overflow-x:auto;flex-wrap:nowrap;padding:4px 0 8px}.nav-links a{white-space:nowrap}}
+@media(max-width:680px){.hero h1{letter-spacing:-1.8px!important}.workflow-step{grid-template-columns:40px minmax(0,1fr)!important}.stats{grid-template-columns:1fr!important}body:has(.topbar) .topbar-inner{padding:13px 16px!important}body:has(.topbar) .wrap{width:calc(100% - 28px)!important}body:has(.topbar) .hero{padding:23px!important}body:has(.topbar) .section{margin-top:22px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}

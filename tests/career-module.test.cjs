@@ -3,6 +3,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const vm = require("node:vm");
 const root = path.join(__dirname, "..");
 const read = (name) => fs.readFileSync(path.join(root, name), "utf8");
 
@@ -19,6 +20,15 @@ const candidateAccess = read("supabase/migrations/20261125240000_idea_app_candid
 function scriptSources(html) {
   return Array.from(html.matchAll(/<script[^>]*src=["']([^"']+)["'][^>]*>/g), match => match[1]);
 }
+
+
+test("all local JavaScript assets loaded by career page parse without syntax errors", () => {
+  const localScripts = scriptSources(page).filter(source => source.startsWith("assets/") && source.endsWith(".js"));
+  assert.ok(localScripts.length > 0, "career page must load local JavaScript modules");
+  for (const source of localScripts) {
+    assert.doesNotThrow(() => new vm.Script(read(source)), source + " must parse");
+  }
+});
 
 test("career route loads shared auth, data and career server modules in order", () => {
   const scripts = scriptSources(page);
@@ -69,4 +79,40 @@ test("candidate resumes are visible to employers only after application", () => 
   assert.match(candidateAccess, /a\.applicant_id=job_seeker_profiles\.user_id/i);
   assert.match(candidateAccess, /j\.created_by=\(select auth\.uid\(\)\)/i);
   assert.match(server, /candidate_experience_summary/);
+});
+
+const closedJobAccessMigration = read("supabase/migrations/20261126160000_idea_app_closed_job_read_applicants_only.sql");
+
+test("closed vacancies are visible only to applicants, owners and moderators", () => {
+  assert.match(closedJobAccessMigration, /status\s*=\s*'closed'/i);
+  assert.match(closedJobAccessMigration, /a\.job_post_id\s*=\s*job_posts\.id/i);
+  assert.match(closedJobAccessMigration, /a\.applicant_id\s*=\s*\(select auth\.uid\(\)\)/i);
+  assert.match(closedJobAccessMigration, /drop policy if exists job_posts_select_closed_for_authenticated/i);
+});
+
+test("async employer, resume and vacancy form handlers await actions and recover from errors", () => {
+  assert.match(server, /try\s*\{\s*await createEmployerOrganization\(event\);\s*\}\s*catch/);
+  assert.match(server, /try\s*\{\s*await saveResume\(event\);\s*\}\s*catch/);
+  assert.match(server, /try\s*\{\s*await createJob\(event\);\s*\}\s*catch/);
+  assert.match(server, /resumeSaveStatus.*Rezyumeni saqlashda xatolik/s);
+});
+
+const careerIndexMigration = read("supabase/migrations/20261126161000_idea_app_career_foreign_key_indexes.sql");
+
+test("career foreign keys have covering indexes", () => {
+  assert.match(careerIndexMigration, /job_posts_organization_idx/i);
+  assert.match(careerIndexMigration, /job_application_activity_application_idx/i);
+  assert.match(careerIndexMigration, /job_application_activity_actor_idx/i);
+  assert.match(careerIndexMigration, /create index if not exists/i);
+});
+
+test("homepage and career page contain no duplicate IDs or broken local anchors", () => {
+  for (const [name, html] of [["index.html", read("index.html")], ["career.html", page]]) {
+    const ids = [...html.matchAll(/\\bid=["']([^"']+)["']/g)].map(match => match[1]);
+    const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);
+    assert.deepEqual([...new Set(duplicates)], [], name + " must not contain duplicate IDs");
+    const anchors = [...html.matchAll(/\\bhref=["']#([^"']+)["']/g)].map(match => match[1]);
+    const missing = [...new Set(anchors.filter(anchor => !ids.includes(anchor)))];
+    assert.deepEqual(missing, [], name + " must not contain broken local anchors");
+  }
 });

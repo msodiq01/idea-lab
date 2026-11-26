@@ -963,6 +963,8 @@
     <link rel="stylesheet" href="assets/idea-shell.css">
     <link rel="stylesheet" href="assets/idea-home-refresh.css">
 <link rel="stylesheet" href="assets/idea-nextgen.css">
+<link rel="stylesheet" href="assets/idea-job-experience.css">
+<link rel="stylesheet" href="assets/idea-visual-system.css">
 </head>
 
 <body>
@@ -979,7 +981,7 @@
             <a href="index.html">Bosh sahifa</a>
             <a href="projects.html">Loyihalar</a>
             <a href="teams.html">Jamoalar</a>
-<a href="career.html">Ish imkoniyatlari</a>
+<a href="career.html">IDEA JOB</a>
             <a href="investors.html">Investorlar</a>
             <a href="specialists.html">Mutaxassislar</a>
             <a href="offers.html">Takliflar</a>
@@ -989,8 +991,8 @@
             <a href="auth.html">Kirish</a>
         </nav>
 
-        <a href="#create-project" class="nav-button">
-            Loyiha yaratish +
+        <a href="career.html" class="nav-button">
+            IDEA JOB’ga o‘tish →
         </a>
 
     </div>
@@ -999,50 +1001,56 @@
 <!-- HERO -->
 <section class="hero">
     <div class="container">
-
         <div class="hero-content">
-            <div class="hero-label">IDEAS · PROJECTS · OPPORTUNITIES</div>
-
-            <h1>
-                G‘oyangizni
-                <span class="gradient-text">kelajakka</span>
-                aylantiring.
-            </h1>
-            <p class="hero-description">
-                IDEA LAB — g‘oyalar, loyihalar, investorlar,
-                mutaxassislar va hamkorlarni yagona platformada
-                birlashtiruvchi innovatsion ekotizim.
-            </p>
-
+            <div class="hero-label">IDEA JOB · PEOPLE × OPPORTUNITY</div>
+            <h1>Sizga mos ishni <span class="gradient-text">toping.</span> Iste’dodga mos xodimni tanlang.</h1>
+            <p class="hero-description">IDEA JOB — ish izlovchilar va ish beruvchilarni bog‘laydigan zamonaviy platforma. Rezyume yarating, vakansiyalarni izlang yoki tashkilotingiz uchun munosib nomzodlarni toping.</p>
             <div class="hero-actions">
-                <a href="#create-project" class="btn btn-primary">
-                    G‘oyangizni taqdim eting →
-                </a>
-
-                <a href="projects.html" class="btn btn-outline">
-                    Loyihalarni ko‘rish
-                </a>
+                <a href="career.html#career-section" class="btn btn-primary">Vakansiyalarni ko‘rish →</a>
+                <a href="#idea-job-priority" class="btn btn-outline">Qanday ishlaydi?</a>
             </div>
         </div>
-
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number" id="projectCount">0</div>
-                <div class="stat-label">Taqdim etilgan loyihalar</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-number">∞</div>
-                <div class="stat-label">Yangi imkoniyatlar</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-number">1</div>
-                <div class="stat-label">Yagona innovatsion ekotizim</div>
-            </div>
+        <div class="stats" aria-label="IDEA JOB asosiy imkoniyatlari">
+            <div class="stat-card"><div class="stat-number">01</div><div class="stat-label">Ish izlovchi uchun shaxsiy rezyume</div></div>
+            <div class="stat-card"><div class="stat-number">02</div><div class="stat-label">Ish beruvchi uchun vakansiya boshqaruvi</div></div>
+            <div class="stat-card"><div class="stat-number">03</div><div class="stat-label">Ko‘nikmalar asosida moslik tavsiyalari</div></div>
         </div>
-
     </div>
+</section>
+
+<!-- IDEA JOB — primary product -->
+<section class="section" id="idea-job-priority" aria-labelledby="idea-job-title">
+  <svg class="job-flow-art" viewBox="0 0 620 420" aria-hidden="true" focusable="false">
+    <defs><linearGradient id="ideaJobLine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#438dff"/><stop offset="1" stop-color="#35d6d1"/></linearGradient></defs>
+    <path d="M38 210 C150 210 140 70 280 70 S410 210 580 210"/>
+    <path d="M38 210 C150 210 140 350 280 350 S410 210 580 210"/>
+    <path d="M280 70 C370 70 370 210 470 210"/><path d="M280 350 C370 350 370 210 470 210"/>
+    <circle cx="38" cy="210" r="5"/><circle cx="280" cy="70" r="5"/><circle cx="280" cy="350" r="5"/><circle cx="470" cy="210" r="5"/><circle cx="580" cy="210" r="5"/>
+  </svg>
+  <div class="container">
+    <div class="job-priority-head">
+      <span class="job-priority-eyebrow">IDEA JOB · ISH VA ISTE’DODLAR MARKAZI</span>
+      <h2 class="job-priority-title" id="idea-job-title">To‘g‘ri ish — to‘g‘ri inson bilan uchrashgan joyda boshlanadi.</h2>
+      <p class="job-priority-lead">IDEA JOB ish izlayotganlar va xodim qidirayotgan tashkilotlarni yagona tizimda bog‘laydi. Vakansiyalarni toping, rezyume yarating yoki jamoangiz uchun nomzod izlang.</p>
+    </div>
+    <div class="job-priority-grid">
+      <article class="job-role-card seeker">
+        <div class="job-role-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c.7-3.5 3.1-5.3 7-5.3s6.3 1.8 7 5.3"/></svg></div>
+        <h3>Ish izlayapman</h3><p>Rezyume profilingizni yarating, mos vakansiyalarni ko‘ring va arizalaringiz holatini kuzating.</p>
+        <a class="job-role-link" href="career.html#resume-section">Ish izlovchi sifatida kirish <span aria-hidden="true">→</span></a>
+      </article>
+      <article class="job-role-card employer">
+        <div class="job-role-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="7" width="17" height="13" rx="2"/><path d="M9 7V4.8A1.8 1.8 0 0 1 10.8 3h2.4A1.8 1.8 0 0 1 15 4.8V7M3.5 12h17M10 12v2h4v-2"/></svg></div>
+        <h3>Xodim izlayapman</h3><p>Tashkilot profilingizni yuboring, vakansiya e’lon qiling va kelib tushgan arizalarni boshqaring.</p>
+        <a class="job-role-link" href="career.html#employerOrgPanel">Ish beruvchi sifatida kirish <span aria-hidden="true">→</span></a>
+      </article>
+    </div>
+    <div class="job-proof-row" aria-label="IDEA JOB imkoniyatlari">
+      <span class="job-proof"><b>01</b> Shaxsiy rezyume</span><span class="job-proof"><b>02</b> Vakansiya filtrlari</span>
+      <span class="job-proof"><b>03</b> Moslik tavsiyalari</span><span class="job-proof"><b>04</b> Ariza holati</span>
+    </div>
+    <a class="job-directory-link" href="career.html#career-section">Barcha vakansiyalarni ko‘rish <span aria-hidden="true">→</span></a>
+  </div>
 </section>
 
 <!-- MAIN WORKFLOW -->
@@ -1319,8 +1327,8 @@
                 Kuchli jamoa va to‘g‘ri hamkorlik esa natijadir.
             </p>
 
-            <a href="projects.html" class="btn btn-primary">
-                Imkoniyatlarni kashf etish →
+            <a href="career.html" class="btn btn-primary">
+                IDEA JOB’da boshlash →
             </a>
         </div>
 
@@ -1369,6 +1377,8 @@
     </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="assets/idea-motion.js"></script>
 <script src="assets/idea-core.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script src="assets/idea-config.js"></script>
