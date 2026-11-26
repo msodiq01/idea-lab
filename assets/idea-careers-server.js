@@ -402,6 +402,14 @@
       box.append(node);
     });
   }
+  let jobSubmitInFlight=false;
+  const jobDraftKey="idea_lab_job_draft_v1";
+  function readJobDraft(){try{const raw=localStorage.getItem(jobDraftKey);if(!raw)return;const draft=JSON.parse(raw);["jobOrganization","jobTitle","jobSalary","jobLocation","jobType","jobExperienceYears","jobSchedule","jobSkills","jobDescription"].forEach(id=>{const el=$(id);if(el&&draft[id]!==undefined)el.value=draft[id];});}catch(_){}}
+  function saveJobDraft(){try{const draft={};["jobOrganization","jobTitle","jobSalary","jobLocation","jobType","jobExperienceYears","jobSchedule","jobSkills","jobDescription"].forEach(id=>{const el=$(id);if(el)draft[id]=el.value;});localStorage.setItem(jobDraftKey,JSON.stringify(draft));}catch(_){}}
+  function clearJobDraft(){try{localStorage.removeItem(jobDraftKey);}catch(_){}}
+  readJobDraft();
+  form.addEventListener("input",saveJobDraft);
+  form.addEventListener("change",saveJobDraft);
   async function createJob(event){
     event.preventDefault();
     if(!userId){alert("Vakansiya joylashtirish uchun avval akkauntga kiring.");location.href="auth.html?next=career.html";return;}
@@ -417,13 +425,15 @@
       description:clean($("jobDescription")?.value)
     };
     if(!input.organizationId){alert("Avval o‘zingizga tegishli tashkilotni tanlang.");return;}
-    const submit=form.querySelector('[type="submit"]');if(submit)submit.disabled=true;
+    const submit=form.querySelector('[type="submit"]');jobSubmitInFlight=true;if(submit)submit.disabled=true;
     setStatus("Vakansiya serverga joylanmoqda…");
-    const r=await data.createJobPost(input);
-    if(!r.ok){setStatus(errorText(r),true);if(submit)submit.disabled=false;return;}
-    form.reset();if($("jobFormPanel"))$("jobFormPanel").hidden=true;if(submit)submit.disabled=false;
-    setStatus("Vakansiya moderator tekshiruviga yuborildi. Tasdiqlangach katalogda ko‘rinadi.");
-    await loadJobs();await loadOwnedJobs();
+    try{
+      const r=await data.createJobPost(input);
+      if(!r.ok){setStatus(errorText(r),true);return;}
+      form.reset();clearJobDraft();if($("jobFormPanel"))$("jobFormPanel").hidden=true;
+      setStatus("Vakansiya moderator tekshiruviga yuborildi. Tasdiqlangach katalogda ko‘rinadi.");
+      await loadJobs();await loadOwnedJobs();
+    }finally{jobSubmitInFlight=false;if(submit)submit.disabled=false;}
   }
   document.addEventListener("submit",async event=>{
     if(event.target?.id==="employerOrgForm"){
