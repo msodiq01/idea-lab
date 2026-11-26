@@ -2,14 +2,14 @@
 (()=>{
  "use strict";
  if(document.getElementById("il-global")) return;
- const primary=[["Core","core.html"],["Bosh sahifa","index.html"],["Loyihalar","projects.html"],["Global bozor","marketplace.html"],["Jamoalar","teams.html"],["Qidiruv","search.html"]];
+ const primary=[["IDEA JOB","career.html"],["Bosh sahifa","index.html"],["Loyihalar","projects.html"],["Global bozor","marketplace.html"],["Jamoalar","teams.html"],["Qidiruv","search.html"]];
  const groups=[
   ["Kabinet va boshqaruv",[["Shaxsiy kabinet","profile.html"],["Boshqaruv paneli","dashboard.html"],["Arizalar markazi","applications.html"],["Bildirishnomalar","notifications.html"],["Faoliyatlar tarixi","activity.html"],["Tashkilotlar","organizations.html"],["Boshqaruv markazi","management.html"],["Moliya markazi","finance.html"],["Analitika va hisobotlar","analytics.html"],["Rollar va ruxsatlar","access.html"],["Ma’lumotlar zaxirasi","backup.html"],["Mening to‘plamim","collection.html"]]],
   ["G‘oya va loyihalar",[["Kelajak loyihalari","portfolio.html"],["Loyiha xarajatlari","project-expenses.html"],["Tadbirlar","events.html"],["Yo‘l xaritasi","roadmap.html"]]],
   ["Bozor va hamkorlik",[["Talab va taklif","exchange.html"],["Takliflar markazi","offers.html"],["Investorlar","investors.html"],["Mening investitsiyalarim","investor-portfolio.html"]]],
-  ["Jamoa va karyera",[["Vakansiyalar","teams.html#career-section"],["Mutaxassislar","specialists.html"]]],
+  ["Jamoa va karyera",[["IDEA JOB — vakansiyalar","career.html"],["Jamoalar","teams.html"],["Mutaxassislar","specialists.html"]]],
   ["Resurslar va ta’minot",[["Resurslar reyestri","resources.html"],["Resurs buyurtmalari","resource-orders.html"],["Resurschilar katalogi","suppliers.html"],["Hujjatlar markazi","supplier-verification.html"],["Tekshiruvchi kabineti","supplier-reviewer.html"],["Tekshiruv boshqaruvi","supplier-verification-admin.html"]]],
-  ["Platforma",[["Platforma haqida","about.html"]]]
+  ["Platforma",[["Core platforma","core.html"],["Platforma haqida","about.html"]]]
  ];
  const current=location.pathname.split("/").pop()||"index.html";
  // Authentication has its own focused header; do not inject the full application shell there.
