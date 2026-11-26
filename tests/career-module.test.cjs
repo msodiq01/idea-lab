@@ -104,6 +104,8 @@ test("vacancy form prevents duplicate submits and preserves drafts locally", () 
   assert.match(server, /localStorage\.setItem\(jobDraftKey/);
   assert.match(server, /localStorage\.getItem\(jobDraftKey/);
   assert.match(server, /clearJobDraft\(\)/);
+  assert.match(server, /pendingJobDraft/);
+  assert.match(server, /restoreJobOrganizationDraft\(\)/);
 });
 
 test("async employer, resume and vacancy form handlers await actions and recover from errors", () => {
