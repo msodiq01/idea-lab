@@ -143,3 +143,19 @@ test("job application status transitions are one-way and participant-authorized"
   assert.match(applicationTransitions, /before update of status on idea_app\.job_applications/i);
   assert.match(applicationTransitions, /security definer/i);
 });
+
+const withdrawnApplicationAccessMigration = read("supabase/migrations/20261126172000_idea_app_withdrawn_application_visibility.sql");
+
+test("withdrawn applications and their private message are hidden from employers by RLS", () => {
+  assert.match(withdrawnApplicationAccessMigration, /drop policy if exists job_applications_select_participant/i);
+  assert.match(withdrawnApplicationAccessMigration, /create policy job_applications_select_participant/i);
+  assert.match(withdrawnApplicationAccessMigration, /applicant_id\s*=\s*\(select auth\.uid\(\)\)/i);
+  assert.match(withdrawnApplicationAccessMigration, /status\s*<>\s*'withdrawn'/i);
+  assert.match(withdrawnApplicationAccessMigration, /j\.created_by\s*=\s*\(select auth\.uid\(\)\)/i);
+});
+
+test("application notifications are visible in both seeker and employer modes", () => {
+  assert.match(server, /myActivity\.dataset\.careerFlow="both"/);
+  assert.match(server, /node\.dataset\.careerFlow!=="both"&&node\.dataset\.careerFlow!==active/);
+  assert.match(server, /loadMyActivity\(\)/);
+});
