@@ -52,3 +52,9 @@ test("shared IDEA LAB logo is wired into homepage and IDEA JOB header", () => {
     assert.ok(page.includes('<img src="assets/idea-lab-logo.svg" alt="IDEA LAB">'), file + " must use the shared header logo");
   }
 });
+
+test("career document head has no literal escaped newline before favicon", () => {
+  const page = read("career.html");
+  assert.ok(page.includes("</title>\n<link rel=\"icon\""), "favicon must begin on a real new line");
+  assert.ok(!page.includes("</title>\\n<link rel=\"icon\""), "literal backslash-n must not appear in HTML");
+});
