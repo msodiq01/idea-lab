@@ -418,7 +418,7 @@
     setStatus("Vakansiya moderator tekshiruviga yuborildi. Tasdiqlangach katalogda ko‘rinadi.");
     await loadJobs();await loadOwnedJobs();
   }
-  document.addEventListener("submit",event=>{
+  document.addEventListener("submit",async event=>{
     if(event.target?.id==="employerOrgForm"){event.preventDefault();event.stopImmediatePropagation();createEmployerOrganization(event);}
     if(event.target?.id==="jobSeekerResumeForm"){event.preventDefault();event.stopImmediatePropagation();saveResume(event);}
     if(event.target?.id==="jobForm"){event.preventDefault();event.stopImmediatePropagation();createJob(event);}
