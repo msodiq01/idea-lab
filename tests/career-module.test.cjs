@@ -97,6 +97,14 @@ test("closed vacancies are visible only to applicants, owners and moderators", (
   assert.match(closedJobAccessMigration, /drop policy if exists job_posts_select_closed_for_authenticated/i);
 });
 
+test("vacancy form includes salary examples and safe preview", () => {
+  assert.match(page, /jobPreviewButton/);
+  assert.match(page, /120 000 so‘m\/kun/);
+  assert.match(server, /function showJobPreview\(/);
+  assert.match(server, /preview\.append\(body\)/);
+  assert.match(server, /jobPreviewButton.*showJobPreview/);
+});
+
 test("async employer, resume and vacancy form handlers await actions and recover from errors", () => {
   assert.match(server, /try\s*\{\s*await createEmployerOrganization\(event\);\s*\}\s*catch/);
   assert.match(server, /try\s*\{\s*await saveResume\(event\);\s*\}\s*catch/);
