@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="IDEA LAB Core — platforma markaziy boshqaruv va tezkor navigatsiya.">
 <title>IDEA LAB CORE | Control Center</title>
+<link rel="stylesheet" href="assets/idea-shell.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 :root{--bg:#080b13;--panel:#121827;--panel2:#171f30;--line:#29344b;--text:#f5f6fb;--muted:#929db2;--purple:#8b5cf6;--cyan:#43d9ce}
@@ -18,6 +19,7 @@ a{color:inherit;text-decoration:none}button,input{font:inherit}.wrap{width:min(1
 .empty{display:none;color:var(--muted);padding:35px;text-align:center;border:1px dashed var(--line);border-radius:14px}
 footer{border-top:1px solid var(--line);margin-top:45px;padding:23px 0;color:#7f8aa1;font-size:11px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 @media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.quick{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.grid,.quick{grid-template-columns:1fr}.tile{min-height:160px}.hero{padding-top:38px}.topin{min-height:60px}}
+body>header:not(#il-global){display:none!important}
 </style>
 </head>
 <body>
@@ -49,4 +51,5 @@ const search=document.getElementById('moduleSearch'),tiles=[...document.querySel
 function filter(){const q=search.value.trim().toLowerCase();let n=0;tiles.forEach(t=>{const match=(t.innerText+' '+t.dataset.tags).toLowerCase().includes(q);t.style.display=match?'':'none';if(match)n++});count.textContent=n+' / '+tiles.length+' modul';empty.style.display=n?'none':'block'}
 search.addEventListener('input',filter);
 </script>
+<script src="assets/idea-shell.js" defer></script>
 </body></html>
