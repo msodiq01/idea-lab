@@ -433,6 +433,22 @@
     listMyJobPosts() {
       return runPublicCommand("idea_lab_list_my_job_posts", {});
     },
+    updateJobPost(jobPostId, input) {
+      if (!isUuid(jobPostId) || !input || !requiredText(input.title, 3, 100) ||
+          !requiredText(input.description, 10, 3000) || !requiredText(input.locationLabel, 2, 120) ||
+          String(input.salaryLabel ?? "").length > 120 ||
+          !["full_time", "part_time", "remote", "internship", "freelance"].includes(input.employmentType)) {
+        return Promise.resolve(fail("INVALID_JOB_EDIT", "Vakansiya tahriri ma’lumotlari noto‘g‘ri."));
+      }
+      return runPublicCommand("idea_lab_update_job_post", {
+        p_job_post_id: jobPostId,
+        p_title: input.title.trim(),
+        p_description: input.description.trim(),
+        p_salary_label: String(input.salaryLabel ?? "").trim(),
+        p_location_label: input.locationLabel.trim(),
+        p_employment_type: input.employmentType
+      });
+    },
     updateJobPostStatus(jobPostId, status) {
       if (!isUuid(jobPostId) || !["pending_review", "closed"].includes(status)) return Promise.resolve(fail("INVALID_JOB_STATUS", "Vakansiya holati noto‘g‘ri."));
       return runPublicCommand("idea_lab_update_job_post_status", { p_job_post_id: jobPostId, p_status: status });
