@@ -412,6 +412,7 @@
   form.addEventListener("change",saveJobDraft);
   async function createJob(event){
     event.preventDefault();
+    if(jobSubmitInFlight)return;
     if(!userId){alert("Vakansiya joylashtirish uchun avval akkauntga kiring.");location.href="auth.html?next=career.html";return;}
     const input={
       organizationId:clean($("jobOrganization")?.value),
