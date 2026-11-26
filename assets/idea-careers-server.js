@@ -60,7 +60,7 @@
   const applicationPanel=document.createElement("div");
   applicationPanel.className="form-panel";
   applicationPanel.hidden=true;
-  applicationPanel.innerHTML='<h3 id="ilApplyTitle">Vakansiyaga ariza</h3><p class="notice">Ariza yuborilganda ism-familiya, kasb yo‘nalishi, ko‘nikmalar, ta’lim va tajriba ma’lumotlaringiz ushbu ish beruvchiga ko‘rinadi. Telefon, pasport yoki uy manzilingizni kiritmang.</p><form id="ilApplyForm"><div class="field"><label for="ilApplyMessage">Ish beruvchiga xabar (10–2000 belgi)</label><textarea id="ilApplyMessage" required minlength="10" maxlength="2000" rows="5" placeholder="Tajriba, qiziqish va mosligingiz haqida yozing. Telefon, manzil yoki boshqa maxfiy ma’lumotlarni kiritmang."></textarea></div><button class="btn btn-green" type="submit">Ariza yuborish</button><button class="btn btn-secondary" id="ilApplyCancel" type="button">Bekor qilish</button></form>';
+  applicationPanel.innerHTML='<h3 id="ilApplyTitle">Vakansiyaga ariza</h3><p class="notice">Ariza yuborilganda ism-familiya, kasb yo‘nalishi, ko‘nikmalar, ta’lim va tajriba ma’lumotlaringiz ushbu ish beruvchiga ko‘rinadi. Telefon, pasport yoki uy manzilingizni kiritmang.</p><div id="ilApplyFeedback" class="notice" role="status" aria-live="polite" hidden></div><form id="ilApplyForm"><div class="field"><label for="ilApplyMessage">Ish beruvchiga xabar (10–2000 belgi)</label><textarea id="ilApplyMessage" required minlength="10" maxlength="2000" rows="5" placeholder="Tajriba, qiziqish va mosligingiz haqida yozing. Telefon, manzil yoki boshqa maxfiy ma’lumotlarni kiritmang."></textarea></div><button class="btn btn-green" type="submit">Ariza yuborish</button><button class="btn btn-secondary" id="ilApplyCancel" type="button">Bekor qilish</button></form>';
   jobList.insertAdjacentElement("afterend",applicationPanel);
 
   function card(title,lines=[]){
@@ -422,20 +422,24 @@
       event.preventDefault();event.stopImmediatePropagation();
       if(!selectedJob)return;
       const message=clean($("ilApplyMessage").value);
+      const feedback=$("ilApplyFeedback");feedback.hidden=false;feedback.textContent="";feedback.style.borderColor="";
       const button=event.target.querySelector('[type="submit"]');button.disabled=true;
       const originalText=button.textContent;button.textContent="Yuborilmoqda…";
       try{
         const r=await data.applyJobPost(selectedJob.id,message);
-        if(!r.ok){alert(errorText(r));return;}
-        applicationPanel.hidden=true;selectedJob=null;event.target.reset();alert("Arizangiz yuborildi.");await loadMyApplications();await loadMyActivity();
+        if(!r.ok){feedback.textContent=errorText(r);feedback.style.borderColor="rgba(255,100,124,.65)";return;}
+        feedback.textContent="Arizangiz muvaffaqiyatli yuborildi. Holatini “Mening ish arizalarim” bo‘limidan kuzatishingiz mumkin.";
+        feedback.style.borderColor="rgba(22,199,181,.35)";
+        selectedJob=null;event.target.reset();await loadMyApplications();await loadMyActivity();
       }catch(error){
-        alert("Ariza yuborishda vaqtinchalik xatolik yuz berdi. Internetni tekshirib, qayta urinib ko‘ring.");
+        feedback.textContent="Ariza yuborishda vaqtinchalik xatolik yuz berdi. Internetni tekshirib, qayta urinib ko‘ring.";
+        feedback.style.borderColor="rgba(255,100,124,.65)";
       }finally{
         button.disabled=false;button.textContent=originalText;
       }
     }
   },true);
-  $("ilApplyCancel").addEventListener("click",()=>{applicationPanel.hidden=true;selectedJob=null;});
+  $("ilApplyCancel").addEventListener("click",()=>{applicationPanel.hidden=true;selectedJob=null;$("ilApplyFeedback").hidden=true;$("ilApplyFeedback").textContent="";});
   $("modeSeeker")?.addEventListener("click",()=>setCareerMode("seeker"));
   $("modeEmployer")?.addEventListener("click",()=>setCareerMode("employer"));
   setCareerMode("seeker");
