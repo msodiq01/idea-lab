@@ -388,7 +388,17 @@
     const r=await data.listMyJobPosts();
     if(!r.ok){empty(box,errorText(r));ownedJobs=[];return;}
     ownedJobs=Array.isArray(r.data)?r.data:[];
+    const analytics=document.createElement("section");analytics.className="card career-employer-analytics";analytics.setAttribute("aria-live","polite");
+    const analyticsTitle=document.createElement("h3");analyticsTitle.textContent="Ish beruvchi statistikasi";analytics.append(analyticsTitle);
+    const analyticsBody=document.createElement("div");analyticsBody.className="card-content";analyticsBody.textContent="Arizalar statistikasi yuklanmoqda…";analytics.append(analyticsBody);box.append(analytics);
+    const statusCount=status=>ownedJobs.filter(job=>job.status===status).length;
+    const statsData={total:ownedJobs.length,published:statusCount("published"),pending:statusCount("pending_review"),closed:statusCount("closed"),rejected:statusCount("rejected"),applications:0,submitted:0,accepted:0,declined:0};
     if(!ownedJobs.length)empty(box,"Siz hali vakansiya joylashtirmagansiz.");
+    Promise.all(ownedJobs.map(job=>data.listJobPostApplications(job.job_post_id))).then(results=>{
+      results.forEach(result=>{if(!result.ok||!Array.isArray(result.data))return;statsData.applications+=result.data.length;result.data.forEach(app=>{if(app.status==="submitted")statsData.submitted++;else if(app.status==="accepted")statsData.accepted++;else if(app.status==="declined")statsData.declined++;});});
+      analyticsBody.replaceChildren();const metrics=[["Jami vakansiyalar",statsData.total],["Ochiq",statsData.published],["Tekshiruvda",statsData.pending],["Yopilgan",statsData.closed],["Rad etilgan vakansiyalar",statsData.rejected],["Ko‘rinadigan arizalar",statsData.applications],["Ko‘rib chiqilmoqda",statsData.submitted],["Qabul qilingan",statsData.accepted],["Rad etilgan arizalar",statsData.declined]];
+      metrics.forEach(([label,value])=>{const row=document.createElement("p");row.textContent=label+": "+value;analyticsBody.append(row);});
+    }).catch(()=>{analyticsBody.textContent="Statistikani yuklab bo‘lmadi. Qayta yuklang.";});
     for(const job of ownedJobs){
       const labels={pending_review:"Tekshiruvda",published:"Ochiq",closed:"Yopilgan",rejected:"Rad etilgan"};
       const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"","Holat: "+(labels[job.status]||job.status)]);
