@@ -116,3 +116,13 @@ test("homepage and career page contain no duplicate IDs or broken local anchors"
     assert.deepEqual(missing, [], name + " must not contain broken local anchors");
   }
 });
+
+const withdrawnResumeAccessMigration = read("supabase/migrations/20261126170000_idea_app_withdrawn_resume_access.sql");
+
+test("candidate resume access ends when the candidate withdraws an application", () => {
+  assert.match(withdrawnResumeAccessMigration, /drop policy if exists job_seeker_profiles_applied_employer_read/i);
+  assert.match(withdrawnResumeAccessMigration, /create policy job_seeker_profiles_applied_employer_read/i);
+  assert.match(withdrawnResumeAccessMigration, /a\.status\s*<>\s*'withdrawn'/i);
+  assert.match(withdrawnResumeAccessMigration, /a\.applicant_id=job_seeker_profiles\.user_id/i);
+  assert.match(withdrawnResumeAccessMigration, /j\.created_by=\(select auth\.uid\(\)\)/i);
+});
