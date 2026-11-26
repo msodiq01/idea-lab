@@ -416,7 +416,17 @@
       schedule:clean($("jobSchedule")?.value),
       description:clean($("jobDescription")?.value)
     };
-    if(!input.organizationId){alert("Avval o‘zingizga tegishli tashkilotni tanlang.");return;}
+    const fields=[
+      ["jobTitle",input.title.length>=3&&input.title.length<=100,"Vakansiya nomi 3–100 belgi bo‘lishi kerak."],
+      ["jobLocation",input.location.length>=2&&input.location.length<=120,"Ish joyi 2–120 belgi bo‘lishi kerak."],
+      ["jobDescription",input.description.length>=40&&input.description.length<=5000,"Tavsif 40–5000 belgi bo‘lishi kerak."],
+      ["jobSalary",!input.salary||input.salary.length<=120,"Maosh ma’lumotini 120 belgidan oshirmang."],
+      ["jobSchedule",!input.schedule||input.schedule.length<=120,"Ish jadvalini 120 belgidan oshirmang."]
+    ];
+    const invalid=fields.find(([id,valid])=>!valid);
+    if(invalid){const field=$(invalid[0]);field?.focus();setStatus(invalid[2],true);return;}
+    if(!Number.isFinite(input.experienceYearsMin)||input.experienceYearsMin<0||input.experienceYearsMin>50){$("jobExperienceYears")?.focus();setStatus("Minimal tajriba 0–50 yil oralig‘ida bo‘lishi kerak.",true);return;}
+    if(!input.organizationId){setStatus("Avval o‘zingizga tegishli tashkilotni tanlang.",true);$("jobOrganization")?.focus();return;}
     const submit=form.querySelector('[type="submit"]');if(submit)submit.disabled=true;
     setStatus("Vakansiya serverga joylanmoqda…");
     const r=await data.createJobPost(input);
