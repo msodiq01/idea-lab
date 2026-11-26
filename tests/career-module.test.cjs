@@ -96,3 +96,12 @@ test("async employer, resume and vacancy form handlers await actions and recover
   assert.match(server, /try\s*\{\s*await createJob\(event\);\s*\}\s*catch/);
   assert.match(server, /resumeSaveStatus.*Rezyumeni saqlashda xatolik/s);
 });
+
+const careerIndexMigration = read("supabase/migrations/20261126161000_idea_app_career_foreign_key_indexes.sql");
+
+test("career foreign keys have covering indexes", () => {
+  assert.match(careerIndexMigration, /job_posts_organization_idx/i);
+  assert.match(careerIndexMigration, /job_application_activity_application_idx/i);
+  assert.match(careerIndexMigration, /job_application_activity_actor_idx/i);
+  assert.match(careerIndexMigration, /create index if not exists/i);
+});
