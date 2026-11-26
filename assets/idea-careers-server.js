@@ -88,7 +88,7 @@
     const locationQuery=clean($("jobLocationFilter")?.value).toLocaleLowerCase("uz-UZ");
     const salaryFloor=Number($("jobSalaryFilter")?.value||0);
     const sortMode=$("jobSort")?.value||"default";
-    const salaryNumber=job=>{const digits=clean(job.salary_label).replace(/[^0-9]/g,"");return digits?Number(digits):0;};
+    const salaryNumber=job=>{const label=clean(job.salary_label).toLocaleLowerCase("uz-UZ");const first=label.match(/\d[\d\s.,]*/);if(!first)return 0;const raw=first[0].trim().replace(/\s/g,"").replace(/,/g,".");const amount=Number(raw);if(!Number.isFinite(amount))return 0;if(/mln|million|млн/.test(label))return amount*1000000;if(/ming|тыс/.test(label))return amount*1000;return amount;};
     const visible=jobs.filter(job=>{
       const hay=[job.title,job.company_name,job.location_label,job.description,job.schedule_label,employmentType(job.employment_type),...(job.required_skills||[])].join(" ").toLocaleLowerCase("uz-UZ");
       const location=clean(job.location_label).toLocaleLowerCase("uz-UZ");
