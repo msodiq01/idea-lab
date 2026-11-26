@@ -30,6 +30,13 @@ test("all local JavaScript assets loaded by career page parse without syntax err
   }
 });
 
+test("vacancy form validates field lengths and experience before sending", () => {
+  assert.match(server, /Vakansiya nomi 3–100 belgi bo‘lishi kerak/);
+  assert.match(server, /Tavsif 40–5000 belgi bo‘lishi kerak/);
+  assert.match(server, /input\.experienceYearsMin<0\|\|input\.experienceYearsMin>50/);
+  assert.match(server, /field\?\.focus\(\)/);
+});
+
 test("career route loads shared auth, data and career server modules in order", () => {
   const scripts = scriptSources(page);
   for (const item of ["assets/idea-auth.js", "assets/idea-data.js", "assets/idea-careers-server.js"]) {
