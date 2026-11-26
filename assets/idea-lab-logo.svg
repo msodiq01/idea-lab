@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-labelledby="title">
+<title id="title">IDEA LAB</title>
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#3987ff"/><stop offset="1" stop-color="#24d5e8"/></linearGradient></defs>
+<g transform="translate(3 3)">
+<path d="M29 3a10 10 0 1 1 0 20 10 10 0 0 1 0-20Z" fill="url(#g)"/>
+<path d="M8 30c0-8 7-13 15-13h12c8 0 14 5 14 12 0 5-3 8-8 11L26 52H8c-5 0-8-3-8-8 0-4 3-8 8-11l13-8" fill="none" stroke="url(#g)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="m27 31 13 12-13 12" fill="none" stroke="#24d5e8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<text x="69" y="32" fill="#f5f8ff" font-family="Inter,Arial,sans-serif" font-size="29" font-weight="900" letter-spacing="-1.5">IDEA</text>
+<text x="69" y="53" fill="#24d5e8" font-family="Inter,Arial,sans-serif" font-size="17" font-weight="800" letter-spacing="4">LAB</text>
+</svg>
