@@ -159,3 +159,15 @@ test("application notifications are visible in both seeker and employer modes", 
   assert.match(server, /node\.dataset\.careerFlow!=="both"&&node\.dataset\.careerFlow!==active/);
   assert.match(server, /loadMyActivity\(\)/);
 });
+
+const ownerEditMigration = read("supabase/migrations/20261127010000_idea_app_owner_edit_job_post.sql");
+
+test("owner vacancy edit RPC validates fields, scopes by creator and requeues published edits for review", () => {
+  assert.match(ownerEditMigration, /security invoker/i);
+  assert.match(ownerEditMigration, /where id=p_job_post_id and created_by=auth\.uid\(\)/i);
+  assert.match(ownerEditMigration, /status=case when status='published' then 'pending_review'/i);
+  assert.match(ownerEditMigration, /revoke all on function public\.idea_lab_update_job_post/i);
+  assert.match(ownerEditMigration, /grant execute on function public\.idea_lab_update_job_post.*to authenticated/i);
+  assert.match(data, /updateJobPost\(jobPostId, input\)/);
+  assert.match(data, /idea_lab_update_job_post/);
+});
