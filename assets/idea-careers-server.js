@@ -13,7 +13,7 @@
   const section=$("career-section"),jobList=$("jobList"),form=$("jobForm");
   function setCareerMode(mode){
     const active=mode==="employer"?"employer":"seeker";activeMode=active;
-    document.querySelectorAll("[data-career-flow]").forEach(node=>{node.hidden=node.dataset.careerFlow!==active;});document.querySelectorAll(".career-apply-action").forEach(button=>{button.hidden=active==="employer";});
+    document.querySelectorAll("[data-career-flow]").forEach(node=>{node.hidden=node.dataset.careerFlow!=="both"&&node.dataset.careerFlow!==active;});document.querySelectorAll(".career-apply-action").forEach(button=>{button.hidden=active==="employer";});
     if(active==="seeker"){$("employerOrgPanel").hidden=true;$("jobFormPanel").hidden=true;}else if(typeof applicationPanel!=="undefined"){applicationPanel.hidden=true;selectedJob=null;}
     $("modeSeeker").className=active==="seeker"?"btn green":"btn secondary";
     $("modeEmployer").className=active==="employer"?"btn green":"btn secondary";
@@ -42,8 +42,8 @@
   section.append(myApps);
   const myActivity=document.createElement("section");
   myActivity.className="section";
-  myActivity.dataset.careerFlow="seeker";
-  myActivity.innerHTML='<div class="section-heading"><div><h2>Bildirishnomalar</h2><p>Ish beruvchi arizangiz holatini o‘zgartirganda xabar shu yerda chiqadi.</p></div></div><div id="ilMyJobActivity" class="cards"></div>';
+  myActivity.dataset.careerFlow="both";
+  myActivity.innerHTML='<div class="section-heading"><div><h2>Bildirishnomalar</h2><p>Ish beruvchi yoki nomzod arizasi bo‘yicha yangilanishlar shu yerda ko‘rinadi.</p></div></div><div id="ilMyJobActivity" class="cards"></div>';
   section.append(myActivity);
 
   const oldCompany=$("companyName");
