@@ -74,7 +74,7 @@ test("job applications create private notifications for participants", () => {
   assert.match(data, /markJobActivityRead\s*\(/);
 });
 
-const applicationTransitions = read("supabase/migrations/20261126170000_idea_app_job_application_status_transitions.sql");
+const applicationTransitions = read("supabase/migrations/20261126171000_idea_app_job_application_status_transitions.sql");
 
 test("job application status transitions are one-way and participant-authorized", () => {
   assert.match(applicationTransitions, /old\.status\s*<>\s*'submitted'/i);
