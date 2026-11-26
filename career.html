@@ -87,7 +87,7 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}
 <h3>Yangi vakansiya</h3>
 <form id="jobForm">
 <div class="form-grid">
-<div class="field"><label for="jobOrganization">Tashkilot *</label><select id="jobOrganization" required><option value="">Tashkilotni tanlang</option></select></div>
+<div class="field"><label for="jobOrganization">Tashkilot *</label><select id="jobOrganization" required><option value="">Tashkilotni tanlang</option></select><p id="jobOrganizationHelp" class="notice" hidden></p><button class="btn secondary" type="button" onclick="document.getElementById('employerOrgPanel').hidden=false;document.getElementById('employerOrgPanel').scrollIntoView({behavior:'smooth',block:'center'}">Tashkilot yaratish / holatini ko‘rish</button></div>
 <div class="field"><label for="jobTitle">Lavozim *</label><input id="jobTitle" required maxlength="100" placeholder="Masalan, administrator"></div>
 <div class="field"><label for="jobSalary">Maosh (ixtiyoriy)</label><input id="jobSalary" maxlength="120" placeholder="Masalan, 3 000 000–4 500 000 so‘m yoki kelishiladi"></div>
 <div class="field"><label for="jobLocation">Ish joyi *</label><input id="jobLocation" required maxlength="120" placeholder="Shahar yoki tuman"></div>
