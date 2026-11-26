@@ -58,3 +58,11 @@ test("career document head has no literal escaped newline before favicon", () =>
   assert.ok(page.includes("</title>\n<link rel=\"icon\""), "favicon must begin on a real new line");
   assert.ok(!page.includes("</title>\\n<link rel=\"icon\""), "literal backslash-n must not appear in HTML");
 });
+
+test("successful vacancy submission hides the form using the hidden property so it can reopen", () => {
+  const source = read("assets/idea-careers-server.js");
+  assert.match(source, /if\(\$\("jobFormPanel"\)\)\$\("jobFormPanel"\)\.hidden=true/);
+  assert.doesNotMatch(source, /jobFormPanel.*classList\.add\(["']hidden["']\)/);
+  const page = read("career.html");
+  assert.match(page, /jobFormPanel["']\)\.hidden=!document\.getElementById\(["']jobFormPanel["']\)\.hidden/);
+});
