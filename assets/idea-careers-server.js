@@ -35,6 +35,13 @@
   myPosts.dataset.careerFlow="employer";
   myPosts.innerHTML='<div class="section-heading"><div><h2>Mening vakansiyalarim</h2><p>Joylashtirgan e’lonlaringizni boshqaring va arizalarni ko‘rib chiqing.</p></div></div><div id="ilMyJobPosts" class="cards"></div><div id="ilJobOwnerApplications" class="cards" style="margin-top:16px"></div>';
   section.append(myPosts);
+
+  const editPanel=document.createElement("section");
+  editPanel.className="section form-panel";
+  editPanel.dataset.careerFlow="employer";
+  editPanel.hidden=true;
+  editPanel.innerHTML='<div class="section-heading"><div><h2>Vakansiyani tahrirlash</h2><p>Saqlangan o‘zgarishlar vakansiya holatiga qarab tekshiruvga qaytarilishi mumkin.</p></div></div><form id="ilJobEditForm"><div class="form-grid"><div class="field"><label for="ilEditTitle">Vakansiya nomi</label><input id="ilEditTitle" required minlength="3" maxlength="100"></div><div class="field"><label for="ilEditLocation">Ish joyi</label><input id="ilEditLocation" required minlength="2" maxlength="120"></div><div class="field"><label for="ilEditSalary">Maosh</label><input id="ilEditSalary" maxlength="120" placeholder="Masalan, 3–5 mln so‘m"></div><div class="field"><label for="ilEditType">Ish turi</label><select id="ilEditType" required><option value="full_time">To‘liq ish kuni</option><option value="part_time">Yarim stavka</option><option value="remote">Masofaviy</option><option value="internship">Amaliyot</option><option value="freelance">Frilans</option></select></div><div class="field" style="grid-column:1/-1"><label for="ilEditDescription">Vakansiya tavsifi</label><textarea id="ilEditDescription" required minlength="10" maxlength="3000" rows="6"></textarea></div></div><p id="ilJobEditFeedback" class="notice" role="status" aria-live="polite"></p><div class="card-actions"><button class="btn" type="submit">O‘zgarishlarni saqlash</button><button class="btn secondary" id="ilJobEditCancel" type="button">Bekor qilish</button></div></form>';
+  section.append(editPanel);
   const myApps=document.createElement("section");
   myApps.className="section";
   myApps.dataset.careerFlow="seeker";
