@@ -80,3 +80,12 @@ test("candidate resumes are visible to employers only after application", () => 
   assert.match(candidateAccess, /j\.created_by=\(select auth\.uid\(\)\)/i);
   assert.match(server, /candidate_experience_summary/);
 });
+
+const closedJobAccessMigration = read("supabase/migrations/20261126160000_idea_app_closed_job_read_applicants_only.sql");
+
+test("closed vacancies are visible only to applicants, owners and moderators", () => {
+  assert.match(closedJobAccessMigration, /status\s*=\s*'closed'/i);
+  assert.match(closedJobAccessMigration, /a\.job_post_id\s*=\s*job_posts\.id/i);
+  assert.match(closedJobAccessMigration, /a\.applicant_id\s*=\s*\(select auth\.uid\(\)\)/i);
+  assert.match(closedJobAccessMigration, /drop policy if exists job_posts_select_closed_for_authenticated/i);
+});
