@@ -3,6 +3,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const vm = require("node:vm");
 const root = path.join(__dirname, "..");
 const read = (name) => fs.readFileSync(path.join(root, name), "utf8");
 test("homepage makes IDEA JOB the primary product", () => {
@@ -33,4 +34,10 @@ test("clarity-first visual system is shared and accessible", () => {
   assert.match(styles, /prefers-reduced-motion/);
   assert.match(styles, /--il-copy:#d3deed/);
   assert.match(styles, /--il-white:#f7faff/);
+});
+
+test("career server module parses and its submit handler supports async operations", () => {
+  const source = read("assets/idea-careers-server.js");
+  assert.doesNotThrow(() => new vm.Script(source));
+  assert.match(source, /document\\.addEventListener\\("submit",\\s*async\\s+event\\s*=>/);
 });
