@@ -86,12 +86,20 @@
     const q=clean($("jobSearch")?.value).toLocaleLowerCase("uz-UZ");
     const f=clean($("jobFilter")?.value);
     const locationQuery=clean($("jobLocationFilter")?.value).toLocaleLowerCase("uz-UZ");
+    const salaryFloor=Number($("jobSalaryFilter")?.value||0);
+    const sortMode=$("jobSort")?.value||"default";
+    const salaryNumber=job=>{const digits=clean(job.salary_label).replace(/[^0-9]/g,"");return digits?Number(digits):0;};
     const visible=jobs.filter(job=>{
       const hay=[job.title,job.company_name,job.location_label,job.description,job.schedule_label,employmentType(job.employment_type),...(job.required_skills||[])].join(" ").toLocaleLowerCase("uz-UZ");
       const location=clean(job.location_label).toLocaleLowerCase("uz-UZ");
-      return hay.includes(q)&&(!locationQuery||location.includes(locationQuery))&&(!f||employmentType(job.employment_type)===f);
+      const salary=salaryNumber(job);
+      return hay.includes(q)&&(!locationQuery||location.includes(locationQuery))&&(!f||employmentType(job.employment_type)===f)&&(!salaryFloor||salary>=salaryFloor);
     });
-    if(!visible.length){empty(jobList,"Hozircha mos ochiq vakansiya yo‘q.");updateCounts();return;}
+    if(sortMode==="title")visible.sort((a,b)=>clean(a.title).localeCompare(clean(b.title),"uz"));
+    else if(sortMode==="salary")visible.sort((a,b)=>salaryNumber(b)-salaryNumber(a));
+    const summary=$("jobResultSummary");
+    if(summary)summary.textContent=visible.length+" ta vakansiya ko‘rsatildi (jami "+jobs.length+" ta faol e’lon).";
+    if(!visible.length){empty(jobList,"Tanlangan filtrlar bo‘yicha vakansiya topilmadi. Filtrlarni o‘zgartirib ko‘ring.");updateCounts();return;}
     visible.forEach(job=>{
       const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",job.description]);
       const actions=document.createElement("div");actions.className="card-actions";
@@ -420,7 +428,7 @@
   $("cancelEmployerOrg")?.addEventListener("click",()=>{$("employerOrgPanel").hidden=true;});
   $("refreshMatches")?.addEventListener("click",loadMatches);
   document.addEventListener("input",event=>{
-    if(event.target?.id==="jobSearch"||event.target?.id==="jobLocationFilter"){event.stopImmediatePropagation();renderJobs();}
+    if(["jobSearch","jobLocationFilter","jobSalaryFilter","jobSort"].includes(event.target?.id)){event.stopImmediatePropagation();renderJobs();}
   },true);
   document.addEventListener("change",event=>{
     if(event.target?.id==="jobFilter"){event.stopImmediatePropagation();renderJobs();}
