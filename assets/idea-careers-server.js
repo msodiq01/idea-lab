@@ -42,6 +42,37 @@
   editPanel.hidden=true;
   editPanel.innerHTML='<div class="section-heading"><div><h2>Vakansiyani tahrirlash</h2><p>Saqlangan o‘zgarishlar vakansiya holatiga qarab tekshiruvga qaytarilishi mumkin.</p></div></div><form id="ilJobEditForm"><div class="form-grid"><div class="field"><label for="ilEditTitle">Vakansiya nomi</label><input id="ilEditTitle" required minlength="3" maxlength="100"></div><div class="field"><label for="ilEditLocation">Ish joyi</label><input id="ilEditLocation" required minlength="2" maxlength="120"></div><div class="field"><label for="ilEditSalary">Maosh</label><input id="ilEditSalary" maxlength="120" placeholder="Masalan, 3–5 mln so‘m"></div><div class="field"><label for="ilEditType">Ish turi</label><select id="ilEditType" required><option value="full_time">To‘liq ish kuni</option><option value="part_time">Yarim stavka</option><option value="remote">Masofaviy</option><option value="internship">Amaliyot</option><option value="freelance">Frilans</option></select></div><div class="field" style="grid-column:1/-1"><label for="ilEditDescription">Vakansiya tavsifi</label><textarea id="ilEditDescription" required minlength="10" maxlength="3000" rows="6"></textarea></div></div><p id="ilJobEditFeedback" class="notice" role="status" aria-live="polite"></p><div class="card-actions"><button class="btn" type="submit">O‘zgarishlarni saqlash</button><button class="btn secondary" id="ilJobEditCancel" type="button">Bekor qilish</button></div></form>';
   section.append(editPanel);
+  let editingJobId=null;
+  const editForm=$("ilJobEditForm"),editFeedback=$("ilJobEditFeedback");
+  function openJobEditor(job){
+    editingJobId=job.job_post_id;
+    $("ilEditTitle").value=job.title||"";
+    $("ilEditLocation").value=job.location_label||"";
+    $("ilEditSalary").value=job.salary_label||"";
+    $("ilEditType").value=job.employment_type||"full_time";
+    $("ilEditDescription").value=job.description||"";
+    editFeedback.textContent="";
+    editPanel.hidden=false;
+    editPanel.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  function closeJobEditor(){
+    editingJobId=null;editForm.reset();editFeedback.textContent="";editPanel.hidden=true;
+  }
+  editForm.addEventListener("submit",async event=>{
+    event.preventDefault();
+    if(!editingJobId)return;
+    const input={title:clean($("ilEditTitle").value),locationLabel:clean($("ilEditLocation").value),salaryLabel:clean($("ilEditSalary").value),employmentType:$("ilEditType").value,description:clean($("ilEditDescription").value)};
+    const button=editForm.querySelector('[type="submit"]');button.disabled=true;editFeedback.textContent="O‘zgarishlar saqlanmoqda…";
+    try{
+      const result=await data.updateJobPost(editingJobId,input);
+      if(!result.ok||result.data!==true){editFeedback.textContent=errorText(result);return;}
+      editFeedback.textContent="Vakansiya yangilandi. Holati moderator tekshiruviga qaytarilgan bo‘lsa, tasdiqlanishini kuting.";
+      await loadJobs();await loadOwnedJobs();
+      setTimeout(()=>closeJobEditor(),1200);
+    }catch(_){editFeedback.textContent="Saqlashda xatolik yuz berdi. Qayta urinib ko‘ring.";}
+    finally{button.disabled=false;}
+  });
+  $("ilJobEditCancel").addEventListener("click",closeJobEditor);
   const myApps=document.createElement("section");
   myApps.className="section";
   myApps.dataset.careerFlow="seeker";
