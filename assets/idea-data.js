@@ -437,6 +437,10 @@
       if (!isUuid(jobPostId) || !input || !requiredText(input.title, 3, 100) ||
           !requiredText(input.description, 10, 3000) || !requiredText(input.locationLabel, 2, 120) ||
           String(input.salaryLabel ?? "").length > 120 ||
+          !Array.isArray(input.requiredSkills) || input.requiredSkills.length > 20 ||
+          input.requiredSkills.some(skill => typeof skill !== "string" || skill.trim().length < 1 || skill.trim().length > 80) ||
+          !Number.isInteger(input.experienceYearsMin) || input.experienceYearsMin < 0 || input.experienceYearsMin > 50 ||
+          typeof input.scheduleLabel !== "string" || input.scheduleLabel.length > 160 ||
           !["full_time", "part_time", "remote", "internship", "freelance"].includes(input.employmentType)) {
         return Promise.resolve(fail("INVALID_JOB_EDIT", "Vakansiya tahriri ma’lumotlari noto‘g‘ri."));
       }
@@ -446,7 +450,10 @@
         p_description: input.description.trim(),
         p_salary_label: String(input.salaryLabel ?? "").trim(),
         p_location_label: input.locationLabel.trim(),
-        p_employment_type: input.employmentType
+        p_employment_type: input.employmentType,
+        p_required_skills: input.requiredSkills.map(skill => skill.trim()).filter(Boolean),
+        p_experience_years_min: input.experienceYearsMin,
+        p_schedule_label: input.scheduleLabel.trim()
       });
     },
     updateJobPostStatus(jobPostId, status) {
