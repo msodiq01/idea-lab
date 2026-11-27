@@ -283,16 +283,36 @@
     else jobResult.data.forEach(job=>{
       const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",job.description,"Yuborilgan: "+new Date(job.created_at).toLocaleString("uz-UZ")]);
       const actions=document.createElement("div");actions.className="card-actions";
+      const checklistKeys=[
+        ["employer_verified","Ish beruvchi tashkilot ma’lumotlari tekshirildi"],
+        ["job_details_clear","Vazifa va majburiyatlar aniq, tushunarli"],
+        ["salary_terms_clear","Maosh va to‘lov shartlari ochiq ko‘rsatilgan"],
+        ["work_conditions_clear","Ish joyi, jadval va bandlik turi aniq"],
+        ["age_requirements_checked","Yosh va boshqa talablar qonuniy, asoslangan"],
+        ["no_upfront_fees","Ishga kirish uchun oldindan pul talab qilinmaydi"],
+        ["no_suspicious_requests","Shubhali hujjat, karta yoki maxfiy ma’lumot talabi yo‘q"]
+      ];
+      const checklistBox=document.createElement("div");checklistBox.className="career-moderation-checklist";checklistBox.style.width="100%";
+      const checklistTitle=document.createElement("strong");checklistTitle.textContent="Tasdiqlashdan oldingi xavfsizlik checklisti";
+      const checklistHint=document.createElement("p");checklistHint.className="notice";checklistHint.textContent="Vakansiyani tasdiqlash uchun barcha 7 bandni tekshirib belgilang. Shubha bo‘lsa, tasdiqlamang.";
+      const checklistInputs={};
+      checklistBox.append(checklistTitle,checklistHint);
+      checklistKeys.forEach(([key,labelText])=>{
+        const label=document.createElement("label");label.className="career-check-item";label.style.display="flex";label.style.alignItems="flex-start";label.style.gap="10px";label.style.margin="10px 0";
+        const input=document.createElement("input");input.type="checkbox";input.checked=false;input.style.marginTop="4px";checklistInputs[key]=input;
+        const textNode=document.createElement("span");textNode.textContent=labelText;label.append(input,textNode);checklistBox.append(label);
+      });
+      const getChecklist=()=>Object.fromEntries(checklistKeys.map(([key])=>[key,checklistInputs[key].checked]));
       const reasonField=document.createElement("div");reasonField.className="field";reasonField.style.width="100%";
       const reasonLabel=document.createElement("label");reasonLabel.textContent="Rad etish sababi (majburiy, 10–500 belgi)";
       const reason=document.createElement("textarea");reason.rows=3;reason.maxLength=500;reason.minLength=10;reason.placeholder="Aniq yozing: qaysi talab bajarilmagan va nima tuzatish kerak?";
       reasonLabel.append(reason);reasonField.append(reasonLabel);
       const feedback=document.createElement("p");feedback.className="notice";feedback.setAttribute("role","status");feedback.setAttribute("aria-live","polite");
       const approveButton=document.createElement("button");approveButton.className="btn";approveButton.type="button";approveButton.textContent="Vakansiyani tasdiqlash";
-      approveButton.addEventListener("click",async()=>{approveButton.disabled=true;feedback.textContent="Tasdiqlanmoqda…";const reviewed=await data.reviewJobPost(job.job_post_id,true);if(!reviewed.ok||reviewed.data!==true){feedback.textContent=errorText(reviewed);approveButton.disabled=false;return;}await loadModeration();await loadJobs();await loadOwnedJobs();});
+      approveButton.addEventListener("click",async()=>{const checklist=getChecklist();const firstMissing=checklistKeys.find(([key])=>!checklist[key]);if(firstMissing){feedback.textContent="Tasdiqlash mumkin emas: barcha checklist bandlarini tekshiring.";checklistInputs[firstMissing[0]].focus();return;}approveButton.disabled=true;feedback.textContent="Checklist tekshirildi. Tasdiqlanmoqda…";const reviewed=await data.reviewJobPost(job.job_post_id,true,"",checklist);if(!reviewed.ok||reviewed.data!==true){feedback.textContent=errorText(reviewed);approveButton.disabled=false;return;}await loadModeration();await loadJobs();await loadOwnedJobs();});
       const rejectButton=document.createElement("button");rejectButton.className="btn secondary";rejectButton.type="button";rejectButton.textContent="Sabab bilan rad etish";
-      rejectButton.addEventListener("click",async()=>{const text=clean(reason.value);if(text.length<10||text.length>500){feedback.textContent="Rad etish sababi kamida 10 va ko‘pi bilan 500 belgidan iborat bo‘lsin.";reason.focus();return;}rejectButton.disabled=true;feedback.textContent="Rad etish sababi saqlanmoqda…";const reviewed=await data.reviewJobPost(job.job_post_id,false,text);if(!reviewed.ok||reviewed.data!==true){feedback.textContent=errorText(reviewed);rejectButton.disabled=false;return;}await loadModeration();await loadJobs();await loadOwnedJobs();});
-      actions.append(approveButton,rejectButton);node.append(reasonField,feedback,actions);jobBox.append(node);
+      rejectButton.addEventListener("click",async()=>{const text=clean(reason.value);if(text.length<10||text.length>500){feedback.textContent="Rad etish sababi kamida 10 va ko‘pi bilan 500 belgidan iborat bo‘lsin.";reason.focus();return;}rejectButton.disabled=true;feedback.textContent="Rad etish sababi saqlanmoqda…";const reviewed=await data.reviewJobPost(job.job_post_id,false,text,getChecklist());if(!reviewed.ok||reviewed.data!==true){feedback.textContent=errorText(reviewed);rejectButton.disabled=false;return;}await loadModeration();await loadJobs();await loadOwnedJobs();});
+      actions.append(approveButton,rejectButton);node.append(checklistBox,reasonField,feedback,actions);jobBox.append(node);
     });
     if(reportBox){
       const reports=await data.listJobPostReports();reportBox.replaceChildren();
