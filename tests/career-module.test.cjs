@@ -218,3 +218,13 @@ test("employer application panel supports candidate search and status filtering 
   assert.match(server, /search\.addEventListener\("input",render\)/);
   assert.match(server, /filter\.addEventListener\("change",render\)/);
 });
+
+
+test("employer applications can be sorted by newest, oldest and candidate name", () => {
+  assert.match(server, /Arizalarni saralash/);
+  assert.match(server, /\[\["newest","Eng yangi"\],\["oldest","Eng eski"\],\["name","Ism bo‘yicha"\]\]/);
+  assert.match(server, /visible\.sort\(\(x,y\)=>new Date\(y\.submitted_at\)-new Date\(x\.submitted_at\)\)/);
+  assert.match(server, /visible\.sort\(\(x,y\)=>new Date\(x\.submitted_at\)-new Date\(y\.submitted_at\)\)/);
+  assert.match(server, /clean\(x\.candidate_name\)\.localeCompare\(clean\(y\.candidate_name\),"uz"\)/);
+  assert.match(server, /sort\.addEventListener\("change",render\)/);
+});
