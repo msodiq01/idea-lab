@@ -454,6 +454,16 @@
       if (!isUuid(jobPostId) || !["published", "closed"].includes(status)) return Promise.resolve(fail("INVALID_JOB_STATUS", "Vakansiya holati noto‘g‘ri."));
       return runPublicCommand("idea_lab_update_job_post_status", { p_job_post_id: jobPostId, p_status: status });
     },
+    updateJobPostContact(input = {}) {
+      const digits=String(input.contactPhone||"").replace(/\\D/g,"");
+      if(!isUuid(input.jobPostId)||!requiredText(input.contactName,2,120)||!/^998[0-9]{9}$/.test(digits))
+        return Promise.resolve(fail("INVALID_JOB_CONTACT","Aloqa ma’lumotlari noto‘g‘ri."));
+      return runPublicCommand("idea_lab_update_job_post_contact", {
+        p_job_post_id: input.jobPostId,
+        p_contact_name: input.contactName.trim(),
+        p_contact_phone: input.contactPhone.trim()
+      });
+    },
     applyJobPost(jobPostId, message) {
       if (!isUuid(jobPostId) || !requiredText(message, 10, 2000)) return Promise.resolve(fail("INVALID_JOB_APPLICATION", "Ariza matni 10–2000 belgidan iborat bo‘lishi kerak."));
       return runPublicCommand("idea_lab_apply_job_post", { p_job_post_id: jobPostId, p_message: message.trim() });
