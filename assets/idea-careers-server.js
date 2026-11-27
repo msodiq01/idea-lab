@@ -218,11 +218,9 @@
     else orgResult.data.forEach(org=>{
       const node=card(org.name,[org.organization_type,org.location_label||"Hudud ko‘rsatilmagan",org.description,org.website_url||"", "Yuborilgan: "+new Date(org.created_at).toLocaleString("uz-UZ")]);
       const actions=document.createElement("div");actions.className="card-actions";
-      [["Tasdiqlash",true],["Rad etish",false]].forEach(([label,approve])=>{
-        const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
-        button.addEventListener("click",async()=>{button.disabled=true;const reviewed=await data.reviewOrganization(org.organization_id,approve);if(!reviewed.ok||reviewed.data!==true){alert(errorText(reviewed));button.disabled=false;return;}await loadModeration();await loadOrganizations();});
-        actions.append(button);
-      });
+      const approveButton=document.createElement("button");approveButton.className="btn";approveButton.type="button";approveButton.textContent="Tasdiqlash";
+      approveButton.addEventListener("click",async()=>{approveButton.disabled=true;const reviewed=await data.reviewOrganization(org.organization_id,true);if(!reviewed.ok||reviewed.data!==true){alert(errorText(reviewed));approveButton.disabled=false;return;}await loadModeration();await loadOrganizations();});
+      actions.append(approveButton);
       node.append(actions);orgBox.append(node);
     });
     const jobResult=await data.listPendingJobPosts();
