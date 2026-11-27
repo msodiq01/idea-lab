@@ -170,7 +170,17 @@
         selectedJob=job;$("ilApplyTitle").textContent=job.title+" — ariza";
         $("ilApplyMessage").value="";applicationPanel.hidden=false;applicationPanel.scrollIntoView({behavior:"smooth",block:"center"});
       });
-      actions.append(apply);node.append(actions);jobList.append(node);
+      actions.append(apply);
+      const reportToggle=document.createElement("button");reportToggle.className="btn secondary";reportToggle.type="button";reportToggle.textContent="Shikoyat qilish";
+      const reportForm=document.createElement("form");reportForm.className="career-report-form";reportForm.hidden=true;
+      const reportCategory=document.createElement("select");reportCategory.className="search";reportCategory.required=true;
+      [["","Shikoyat sababini tanlang"],["scam","Firibgarlik yoki soxta ish taklifi"],["misleading","Noto‘g‘ri yoki chalg‘ituvchi ma’lumot"],["inappropriate","Nomunosib yoki xavfli mazmun"],["duplicate","Takroriy e’lon"],["expired","Amalda bo‘lmagan vakansiya"],["other","Boshqa sabab"]].forEach(([value,label])=>reportCategory.add(new Option(label,value)));
+      const reportDetails=document.createElement("textarea");reportDetails.rows=3;reportDetails.maxLength=1000;reportDetails.minLength=10;reportDetails.required=true;reportDetails.placeholder="Muammoni aniq tushuntiring (10–1000 belgi).";
+      const reportFeedback=document.createElement("p");reportFeedback.className="notice";reportFeedback.setAttribute("role","status");reportFeedback.setAttribute("aria-live","polite");
+      const reportSubmit=document.createElement("button");reportSubmit.className="btn";reportSubmit.type="submit";reportSubmit.textContent="Shikoyatni yuborish";
+      reportToggle.addEventListener("click",()=>{if(!userId){location.href="auth.html?next=career.html";return;}reportForm.hidden=!reportForm.hidden;});
+      reportForm.addEventListener("submit",async event=>{event.preventDefault();const details=clean(reportDetails.value);if(!reportCategory.value||details.length<10||details.length>1000){reportFeedback.textContent="Shikoyat turini tanlang va kamida 10 belgi izoh yozing.";return;}reportSubmit.disabled=true;reportFeedback.textContent="Shikoyat yuborilmoqda…";const result=await data.createJobPostReport({jobPostId:job.id,category:reportCategory.value,details});reportSubmit.disabled=false;if(!result.ok){reportFeedback.textContent=errorText(result);return;}if(result.data!==true){reportFeedback.textContent="Bu vakansiya bo‘yicha shikoyat avval yuborilgan.";return;}reportForm.reset();reportForm.hidden=true;reportToggle.disabled=true;reportToggle.textContent="Shikoyat yuborildi";reportFeedback.textContent="Rahmat. Shikoyatingiz moderatorlar ko‘rib chiqishi uchun yuborildi.";});
+      reportForm.append(reportCategory,reportDetails,reportSubmit,reportFeedback);actions.append(reportToggle);node.append(actions,reportForm);jobList.append(node);
     });
     updateCounts();
   }
@@ -247,7 +257,7 @@
     });
   }
   async function loadModeration(){
-    const panel=$("moderationPanel"),orgBox=$("moderationOrganizations"),jobBox=$("moderationJobs");
+    const panel=$("moderationPanel"),orgBox=$("moderationOrganizations"),jobBox=$("moderationJobs"),reportBox=$("moderationReports");
     if(!panel||!orgBox||!jobBox||!userId)return;
     const access=await data.isJobModerator();
     if(!access.ok||access.data!==true){panel.hidden=true;return;}
@@ -284,6 +294,27 @@
       rejectButton.addEventListener("click",async()=>{const text=clean(reason.value);if(text.length<10||text.length>500){feedback.textContent="Rad etish sababi kamida 10 va ko‘pi bilan 500 belgidan iborat bo‘lsin.";reason.focus();return;}rejectButton.disabled=true;feedback.textContent="Rad etish sababi saqlanmoqda…";const reviewed=await data.reviewJobPost(job.job_post_id,false,text);if(!reviewed.ok||reviewed.data!==true){feedback.textContent=errorText(reviewed);rejectButton.disabled=false;return;}await loadModeration();await loadJobs();await loadOwnedJobs();});
       actions.append(approveButton,rejectButton);node.append(reasonField,feedback,actions);jobBox.append(node);
     });
+    if(reportBox){
+      const reports=await data.listJobPostReports();reportBox.replaceChildren();
+      if(!reports.ok)empty(reportBox,errorText(reports));
+      else if(!reports.data?.length)empty(reportBox,"Hozircha vakansiyalar bo‘yicha shikoyatlar yo‘q.");
+      else reports.data.forEach(report=>{
+        const categories={scam:"Firibgarlik yoki soxta taklif",misleading:"Chalg‘ituvchi ma’lumot",inappropriate:"Nomunosib yoki xavfli mazmun",duplicate:"Takroriy e’lon",expired:"Amalda bo‘lmagan vakansiya",other:"Boshqa sabab"};
+        const statuses={open:"Yangi",in_review:"Ko‘rib chiqilmoqda",resolved:"Ko‘rib chiqildi",dismissed:"Asossiz deb yopildi"};
+        const reportNode=card(report.job_title,[report.company_name,"Sabab: "+(categories[report.category]||report.category),report.details,"Holat: "+(statuses[report.status]||report.status),report.moderator_note?"Moderator izohi: "+report.moderator_note:"","Yuborilgan: "+new Date(report.created_at).toLocaleString("uz-UZ")]);
+        if(["open","in_review"].includes(report.status)){
+          const note=document.createElement("textarea");note.rows=2;note.maxLength=1000;note.placeholder="Moderator izohi (ixtiyoriy, 1000 belgigacha)";
+          const reportActions=document.createElement("div");reportActions.className="card-actions";
+          [["Tekshiruvga olish","in_review"],["Ko‘rib chiqildi","resolved"],["Asossiz deb yopish","dismissed"]].forEach(([label,status])=>{
+            const button=document.createElement("button");button.className="btn secondary";button.type="button";button.textContent=label;
+            button.addEventListener("click",async()=>{button.disabled=true;const updated=await data.updateJobPostReport({reportId:report.report_id,status,moderatorNote:note.value});if(!updated.ok||updated.data!==true){alert(errorText(updated));button.disabled=false;return;}await loadModeration();});
+            reportActions.append(button);
+          });
+          reportNode.append(note,reportActions);
+        }
+        reportBox.append(reportNode);
+      });
+    }
   }
   async function loadJobs(){
     const r=await data.listPublicJobPosts({limit:50});
