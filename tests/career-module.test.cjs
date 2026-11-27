@@ -260,3 +260,10 @@ test("moderator UI requires a clear rejection reason and displays it in the empl
   assert.match(data, /reviewJobPost\(jobPostId, approve, reason = ""\)/);
   assert.match(data, /p_reason: approve \? null : cleanReason/);
 });
+
+test("owners can correct rejected vacancies and resubmit them for moderation", () => {
+  assert.match(ownerEditMigration, /status=case when status in \('published','rejected'\) then 'pending_review' else status end/i);
+  assert.match(ownerEditMigration, /moderation_reason=case when status='rejected' then null else moderation_reason end/i);
+  assert.match(ownerEditMigration, /status in \('published','closed','pending_review','rejected'\)/i);
+  assert.match(server, /\["published","closed","pending_review","rejected"\]\.includes\(job\.status\)/);
+});
