@@ -83,7 +83,7 @@
     const statsRows=$("vacancyStatsRows");
     if(statsRows){
       statsRows.replaceChildren();
-      [["Jami faol e’lonlar",jobs.length],["Jami ish o‘rinlari",jobs.reduce((sum,job)=>sum+(Number(job.openings_count)||1),0)],["Filtrdan keyin ko‘rinayotgan e’lonlar",visibleCount],["E’lon joylangan hududlar",new Set(jobs.map(job=>clean(job.location_label)||"Hudud ko‘rsatilmagan")).size]].forEach(([label,value])=>{
+      [["Jami faol e’lonlar",jobs.length],["Jami ish o‘rinlari",jobs.reduce((sum,job)=>sum+(Number(job.openings_count)||1),0)],["Filtrdan keyin ko‘rinayotgan e’lonlar",visibleCount],["E’lon joylangan hududlar",new Set(jobs.map(job=>clean(job.region_label)||clean(job.location_label)||"Hudud ko‘rsatilmagan")).size]].forEach(([label,value])=>{
         const row=document.createElement("tr"),left=document.createElement("td"),right=document.createElement("td");
         left.textContent=label;right.textContent=String(value);right.style.textAlign="right";
         [left,right].forEach(cell=>{cell.style.padding="10px";cell.style.borderTop="1px solid var(--border,rgba(255,255,255,.12))";});
@@ -135,9 +135,11 @@
     }
     const regions=new Map();
     jobs.forEach(job=>{
-      const region=clean(job.location_label)||"Hudud ko‘rsatilmagan";
-      const totals=regions.get(region)||{posts:0,openings:0};
-      totals.posts+=1;totals.openings+=Number(job.openings_count)||1;regions.set(region,totals);
+      const region=clean(job.region_label)||"Hudud ko‘rsatilmagan";
+      const district=clean(job.district_label)||clean(job.location_label)||"Tuman ko‘rsatilmagan";
+      const key=region+"|||"+district;
+      const totals=regions.get(key)||{region,district,posts:0,openings:0};
+      totals.posts+=1;totals.openings+=Number(job.openings_count)||1;regions.set(key,totals);
     });
     const professionTotals=new Map();
     jobs.forEach(job=>{
@@ -160,14 +162,14 @@
     const regionRows=$("vacancyRegionRows");
     if(regionRows){
       regionRows.replaceChildren();
-      [...regions.entries()].sort((a,b)=>b[1].posts-a[1].posts||a[0].localeCompare(b[0],"uz")).forEach(([region,totals])=>{
-        const row=document.createElement("tr"),left=document.createElement("td"),posts=document.createElement("td"),openings=document.createElement("td");
-        left.textContent=region;posts.textContent=String(totals.posts);openings.textContent=String(totals.openings);
+      [...regions.values()].sort((a,b)=>b.posts-a.posts||a.region.localeCompare(b.region,"uz")||a.district.localeCompare(b.district,"uz")).forEach(totals=>{
+        const row=document.createElement("tr"),regionCell=document.createElement("td"),districtCell=document.createElement("td"),posts=document.createElement("td"),openings=document.createElement("td");
+        regionCell.textContent=totals.region;districtCell.textContent=totals.district;posts.textContent=String(totals.posts);openings.textContent=String(totals.openings);
         posts.style.textAlign="right";openings.style.textAlign="right";
-        [left,posts,openings].forEach(cell=>{cell.style.padding="10px";cell.style.borderTop="1px solid var(--border,rgba(255,255,255,.12))";});
-        row.append(left,posts,openings);regionRows.append(row);
+        [regionCell,districtCell,posts,openings].forEach(cell=>{cell.style.padding="10px";cell.style.borderTop="1px solid var(--border,rgba(255,255,255,.12))";});
+        row.append(regionCell,districtCell,posts,openings);regionRows.append(row);
       });
-      if(!regions.size){const row=document.createElement("tr"),cell=document.createElement("td");cell.colSpan=3;cell.textContent="Hududiy statistika uchun vakansiya topilmadi.";cell.style.padding="10px";row.append(cell);regionRows.append(row);}
+      if(!regions.size){const row=document.createElement("tr"),cell=document.createElement("td");cell.colSpan=4;cell.textContent="Hududiy statistika uchun vakansiya topilmadi.";cell.style.padding="10px";row.append(cell);regionRows.append(row);}
     }
   }
   function renderJobs(){
