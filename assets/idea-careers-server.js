@@ -260,7 +260,9 @@
       if(!all.length)empty(statusBox,"Hali ish beruvchi tashkilot profilingiz yo‘q.");
       all.forEach(org=>{
         const labels={draft:"Qoralama",pending_review:"Tekshiruvda",active:"Faol — avtomatik",rejected:"Rad etilgan",archived:"Arxivlangan"};
-        const details=["Holat: "+(labels[org.status]||org.status),org.location_label||"Hudud ko‘rsatilmagan"];\n        if(org.status==="active")details.push("Avtomatik faollashtirilgan; bu yuridik tekshiruvdan o‘tganini anglatmaydi.");\n        statusBox.append(card(org.name,details));
+        const details=["Holat: "+(labels[org.status]||org.status),org.location_label||"Hudud ko‘rsatilmagan"];
+        if(org.status==="active")details.push("Avtomatik faollashtirilgan; bu yuridik tekshiruvdan o‘tganini anglatmaydi.");
+        statusBox.append(card(org.name,details));
       });
     }
     if(!organizations.length){
