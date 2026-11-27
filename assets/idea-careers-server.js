@@ -394,7 +394,7 @@
     const statusCount=status=>ownedJobs.filter(job=>job.status===status).length;
     const statsData={total:ownedJobs.length,published:statusCount("published"),pending:statusCount("pending_review"),closed:statusCount("closed"),rejected:statusCount("rejected"),applications:0,submitted:0,accepted:0,declined:0};
     if(!ownedJobs.length)empty(box,"Siz hali vakansiya joylashtirmagansiz.");
-    Promise.all(ownedJobs.map(job=>data.listJobPostApplications(job.job_post_id))).then(results=>{
+    Promise.all(ownedJobs.filter(job=>["published","closed"].includes(job.status)).map(job=>data.listJobPostApplications(job.job_post_id))).then(results=>{
       results.forEach(result=>{if(!result.ok||!Array.isArray(result.data))return;statsData.applications+=result.data.length;result.data.forEach(app=>{if(app.status==="submitted")statsData.submitted++;else if(app.status==="accepted")statsData.accepted++;else if(app.status==="declined")statsData.declined++;});});
       analyticsBody.replaceChildren();const metrics=[["Jami vakansiyalar",statsData.total],["Ochiq",statsData.published],["Tekshiruvda",statsData.pending],["Yopilgan",statsData.closed],["Rad etilgan vakansiyalar",statsData.rejected],["Ko‘rinadigan arizalar",statsData.applications],["Ko‘rib chiqilmoqda",statsData.submitted],["Qabul qilingan",statsData.accepted],["Rad etilgan arizalar",statsData.declined]];
       metrics.forEach(([label,value])=>{const row=document.createElement("p");row.textContent=label+": "+value;analyticsBody.append(row);});
