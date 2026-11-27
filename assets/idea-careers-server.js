@@ -436,7 +436,9 @@
     const search=document.createElement("input");search.type="search";search.placeholder="Nomzod, ko‘nikma yoki shahar bo‘yicha qidirish";search.setAttribute("aria-label","Arizalarni qidirish");
     const filter=document.createElement("select");filter.setAttribute("aria-label","Ariza holati bo‘yicha filtrlash");
     [["","Barcha holatlar"],["submitted","Ko‘rib chiqilmoqda"],["accepted","Qabul qilindi"],["declined","Rad etildi"],["withdrawn","Qaytarib olindi"]].forEach(([value,label])=>{const option=document.createElement("option");option.value=value;option.textContent=label;filter.append(option);});
-    const sort=document.createElement("select");sort.setAttribute("aria-label","Arizalarni saralash");\n    [["newest","Eng yangi"],["oldest","Eng eski"],["name","Ism bo‘yicha"]].forEach(([value,label])=>{const option=document.createElement("option");option.value=value;option.textContent=label;sort.append(option);});\n    const summary=document.createElement("p");summary.className="notice";summary.setAttribute("role","status");summary.setAttribute("aria-live","polite");
+    const sort=document.createElement("select");sort.setAttribute("aria-label","Arizalarni saralash");
+    [["newest","Eng yangi"],["oldest","Eng eski"],["name","Ism bo‘yicha"]].forEach(([value,label])=>{const option=document.createElement("option");option.value=value;option.textContent=label;sort.append(option);});
+    const summary=document.createElement("p");summary.className="notice";summary.setAttribute("role","status");summary.setAttribute("aria-live","polite");
     const results=document.createElement("div");results.className="cards";
     toolbar.append(search,filter,sort);box.append(toolbar,summary,results);
     function render(){
@@ -446,6 +448,10 @@
         const hay=[item.candidate_name,item.candidate_city,item.candidate_experience_summary,item.candidate_education_summary,item.message,...(item.candidate_roles||[]),...(item.candidate_skills||[])].join(" ").toLocaleLowerCase("uz-UZ");
         return hay.includes(q)&&(!status||item.status===status);
       });
+      const sortMode=sort.value;
+      if(sortMode==="newest")visible.sort((x,y)=>new Date(y.submitted_at)-new Date(x.submitted_at));
+      else if(sortMode==="oldest")visible.sort((x,y)=>new Date(x.submitted_at)-new Date(y.submitted_at));
+      else if(sortMode==="name")visible.sort((x,y)=>clean(x.candidate_name).localeCompare(clean(y.candidate_name),"uz"));
       summary.textContent=visible.length+" ta ariza ko‘rsatilmoqda (jami "+applications.length+" ta).";
       if(!visible.length){empty(results,"Qidiruv yoki holat filtri bo‘yicha ariza topilmadi.");return;}
       visible.forEach(item=>{
