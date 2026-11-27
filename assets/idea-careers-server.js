@@ -436,9 +436,9 @@
     const search=document.createElement("input");search.type="search";search.placeholder="Nomzod, ko‘nikma yoki shahar bo‘yicha qidirish";search.setAttribute("aria-label","Arizalarni qidirish");
     const filter=document.createElement("select");filter.setAttribute("aria-label","Ariza holati bo‘yicha filtrlash");
     [["","Barcha holatlar"],["submitted","Ko‘rib chiqilmoqda"],["accepted","Qabul qilindi"],["declined","Rad etildi"],["withdrawn","Qaytarib olindi"]].forEach(([value,label])=>{const option=document.createElement("option");option.value=value;option.textContent=label;filter.append(option);});
-    const summary=document.createElement("p");summary.className="notice";summary.setAttribute("role","status");summary.setAttribute("aria-live","polite");
+    const sort=document.createElement("select");sort.setAttribute("aria-label","Arizalarni saralash");\n    [["newest","Eng yangi"],["oldest","Eng eski"],["name","Ism bo‘yicha"]].forEach(([value,label])=>{const option=document.createElement("option");option.value=value;option.textContent=label;sort.append(option);});\n    const summary=document.createElement("p");summary.className="notice";summary.setAttribute("role","status");summary.setAttribute("aria-live","polite");
     const results=document.createElement("div");results.className="cards";
-    toolbar.append(search,filter);box.append(toolbar,summary,results);
+    toolbar.append(search,filter,sort);box.append(toolbar,summary,results);
     function render(){
       results.replaceChildren();
       const q=clean(search.value).toLocaleLowerCase("uz-UZ"),status=filter.value;
@@ -487,7 +487,7 @@
         results.append(node);
       });
     }
-    search.addEventListener("input",render);filter.addEventListener("change",render);render();
+    search.addEventListener("input",render);filter.addEventListener("change",render);sort.addEventListener("change",render);render();
   }
   async function createJob(event){
     event.preventDefault();
