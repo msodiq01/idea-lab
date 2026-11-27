@@ -393,6 +393,26 @@
     const analyticsBody=document.createElement("div");analyticsBody.className="card-content";analyticsBody.textContent="Arizalar statistikasi yuklanmoqda…";analytics.append(analyticsBody);box.append(analytics);
     const statusCount=status=>ownedJobs.filter(job=>job.status===status).length;
     const statsData={total:ownedJobs.length,published:statusCount("published"),pending:statusCount("pending_review"),closed:statusCount("closed"),rejected:statusCount("rejected"),applications:0,submitted:0,accepted:0,declined:0};
+    const tools=document.createElement("div");tools.className="career-application-tools";
+    const search=document.createElement("input");search.type="search";search.placeholder="Vakansiya nomi yoki shahar bo‘yicha qidirish";search.setAttribute("aria-label","Mening vakansiyalarimdan qidirish");
+    const filter=document.createElement("select");filter.setAttribute("aria-label","Vakansiya holati bo‘yicha filtrlash");
+    [["","Barcha holatlar"],["published","Ochiq"],["pending_review","Tekshiruvda"],["closed","Yopilgan"],["rejected","Rad etilgan"]].forEach(([value,label])=>{const option=document.createElement("option");option.value=value;option.textContent=label;filter.append(option);});
+    const resultCount=document.createElement("p");resultCount.className="notice";resultCount.setAttribute("role","status");resultCount.setAttribute("aria-live","polite");
+    tools.append(search,filter);box.append(tools,resultCount);
+    function updateOwnedVisibility(){
+      const query=clean(search.value).toLocaleLowerCase("uz-UZ"),status=filter.value;
+      let visible=0;
+      Array.from(box.children).forEach(node=>{
+        if(node===analytics||node===tools||node===resultCount)return;
+        const job=ownedJobs.find(item=>item.job_post_id===node.dataset.jobPostId);
+        if(!job)return;
+        const matches=(!status||job.status===status)&&[job.title,job.company_name,job.location_label].join(" ").toLocaleLowerCase("uz-UZ").includes(query);
+        node.hidden=!matches;if(matches)visible++;
+      });
+      resultCount.textContent=visible+" ta vakansiya ko‘rsatilmoqda (jami "+ownedJobs.length+" ta).";
+      if(!visible&&ownedJobs.length)resultCount.textContent="Tanlangan qidiruv yoki holat bo‘yicha vakansiya topilmadi.";
+    }
+    search.addEventListener("input",updateOwnedVisibility);filter.addEventListener("change",updateOwnedVisibility);
     if(!ownedJobs.length)empty(box,"Siz hali vakansiya joylashtirmagansiz.");
     Promise.all(ownedJobs.filter(job=>["published","closed"].includes(job.status)).map(job=>data.listJobPostApplications(job.job_post_id))).then(results=>{
       results.forEach(result=>{if(!result.ok||!Array.isArray(result.data))return;statsData.applications+=result.data.length;result.data.forEach(app=>{if(app.status==="submitted")statsData.submitted++;else if(app.status==="accepted")statsData.accepted++;else if(app.status==="declined")statsData.declined++;});});
@@ -401,7 +421,8 @@
     }).catch(()=>{analyticsBody.textContent="Statistikani yuklab bo‘lmadi. Qayta yuklang.";});
     for(const job of ownedJobs){
       const labels={pending_review:"Tekshiruvda",published:"Ochiq",closed:"Yopilgan",rejected:"Rad etilgan"};
-      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"","Holat: "+(labels[job.status]||job.status)]);
+      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"","Holat: "+(labels[job.status]||job.status),job.status==="closed"?"Bu e’lon yopilgan va ommaviy katalogda ko‘rinmaydi. Qayta ochish moderator tekshiruvini talab qiladi.":""]); 
+      node.dataset.jobPostId=job.job_post_id;
       const actions=document.createElement("div");actions.className="card-actions";
       if(["published","closed","pending_review"].includes(job.status)){
         const edit=document.createElement("button");edit.className="btn secondary";edit.type="button";edit.textContent="Tahrirlash";
@@ -422,6 +443,7 @@
       }
       if(actions.childNodes.length)node.append(actions);box.append(node);
     }
+    updateOwnedVisibility();
     updateCounts();
     if(!ownedJobs.length)empty(requests,"Hozircha ko‘rib chiqiladigan arizalar yo‘q.");
   }
