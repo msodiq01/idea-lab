@@ -461,13 +461,17 @@
       const labels={pending_review:"Tekshiruvda",published:"Ochiq",closed:"Yopilgan",rejected:"Rad etilgan"};
       const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"","Holat: "+(labels[job.status]||job.status)]);
       const actions=document.createElement("div");actions.className="card-actions";
-      if(job.status!=="pending_review"&&job.status!=="rejected"){
+      if(job.status!=="rejected"){
         const toggle=document.createElement("button");toggle.className="btn";toggle.type="button";
-        toggle.textContent=job.status==="published"?"Vakansiyani yopish":"Tekshiruvga qayta yuborish";
-        toggle.addEventListener("click",async()=>{toggle.disabled=true;const x=await data.updateJobPostStatus(job.job_post_id,job.status==="published"?"closed":"pending_review");if(!x.ok||x.data!==true){alert(errorText(x));toggle.disabled=false;return;}await loadJobs();await loadOwnedJobs();});
+        toggle.textContent=job.status==="published"?"Vakansiyani yopish":job.status==="pending_review"?"Darhol e’lon qilish":"Vakansiyani qayta ochish";
+        toggle.addEventListener("click",async()=>{
+          toggle.disabled=true;
+          const nextStatus=job.status==="published"?"closed":"published";
+          const x=await data.updateJobPostStatus(job.job_post_id,nextStatus);
+          if(!x.ok||x.data!==true){alert(errorText(x));toggle.disabled=false;return;}
+          await loadJobs();await loadOwnedJobs();
+        });
         actions.append(toggle);
-      } else if(job.status==="pending_review") {
-        const waiting=document.createElement("span");waiting.className="notice";waiting.textContent="Moderator tekshiruvi kutilmoqda";actions.append(waiting);
       }
       if(job.status==="published"||job.status==="closed"){
         const view=document.createElement("button");view.className="btn secondary";view.type="button";view.textContent="Arizalarni ko‘rish";
