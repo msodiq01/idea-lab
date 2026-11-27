@@ -510,6 +510,8 @@
       openingsCount:Number($("jobOpenings")?.value||1),
       salary:clean($("jobSalary")?.value),
       location:clean($("jobLocation")?.value),
+      region:clean($("jobRegion")?.value),
+      district:clean($("jobDistrict")?.value),
       employmentType:({ "To‘liq ish kuni":"full_time","Yarim stavka":"part_time","Masofaviy":"remote","Amaliyot":"internship","Frilans":"freelance" })[clean($("jobType")?.value)]||"full_time",
       requiredSkills:splitTags($("jobSkills")?.value,20),
       experienceYearsMin:Number($("jobExperienceYears")?.value||0),
