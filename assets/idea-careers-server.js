@@ -34,7 +34,7 @@
   myPosts.id="ilMyPostsSection";
   myPosts.className="section";
   myPosts.dataset.careerFlow="employer";
-  myPosts.innerHTML='<div class="section-head"><div><h2>Mening e’lonlarim</h2><p>Bu yerda aynan shu IDEA LAB akkauntidan joylangan vakansiyalar va ularning holati ko‘rinadi. Boshqa qurilmada ham shu akkauntga kiring.</p></div><button class="btn secondary" id="ilRefreshCareerData" type="button">Ma’lumotlarni yangilash</button></div><div id="ilMyJobPosts" class="cards"></div><h3 style="margin-top:22px">Kelgan arizalar</h3><p class="notice">Faqat sizning tashkilotingiz vakansiyalariga yuborilgan arizalar ko‘rsatiladi.</p><div id="ilJobOwnerApplications" class="cards"></div>';
+  myPosts.innerHTML='<div class="section-head"><div><h2>Mening e’lonlarim</h2><p>Bu yerda aynan shu IDEA LAB akkauntidan joylangan vakansiyalar va ularning holati ko‘rinadi. Boshqa qurilmada ham shu akkauntga kiring.</p></div><button class="btn secondary" id="ilRefreshCareerData" type="button">Ma’lumotlarni yangilash</button></div><div class="panel" id="ilCentralApplicationsPanel"><h3>Yagona arizalar markazi</h3><p class="notice">Barcha vakansiyalaringizga kelgan arizalar bitta ro‘yxatda. Holat bo‘yicha filtrlashingiz mumkin.</p><div class="form-grid"><div class="field"><label for="ilCentralApplicationSearch">Nomzod yoki vakansiya</label><input id="ilCentralApplicationSearch" type="search" placeholder="Qidirish"></div><div class="field"><label for="ilCentralApplicationStatus">Ariza holati</label><select id="ilCentralApplicationStatus"><option value="">Barcha holatlar</option><option value="submitted">Yangi / ko‘rib chiqilmoqda</option><option value="accepted">Qabul qilindi</option><option value="declined">Rad etildi</option><option value="withdrawn">Qaytarib olindi</option></select></div></div><div class="cards" id="ilCentralApplications"></div></div><div id="ilMyJobPosts" class="cards"></div><h3 style="margin-top:22px">Vakansiya bo‘yicha arizalar</h3><p class="notice">Arizalarni alohida vakansiya bo‘yicha ham ko‘rishingiz mumkin.</p><div id="ilJobOwnerApplications" class="cards"></div>';
   section.append(myPosts);
   const myApps=document.createElement("section");
   myApps.id="ilMyApplicationsSection";
@@ -464,12 +464,37 @@
       box.append(node);
     });
   }
+  let centralApplicationsCache=[];
+  function renderCentralApplications(){
+    const box=$("ilCentralApplications");if(!box)return;box.replaceChildren();
+    const query=clean($("ilCentralApplicationSearch")?.value).toLowerCase();
+    const status=clean($("ilCentralApplicationStatus")?.value);
+    const rows=centralApplicationsCache.filter(item=>(!status||item.status===status)&&(!query||[item.candidate_name,item.job_title,item.company_name,item.candidate_city].some(value=>String(value||"").toLowerCase().includes(query))));
+    const counts={submitted:0,accepted:0,declined:0,withdrawn:0};centralApplicationsCache.forEach(item=>{if(counts[item.status]!=null)counts[item.status]++;});
+    const summary=document.createElement("p");summary.className="notice";summary.textContent="Jami: "+centralApplicationsCache.length+" | Yangi: "+counts.submitted+" | Qabul: "+counts.accepted+" | Rad: "+counts.declined+" | Qaytarilgan: "+counts.withdrawn;box.append(summary);
+    if(!rows.length){empty(box,"Tanlangan filtr bo‘yicha arizalar topilmadi.");return;}
+    rows.forEach(item=>{
+      const labels={submitted:"Yangi / ko‘rib chiqilmoqda",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"};
+      const node=card(item.candidate_name||"Nomzod",[item.job_title||"Vakansiya",item.company_name||"Ish beruvchi",item.candidate_city||"",item.candidate_roles?.length?"Kasblar: "+item.candidate_roles.join(", "):"",item.candidate_skills?.length?"Ko‘nikmalar: "+item.candidate_skills.join(", "):"",item.candidate_experience_years!=null?"Tajriba: "+item.candidate_experience_years+" yil":"",item.candidate_experience_summary||"",item.candidate_education_summary||"", "Holat: "+(labels[item.status]||item.status),item.message||"", "Yuborilgan: "+new Date(item.submitted_at).toLocaleString("uz-UZ")]);
+      if(item.status==="submitted"){
+        const actions=document.createElement("div");actions.className="card-actions";
+        [["Qabul qilish","accepted"],["Rad etish","declined"]].forEach(([label,nextStatus])=>{
+          const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
+          button.addEventListener("click",async()=>{button.disabled=true;const result=await data.reviewJobApplication(item.application_id,nextStatus);if(!result.ok||result.data!==true){alert(errorText(result));button.disabled=false;return;}await loadOwnedJobs();});
+          actions.append(button);
+        });node.append(actions);
+      }
+      box.append(node);
+    });
+  }
+  $("ilCentralApplicationSearch")?.addEventListener("input",renderCentralApplications);
+  $("ilCentralApplicationStatus")?.addEventListener("change",renderCentralApplications);
   async function loadOwnedJobs(){
     const box=$("ilMyJobPosts"),requests=$("ilJobOwnerApplications");box.replaceChildren();requests.replaceChildren();
     if(!userId){empty(box,"Vakansiyalarni boshqarish uchun akkauntga kiring.");empty(requests,"Ish beruvchi kabineti uchun akkauntga kiring.");ownedJobs=[];updateCounts();return;}
     const r=await data.listMyJobPosts();
     if(!r.ok){empty(box,errorText(r));ownedJobs=[];return;}
-    ownedJobs=Array.isArray(r.data)?r.data:[];
+    ownedJobs=Array.isArray(r.data)?r.data:[];\n    centralApplicationsCache=[];\n    const appResults=await Promise.all(ownedJobs.filter(job=>job.status==="published"||job.status==="closed").map(async job=>{const apps=await data.listJobPostApplications(job.job_post_id);return apps.ok&&Array.isArray(apps.data)?apps.data.map(item=>({...item,job_title:job.title,company_name:job.company_name})):[]}));\n    centralApplicationsCache=appResults.flat();renderCentralApplications();
     if(!ownedJobs.length)empty(box,"Siz hali vakansiya joylashtirmagansiz.");
     for(const job of ownedJobs){
       const labels={pending_review:"Tekshiruvda",published:"Ochiq",closed:"Yopilgan",rejected:"Rad etilgan"};
