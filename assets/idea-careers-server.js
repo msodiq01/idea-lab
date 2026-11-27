@@ -31,20 +31,27 @@
   section.insertBefore(notice,form.parentElement);
 
   const myPosts=document.createElement("section");
+  myPosts.id="ilMyPostsSection";
   myPosts.className="section";
   myPosts.dataset.careerFlow="employer";
-  myPosts.innerHTML='<div class="section-heading"><div><h2>Mening vakansiyalarim</h2><p>Joylashtirgan e’lonlaringizni boshqaring va arizalarni ko‘rib chiqing.</p></div></div><div id="ilMyJobPosts" class="cards"></div><div id="ilJobOwnerApplications" class="cards" style="margin-top:16px"></div>';
+  myPosts.innerHTML='<div class="section-head"><div><h2>Mening e’lonlarim</h2><p>Bu yerda aynan shu IDEA LAB akkauntidan joylangan vakansiyalar va ularning holati ko‘rinadi. Boshqa qurilmada ham shu akkauntga kiring.</p></div><button class="btn secondary" id="ilRefreshCareerData" type="button">Ma’lumotlarni yangilash</button></div><div id="ilMyJobPosts" class="cards"></div><h3 style="margin-top:22px">Kelgan arizalar</h3><p class="notice">Faqat sizning tashkilotingiz vakansiyalariga yuborilgan arizalar ko‘rsatiladi.</p><div id="ilJobOwnerApplications" class="cards"></div>';
   section.append(myPosts);
   const myApps=document.createElement("section");
+  myApps.id="ilMyApplicationsSection";
   myApps.className="section";
   myApps.dataset.careerFlow="seeker";
-  myApps.innerHTML='<div class="section-heading"><div><h2>Mening ish arizalarim</h2><p>Yuborgan arizalaringiz holati.</p></div></div><div id="ilMyJobApplications" class="cards"></div>';
+  myApps.innerHTML='<div class="section-head"><div><h2>Men yuborgan arizalar</h2><p>Vakansiyalarga yuborgan arizalaringiz va ularning holati.</p></div></div><div id="ilMyJobApplications" class="cards"></div>';
   section.append(myApps);
   const myActivity=document.createElement("section");
+  myActivity.id="ilMyActivitySection";
   myActivity.className="section";
   myActivity.dataset.careerFlow="both";
-  myActivity.innerHTML='<div class="section-heading"><div><h2>Bildirishnomalar</h2><p>Ish beruvchi yoki nomzod arizasi bo‘yicha yangilanishlar shu yerda ko‘rinadi.</p></div></div><div id="ilMyJobActivity" class="cards"></div>';
+  myActivity.innerHTML='<div class="section-head"><div><h2>Bildirishnomalar</h2><p>Ariza holati va ish beruvchi javoblari haqidagi yangilanishlar.</p></div></div><div id="ilMyJobActivity" class="cards"></div>';
   section.append(myActivity);
+  const quickNav=document.createElement("div");
+  quickNav.className="hero-actions";
+  quickNav.innerHTML='<a class="btn secondary" href="#career-section">Ochiq vakansiyalar</a><a class="btn secondary" href="#ilMyPostsSection" data-career-flow="employer">Mening e’lonlarim</a><a class="btn secondary" href="#ilMyApplicationsSection" data-career-flow="seeker">Arizalarim</a><a class="btn secondary" href="#ilMyActivitySection" data-career-flow="both">Bildirishnomalar</a>';
+  document.querySelector(".hero")?.append(quickNav);
 
   const oldCompany=$("companyName");
   if(oldCompany){
@@ -570,6 +577,11 @@
       }
     }
   },true);
+  $("ilRefreshCareerData")?.addEventListener("click",async event=>{
+    const button=event.currentTarget;button.disabled=true;button.textContent="Yangilanmoqda…";
+    try{await Promise.all([loadJobs(),loadOwnedJobs(),loadMyApplications(),loadMyActivity(),loadMatches()]);}
+    finally{button.disabled=false;button.textContent="Ma’lumotlarni yangilash";}
+  });
   $("ilApplyCancel").addEventListener("click",()=>{applicationPanel.hidden=true;selectedJob=null;$("ilApplyFeedback").hidden=true;$("ilApplyFeedback").textContent="";});
   $("modeSeeker")?.addEventListener("click",()=>setCareerMode("seeker"));
   $("modeEmployer")?.addEventListener("click",()=>setCareerMode("employer"));
