@@ -491,7 +491,7 @@
   $("ilCentralApplicationStatus")?.addEventListener("change",renderCentralApplications);
   async function loadOwnedJobs(){
     const box=$("ilMyJobPosts"),requests=$("ilJobOwnerApplications");box.replaceChildren();requests.replaceChildren();
-    if(!userId){empty(box,"Vakansiyalarni boshqarish uchun akkauntga kiring.");empty(requests,"Ish beruvchi kabineti uchun akkauntga kiring.");ownedJobs=[];updateCounts();return;}
+    if(!userId){empty(box,"Vakansiyalarni boshqarish uchun akkauntga kiring.");empty(requests,"Ish beruvchi kabineti uchun akkauntga kiring.");ownedJobs=[];centralApplicationsCache=[];renderCentralApplications();updateCounts();return;}
     const r=await data.listMyJobPosts();
     if(!r.ok){empty(box,errorText(r));ownedJobs=[];return;}
     ownedJobs=Array.isArray(r.data)?r.data:[];\n    centralApplicationsCache=[];\n    const appResults=await Promise.all(ownedJobs.filter(job=>job.status==="published"||job.status==="closed").map(async job=>{const apps=await data.listJobPostApplications(job.job_post_id);return apps.ok&&Array.isArray(apps.data)?apps.data.map(item=>({...item,job_title:job.title,company_name:job.company_name})):[]}));\n    centralApplicationsCache=appResults.flat();renderCentralApplications();
