@@ -1,5 +1,5 @@
 /* IDEA LAB — server-backed career centre.
- * Public vacancies omit private contact details. Applications remain visible only
+ * Vacancies display the employer-provided work contact. Applications remain visible only
  * to the applicant and the organization that published the vacancy.
  */
 (() => {
@@ -27,7 +27,7 @@
   const notice=document.createElement("p");
   notice.className="notice";
   notice.setAttribute("role","status");
-  notice.textContent="Xavfsizlik: vakansiya shartlari, ish beruvchi va yosh bo‘yicha talablarni ariza yuborishdan oldin ishonchli katta bilan tekshiring. Shaxsiy telefon raqamlar ochiq katalogda ko‘rsatilmaydi.";
+  notice.textContent="Xavfsizlik: vakansiya shartlari, ish beruvchi va yosh bo‘yicha talablarni ariza yuborishdan oldin ishonchli katta bilan tekshiring. E’londa aloqa uchun kiritilgan ism va ish telefoni hammaga ko‘rinadi; shaxsiy raqamingizni kiritmang.";
   section.insertBefore(notice,form.parentElement);
 
   const myPosts=document.createElement("section");
@@ -61,7 +61,7 @@
     const label=field?.querySelector("label");if(label)label.textContent="Ish beruvchi tashkilot *";
   }
   const phoneField=$("employerPhone")?.closest(".field");if(phoneField)phoneField.remove();
-  const formHint=document.createElement("p");formHint.className="notice";formHint.textContent="Vakansiya joylashtirish uchun IDEA LAB’da faol tashkilot egasi bo‘lishingiz kerak. Joylangan vakansiya moderator kutuvisiz darhol ochiq katalogda chiqadi. Aloqa telefonini ochiq e’longa kiritmang.";
+  const formHint=document.createElement("p");formHint.className="notice";formHint.textContent="Vakansiya joylashtirish uchun IDEA LAB’da faol tashkilot egasi bo‘lishingiz kerak. Joylangan vakansiya moderator kutuvisiz darhol ochiq katalogda chiqadi. Aloqa uchun mas’ul shaxs ismi va ish telefon raqami ochiq e’londa ko‘rinadi; faqat ish uchun mo‘ljallangan raqamni kiriting.";
   form.insertBefore(formHint,form.firstChild);
 
   const applicationPanel=document.createElement("div");
