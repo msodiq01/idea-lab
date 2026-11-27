@@ -301,7 +301,7 @@ const vacancyModerationChecklistMigration = read("supabase/migrations/2026112704
 test("moderator approval requires all seven safety checks and stores an audit record", () => {
   assert.match(vacancyModerationChecklistMigration, /job_post_moderation_reviews/i);
   assert.match(vacancyModerationChecklistMigration, /jsonb_object_length\(p_checklist\)<>7/i);
-  assert.match(vacancyModerationChecklistMigration, /p_approve and exists\(select 1 from unnest\(v_keys\) k where p_checklist->>k<>'true'\)/i);
+  assert.match(vacancyModerationChecklistMigration, /p_approve and exists\(select 1 from unnest\(v_keys\) as keys\(key\) where p_checklist->>keys\.key<>'true'\)/i);
   assert.match(vacancyModerationChecklistMigration, /insert into idea_app\.job_post_moderation_reviews/i);
   assert.match(vacancyModerationChecklistMigration, /moderator_id=\(select auth\.uid\(\)\)/i);
   assert.match(vacancyModerationChecklistMigration, /grant execute on function public\.idea_lab_review_job_post\(uuid,boolean,text,jsonb\) to authenticated/i);
