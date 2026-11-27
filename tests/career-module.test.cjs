@@ -273,6 +273,8 @@ const vacancyReportsMigration = read("supabase/migrations/20261127030000_idea_ap
 test("vacancy reports enforce authenticated ownership, one report per user and moderator-only review", () => {
   assert.match(vacancyReportsMigration, /enable row level security/i);
   assert.match(vacancyReportsMigration, /unique\(job_post_id,reporter_id\)/i);
+  assert.match(vacancyReportsMigration, /p_category is null or p_category not in/i);
+  assert.match(vacancyReportsMigration, /p_status is null or p_status not in/i);
   assert.match(vacancyReportsMigration, /reporter_id=\(select auth\.uid\(\)\)/i);
   assert.match(vacancyReportsMigration, /role in \('admin','moderator'\)/i);
   assert.match(vacancyReportsMigration, /j\.status='published' and j\.created_by<>\(select auth\.uid\(\)\)/i);
