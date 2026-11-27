@@ -394,7 +394,8 @@
         p_description: input.description.trim(), p_salary_label: input.salary || "",
         p_location_label: input.location.trim(), p_employment_type: input.employmentType,
         p_required_skills: skills.map(x => x.trim()), p_experience_years_min: years,
-        p_schedule_label: input.schedule || "", p_openings_count: Number(input.openingsCount),\n        p_region_label: input.region.trim(), p_district_label: input.district.trim()
+        p_schedule_label: input.schedule || "", p_openings_count: Number(input.openingsCount),
+        p_region_label: input.region.trim(), p_district_label: input.district.trim()
       });
     },
     getMyJobSeekerProfile() {
