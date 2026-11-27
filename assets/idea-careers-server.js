@@ -474,6 +474,22 @@
     for(const job of ownedJobs){
       const labels={pending_review:"Tekshiruvda",published:"Ochiq",closed:"Yopilgan",rejected:"Rad etilgan"};
       const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"","Holat: "+(labels[job.status]||job.status)]);
+      const currentContact=contactBlock(job);if(currentContact)node.append(currentContact);
+      const contactEditor=document.createElement("div");contactEditor.className="form-panel";contactEditor.hidden=true;
+      contactEditor.innerHTML='<h4>Aloqa ma’lumotlarini yangilash</h4><div class="field"><label>Mas’ul shaxs ismi</label><input class="ilEditContactName" required minlength="2" maxlength="120"></div><div class="field"><label>Ish telefoni</label><input class="ilEditContactPhone" type="tel" required maxlength="20" placeholder="+998 90 123 45 67"></div><p class="notice">Saqlangandan keyin ism va telefon ochiq vakansiya e’lonida ko‘rinadi.</p><div class="card-actions"><button class="btn green ilSaveContact" type="button">Saqlash</button><button class="btn secondary ilCancelContact" type="button">Bekor qilish</button></div>';
+      contactEditor.querySelector(".ilEditContactName").value=job.contact_name||"";
+      contactEditor.querySelector(".ilEditContactPhone").value=job.contact_phone||"";
+      const editContact=document.createElement("button");editContact.className="btn secondary";editContact.type="button";editContact.textContent="Aloqa ma’lumotlarini tahrirlash";
+      editContact.addEventListener("click",()=>{contactEditor.hidden=!contactEditor.hidden;});
+      contactEditor.querySelector(".ilCancelContact").addEventListener("click",()=>{contactEditor.hidden=true;});
+      contactEditor.querySelector(".ilSaveContact").addEventListener("click",async()=>{
+        const save=contactEditor.querySelector(".ilSaveContact"),name=contactEditor.querySelector(".ilEditContactName").value.trim(),phone=contactEditor.querySelector(".ilEditContactPhone").value.trim();
+        save.disabled=true;save.textContent="Saqlanmoqda…";
+        const result=await data.updateJobPostContact({jobPostId:job.job_post_id,contactName:name,contactPhone:phone});
+        if(!result.ok||result.data!==true){alert(errorText(result));save.disabled=false;save.textContent="Saqlash";return;}
+        await loadJobs();await loadOwnedJobs();
+      });
+      node.append(editContact,contactEditor);
       const actions=document.createElement("div");actions.className="card-actions";
       if(job.status!=="rejected"){
         const toggle=document.createElement("button");toggle.className="btn";toggle.type="button";
