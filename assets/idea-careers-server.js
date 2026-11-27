@@ -78,8 +78,25 @@
   function employmentType(raw){
     const found=Object.entries(typeLabels).find(([key])=>key===raw);return found?found[1]:"Boshqa";
   }
-  function updateCounts(){
+  function updateCounts(visibleCount=jobs.length){
     if($("jobCount"))$("jobCount").textContent=String(jobs.length);
+    if($("vacancyTotalCount"))$("vacancyTotalCount").textContent=String(jobs.length);
+    if($("vacancyVisibleCount"))$("vacancyVisibleCount").textContent=String(visibleCount);
+    const regions=new Map();
+    jobs.forEach(job=>{
+      const region=clean(job.location_label)||"Hudud ko‘rsatilmagan";
+      regions.set(region,(regions.get(region)||0)+1);
+    });
+    if($("vacancyRegionCount"))$("vacancyRegionCount").textContent=String(regions.size);
+    const regionBox=$("vacancyRegionStats");
+    if(regionBox){
+      regionBox.replaceChildren();
+      [...regions.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],"uz")).slice(0,8).forEach(([region,count])=>{
+        const item=card(region,[count+" ta faol e’lon"]);
+        regionBox.append(item);
+      });
+      if(!regions.size)empty(regionBox,"Hududiy statistika uchun vakansiya topilmadi.");
+    }
   }
   function renderJobs(){
     jobList.replaceChildren();
@@ -106,8 +123,9 @@
     if(sortMode==="title")visible.sort((a,b)=>clean(a.title).localeCompare(clean(b.title),"uz"));
     else if(sortMode==="salary")visible.sort((a,b)=>salaryNumber(b)-salaryNumber(a));
     const summary=$("jobResultSummary");
-    if(summary)summary.textContent=visible.length+" ta vakansiya ko‘rsatildi (jami "+jobs.length+" ta faol e’lon).";
-    if(!visible.length){empty(jobList,"Tanlangan filtrlar bo‘yicha vakansiya topilmadi. Filtrlarni o‘zgartirib ko‘ring.");updateCounts();return;}
+    if(summary)summary.textContent=visible.length+" ta vakansiya ko‘rsatildi. Jami "+jobs.length+" ta faol e’lon yuklandi.";
+    updateCounts(visible.length);
+    if(!visible.length){empty(jobList,"Tanlangan filtrlar bo‘yicha vakansiya topilmadi. Filtrlarni o‘zgartirib ko‘ring.");return;}
     visible.forEach(job=>{
       const node=card(job.title,[job.company_name,job.description]);
       const paragraphs=node.querySelectorAll("p");if(paragraphs[1])paragraphs[1].className="career-description";
