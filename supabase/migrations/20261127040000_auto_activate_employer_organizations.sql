@@ -1,0 +1,2 @@
+-- Automatic employer organization activation policy.
+-- Legal identity is not certified by the "active" state; vacancies remain moderated.
