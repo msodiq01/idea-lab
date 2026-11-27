@@ -296,7 +296,7 @@ test("public vacancy cards can submit reports and moderator panel can review the
   assert.match(data, /updateJobPostReport\(input = \{\}\)/);
 });
 
-const vacancyModerationChecklistMigration = read("supabase/migrations/20261127040000_idea_app_vacancy_moderation_checklist.sql");
+const vacancyModerationChecklistMigration = read("supabase/migrations/20261127050000_idea_app_vacancy_moderation_checklist.sql");
 
 test("moderator approval requires all seven safety checks and stores an audit record", () => {
   assert.match(vacancyModerationChecklistMigration, /job_post_moderation_reviews/i);
