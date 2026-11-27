@@ -78,12 +78,15 @@
   function employmentType(raw){
     const found=Object.entries(typeLabels).find(([key])=>key===raw);return found?found[1]:"Boshqa";
   }
+  function locationLabel(job){
+    return [clean(job.region_label),clean(job.district_label),clean(job.location_label)].filter(Boolean).join(" · ")||"Hudud ko‘rsatilmagan";
+  }
   function updateCounts(visibleCount=jobs.length){
     if($("jobCount"))$("jobCount").textContent=String(jobs.length);
     const statsRows=$("vacancyStatsRows");
     if(statsRows){
       statsRows.replaceChildren();
-      [["Jami faol e’lonlar",jobs.length],["Jami ish o‘rinlari",jobs.reduce((sum,job)=>sum+(Number(job.openings_count)||1),0)],["Filtrdan keyin ko‘rinayotgan e’lonlar",visibleCount],["E’lon joylangan hududlar",new Set(jobs.map(job=>clean(job.location_label)||"Hudud ko‘rsatilmagan")).size]].forEach(([label,value])=>{
+      [["Jami faol e’lonlar",jobs.length],["Jami ish o‘rinlari",jobs.reduce((sum,job)=>sum+(Number(job.openings_count)||1),0)],["Filtrdan keyin ko‘rinayotgan e’lonlar",visibleCount],["E’lon joylangan hududlar",new Set(jobs.map(job=>clean(job.region_label)||clean(job.location_label)||"Hudud ko‘rsatilmagan")).size]].forEach(([label,value])=>{
         const row=document.createElement("tr"),left=document.createElement("td"),right=document.createElement("td");
         left.textContent=label;right.textContent=String(value);right.style.textAlign="right";
         [left,right].forEach(cell=>{cell.style.padding="10px";cell.style.borderTop="1px solid var(--border,rgba(255,255,255,.12))";});
@@ -135,9 +138,11 @@
     }
     const regions=new Map();
     jobs.forEach(job=>{
-      const region=clean(job.location_label)||"Hudud ko‘rsatilmagan";
-      const totals=regions.get(region)||{posts:0,openings:0};
-      totals.posts+=1;totals.openings+=Number(job.openings_count)||1;regions.set(region,totals);
+      const region=clean(job.region_label)||"Hudud ko‘rsatilmagan";
+      const district=clean(job.district_label)||clean(job.location_label)||"Tuman ko‘rsatilmagan";
+      const key=region+"|||"+district;
+      const totals=regions.get(key)||{region,district,posts:0,openings:0};
+      totals.posts+=1;totals.openings+=Number(job.openings_count)||1;regions.set(key,totals);
     });
     const professionTotals=new Map();
     jobs.forEach(job=>{
@@ -160,14 +165,14 @@
     const regionRows=$("vacancyRegionRows");
     if(regionRows){
       regionRows.replaceChildren();
-      [...regions.entries()].sort((a,b)=>b[1].posts-a[1].posts||a[0].localeCompare(b[0],"uz")).forEach(([region,totals])=>{
-        const row=document.createElement("tr"),left=document.createElement("td"),posts=document.createElement("td"),openings=document.createElement("td");
-        left.textContent=region;posts.textContent=String(totals.posts);openings.textContent=String(totals.openings);
+      [...regions.values()].sort((a,b)=>b.posts-a.posts||a.region.localeCompare(b.region,"uz")||a.district.localeCompare(b.district,"uz")).forEach(totals=>{
+        const row=document.createElement("tr"),regionCell=document.createElement("td"),districtCell=document.createElement("td"),posts=document.createElement("td"),openings=document.createElement("td");
+        regionCell.textContent=totals.region;districtCell.textContent=totals.district;posts.textContent=String(totals.posts);openings.textContent=String(totals.openings);
         posts.style.textAlign="right";openings.style.textAlign="right";
-        [left,posts,openings].forEach(cell=>{cell.style.padding="10px";cell.style.borderTop="1px solid var(--border,rgba(255,255,255,.12))";});
-        row.append(left,posts,openings);regionRows.append(row);
+        [regionCell,districtCell,posts,openings].forEach(cell=>{cell.style.padding="10px";cell.style.borderTop="1px solid var(--border,rgba(255,255,255,.12))";});
+        row.append(regionCell,districtCell,posts,openings);regionRows.append(row);
       });
-      if(!regions.size){const row=document.createElement("tr"),cell=document.createElement("td");cell.colSpan=3;cell.textContent="Hududiy statistika uchun vakansiya topilmadi.";cell.style.padding="10px";row.append(cell);regionRows.append(row);}
+      if(!regions.size){const row=document.createElement("tr"),cell=document.createElement("td");cell.colSpan=4;cell.textContent="Hududiy statistika uchun vakansiya topilmadi.";cell.style.padding="10px";row.append(cell);regionRows.append(row);}
     }
   }
   function renderJobs(){
@@ -187,8 +192,8 @@
       return amount;
     };
     const visible=jobs.filter(job=>{
-      const hay=[job.title,job.company_name,job.location_label,job.description,job.schedule_label,employmentType(job.employment_type),...(job.required_skills||[])].join(" ").toLocaleLowerCase("uz-UZ");
-      const location=clean(job.location_label).toLocaleLowerCase("uz-UZ");
+      const hay=[job.title,job.company_name,job.region_label,job.district_label,job.location_label,job.description,job.schedule_label,employmentType(job.employment_type),...(job.required_skills||[])].join(" ").toLocaleLowerCase("uz-UZ");
+      const location=[job.region_label,job.district_label,job.location_label].map(clean).join(" ").toLocaleLowerCase("uz-UZ");
       const salary=salaryNumber(job);
       return hay.includes(q)&&(!locationQuery||location.includes(locationQuery))&&(!f||employmentType(job.employment_type)===f)&&(!salaryFloor||salary>=salaryFloor);
     });
@@ -202,7 +207,7 @@
       const node=card(job.title,[job.company_name,job.description]);
       const paragraphs=node.querySelectorAll("p");if(paragraphs[1])paragraphs[1].className="career-description";
       const meta=document.createElement("div");meta.className="career-meta";
-      const chips=[job.location_label,employmentType(job.employment_type),job.schedule_label||"",Number(job.openings_count)>1?String(job.openings_count)+" ta ish o‘rni":"1 ta ish o‘rni",job.experience_years_min>0?"Tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.salary_label||"Maosh kelishiladi"];
+      const chips=[locationLabel(job),employmentType(job.employment_type),job.schedule_label||"",Number(job.openings_count)>1?String(job.openings_count)+" ta ish o‘rni":"1 ta ish o‘rni",job.experience_years_min>0?"Tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.salary_label||"Maosh kelishiladi"];
       chips.filter(Boolean).forEach((label,index)=>{const chip=document.createElement("span");chip.className="career-chip"+(index===5?" career-salary":"");chip.textContent=label;meta.append(chip);});
       const skills=job.required_skills||[];
       if(skills.length){const skillLine=document.createElement("p");skillLine.textContent="Ko‘nikmalar: "+skills.join(", ");node.append(skillLine);}
@@ -287,10 +292,10 @@
     if(!r.data?.length){empty(matchBox,"Hozircha rezyumengizga mos haqiqiy vakansiya topilmadi. Yangi e’lonlar joylashtirilganda shu yerda ko‘rinadi.");return;}
     r.data.forEach(job=>{
       const reasons=Array.isArray(job.match_reasons)?job.match_reasons.join(" • "):"";
-      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Kerakli ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",reasons]);
+      const node=card(job.title,[job.company_name,locationLabel(job),employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Kerakli ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",reasons]);
       const score=document.createElement("p");score.className="notice";score.textContent="Moslik: "+Number(job.match_score||0)+"% — bu yo‘naltiruvchi baho, ishga qabul qilish kafolati emas.";node.append(score);
       const actions=document.createElement("div");actions.className="card-actions";
-      const apply=document.createElement("button");apply.className="btn green career-apply-action";apply.type="button";apply.textContent=userId?"Ariza yuborish":"Kirish orqali ariza yuborish";apply.hidden=activeMode==="employer";
+      const apply=document.createElement("button");apply.className="btn green career-apply-action";apply.type="button";const alreadyApplied=appliedJobIds.has(job.id);apply.textContent=alreadyApplied?"Ariza yuborilgan":userId?"Ariza yuborish":"Kirish orqali ariza yuborish";apply.disabled=alreadyApplied;apply.hidden=activeMode==="employer";
       apply.addEventListener("click",()=>{if(!userId){location.href="auth.html?next=career.html";return;}selectedJob=job;$("ilApplyTitle").textContent=job.title+" — ariza";$("ilApplyMessage").value="";applicationPanel.hidden=false;applicationPanel.scrollIntoView({behavior:"smooth",block:"center"});});
       actions.append(apply);node.append(actions);matchBox.append(node);
     });
@@ -508,6 +513,8 @@
       openingsCount:Number($("jobOpenings")?.value||1),
       salary:clean($("jobSalary")?.value),
       location:clean($("jobLocation")?.value),
+      region:clean($("jobRegion")?.value),
+      district:clean($("jobDistrict")?.value),
       employmentType:({ "To‘liq ish kuni":"full_time","Yarim stavka":"part_time","Masofaviy":"remote","Amaliyot":"internship","Frilans":"freelance" })[clean($("jobType")?.value)]||"full_time",
       requiredSkills:splitTags($("jobSkills")?.value,20),
       experienceYearsMin:Number($("jobExperienceYears")?.value||0),
@@ -554,7 +561,7 @@
         if(!r.ok){feedback.textContent=errorText(r);feedback.style.borderColor="rgba(255,100,124,.65)";return;}
         feedback.textContent="Arizangiz muvaffaqiyatli yuborildi. Holatini “Mening ish arizalarim” bo‘limidan kuzatishingiz mumkin.";
         feedback.style.borderColor="rgba(22,199,181,.35)";
-        selectedJob=null;event.target.reset();await loadMyApplications();await loadMyActivity();
+        selectedJob=null;event.target.reset();await loadMyApplications();await loadMyActivity();await loadMatches();
       }catch(error){
         feedback.textContent="Ariza yuborishda vaqtinchalik xatolik yuz berdi. Internetni tekshirib, qayta urinib ko‘ring.";
         feedback.style.borderColor="rgba(255,100,124,.65)";
