@@ -453,17 +453,26 @@
         p_moderator_note: input.moderatorNote === undefined ? null : input.moderatorNote.trim()
       });
     },
-    reviewJobPost(jobPostId, approve, reason = "") {
+    reviewJobPost(jobPostId, approve, reason = "", checklist = {}) {
       const cleanReason = String(reason ?? "").trim();
-      if (!isUuid(jobPostId) || typeof approve !== "boolean" ||
+      const requiredChecks = [
+        "employer_verified","job_details_clear","salary_terms_clear",
+        "work_conditions_clear","age_requirements_checked","no_upfront_fees","no_suspicious_requests"
+      ];
+      const validChecklist = checklist && typeof checklist === "object" && !Array.isArray(checklist) &&
+        Object.keys(checklist).length === requiredChecks.length &&
+        requiredChecks.every(key => typeof checklist[key] === "boolean");
+      if (!isUuid(jobPostId) || typeof approve !== "boolean" || !validChecklist ||
+          (approve && requiredChecks.some(key => checklist[key] !== true)) ||
           (!approve && (cleanReason.length < 10 || cleanReason.length > 500)) ||
           (approve && cleanReason.length > 500)) {
-        return Promise.resolve(fail("INVALID_JOB_REVIEW", "Rad etish sababi 10–500 belgidan iborat bo‘lishi kerak."));
+        return Promise.resolve(fail("INVALID_JOB_REVIEW", "Tasdiqlash uchun barcha checklist bandlari bajarilishi, rad etish uchun esa 10–500 belgilik sabab yozilishi kerak."));
       }
       return runPublicCommand("idea_lab_review_job_post", {
         p_job_post_id: jobPostId,
         p_approve: approve,
-        p_reason: approve ? null : cleanReason
+        p_reason: approve ? null : cleanReason,
+        p_checklist: Object.fromEntries(requiredChecks.map(key => [key, checklist[key]]))
       });
     },
     listMyJobPosts() {
