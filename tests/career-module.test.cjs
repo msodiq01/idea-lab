@@ -255,10 +255,10 @@ test("moderator rejection reasons are validated, persisted and returned only thr
 test("moderator UI requires a clear rejection reason and displays it in the employer cabinet", () => {
   assert.match(server, /Rad etish sababi \(majburiy, 10–500 belgi\)/);
   assert.match(server, /Rad etish sababi kamida 10 va ko‘pi bilan 500 belgidan iborat bo‘lsin/);
-  assert.match(server, /data\.reviewJobPost\(job\.job_post_id,false,text\)/);
+  assert.match(server, /data\.reviewJobPost\(job\.job_post_id,false,text,getChecklist\(\)\)/);
   assert.ok(server.includes('job.moderation_reason?"Moderator izohi: "+job.moderation_reason'));
-  assert.match(data, /reviewJobPost\(jobPostId, approve, reason = ""\)/);
-  assert.match(data, /p_reason: approve \? null : cleanReason/);
+  assert.match(data, /reviewJobPost\(jobPostId, approve, reason = "", checklist = \{\}\)/);
+  assert.match(data, /p_reason: approve \? null : cleanReason/);\n  assert.match(data, /p_checklist: Object\.fromEntries/);
 });
 
 test("owners can correct rejected vacancies and resubmit them for moderation", () => {
@@ -293,4 +293,24 @@ test("public vacancy cards can submit reports and moderator panel can review the
   assert.match(data, /createJobPostReport\(input = \{\}\)/);
   assert.match(data, /listJobPostReports\(\)/);
   assert.match(data, /updateJobPostReport\(input = \{\}\)/);
+});
+
+const vacancyModerationChecklistMigration = read("supabase/migrations/20261127040000_idea_app_vacancy_moderation_checklist.sql");
+
+test("moderator approval requires all seven safety checks and stores an audit record", () => {
+  assert.match(vacancyModerationChecklistMigration, /job_post_moderation_reviews/i);
+  assert.match(vacancyModerationChecklistMigration, /jsonb_object_length\(p_checklist\)<>7/i);
+  assert.match(vacancyModerationChecklistMigration, /p_approve and exists\(select 1 from unnest\(v_keys\) k where p_checklist->>k<>'true'\)/i);
+  assert.match(vacancyModerationChecklistMigration, /insert into idea_app\.job_post_moderation_reviews/i);
+  assert.match(vacancyModerationChecklistMigration, /moderator_id=\(select auth\.uid\(\)\)/i);
+  assert.match(vacancyModerationChecklistMigration, /grant execute on function public\.idea_lab_review_job_post\(uuid,boolean,text,jsonb\) to authenticated/i);
+});
+
+test("moderator interface blocks approval until all seven checklist items are checked", () => {
+  assert.match(server, /Tasdiqlashdan oldingi xavfsizlik checklisti/);
+  assert.match(server, /const checklistKeys=\[/);
+  assert.match(server, /barcha checklist bandlarini tekshiring/);
+  assert.match(server, /data\.reviewJobPost\(job\.job_post_id,true,"",checklist\)/);
+  assert.match(server, /checklistInputs\[firstMissing\[0\]\]\.focus\(\)/);
+  assert.match(data, /requiredChecks\.some\(key => checklist\[key\] !== true\)/);
 });
