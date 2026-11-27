@@ -561,7 +561,7 @@
         if(!r.ok){feedback.textContent=errorText(r);feedback.style.borderColor="rgba(255,100,124,.65)";return;}
         feedback.textContent="Arizangiz muvaffaqiyatli yuborildi. Holatini “Mening ish arizalarim” bo‘limidan kuzatishingiz mumkin.";
         feedback.style.borderColor="rgba(22,199,181,.35)";
-        selectedJob=null;event.target.reset();await loadMyApplications();await loadMyActivity();
+        selectedJob=null;event.target.reset();await loadMyApplications();await loadMyActivity();await loadMatches();
       }catch(error){
         feedback.textContent="Ariza yuborishda vaqtinchalik xatolik yuz berdi. Internetni tekshirib, qayta urinib ko‘ring.";
         feedback.style.borderColor="rgba(255,100,124,.65)";
