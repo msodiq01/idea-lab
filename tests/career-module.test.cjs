@@ -188,6 +188,13 @@ test("employer dashboard shows vacancy and application analytics", () => {
   assert.match(server, /Ko‘rinadigan arizalar/);
   assert.match(server, /statsData\.accepted\+\+/);
 });
+test("employer application decisions show inline accessible feedback and recover on errors", () => {
+  assert.match(server, /feedback\.setAttribute\("role","status"\)/);
+  assert.match(server, /feedback\.setAttribute\("aria-live","polite"\)/);
+  assert.match(server, /Qaror saqlandi\. Arizalar ro‘yxati yangilanmoqda/);
+  assert.match(server, /Qarorni saqlashda xatolik yuz berdi/);
+  assert.match(server, /aria-label",label\+" — "\+\(item\.candidate_name\|\|"nomzod"\)/);
+});
 test("vacancy edit includes schedule, experience and required skills", () => {
   assert.match(server, /ilEditSchedule/);
   assert.match(server, /ilEditExperience/);
