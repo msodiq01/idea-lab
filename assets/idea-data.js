@@ -325,15 +325,15 @@
         p_website_url: input.websiteUrl || null, p_visibility: visibility
       });
     },
-    submitOrganizationForReview(input = {}) {
+    createActiveOrganization(input = {}) {
       if (!requiredText(input.name, 2, 120) || (input.description || "").length > 2400) return Promise.resolve(fail("INVALID_ORGANIZATION", "Tashkilot nomi yoki tavsifi noto‘g‘ri."));
-      const types = ["company", "nonprofit", "educational_institution", "community", "team", "other"];
-      const visibility = ["private", "unlisted", "public"].includes(input.visibility) ? input.visibility : "public";
-      return runPublicCommand("idea_lab_submit_organization_for_review", {
+      const types = ["company", "nonprofit", "educational_institution", "community", "other"];
+      const type = types.includes(input.type) ? input.type : "company";
+      return runPublicCommand("idea_lab_create_active_organization", {
         p_name: input.name.trim(), p_slug: input.slug || null,
-        p_organization_type: types.includes(input.type) ? input.type : "other",
+        p_organization_type: type,
         p_description: input.description || "", p_location_label: input.location || null,
-        p_website_url: input.websiteUrl || null, p_visibility: visibility
+        p_website_url: input.websiteUrl || null, p_visibility: "public"
       });
     },
     updateOrganization(input = {}) {
