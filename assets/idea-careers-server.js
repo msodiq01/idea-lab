@@ -182,6 +182,18 @@
       if(!regions.size){const row=document.createElement("tr"),cell=document.createElement("td");cell.colSpan=4;cell.textContent="Hududiy statistika uchun vakansiya topilmadi.";cell.style.padding="10px";row.append(cell);regionRows.append(row);}
     }
   }
+  function contactBlock(job){
+    if(!job.contact_name&&!job.contact_phone)return null;
+    const box=document.createElement("p");box.className="notice";
+    const label=document.createElement("strong");label.textContent="Aloqa uchun: ";box.append(label);
+    if(job.contact_name){const name=document.createElement("span");name.textContent=job.contact_name;box.append(name);}
+    if(job.contact_name&&job.contact_phone){box.append(document.createTextNode(" · "));}
+    if(job.contact_phone){
+      const phone=document.createElement("a");phone.href="tel:"+String(job.contact_phone).replace(/[^0-9+]/g,"");
+      phone.textContent=job.contact_phone;phone.style.color="var(--career-secondary)";phone.style.fontWeight="700";box.append(phone);
+    }
+    return box;
+  }
   function renderJobs(){
     jobList.replaceChildren();
     const q=clean($("jobSearch")?.value).toLocaleLowerCase("uz-UZ");
@@ -219,6 +231,7 @@
       const skills=job.required_skills||[];
       if(skills.length){const skillLine=document.createElement("p");skillLine.textContent="Ko‘nikmalar: "+skills.join(", ");node.append(skillLine);}
       node.insertBefore(meta,node.children[1]||null);
+      const contact=contactBlock(job);if(contact)node.append(contact);
       const actions=document.createElement("div");actions.className="card-actions";
       const apply=document.createElement("button");apply.className="btn btn-green";apply.type="button";
       const alreadyApplied=appliedJobIds.has(job.id);
@@ -300,6 +313,7 @@
     r.data.forEach(job=>{
       const reasons=Array.isArray(job.match_reasons)?job.match_reasons.join(" • "):"";
       const node=card(job.title,[job.company_name,locationLabel(job),employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Kerakli ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",reasons]);
+      const contact=contactBlock(job);if(contact)node.append(contact);
       const score=document.createElement("p");score.className="notice";score.textContent="Moslik: "+Number(job.match_score||0)+"% — bu yo‘naltiruvchi baho, ishga qabul qilish kafolati emas.";node.append(score);
       const actions=document.createElement("div");actions.className="card-actions";
       const apply=document.createElement("button");apply.className="btn green career-apply-action";apply.type="button";const alreadyApplied=appliedJobIds.has(job.id);apply.textContent=alreadyApplied?"Ariza yuborilgan":userId?"Ariza yuborish":"Kirish orqali ariza yuborish";apply.disabled=alreadyApplied;apply.hidden=activeMode==="employer";
@@ -530,9 +544,14 @@
       requiredSkills:splitTags($("jobSkills")?.value,20),
       experienceYearsMin:Number($("jobExperienceYears")?.value||0),
       schedule:clean($("jobSchedule")?.value),
-      description:clean($("jobDescription")?.value)
+      description:clean($("jobDescription")?.value),
+      contactName:clean($("jobContactName")?.value),
+      contactPhone:clean($("jobContactPhone")?.value)
     };
     if(!input.organizationId){alert("Avval o‘zingizga tegishli tashkilotni tanlang.");return;}
+    const contactDigits=input.contactPhone.replace(/\D/g,"");
+    if(input.contactName.length<2){alert("Aloqa uchun mas’ul shaxs ismini kiriting.");return;}
+    if(!/^998[0-9]{9}$/.test(contactDigits)){alert("Telefon raqamini +998 90 123 45 67 formatida kiriting.");return;}
     const submit=form.querySelector('[type="submit"]');if(submit)submit.disabled=true;
     setStatus("Vakansiya serverga joylanmoqda…");
     const r=await data.createJobPost(input);

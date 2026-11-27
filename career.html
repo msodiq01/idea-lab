@@ -101,6 +101,8 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}
 <div class="field"><label for="jobExperienceYears">Eng kam tajriba (yil)</label><input id="jobExperienceYears" type="number" min="0" max="50" value="0"></div>
 <div class="field"><label for="jobSchedule">Ish jadvali</label><input id="jobSchedule" maxlength="160" placeholder="Masalan, 09:00–18:00, 5/2"></div>
 <div class="field full"><label for="jobSkills">Kerakli ko‘nikmalar (vergul bilan)</label><input id="jobSkills" maxlength="1600" placeholder="Excel, muloqot, rus tili"></div>
+<div class="field"><label for="jobContactName">Aloqa uchun mas’ul shaxs ismi *</label><input id="jobContactName" required minlength="2" maxlength="120" autocomplete="name" placeholder="Masalan, Ali Valiyev"></div>
+<div class="field"><label for="jobContactPhone">Aloqa telefon raqami *</label><input id="jobContactPhone" type="tel" required inputmode="tel" autocomplete="tel" maxlength="20" pattern="\+?998[0-9 ()-]{9,16}" placeholder="+998 90 123 45 67"><p class="notice">Ushbu ism va telefon raqami vakansiya e’lonida hammaga ko‘rinadi. Faqat ish bo‘yicha bog‘lanish uchun mo‘ljallangan raqamni kiriting.</p></div>
 <div class="field full"><label for="jobDescription">Vazifalar va talablar *</label><textarea id="jobDescription" required minlength="10" maxlength="3000" placeholder="Ish vazifalari, malaka talablari va shartlarini aniq yozing."></textarea></div>
 </div><div class="hero-actions"><button class="btn green" type="submit">Vakansiyani joylashtirish</button><button class="btn secondary" type="button" onclick="document.getElementById('jobFormPanel').hidden=true">Bekor qilish</button></div>
 </form></div>

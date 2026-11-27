@@ -386,7 +386,8 @@
           !Array.isArray(skills) || skills.length > 20 ||
           skills.some(x => typeof x !== "string" || !x.trim() || x.trim().length > 80) ||
           !Number.isInteger(years) || years < 0 || years > 50 ||
-          (input.schedule || "").length > 160) {
+          (input.schedule || "").length > 160 || !requiredText(input.contactName, 2, 120) ||
+          !/^998[0-9]{9}$/.test(String(input.contactPhone || "").replace(/\D/g, ""))) {
         return Promise.resolve(fail("INVALID_JOB_POST", "Vakansiya maydonlari noto‘g‘ri."));
       }
       return runPublicCommand("idea_lab_create_job_post", {
@@ -395,7 +396,8 @@
         p_location_label: input.location.trim(), p_employment_type: input.employmentType,
         p_required_skills: skills.map(x => x.trim()), p_experience_years_min: years,
         p_schedule_label: input.schedule || "", p_openings_count: Number(input.openingsCount),
-        p_region_label: input.region.trim(), p_district_label: input.district.trim()
+        p_region_label: input.region.trim(), p_district_label: input.district.trim(),
+        p_contact_name: input.contactName.trim(), p_contact_phone: input.contactPhone.trim()
       });
     },
     getMyJobSeekerProfile() {
