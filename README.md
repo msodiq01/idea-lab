@@ -64,3 +64,27 @@ Avtomatik tekshiruv: `node --test tests/*.test.cjs`. GitHub Actions PR #104 run 
 - Barcha asosiy sahifalar yagona premium vizual qatlam, navigatsiya, mobil moslashuv va fokus holatlaridan foydalanadi; kirish sahifasi o‘zining ixcham sarlavhasini saqlaydi.
 - Server belgisi backend konfiguratsiyasi mavjudligini va qolgan modullar demo ekanini alohida ko‘rsatadi; bu butun platforma serverga ulandi degani emas.
 - Har bir modulning haqiqiy ma’lumot manbasi, hozirgi integratsiya darajasi va keyingi bog‘lanish zanjiri [Modul va ma’lumotlar zanjiri xaritasi](MODULE-CONNECTION-MATRIX.md) hujjatida qayd etilgan.
+
+
+## Vakansiya xavfsizligi — moderator tekshiruv ro'yxati
+
+Har bir e'lonni tasdiqlashdan oldin moderator quyidagilarni tekshiradi. Bu checklist dastlabki qo'llanma; u avtomatik verifikatsiya yoki yuridik kafolat emas.
+
+- [ ] Vakansiya nomi aniq va ish vazifalari bilan mos.
+- [ ] Tashkilot/ish beruvchi identifikatsiyasi tekshirish uchun yetarli ma'lumotga ega; tasdiqlanmagan holat “verified” deb ko'rsatilmaydi.
+- [ ] Ish joyi, ish jadvali va ish turi aniq yozilgan.
+- [ ] Maosh yoki to'lov shartlari berilgan yoxud “kelishiladi” deb ochiq ko'rsatilgan.
+- [ ] Ariza beruvchidan oldindan pul, karta ma'lumotlari, parol, OTP yoki ortiqcha shaxsiy hujjat so'ralmaydi.
+- [ ] Ish talablari, tajriba va ko'nikmalar vazifaga mos; kamsituvchi yoki aloqasiz talablar yo'q.
+- [ ] Ariza topshirish kanali va jarayoni tushunarli, shaxsiy kontaktlar ochiq katalogda oshkor qilinmagan.
+- [ ] Shubhali yoki yetarli bo'lmagan ma'lumotlar bo'lsa, e'lon tasdiqlanmaydi; qo'shimcha tekshiruv so'raladi.
+
+### Moderator qarorlari
+
+- **Tasdiqlash:** checklist bo'yicha e'lon yetarli va xavfsiz ko'rinadi.
+- **Qo'shimcha ma'lumot so'rash:** muhim shartlar yetishmaydi; e'lon vaqtincha ko'rib chiqishda qoladi.
+- **Rad etish:** shubhali to'lov talabi, ma'lumotlarni o'g'irlashga urinish, yolg'on/qarama-qarshi ma'lumot yoki xavfli e'lon belgisi mavjud.
+
+### Maxfiylik
+
+Checklist natijasi, moderator izohi va report qilgan foydalanuvchi ma'lumotlari ommaviy ko'rinmasligi kerak. Moderator yozuvlariga faqat tegishli vakolatli xodimlar kirishi lozim. Checklist ishlab chiqarish tizimiga ulanishi uchun server-side ruxsatlar, RLS va audit log testlari alohida talab qilinadi.
