@@ -256,7 +256,7 @@ test("moderator UI requires a clear rejection reason and displays it in the empl
   assert.match(server, /Rad etish sababi \(majburiy, 10–500 belgi\)/);
   assert.match(server, /Rad etish sababi kamida 10 va ko‘pi bilan 500 belgidan iborat bo‘lsin/);
   assert.match(server, /data\.reviewJobPost\(job\.job_post_id,false,text\)/);
-  assert.match(server, /Moderator izohi: \+job\.moderation_reason/);
+  assert.match(server, /Moderator izohi: "\\+job\\.moderation_reason/);
   assert.match(data, /reviewJobPost\(jobPostId, approve, reason = ""\)/);
   assert.match(data, /p_reason: approve \? null : cleanReason/);
 });
