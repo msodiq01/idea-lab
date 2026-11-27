@@ -165,7 +165,7 @@ const ownerEditMigration = read("supabase/migrations/20261127010000_idea_app_own
 test("owner vacancy edit RPC validates fields, scopes by creator and requeues published edits for review", () => {
   assert.match(ownerEditMigration, /security invoker/i);
   assert.match(ownerEditMigration, /where id=p_job_post_id and created_by=auth\.uid\(\)/i);
-  assert.match(ownerEditMigration, /status=case when status='published' then 'pending_review'/i);
+  assert.match(ownerEditMigration, /status=case when status in \('published','rejected'\) then 'pending_review' else status end/i);
   assert.match(ownerEditMigration, /revoke all on function public\.idea_lab_update_job_post/i);
   assert.match(ownerEditMigration, /grant execute on function public\.idea_lab_update_job_post.*to authenticated/i);
   assert.match(data, /updateJobPost\(jobPostId, input\)/);
@@ -256,7 +256,7 @@ test("moderator UI requires a clear rejection reason and displays it in the empl
   assert.match(server, /Rad etish sababi \(majburiy, 10–500 belgi\)/);
   assert.match(server, /Rad etish sababi kamida 10 va ko‘pi bilan 500 belgidan iborat bo‘lsin/);
   assert.match(server, /data\.reviewJobPost\(job\.job_post_id,false,text\)/);
-  assert.match(server, /job\\.moderation_reason\\?"Moderator izohi: "\\+job\\.moderation_reason/);
+  assert.ok(server.includes('job.moderation_reason?"Moderator izohi: "+job.moderation_reason'));
   assert.match(data, /reviewJobPost\(jobPostId, approve, reason = ""\)/);
   assert.match(data, /p_reason: approve \? null : cleanReason/);
 });
