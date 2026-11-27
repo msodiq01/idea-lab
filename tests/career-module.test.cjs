@@ -228,3 +228,14 @@ test("employer applications can be sorted by newest, oldest and candidate name",
   assert.match(server, /clean\(x\.candidate_name\)\.localeCompare\(clean\(y\.candidate_name\),"uz"\)/);
   assert.match(server, /sort\.addEventListener\("change",render\)/);
 });
+
+test("employer vacancy dashboard supports search and lifecycle status filters", () => {
+  assert.match(server, /Mening vakansiyalarimdan qidirish/);
+  assert.match(server, /Vakansiya holati bo‘yicha filtrlash/);
+  assert.match(server, /\[\["","Barcha holatlar"\],\["published","Ochiq"\],\["pending_review","Tekshiruvda"\],\["closed","Yopilgan"\],\["rejected","Rad etilgan"\]\]/);
+  assert.match(server, /updateOwnedVisibility\(\)/);
+  assert.match(server, /search\.addEventListener\("input",updateOwnedVisibility\)/);
+  assert.match(server, /filter\.addEventListener\("change",updateOwnedVisibility\)/);
+  assert.match(server, /Bu e’lon yopilgan va ommaviy katalogda ko‘rinmaydi/);
+  assert.match(server, /Qayta ochish moderator tekshiruvini talab qiladi/);
+});
