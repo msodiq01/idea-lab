@@ -431,45 +431,63 @@
     if(!r.ok){empty(box,errorText(r));return;}
     const applications=Array.isArray(r.data)?r.data:[];
     if(!applications.length){empty(box,"Bu vakansiya uchun hali ariza kelib tushmagan.");return;}
-    applications.forEach(item=>{
-      const statusLabels={submitted:"Ko‘rib chiqilmoqda",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"};
-      const candidateLines=[
-        item.candidate_city||"",
-        item.candidate_roles?.length?"Kasblar: "+item.candidate_roles.join(", "):"",
-        item.candidate_skills?.length?"Ko‘nikmalar: "+item.candidate_skills.join(", "):"",
-        item.candidate_experience_years!=null?"Tajriba: "+item.candidate_experience_years+" yil":"",
-        item.candidate_experience_summary||"",
-        item.candidate_education_summary||"",
-        "Ariza holati: "+(statusLabels[item.status]||item.status),
-        "Ariza xabari: "+item.message,
-        "Yuborilgan: "+new Date(item.submitted_at).toLocaleString("uz-UZ")
-      ];
-      const node=card(item.candidate_name||"Nomzod",candidateLines);
-      if(item.status==="submitted"){
-        const actions=document.createElement("div");actions.className="card-actions";
-        const feedback=document.createElement("p");feedback.className="notice";feedback.setAttribute("role","status");feedback.setAttribute("aria-live","polite");
-        [["Qabul qilish","accepted"],["Rad etish","declined"]].forEach(([label,status])=>{
-          const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
-          button.setAttribute("aria-label",label+" — "+(item.candidate_name||"nomzod"));
-          button.addEventListener("click",async()=>{
-            actions.querySelectorAll("button").forEach(control=>control.disabled=true);
-            feedback.textContent=label+" qarori saqlanmoqda…";
-            try{
-              const x=await data.reviewJobApplication(item.application_id,status);
-              if(!x.ok||x.data!==true){feedback.textContent=errorText(x);actions.querySelectorAll("button").forEach(control=>control.disabled=false);return;}
-              feedback.textContent="Qaror saqlandi. Arizalar ro‘yxati yangilanmoqda…";
-              await loadApplicationsFor(job,box);
-            }catch(_){
-              feedback.textContent="Qarorni saqlashda xatolik yuz berdi. Qayta urinib ko‘ring.";
-              actions.querySelectorAll("button").forEach(control=>control.disabled=false);
-            }
+    const statusLabels={submitted:"Ko‘rib chiqilmoqda",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"};
+    const toolbar=document.createElement("div");toolbar.className="career-application-tools";
+    const search=document.createElement("input");search.type="search";search.placeholder="Nomzod, ko‘nikma yoki shahar bo‘yicha qidirish";search.setAttribute("aria-label","Arizalarni qidirish");
+    const filter=document.createElement("select");filter.setAttribute("aria-label","Ariza holati bo‘yicha filtrlash");
+    [["","Barcha holatlar"],["submitted","Ko‘rib chiqilmoqda"],["accepted","Qabul qilindi"],["declined","Rad etildi"],["withdrawn","Qaytarib olindi"]].forEach(([value,label])=>{const option=document.createElement("option");option.value=value;option.textContent=label;filter.append(option);});
+    const summary=document.createElement("p");summary.className="notice";summary.setAttribute("role","status");summary.setAttribute("aria-live","polite");
+    const results=document.createElement("div");results.className="cards";
+    toolbar.append(search,filter);box.append(toolbar,summary,results);
+    function render(){
+      results.replaceChildren();
+      const q=clean(search.value).toLocaleLowerCase("uz-UZ"),status=filter.value;
+      const visible=applications.filter(item=>{
+        const hay=[item.candidate_name,item.candidate_city,item.candidate_experience_summary,item.candidate_education_summary,item.message,...(item.candidate_roles||[]),...(item.candidate_skills||[])].join(" ").toLocaleLowerCase("uz-UZ");
+        return hay.includes(q)&&(!status||item.status===status);
+      });
+      summary.textContent=visible.length+" ta ariza ko‘rsatilmoqda (jami "+applications.length+" ta).";
+      if(!visible.length){empty(results,"Qidiruv yoki holat filtri bo‘yicha ariza topilmadi.");return;}
+      visible.forEach(item=>{
+        const candidateLines=[
+          item.candidate_city||"",
+          item.candidate_roles?.length?"Kasblar: "+item.candidate_roles.join(", "):"",
+          item.candidate_skills?.length?"Ko‘nikmalar: "+item.candidate_skills.join(", "):"",
+          item.candidate_experience_years!=null?"Tajriba: "+item.candidate_experience_years+" yil":"",
+          item.candidate_experience_summary||"",
+          item.candidate_education_summary||"",
+          "Ariza holati: "+(statusLabels[item.status]||item.status),
+          "Ariza xabari: "+item.message,
+          "Yuborilgan: "+new Date(item.submitted_at).toLocaleString("uz-UZ")
+        ];
+        const node=card(item.candidate_name||"Nomzod",candidateLines);
+        if(item.status==="submitted"){
+          const actions=document.createElement("div");actions.className="card-actions";
+          const feedback=document.createElement("p");feedback.className="notice";feedback.setAttribute("role","status");feedback.setAttribute("aria-live","polite");
+          [["Qabul qilish","accepted"],["Rad etish","declined"]].forEach(([label,nextStatus])=>{
+            const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
+            button.setAttribute("aria-label",label+" — "+(item.candidate_name||"nomzod"));
+            button.addEventListener("click",async()=>{
+              actions.querySelectorAll("button").forEach(control=>control.disabled=true);
+              feedback.textContent=label+" qarori saqlanmoqda…";
+              try{
+                const x=await data.reviewJobApplication(item.application_id,nextStatus);
+                if(!x.ok||x.data!==true){feedback.textContent=errorText(x);actions.querySelectorAll("button").forEach(control=>control.disabled=false);return;}
+                feedback.textContent="Qaror saqlandi. Arizalar ro‘yxati yangilanmoqda…";
+                await loadApplicationsFor(job,box);
+              }catch(_){
+                feedback.textContent="Qarorni saqlashda xatolik yuz berdi. Qayta urinib ko‘ring.";
+                actions.querySelectorAll("button").forEach(control=>control.disabled=false);
+              }
+            });
+            actions.append(button);
           });
-          actions.append(button);
-        });
-        actions.append(feedback);node.append(actions);
-      }
-      box.append(node);
-    });
+          actions.append(feedback);node.append(actions);
+        }
+        results.append(node);
+      });
+    }
+    search.addEventListener("input",render);filter.addEventListener("change",render);render();
   }
   async function createJob(event){
     event.preventDefault();
