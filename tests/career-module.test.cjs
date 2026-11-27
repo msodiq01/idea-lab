@@ -239,3 +239,24 @@ test("employer vacancy dashboard supports search and lifecycle status filters", 
   assert.match(server, /Bu e’lon yopilgan va ommaviy katalogda ko‘rinmaydi/);
   assert.match(server, /Qayta ochish moderator tekshiruvini talab qiladi/);
 });
+
+const vacancyModerationReasonsMigration = read("supabase/migrations/20261127020000_idea_app_vacancy_moderation_reasons.sql");
+
+test("moderator rejection reasons are validated, persisted and returned only through the owner vacancy list", () => {
+  assert.match(vacancyModerationReasonsMigration, /add column if not exists moderation_reason text/i);
+  assert.match(vacancyModerationReasonsMigration, /security invoker/i);
+  assert.match(vacancyModerationReasonsMigration, /not p_approve and \(v_reason is null or char_length\(v_reason\) not between 10 and 500\)/i);
+  assert.match(vacancyModerationReasonsMigration, /moderation_reason=case when p_approve then null else v_reason end/i);
+  assert.match(vacancyModerationReasonsMigration, /where j\.created_by=\(select auth\.uid\(\)\)/i);
+  assert.match(vacancyModerationReasonsMigration, /j\.moderation_reason/i);
+  assert.match(vacancyModerationReasonsMigration, /grant execute on function public\.idea_lab_review_job_post\(uuid,boolean,text\) to authenticated/i);
+});
+
+test("moderator UI requires a clear rejection reason and displays it in the employer cabinet", () => {
+  assert.match(server, /Rad etish sababi \(majburiy, 10–500 belgi\)/);
+  assert.match(server, /Rad etish sababi kamida 10 va ko‘pi bilan 500 belgidan iborat bo‘lsin/);
+  assert.match(server, /data\.reviewJobPost\(job\.job_post_id,false,text\)/);
+  assert.match(server, /Moderator izohi: \+job\.moderation_reason/);
+  assert.match(data, /reviewJobPost\(jobPostId, approve, reason = ""\)/);
+  assert.match(data, /p_reason: approve \? null : cleanReason/);
+});
