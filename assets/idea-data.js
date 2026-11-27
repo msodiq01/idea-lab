@@ -490,6 +490,14 @@
       if (!isUuid(applicationId) || !["interview", "accepted", "declined"].includes(status)) return Promise.resolve(fail("INVALID_JOB_REVIEW", "Ariza qarori noto‘g‘ri."));
       return runPublicCommand("idea_lab_review_job_application", { p_application_id: applicationId, p_status: status });
     },
+    getEmployerApplicationNote(applicationId) {
+      if (!isUuid(applicationId)) return Promise.resolve(fail("INVALID_APPLICATION_ID", "Ariza identifikatori noto‘g‘ri."));
+      return runPublicCommand("idea_lab_get_job_application_employer_note", { p_application_id: applicationId });
+    },
+    saveEmployerApplicationNote(input = {}) {
+      if (!isUuid(input.applicationId) || typeof input.note !== "string" || input.note.length > 3000 || (input.nextContactDate && !/^\\d{4}-\\d{2}-\\d{2}$/.test(input.nextContactDate))) return Promise.resolve(fail("INVALID_APPLICATION_NOTE", "Qayd ma’lumotlari noto‘g‘ri."));
+      return runPublicCommand("idea_lab_save_job_application_employer_note", { p_application_id: input.applicationId, p_note: input.note, p_next_contact_date: input.nextContactDate || null });
+    },
     createResourceOffer(input = {}) {
       if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(String(input.slug || "")) || !requiredText(input.title, 3, 160) ||
           !requiredText(input.category, 1, 40) || (input.description || "").length > 3000) {
