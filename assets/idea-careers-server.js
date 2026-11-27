@@ -273,12 +273,16 @@
     else jobResult.data.forEach(job=>{
       const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",job.description,"Yuborilgan: "+new Date(job.created_at).toLocaleString("uz-UZ")]);
       const actions=document.createElement("div");actions.className="card-actions";
-      [["Vakansiyani tasdiqlash",true],["Rad etish",false]].forEach(([label,approve])=>{
-        const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
-        button.addEventListener("click",async()=>{button.disabled=true;const reviewed=await data.reviewJobPost(job.job_post_id,approve);if(!reviewed.ok||reviewed.data!==true){alert(errorText(reviewed));button.disabled=false;return;}await loadModeration();await loadJobs();await loadOwnedJobs();});
-        actions.append(button);
-      });
-      node.append(actions);jobBox.append(node);
+      const reasonField=document.createElement("div");reasonField.className="field";reasonField.style.width="100%";
+      const reasonLabel=document.createElement("label");reasonLabel.textContent="Rad etish sababi (majburiy, 10–500 belgi)";
+      const reason=document.createElement("textarea");reason.rows=3;reason.maxLength=500;reason.minLength=10;reason.placeholder="Aniq yozing: qaysi talab bajarilmagan va nima tuzatish kerak?";
+      reasonLabel.append(reason);reasonField.append(reasonLabel);
+      const feedback=document.createElement("p");feedback.className="notice";feedback.setAttribute("role","status");feedback.setAttribute("aria-live","polite");
+      const approveButton=document.createElement("button");approveButton.className="btn";approveButton.type="button";approveButton.textContent="Vakansiyani tasdiqlash";
+      approveButton.addEventListener("click",async()=>{approveButton.disabled=true;feedback.textContent="Tasdiqlanmoqda…";const reviewed=await data.reviewJobPost(job.job_post_id,true);if(!reviewed.ok||reviewed.data!==true){feedback.textContent=errorText(reviewed);approveButton.disabled=false;return;}await loadModeration();await loadJobs();await loadOwnedJobs();});
+      const rejectButton=document.createElement("button");rejectButton.className="btn secondary";rejectButton.type="button";rejectButton.textContent="Sabab bilan rad etish";
+      rejectButton.addEventListener("click",async()=>{const text=clean(reason.value);if(text.length<10||text.length>500){feedback.textContent="Rad etish sababi kamida 10 va ko‘pi bilan 500 belgidan iborat bo‘lsin.";reason.focus();return;}rejectButton.disabled=true;feedback.textContent="Rad etish sababi saqlanmoqda…";const reviewed=await data.reviewJobPost(job.job_post_id,false,text);if(!reviewed.ok||reviewed.data!==true){feedback.textContent=errorText(reviewed);rejectButton.disabled=false;return;}await loadModeration();await loadJobs();await loadOwnedJobs();});
+      actions.append(approveButton,rejectButton);node.append(reasonField,feedback,actions);jobBox.append(node);
     });
   }
   async function loadJobs(){
@@ -421,7 +425,7 @@
     }).catch(()=>{analyticsBody.textContent="Statistikani yuklab bo‘lmadi. Qayta yuklang.";});
     for(const job of ownedJobs){
       const labels={pending_review:"Tekshiruvda",published:"Ochiq",closed:"Yopilgan",rejected:"Rad etilgan"};
-      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"","Holat: "+(labels[job.status]||job.status),job.status==="closed"?"Bu e’lon yopilgan va ommaviy katalogda ko‘rinmaydi. Qayta ochish moderator tekshiruvini talab qiladi.":""]); 
+      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"","Holat: "+(labels[job.status]||job.status),job.moderation_reason?"Moderator izohi: "+job.moderation_reason:"",job.status==="closed"?"Bu e’lon yopilgan va ommaviy katalogda ko‘rinmaydi. Qayta ochish moderator tekshiruvini talab qiladi.":""]); 
       node.dataset.jobPostId=job.job_post_id;
       const actions=document.createElement("div");actions.className="card-actions";
       if(["published","closed","pending_review"].includes(job.status)){
