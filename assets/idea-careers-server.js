@@ -78,8 +78,34 @@
   function employmentType(raw){
     const found=Object.entries(typeLabels).find(([key])=>key===raw);return found?found[1]:"Boshqa";
   }
-  function updateCounts(){
+  function updateCounts(visibleCount=jobs.length){
     if($("jobCount"))$("jobCount").textContent=String(jobs.length);
+    const statsRows=$("vacancyStatsRows");
+    if(statsRows){
+      statsRows.replaceChildren();
+      [["Jami faol e’lonlar",jobs.length],["Filtrdan keyin ko‘rinayotgan e’lonlar",visibleCount],["E’lon joylangan hududlar",new Set(jobs.map(job=>clean(job.location_label)||"Hudud ko‘rsatilmagan")).size]].forEach(([label,value])=>{
+        const row=document.createElement("tr"),left=document.createElement("td"),right=document.createElement("td");
+        left.textContent=label;right.textContent=String(value);right.style.textAlign="right";
+        [left,right].forEach(cell=>{cell.style.padding="10px";cell.style.borderTop="1px solid var(--border,rgba(255,255,255,.12))";});
+        row.append(left,right);statsRows.append(row);
+      });
+    }
+    const regions=new Map();
+    jobs.forEach(job=>{
+      const region=clean(job.location_label)||"Hudud ko‘rsatilmagan";
+      regions.set(region,(regions.get(region)||0)+1);
+    });
+    const regionRows=$("vacancyRegionRows");
+    if(regionRows){
+      regionRows.replaceChildren();
+      [...regions.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],"uz")).forEach(([region,count])=>{
+        const row=document.createElement("tr"),left=document.createElement("td"),right=document.createElement("td");
+        left.textContent=region;right.textContent=String(count);right.style.textAlign="right";
+        [left,right].forEach(cell=>{cell.style.padding="10px";cell.style.borderTop="1px solid var(--border,rgba(255,255,255,.12))";});
+        row.append(left,right);regionRows.append(row);
+      });
+      if(!regions.size){const row=document.createElement("tr"),cell=document.createElement("td");cell.colSpan=2;cell.textContent="Hududiy statistika uchun vakansiya topilmadi.";cell.style.padding="10px";row.append(cell);regionRows.append(row);}
+    }
   }
   function renderJobs(){
     jobList.replaceChildren();
@@ -106,8 +132,9 @@
     if(sortMode==="title")visible.sort((a,b)=>clean(a.title).localeCompare(clean(b.title),"uz"));
     else if(sortMode==="salary")visible.sort((a,b)=>salaryNumber(b)-salaryNumber(a));
     const summary=$("jobResultSummary");
-    if(summary)summary.textContent=visible.length+" ta vakansiya ko‘rsatildi (jami "+jobs.length+" ta faol e’lon).";
-    if(!visible.length){empty(jobList,"Tanlangan filtrlar bo‘yicha vakansiya topilmadi. Filtrlarni o‘zgartirib ko‘ring.");updateCounts();return;}
+    if(summary)summary.textContent=visible.length+" ta vakansiya ko‘rsatildi. Jami "+jobs.length+" ta faol e’lon yuklandi.";
+    updateCounts(visible.length);
+    if(!visible.length){empty(jobList,"Tanlangan filtrlar bo‘yicha vakansiya topilmadi. Filtrlarni o‘zgartirib ko‘ring.");return;}
     visible.forEach(job=>{
       const node=card(job.title,[job.company_name,job.description]);
       const paragraphs=node.querySelectorAll("p");if(paragraphs[1])paragraphs[1].className="career-description";
@@ -239,9 +266,18 @@
     });
   }
   async function loadJobs(){
-    const r=await data.listPublicJobPosts({limit:50});
-    if(!r.ok){setStatus(errorText(r),true);jobs=[];renderJobs();return;}
-    jobs=Array.isArray(r.data)?r.data:[];
+    setStatus("Barcha faol vakansiyalar yuklanmoqda…");
+    const pageSize=50;let offset=0,all=[];
+    while(true){
+      const r=await data.listPublicJobPosts({limit:pageSize,offset});
+      if(!r.ok){setStatus(errorText(r),true);jobs=[];renderJobs();return;}
+      const page=Array.isArray(r.data)?r.data:[];
+      all=all.concat(page);
+      if(page.length<pageSize)break;
+      offset+=pageSize;
+    }
+    jobs=all;
+    setStatus("Barcha faol vakansiyalar katalogi yangilandi.");
     renderJobs();
   }
   async function loadOrganizations(){

@@ -369,9 +369,11 @@
       return runPublicCommand("idea_lab_list_my_team_memberships", {});
     },
     listPublicJobPosts(options = {}) {
+      const pageSize = limitValue(options.limit);
+      const offset = Number.isFinite(Number(options.offset)) ? Math.max(0, Math.floor(Number(options.offset))) : 0;
       return queryView("idea_lab_public_job_directory", query => query
         .order("published_at", { ascending: false })
-        .limit(limitValue(options.limit)));
+        .range(offset, offset + pageSize - 1));
     },
     createJobPost(input = {}) {
       const types = ["full_time", "part_time", "remote", "internship", "freelance"];
