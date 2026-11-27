@@ -50,10 +50,10 @@ begin
  if p_approve is null or p_checklist is null or jsonb_typeof(p_checklist)<>'object'
    or jsonb_object_length(p_checklist)<>7
    or not (p_checklist ?& v_keys)
-   or exists(select 1 from unnest(v_keys) k where p_checklist->>k not in ('true','false')) then
+   or exists(select 1 from unnest(v_keys) as keys(key) where p_checklist->>keys.key not in ('true','false')) then
   raise exception 'A complete moderation checklist is required' using errcode='22023';
  end if;
- if p_approve and exists(select 1 from unnest(v_keys) k where p_checklist->>k<>'true') then
+ if p_approve and exists(select 1 from unnest(v_keys) as keys(key) where p_checklist->>keys.key<>'true') then
   raise exception 'All safety checks must pass before approval' using errcode='22023';
  end if;
  if not p_approve and (v_reason is null or char_length(v_reason) not between 10 and 500) then
