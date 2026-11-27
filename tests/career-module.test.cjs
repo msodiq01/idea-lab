@@ -315,3 +315,16 @@ test("moderator interface blocks approval until all seven checklist items are ch
   assert.match(server, /checklistInputs\[firstMissing\[0\]\]\.focus\(\)/);
   assert.match(data, /requiredChecks\.some\(key => checklist\[key\] !== true\)/);
 });
+
+const vacancyPolicyRecursionMigration = read("supabase/migrations/20261127060000_fix_job_post_policy_recursion.sql");
+
+test("closed vacancy read policy uses a private helper to avoid job post/application RLS recursion", () => {
+  assert.match(vacancyPolicyRecursionMigration, /create or replace function idea_private\.has_job_application\(p_job_post_id uuid\)/i);
+  assert.match(vacancyPolicyRecursionMigration, /security definer/i);
+  assert.match(vacancyPolicyRecursionMigration, /set search_path = ''/i);
+  assert.match(vacancyPolicyRecursionMigration, /a\.applicant_id = \(select auth\.uid\(\)\)/i);
+  assert.match(vacancyPolicyRecursionMigration, /revoke all on function idea_private\.has_job_application\(uuid\) from public, anon, authenticated/i);
+  assert.match(vacancyPolicyRecursionMigration, /grant execute on function idea_private\.has_job_application\(uuid\) to authenticated/i);
+  assert.match(vacancyPolicyRecursionMigration, /and idea_private\.has_job_application\(id\)/i);
+  assert.doesNotMatch(vacancyPolicyRecursionMigration, /from idea_app\.job_applications a[\s\S]*?create policy job_posts_select_closed_for_authenticated/i);
+});
