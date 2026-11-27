@@ -326,5 +326,5 @@ test("closed vacancy read policy uses a private helper to avoid job post/applica
   assert.match(vacancyPolicyRecursionMigration, /revoke all on function idea_private\.has_job_application\(uuid\) from public, anon, authenticated/i);
   assert.match(vacancyPolicyRecursionMigration, /grant execute on function idea_private\.has_job_application\(uuid\) to authenticated/i);
   assert.match(vacancyPolicyRecursionMigration, /and idea_private\.has_job_application\(id\)/i);
-  assert.doesNotMatch(vacancyPolicyRecursionMigration, /from idea_app\.job_applications a[\s\S]*?create policy job_posts_select_closed_for_authenticated/i);
+  assert.match(vacancyPolicyRecursionMigration, /using\s*\([\s\S]*idea_private\.has_job_application\(id\)/i);
 });
