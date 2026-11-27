@@ -437,12 +437,80 @@
     listPendingJobPosts() {
       return runPublicCommand("idea_lab_list_pending_job_posts", {});
     },
-    reviewJobPost(jobPostId, approve) {
-      if (!isUuid(jobPostId) || typeof approve !== "boolean") return Promise.resolve(fail("INVALID_JOB_REVIEW", "Vakansiya tekshiruvi ma’lumoti noto‘g‘ri."));
-      return runPublicCommand("idea_lab_review_job_post", { p_job_post_id: jobPostId, p_approve: approve });
+    createJobPostReport(input = {}) {
+      const categories = ["scam","misleading","inappropriate","duplicate","expired","other"];
+      if (!isUuid(input.jobPostId) || !categories.includes(input.category) ||
+          !requiredText(input.details, 10, 1000)) {
+        return Promise.resolve(fail("INVALID_JOB_REPORT", "Shikoyat turi va izohi to‘g‘ri kiritilishi kerak (10–1000 belgi)."));
+      }
+      return runPublicCommand("idea_lab_create_job_post_report", {
+        p_job_post_id: input.jobPostId,
+        p_category: input.category,
+        p_details: input.details.trim()
+      });
+    },
+    listJobPostReports() {
+      return runPublicCommand("idea_lab_list_job_post_reports", {});
+    },
+    updateJobPostReport(input = {}) {
+      const statuses = ["in_review","resolved","dismissed"];
+      if (!isUuid(input.reportId) || !statuses.includes(input.status) ||
+          (input.moderatorNote !== undefined && (typeof input.moderatorNote !== "string" || input.moderatorNote.length > 1000))) {
+        return Promise.resolve(fail("INVALID_JOB_REPORT_REVIEW", "Shikoyat holati yoki moderator izohi noto‘g‘ri."));
+      }
+      return runPublicCommand("idea_lab_update_job_post_report", {
+        p_report_id: input.reportId,
+        p_status: input.status,
+        p_moderator_note: input.moderatorNote === undefined ? null : input.moderatorNote.trim()
+      });
+    },
+    reviewJobPost(jobPostId, approve, reason = "", checklist = {}) {
+      const cleanReason = String(reason ?? "").trim();
+      const requiredChecks = [
+        "employer_verified","job_details_clear","salary_terms_clear",
+        "work_conditions_clear","age_requirements_checked","no_upfront_fees","no_suspicious_requests"
+      ];
+      const validChecklist = checklist && typeof checklist === "object" && !Array.isArray(checklist) &&
+        Object.keys(checklist).length === requiredChecks.length &&
+        requiredChecks.every(key => typeof checklist[key] === "boolean");
+      if (!isUuid(jobPostId) || typeof approve !== "boolean" || !validChecklist ||
+          (approve && requiredChecks.some(key => checklist[key] !== true)) ||
+          (!approve && (cleanReason.length < 10 || cleanReason.length > 500)) ||
+          (approve && cleanReason.length > 500)) {
+        return Promise.resolve(fail("INVALID_JOB_REVIEW", "Tasdiqlash uchun barcha checklist bandlari bajarilishi, rad etish uchun esa 10–500 belgilik sabab yozilishi kerak."));
+      }
+      return runPublicCommand("idea_lab_review_job_post", {
+        p_job_post_id: jobPostId,
+        p_approve: approve,
+        p_reason: approve ? null : cleanReason,
+        p_checklist: Object.fromEntries(requiredChecks.map(key => [key, checklist[key]]))
+      });
     },
     listMyJobPosts() {
       return runPublicCommand("idea_lab_list_my_job_posts", {});
+    },
+    updateJobPost(jobPostId, input) {
+      if (!isUuid(jobPostId) || !input || !requiredText(input.title, 3, 100) ||
+          !requiredText(input.description, 10, 3000) || !requiredText(input.locationLabel, 2, 120) ||
+          String(input.salaryLabel ?? "").length > 120 ||
+          !Array.isArray(input.requiredSkills) || input.requiredSkills.length > 20 ||
+          input.requiredSkills.some(skill => typeof skill !== "string" || skill.trim().length < 1 || skill.trim().length > 80) ||
+          !Number.isInteger(input.experienceYearsMin) || input.experienceYearsMin < 0 || input.experienceYearsMin > 50 ||
+          typeof input.scheduleLabel !== "string" || input.scheduleLabel.length > 160 ||
+          !["full_time", "part_time", "remote", "internship", "freelance"].includes(input.employmentType)) {
+        return Promise.resolve(fail("INVALID_JOB_EDIT", "Vakansiya tahriri ma’lumotlari noto‘g‘ri."));
+      }
+      return runPublicCommand("idea_lab_update_job_post", {
+        p_job_post_id: jobPostId,
+        p_title: input.title.trim(),
+        p_description: input.description.trim(),
+        p_salary_label: String(input.salaryLabel ?? "").trim(),
+        p_location_label: input.locationLabel.trim(),
+        p_employment_type: input.employmentType,
+        p_required_skills: input.requiredSkills.map(skill => skill.trim()).filter(Boolean),
+        p_experience_years_min: input.experienceYearsMin,
+        p_schedule_label: input.scheduleLabel.trim()
+      });
     },
     updateJobPostStatus(jobPostId, status) {
       if (!isUuid(jobPostId) || !["pending_review", "closed"].includes(status)) return Promise.resolve(fail("INVALID_JOB_STATUS", "Vakansiya holati noto‘g‘ri."));

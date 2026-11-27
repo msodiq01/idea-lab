@@ -159,3 +159,172 @@ test("application notifications are visible in both seeker and employer modes", 
   assert.match(server, /node\.dataset\.careerFlow!=="both"&&node\.dataset\.careerFlow!==active/);
   assert.match(server, /loadMyActivity\(\)/);
 });
+
+const ownerEditMigration = read("supabase/migrations/20261127010000_idea_app_owner_edit_job_post.sql");
+
+test("owner vacancy edit RPC validates fields, scopes by creator and requeues published edits for review", () => {
+  assert.match(ownerEditMigration, /security invoker/i);
+  assert.match(ownerEditMigration, /where id=p_job_post_id and created_by=auth\.uid\(\)/i);
+  assert.match(ownerEditMigration, /status=case when status in \('published','rejected'\) then 'pending_review' else status end/i);
+  assert.match(ownerEditMigration, /revoke all on function public\.idea_lab_update_job_post/i);
+  assert.match(ownerEditMigration, /grant execute on function public\.idea_lab_update_job_post.*to authenticated/i);
+  assert.match(data, /updateJobPost\(jobPostId, input\)/);
+  assert.match(data, /idea_lab_update_job_post/);
+});
+
+test("employer dashboard exposes a prefilled vacancy editor and validated save flow", () => {
+  assert.match(server, /const editPanel=document\.createElement\("section"\)/);
+  assert.match(server, /function openJobEditor\(job\)/);
+  assert.match(server, /ilEditTitle.*job\.title/);
+  assert.match(server, /data\.updateJobPost\(editingJobId,input\)/);
+  assert.match(server, /ilJobEditCancel/);
+  assert.match(server, /textContent="Tahrirlash"/);
+});
+
+test("employer dashboard shows vacancy and application analytics", () => {
+  assert.match(server, /Ish beruvchi statistikasi/);
+  assert.match(server, /listJobPostApplications\(job\.job_post_id\)/);
+  assert.match(server, /ownedJobs\.filter\(job=>\["published","closed"\]\.includes\(job\.status\)\)\.map\(job=>data\.listJobPostApplications\(job\.job_post_id\)\)/);
+  assert.match(server, /Ko‘rinadigan arizalar/);
+  assert.match(server, /statsData\.accepted\+\+/);
+});
+test("employer application decisions show inline accessible feedback and recover on errors", () => {
+  assert.match(server, /feedback\.setAttribute\("role","status"\)/);
+  assert.match(server, /feedback\.setAttribute\("aria-live","polite"\)/);
+  assert.match(server, /Qaror saqlandi\. Arizalar ro‘yxati yangilanmoqda/);
+  assert.match(server, /Qarorni saqlashda xatolik yuz berdi/);
+  assert.match(server, /aria-label",label\+" — "\+\(item\.candidate_name\|\|"nomzod"\)/);
+});
+test("vacancy edit includes schedule, experience and required skills", () => {
+  assert.match(server, /ilEditSchedule/);
+  assert.match(server, /ilEditExperience/);
+  assert.match(server, /ilEditSkills/);
+  assert.match(server, /requiredSkills:clean\(\$\("ilEditSkills"\)\.value\)\.split\(","\)/);
+  assert.match(data, /p_required_skills: input\.requiredSkills\.map/);
+  assert.match(data, /p_experience_years_min: input\.experienceYearsMin/);
+  assert.match(data, /p_schedule_label: input\.scheduleLabel\.trim\(\)/);
+  assert.match(ownerEditMigration, /required_skills=coalesce\(p_required_skills,'\{\}'\)/);
+  assert.match(ownerEditMigration, /experience_years_min=coalesce\(p_experience_years_min,0\)/);
+  assert.match(ownerEditMigration, /schedule_label=coalesce\(btrim\(p_schedule_label\),''\)/);
+});
+
+
+test("employer application panel supports candidate search and status filtering with live counts", () => {
+  assert.match(server, /career-application-tools/);
+  assert.match(server, /Nomzod, ko‘nikma yoki shahar bo‘yicha qidirish/);
+  assert.match(server, /Ariza holati bo‘yicha filtrlash/);
+  assert.match(server, /visible\.length\+" ta ariza ko‘rsatilmoqda/);
+  assert.match(server, /item\.candidate_name,item\.candidate_city,item\.candidate_experience_summary/);
+  assert.match(server, /search\.addEventListener\("input",render\)/);
+  assert.match(server, /filter\.addEventListener\("change",render\)/);
+});
+
+
+test("employer applications can be sorted by newest, oldest and candidate name", () => {
+  assert.match(server, /Arizalarni saralash/);
+  assert.match(server, /\[\["newest","Eng yangi"\],\["oldest","Eng eski"\],\["name","Ism bo‘yicha"\]\]/);
+  assert.match(server, /visible\.sort\(\(x,y\)=>new Date\(y\.submitted_at\)-new Date\(x\.submitted_at\)\)/);
+  assert.match(server, /visible\.sort\(\(x,y\)=>new Date\(x\.submitted_at\)-new Date\(y\.submitted_at\)\)/);
+  assert.match(server, /clean\(x\.candidate_name\)\.localeCompare\(clean\(y\.candidate_name\),"uz"\)/);
+  assert.match(server, /sort\.addEventListener\("change",render\)/);
+});
+
+test("employer vacancy dashboard supports search and lifecycle status filters", () => {
+  assert.match(server, /Mening vakansiyalarimdan qidirish/);
+  assert.match(server, /Vakansiya holati bo‘yicha filtrlash/);
+  assert.match(server, /\[\["","Barcha holatlar"\],\["published","Ochiq"\],\["pending_review","Tekshiruvda"\],\["closed","Yopilgan"\],\["rejected","Rad etilgan"\]\]/);
+  assert.match(server, /updateOwnedVisibility\(\)/);
+  assert.match(server, /search\.addEventListener\("input",updateOwnedVisibility\)/);
+  assert.match(server, /filter\.addEventListener\("change",updateOwnedVisibility\)/);
+  assert.match(server, /Bu e’lon yopilgan va ommaviy katalogda ko‘rinmaydi/);
+  assert.match(server, /Qayta ochish moderator tekshiruvini talab qiladi/);
+});
+
+const vacancyModerationReasonsMigration = read("supabase/migrations/20261127020000_idea_app_vacancy_moderation_reasons.sql");
+
+test("moderator rejection reasons are validated, persisted and returned only through the owner vacancy list", () => {
+  assert.match(vacancyModerationReasonsMigration, /add column if not exists moderation_reason text/i);
+  assert.match(vacancyModerationReasonsMigration, /security invoker/i);
+  assert.match(vacancyModerationReasonsMigration, /not p_approve and \(v_reason is null or char_length\(v_reason\) not between 10 and 500\)/i);
+  assert.match(vacancyModerationReasonsMigration, /moderation_reason=case when p_approve then null else v_reason end/i);
+  assert.match(vacancyModerationReasonsMigration, /where j\.created_by=\(select auth\.uid\(\)\)/i);
+  assert.match(vacancyModerationReasonsMigration, /j\.moderation_reason/i);
+  assert.match(vacancyModerationReasonsMigration, /grant execute on function public\.idea_lab_review_job_post\(uuid,boolean,text\) to authenticated/i);
+});
+
+test("moderator UI requires a clear rejection reason and displays it in the employer cabinet", () => {
+  assert.match(server, /Rad etish sababi \(majburiy, 10–500 belgi\)/);
+  assert.match(server, /Rad etish sababi kamida 10 va ko‘pi bilan 500 belgidan iborat bo‘lsin/);
+  assert.match(server, /data\.reviewJobPost\(job\.job_post_id,false,text,getChecklist\(\)\)/);
+  assert.ok(server.includes('job.moderation_reason?"Moderator izohi: "+job.moderation_reason'));
+  assert.match(data, /reviewJobPost\(jobPostId, approve, reason = "", checklist = \{\}\)/);
+  assert.match(data, /p_reason: approve \? null : cleanReason/);
+  assert.match(data, /p_checklist: Object\.fromEntries/);
+});
+
+test("owners can correct rejected vacancies and resubmit them for moderation", () => {
+  assert.match(ownerEditMigration, /status=case when status in \('published','rejected'\) then 'pending_review' else status end/i);
+  assert.match(ownerEditMigration, /moderation_reason=case when status='rejected' then null else moderation_reason end/i);
+  assert.match(ownerEditMigration, /status in \('published','closed','pending_review','rejected'\)/i);
+  assert.match(server, /\["published","closed","pending_review","rejected"\]\.includes\(job\.status\)/);
+});
+
+const vacancyReportsMigration = read("supabase/migrations/20261127030000_idea_app_job_post_reports.sql");
+
+test("vacancy reports enforce authenticated ownership, one report per user and moderator-only review", () => {
+  assert.match(vacancyReportsMigration, /enable row level security/i);
+  assert.match(vacancyReportsMigration, /unique\(job_post_id,reporter_id\)/i);
+  assert.match(vacancyReportsMigration, /p_category is null or p_category not in/i);
+  assert.match(vacancyReportsMigration, /p_status is null or p_status not in/i);
+  assert.match(vacancyReportsMigration, /reporter_id=\(select auth\.uid\(\)\)/i);
+  assert.match(vacancyReportsMigration, /role in \('admin','moderator'\)/i);
+  assert.match(vacancyReportsMigration, /j\.status='published' and j\.created_by<>\(select auth\.uid\(\)\)/i);
+  assert.match(vacancyReportsMigration, /on conflict\(job_post_id,reporter_id\) do nothing/i);
+  assert.match(vacancyReportsMigration, /grant execute on function public\.idea_lab_create_job_post_report\(uuid,text,text\) to authenticated/i);
+  assert.match(vacancyReportsMigration, /grant execute on function public\.idea_lab_list_job_post_reports\(\) to authenticated/i);
+  assert.match(vacancyReportsMigration, /grant execute on function public\.idea_lab_update_job_post_report\(uuid,text,text\) to authenticated/i);
+});
+
+test("public vacancy cards can submit reports and moderator panel can review them", () => {
+  assert.match(page, /id="moderationReports"/);
+  assert.match(server, /Shikoyat qilish/);
+  assert.match(server, /data\.createJobPostReport\(\{jobPostId:job\.id/);
+  assert.match(server, /data\.listJobPostReports\(\)/);
+  assert.match(server, /data\.updateJobPostReport\(\{reportId:report\.report_id/);
+  assert.match(data, /createJobPostReport\(input = \{\}\)/);
+  assert.match(data, /listJobPostReports\(\)/);
+  assert.match(data, /updateJobPostReport\(input = \{\}\)/);
+});
+
+const vacancyModerationChecklistMigration = read("supabase/migrations/20261127050000_idea_app_vacancy_moderation_checklist.sql");
+
+test("moderator approval requires all seven safety checks and stores an audit record", () => {
+  assert.match(vacancyModerationChecklistMigration, /job_post_moderation_reviews/i);
+  assert.match(vacancyModerationChecklistMigration, /jsonb_object_length\(p_checklist\)<>7/i);
+  assert.match(vacancyModerationChecklistMigration, /p_approve and exists\(select 1 from unnest\(v_keys\) as keys\(key\) where p_checklist->>keys\.key<>'true'\)/i);
+  assert.match(vacancyModerationChecklistMigration, /insert into idea_app\.job_post_moderation_reviews/i);
+  assert.match(vacancyModerationChecklistMigration, /moderator_id=\(select auth\.uid\(\)\)/i);
+  assert.match(vacancyModerationChecklistMigration, /grant execute on function public\.idea_lab_review_job_post\(uuid,boolean,text,jsonb\) to authenticated/i);
+});
+
+test("moderator interface blocks approval until all seven checklist items are checked", () => {
+  assert.match(server, /Tasdiqlashdan oldingi xavfsizlik checklisti/);
+  assert.match(server, /const checklistKeys=\[/);
+  assert.match(server, /barcha checklist bandlarini tekshiring/);
+  assert.match(server, /data\.reviewJobPost\(job\.job_post_id,true,"",checklist\)/);
+  assert.match(server, /checklistInputs\[firstMissing\[0\]\]\.focus\(\)/);
+  assert.match(data, /requiredChecks\.some\(key => checklist\[key\] !== true\)/);
+});
+
+const vacancyPolicyRecursionMigration = read("supabase/migrations/20261127060000_fix_job_post_policy_recursion.sql");
+
+test("closed vacancy read policy uses a private helper to avoid job post/application RLS recursion", () => {
+  assert.match(vacancyPolicyRecursionMigration, /create or replace function idea_private\.has_job_application\(p_job_post_id uuid\)/i);
+  assert.match(vacancyPolicyRecursionMigration, /security definer/i);
+  assert.match(vacancyPolicyRecursionMigration, /set search_path = ''/i);
+  assert.match(vacancyPolicyRecursionMigration, /a\.applicant_id = \(select auth\.uid\(\)\)/i);
+  assert.match(vacancyPolicyRecursionMigration, /revoke all on function idea_private\.has_job_application\(uuid\) from public, anon, authenticated/i);
+  assert.match(vacancyPolicyRecursionMigration, /grant execute on function idea_private\.has_job_application\(uuid\) to authenticated/i);
+  assert.match(vacancyPolicyRecursionMigration, /and idea_private\.has_job_application\(id\)/i);
+  assert.match(vacancyPolicyRecursionMigration, /using\s*\([\s\S]*idea_private\.has_job_application\(id\)/i);
+});

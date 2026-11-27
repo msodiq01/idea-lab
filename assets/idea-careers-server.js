@@ -35,6 +35,47 @@
   myPosts.dataset.careerFlow="employer";
   myPosts.innerHTML='<div class="section-heading"><div><h2>Mening vakansiyalarim</h2><p>Joylashtirgan e’lonlaringizni boshqaring va arizalarni ko‘rib chiqing.</p></div></div><div id="ilMyJobPosts" class="cards"></div><div id="ilJobOwnerApplications" class="cards" style="margin-top:16px"></div>';
   section.append(myPosts);
+
+  const editPanel=document.createElement("section");
+  editPanel.className="section form-panel";
+  editPanel.dataset.careerFlow="employer";
+  editPanel.hidden=true;
+  editPanel.innerHTML='<div class="section-heading"><div><h2>Vakansiyani tahrirlash</h2><p>Saqlangan o‘zgarishlar vakansiya holatiga qarab tekshiruvga qaytarilishi mumkin.</p></div></div><form id="ilJobEditForm"><div class="form-grid"><div class="field"><label for="ilEditTitle">Vakansiya nomi</label><input id="ilEditTitle" required minlength="3" maxlength="100"></div><div class="field"><label for="ilEditLocation">Ish joyi</label><input id="ilEditLocation" required minlength="2" maxlength="120"></div><div class="field"><label for="ilEditSalary">Maosh</label><input id="ilEditSalary" maxlength="120" placeholder="Masalan, 3–5 mln so‘m"></div><div class="field"><label for="ilEditType">Ish turi</label><select id="ilEditType" required><option value="full_time">To‘liq ish kuni</option><option value="part_time">Yarim stavka</option><option value="remote">Masofaviy</option><option value="internship">Amaliyot</option><option value="freelance">Frilans</option></select></div><div class="field"><label for="ilEditSchedule">Ish jadvali</label><input id="ilEditSchedule" maxlength="160" placeholder="Masalan, 09:00–18:00"></div><div class="field"><label for="ilEditExperience">Minimal tajriba (yil)</label><input id="ilEditExperience" type="number" min="0" max="50" step="1" required></div><div class="field" style="grid-column:1/-1"><label for="ilEditSkills">Talab qilinadigan ko‘nikmalar (vergul bilan, 20 tagacha)</label><input id="ilEditSkills" maxlength="1600" placeholder="Muloqot, Excel, savdo"></div><div class="field" style="grid-column:1/-1"><label for="ilEditDescription">Vakansiya tavsifi</label><textarea id="ilEditDescription" required minlength="10" maxlength="3000" rows="6"></textarea></div></div><p id="ilJobEditFeedback" class="notice" role="status" aria-live="polite"></p><div class="card-actions"><button class="btn" type="submit">O‘zgarishlarni saqlash</button><button class="btn secondary" id="ilJobEditCancel" type="button">Bekor qilish</button></div></form>';
+  section.append(editPanel);
+  let editingJobId=null;
+  const editForm=$("ilJobEditForm"),editFeedback=$("ilJobEditFeedback");
+  function openJobEditor(job){
+    editingJobId=job.job_post_id;
+    $("ilEditTitle").value=job.title||"";
+    $("ilEditLocation").value=job.location_label||"";
+    $("ilEditSalary").value=job.salary_label||"";
+    $("ilEditType").value=job.employment_type||"full_time";
+    $("ilEditSchedule").value=job.schedule_label||"";
+    $("ilEditExperience").value=Number(job.experience_years_min||0);
+    $("ilEditSkills").value=Array.isArray(job.required_skills)?job.required_skills.join(", "):"";
+    $("ilEditDescription").value=job.description||"";
+    editFeedback.textContent="";
+    editPanel.hidden=false;
+    editPanel.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  function closeJobEditor(){
+    editingJobId=null;editForm.reset();editFeedback.textContent="";editPanel.hidden=true;
+  }
+  editForm.addEventListener("submit",async event=>{
+    event.preventDefault();
+    if(!editingJobId)return;
+    const input={title:clean($("ilEditTitle").value),locationLabel:clean($("ilEditLocation").value),salaryLabel:clean($("ilEditSalary").value),employmentType:$("ilEditType").value,description:clean($("ilEditDescription").value),scheduleLabel:clean($("ilEditSchedule").value),experienceYearsMin:Number($("ilEditExperience").value),requiredSkills:clean($("ilEditSkills").value).split(",").map(skill=>skill.trim()).filter(Boolean)};
+    const button=editForm.querySelector('[type="submit"]');button.disabled=true;editFeedback.textContent="O‘zgarishlar saqlanmoqda…";
+    try{
+      const result=await data.updateJobPost(editingJobId,input);
+      if(!result.ok||result.data!==true){editFeedback.textContent=errorText(result);return;}
+      editFeedback.textContent="Vakansiya yangilandi. Holati moderator tekshiruviga qaytarilgan bo‘lsa, tasdiqlanishini kuting.";
+      await loadJobs();await loadOwnedJobs();
+      setTimeout(()=>closeJobEditor(),1200);
+    }catch(_){editFeedback.textContent="Saqlashda xatolik yuz berdi. Qayta urinib ko‘ring.";}
+    finally{button.disabled=false;}
+  });
+  $("ilJobEditCancel").addEventListener("click",closeJobEditor);
   const myApps=document.createElement("section");
   myApps.className="section";
   myApps.dataset.careerFlow="seeker";
@@ -129,7 +170,17 @@
         selectedJob=job;$("ilApplyTitle").textContent=job.title+" — ariza";
         $("ilApplyMessage").value="";applicationPanel.hidden=false;applicationPanel.scrollIntoView({behavior:"smooth",block:"center"});
       });
-      actions.append(apply);node.append(actions);jobList.append(node);
+      actions.append(apply);
+      const reportToggle=document.createElement("button");reportToggle.className="btn secondary";reportToggle.type="button";reportToggle.textContent="Shikoyat qilish";
+      const reportForm=document.createElement("form");reportForm.className="career-report-form";reportForm.hidden=true;
+      const reportCategory=document.createElement("select");reportCategory.className="search";reportCategory.required=true;
+      [["","Shikoyat sababini tanlang"],["scam","Firibgarlik yoki soxta ish taklifi"],["misleading","Noto‘g‘ri yoki chalg‘ituvchi ma’lumot"],["inappropriate","Nomunosib yoki xavfli mazmun"],["duplicate","Takroriy e’lon"],["expired","Amalda bo‘lmagan vakansiya"],["other","Boshqa sabab"]].forEach(([value,label])=>reportCategory.add(new Option(label,value)));
+      const reportDetails=document.createElement("textarea");reportDetails.rows=3;reportDetails.maxLength=1000;reportDetails.minLength=10;reportDetails.required=true;reportDetails.placeholder="Muammoni aniq tushuntiring (10–1000 belgi).";
+      const reportFeedback=document.createElement("p");reportFeedback.className="notice";reportFeedback.setAttribute("role","status");reportFeedback.setAttribute("aria-live","polite");
+      const reportSubmit=document.createElement("button");reportSubmit.className="btn";reportSubmit.type="submit";reportSubmit.textContent="Shikoyatni yuborish";
+      reportToggle.addEventListener("click",()=>{if(!userId){location.href="auth.html?next=career.html";return;}reportForm.hidden=!reportForm.hidden;});
+      reportForm.addEventListener("submit",async event=>{event.preventDefault();const details=clean(reportDetails.value);if(!reportCategory.value||details.length<10||details.length>1000){reportFeedback.textContent="Shikoyat turini tanlang va kamida 10 belgi izoh yozing.";return;}reportSubmit.disabled=true;reportFeedback.textContent="Shikoyat yuborilmoqda…";const result=await data.createJobPostReport({jobPostId:job.id,category:reportCategory.value,details});reportSubmit.disabled=false;if(!result.ok){reportFeedback.textContent=errorText(result);return;}if(result.data!==true){reportFeedback.textContent="Bu vakansiya bo‘yicha shikoyat avval yuborilgan.";return;}reportForm.reset();reportForm.hidden=true;reportToggle.disabled=true;reportToggle.textContent="Shikoyat yuborildi";reportFeedback.textContent="Rahmat. Shikoyatingiz moderatorlar ko‘rib chiqishi uchun yuborildi.";});
+      reportForm.append(reportCategory,reportDetails,reportSubmit,reportFeedback);actions.append(reportToggle);node.append(actions,reportForm);jobList.append(node);
     });
     updateCounts();
   }
@@ -206,7 +257,7 @@
     });
   }
   async function loadModeration(){
-    const panel=$("moderationPanel"),orgBox=$("moderationOrganizations"),jobBox=$("moderationJobs");
+    const panel=$("moderationPanel"),orgBox=$("moderationOrganizations"),jobBox=$("moderationJobs"),reportBox=$("moderationReports");
     if(!panel||!orgBox||!jobBox||!userId)return;
     const access=await data.isJobModerator();
     if(!access.ok||access.data!==true){panel.hidden=true;return;}
@@ -230,13 +281,58 @@
     else jobResult.data.forEach(job=>{
       const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",job.description,"Yuborilgan: "+new Date(job.created_at).toLocaleString("uz-UZ")]);
       const actions=document.createElement("div");actions.className="card-actions";
-      [["Vakansiyani tasdiqlash",true],["Rad etish",false]].forEach(([label,approve])=>{
-        const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
-        button.addEventListener("click",async()=>{button.disabled=true;const reviewed=await data.reviewJobPost(job.job_post_id,approve);if(!reviewed.ok||reviewed.data!==true){alert(errorText(reviewed));button.disabled=false;return;}await loadModeration();await loadJobs();await loadOwnedJobs();});
-        actions.append(button);
+      const checklistKeys=[
+        ["employer_verified","Ish beruvchi tashkilot ma’lumotlari tekshirildi"],
+        ["job_details_clear","Vazifa va majburiyatlar aniq, tushunarli"],
+        ["salary_terms_clear","Maosh va to‘lov shartlari ochiq ko‘rsatilgan"],
+        ["work_conditions_clear","Ish joyi, jadval va bandlik turi aniq"],
+        ["age_requirements_checked","Yosh va boshqa talablar qonuniy, asoslangan"],
+        ["no_upfront_fees","Ishga kirish uchun oldindan pul talab qilinmaydi"],
+        ["no_suspicious_requests","Shubhali hujjat, karta yoki maxfiy ma’lumot talabi yo‘q"]
+      ];
+      const checklistBox=document.createElement("div");checklistBox.className="career-moderation-checklist";checklistBox.style.width="100%";
+      const checklistTitle=document.createElement("strong");checklistTitle.textContent="Tasdiqlashdan oldingi xavfsizlik checklisti";
+      const checklistHint=document.createElement("p");checklistHint.className="notice";checklistHint.textContent="Vakansiyani tasdiqlash uchun barcha 7 bandni tekshirib belgilang. Shubha bo‘lsa, tasdiqlamang.";
+      const checklistInputs={};
+      checklistBox.append(checklistTitle,checklistHint);
+      checklistKeys.forEach(([key,labelText])=>{
+        const label=document.createElement("label");label.className="career-check-item";label.style.display="flex";label.style.alignItems="flex-start";label.style.gap="10px";label.style.margin="10px 0";
+        const input=document.createElement("input");input.type="checkbox";input.checked=false;input.style.marginTop="4px";checklistInputs[key]=input;
+        const textNode=document.createElement("span");textNode.textContent=labelText;label.append(input,textNode);checklistBox.append(label);
       });
-      node.append(actions);jobBox.append(node);
+      const getChecklist=()=>Object.fromEntries(checklistKeys.map(([key])=>[key,checklistInputs[key].checked]));
+      const reasonField=document.createElement("div");reasonField.className="field";reasonField.style.width="100%";
+      const reasonLabel=document.createElement("label");reasonLabel.textContent="Rad etish sababi (majburiy, 10–500 belgi)";
+      const reason=document.createElement("textarea");reason.rows=3;reason.maxLength=500;reason.minLength=10;reason.placeholder="Aniq yozing: qaysi talab bajarilmagan va nima tuzatish kerak?";
+      reasonLabel.append(reason);reasonField.append(reasonLabel);
+      const feedback=document.createElement("p");feedback.className="notice";feedback.setAttribute("role","status");feedback.setAttribute("aria-live","polite");
+      const approveButton=document.createElement("button");approveButton.className="btn";approveButton.type="button";approveButton.textContent="Vakansiyani tasdiqlash";
+      approveButton.addEventListener("click",async()=>{const checklist=getChecklist();const firstMissing=checklistKeys.find(([key])=>!checklist[key]);if(firstMissing){feedback.textContent="Tasdiqlash mumkin emas: barcha checklist bandlarini tekshiring.";checklistInputs[firstMissing[0]].focus();return;}approveButton.disabled=true;feedback.textContent="Checklist tekshirildi. Tasdiqlanmoqda…";const reviewed=await data.reviewJobPost(job.job_post_id,true,"",checklist);if(!reviewed.ok||reviewed.data!==true){feedback.textContent=errorText(reviewed);approveButton.disabled=false;return;}await loadModeration();await loadJobs();await loadOwnedJobs();});
+      const rejectButton=document.createElement("button");rejectButton.className="btn secondary";rejectButton.type="button";rejectButton.textContent="Sabab bilan rad etish";
+      rejectButton.addEventListener("click",async()=>{const text=clean(reason.value);if(text.length<10||text.length>500){feedback.textContent="Rad etish sababi kamida 10 va ko‘pi bilan 500 belgidan iborat bo‘lsin.";reason.focus();return;}rejectButton.disabled=true;feedback.textContent="Rad etish sababi saqlanmoqda…";const reviewed=await data.reviewJobPost(job.job_post_id,false,text,getChecklist());if(!reviewed.ok||reviewed.data!==true){feedback.textContent=errorText(reviewed);rejectButton.disabled=false;return;}await loadModeration();await loadJobs();await loadOwnedJobs();});
+      actions.append(approveButton,rejectButton);node.append(checklistBox,reasonField,feedback,actions);jobBox.append(node);
     });
+    if(reportBox){
+      const reports=await data.listJobPostReports();reportBox.replaceChildren();
+      if(!reports.ok)empty(reportBox,errorText(reports));
+      else if(!reports.data?.length)empty(reportBox,"Hozircha vakansiyalar bo‘yicha shikoyatlar yo‘q.");
+      else reports.data.forEach(report=>{
+        const categories={scam:"Firibgarlik yoki soxta taklif",misleading:"Chalg‘ituvchi ma’lumot",inappropriate:"Nomunosib yoki xavfli mazmun",duplicate:"Takroriy e’lon",expired:"Amalda bo‘lmagan vakansiya",other:"Boshqa sabab"};
+        const statuses={open:"Yangi",in_review:"Ko‘rib chiqilmoqda",resolved:"Ko‘rib chiqildi",dismissed:"Asossiz deb yopildi"};
+        const reportNode=card(report.job_title,[report.company_name,"Sabab: "+(categories[report.category]||report.category),report.details,"Holat: "+(statuses[report.status]||report.status),report.moderator_note?"Moderator izohi: "+report.moderator_note:"","Yuborilgan: "+new Date(report.created_at).toLocaleString("uz-UZ")]);
+        if(["open","in_review"].includes(report.status)){
+          const note=document.createElement("textarea");note.rows=2;note.maxLength=1000;note.placeholder="Moderator izohi (ixtiyoriy, 1000 belgigacha)";
+          const reportActions=document.createElement("div");reportActions.className="card-actions";
+          [["Tekshiruvga olish","in_review"],["Ko‘rib chiqildi","resolved"],["Asossiz deb yopish","dismissed"]].forEach(([label,status])=>{
+            const button=document.createElement("button");button.className="btn secondary";button.type="button";button.textContent=label;
+            button.addEventListener("click",async()=>{button.disabled=true;const updated=await data.updateJobPostReport({reportId:report.report_id,status,moderatorNote:note.value});if(!updated.ok||updated.data!==true){alert(errorText(updated));button.disabled=false;return;}await loadModeration();});
+            reportActions.append(button);
+          });
+          reportNode.append(note,reportActions);
+        }
+        reportBox.append(reportNode);
+      });
+    }
   }
   async function loadJobs(){
     const r=await data.listPublicJobPosts({limit:50});
@@ -345,11 +441,46 @@
     const r=await data.listMyJobPosts();
     if(!r.ok){empty(box,errorText(r));ownedJobs=[];return;}
     ownedJobs=Array.isArray(r.data)?r.data:[];
+    const analytics=document.createElement("section");analytics.className="card career-employer-analytics";analytics.setAttribute("aria-live","polite");
+    const analyticsTitle=document.createElement("h3");analyticsTitle.textContent="Ish beruvchi statistikasi";analytics.append(analyticsTitle);
+    const analyticsBody=document.createElement("div");analyticsBody.className="card-content";analyticsBody.textContent="Arizalar statistikasi yuklanmoqda…";analytics.append(analyticsBody);box.append(analytics);
+    const statusCount=status=>ownedJobs.filter(job=>job.status===status).length;
+    const statsData={total:ownedJobs.length,published:statusCount("published"),pending:statusCount("pending_review"),closed:statusCount("closed"),rejected:statusCount("rejected"),applications:0,submitted:0,accepted:0,declined:0};
+    const tools=document.createElement("div");tools.className="career-application-tools";
+    const search=document.createElement("input");search.type="search";search.placeholder="Vakansiya nomi yoki shahar bo‘yicha qidirish";search.setAttribute("aria-label","Mening vakansiyalarimdan qidirish");
+    const filter=document.createElement("select");filter.setAttribute("aria-label","Vakansiya holati bo‘yicha filtrlash");
+    [["","Barcha holatlar"],["published","Ochiq"],["pending_review","Tekshiruvda"],["closed","Yopilgan"],["rejected","Rad etilgan"]].forEach(([value,label])=>{const option=document.createElement("option");option.value=value;option.textContent=label;filter.append(option);});
+    const resultCount=document.createElement("p");resultCount.className="notice";resultCount.setAttribute("role","status");resultCount.setAttribute("aria-live","polite");
+    tools.append(search,filter);box.append(tools,resultCount);
+    function updateOwnedVisibility(){
+      const query=clean(search.value).toLocaleLowerCase("uz-UZ"),status=filter.value;
+      let visible=0;
+      Array.from(box.children).forEach(node=>{
+        if(node===analytics||node===tools||node===resultCount)return;
+        const job=ownedJobs.find(item=>item.job_post_id===node.dataset.jobPostId);
+        if(!job)return;
+        const matches=(!status||job.status===status)&&[job.title,job.company_name,job.location_label].join(" ").toLocaleLowerCase("uz-UZ").includes(query);
+        node.hidden=!matches;if(matches)visible++;
+      });
+      resultCount.textContent=visible+" ta vakansiya ko‘rsatilmoqda (jami "+ownedJobs.length+" ta).";
+      if(!visible&&ownedJobs.length)resultCount.textContent="Tanlangan qidiruv yoki holat bo‘yicha vakansiya topilmadi.";
+    }
+    search.addEventListener("input",updateOwnedVisibility);filter.addEventListener("change",updateOwnedVisibility);
     if(!ownedJobs.length)empty(box,"Siz hali vakansiya joylashtirmagansiz.");
+    Promise.all(ownedJobs.filter(job=>["published","closed"].includes(job.status)).map(job=>data.listJobPostApplications(job.job_post_id))).then(results=>{
+      results.forEach(result=>{if(!result.ok||!Array.isArray(result.data))return;statsData.applications+=result.data.length;result.data.forEach(app=>{if(app.status==="submitted")statsData.submitted++;else if(app.status==="accepted")statsData.accepted++;else if(app.status==="declined")statsData.declined++;});});
+      analyticsBody.replaceChildren();const metrics=[["Jami vakansiyalar",statsData.total],["Ochiq",statsData.published],["Tekshiruvda",statsData.pending],["Yopilgan",statsData.closed],["Rad etilgan vakansiyalar",statsData.rejected],["Ko‘rinadigan arizalar",statsData.applications],["Ko‘rib chiqilmoqda",statsData.submitted],["Qabul qilingan",statsData.accepted],["Rad etilgan arizalar",statsData.declined]];
+      metrics.forEach(([label,value])=>{const row=document.createElement("p");row.textContent=label+": "+value;analyticsBody.append(row);});
+    }).catch(()=>{analyticsBody.textContent="Statistikani yuklab bo‘lmadi. Qayta yuklang.";});
     for(const job of ownedJobs){
       const labels={pending_review:"Tekshiruvda",published:"Ochiq",closed:"Yopilgan",rejected:"Rad etilgan"};
-      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"","Holat: "+(labels[job.status]||job.status)]);
+      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"","Holat: "+(labels[job.status]||job.status),job.moderation_reason?"Moderator izohi: "+job.moderation_reason:"",job.status==="closed"?"Bu e’lon yopilgan va ommaviy katalogda ko‘rinmaydi. Qayta ochish moderator tekshiruvini talab qiladi.":""]); 
+      node.dataset.jobPostId=job.job_post_id;
       const actions=document.createElement("div");actions.className="card-actions";
+      if(["published","closed","pending_review","rejected"].includes(job.status)){
+        const edit=document.createElement("button");edit.className="btn secondary";edit.type="button";edit.textContent="Tahrirlash";
+        edit.addEventListener("click",()=>openJobEditor(job));actions.append(edit);
+      }
       if(job.status!=="pending_review"&&job.status!=="rejected"){
         const toggle=document.createElement("button");toggle.className="btn";toggle.type="button";
         toggle.textContent=job.status==="published"?"Vakansiyani yopish":"Tekshiruvga qayta yuborish";
@@ -365,6 +496,7 @@
       }
       if(actions.childNodes.length)node.append(actions);box.append(node);
     }
+    updateOwnedVisibility();
     updateCounts();
     if(!ownedJobs.length)empty(requests,"Hozircha ko‘rib chiqiladigan arizalar yo‘q.");
   }
@@ -374,31 +506,69 @@
     if(!r.ok){empty(box,errorText(r));return;}
     const applications=Array.isArray(r.data)?r.data:[];
     if(!applications.length){empty(box,"Bu vakansiya uchun hali ariza kelib tushmagan.");return;}
-    applications.forEach(item=>{
-      const statusLabels={submitted:"Ko‘rib chiqilmoqda",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"};
-      const candidateLines=[
-        item.candidate_city||"",
-        item.candidate_roles?.length?"Kasblar: "+item.candidate_roles.join(", "):"",
-        item.candidate_skills?.length?"Ko‘nikmalar: "+item.candidate_skills.join(", "):"",
-        item.candidate_experience_years!=null?"Tajriba: "+item.candidate_experience_years+" yil":"",
-        item.candidate_experience_summary||"",
-        item.candidate_education_summary||"",
-        "Ariza holati: "+(statusLabels[item.status]||item.status),
-        "Ariza xabari: "+item.message,
-        "Yuborilgan: "+new Date(item.submitted_at).toLocaleString("uz-UZ")
-      ];
-      const node=card(item.candidate_name||"Nomzod",candidateLines);
-      if(item.status==="submitted"){
-        const actions=document.createElement("div");actions.className="card-actions";
-        [["Qabul qilish","accepted"],["Rad etish","declined"]].forEach(([label,status])=>{
-          const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
-          button.addEventListener("click",async()=>{button.disabled=true;const x=await data.reviewJobApplication(item.application_id,status);if(!x.ok||x.data!==true){alert(errorText(x));button.disabled=false;return;}await loadApplicationsFor(job,box);});
-          actions.append(button);
-        });
-        node.append(actions);
-      }
-      box.append(node);
-    });
+    const statusLabels={submitted:"Ko‘rib chiqilmoqda",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"};
+    const toolbar=document.createElement("div");toolbar.className="career-application-tools";
+    const search=document.createElement("input");search.type="search";search.placeholder="Nomzod, ko‘nikma yoki shahar bo‘yicha qidirish";search.setAttribute("aria-label","Arizalarni qidirish");
+    const filter=document.createElement("select");filter.setAttribute("aria-label","Ariza holati bo‘yicha filtrlash");
+    [["","Barcha holatlar"],["submitted","Ko‘rib chiqilmoqda"],["accepted","Qabul qilindi"],["declined","Rad etildi"],["withdrawn","Qaytarib olindi"]].forEach(([value,label])=>{const option=document.createElement("option");option.value=value;option.textContent=label;filter.append(option);});
+    const sort=document.createElement("select");sort.setAttribute("aria-label","Arizalarni saralash");
+    [["newest","Eng yangi"],["oldest","Eng eski"],["name","Ism bo‘yicha"]].forEach(([value,label])=>{const option=document.createElement("option");option.value=value;option.textContent=label;sort.append(option);});
+    const summary=document.createElement("p");summary.className="notice";summary.setAttribute("role","status");summary.setAttribute("aria-live","polite");
+    const results=document.createElement("div");results.className="cards";
+    toolbar.append(search,filter,sort);box.append(toolbar,summary,results);
+    function render(){
+      results.replaceChildren();
+      const q=clean(search.value).toLocaleLowerCase("uz-UZ"),status=filter.value;
+      const visible=applications.filter(item=>{
+        const hay=[item.candidate_name,item.candidate_city,item.candidate_experience_summary,item.candidate_education_summary,item.message,...(item.candidate_roles||[]),...(item.candidate_skills||[])].join(" ").toLocaleLowerCase("uz-UZ");
+        return hay.includes(q)&&(!status||item.status===status);
+      });
+      const sortMode=sort.value;
+      if(sortMode==="newest")visible.sort((x,y)=>new Date(y.submitted_at)-new Date(x.submitted_at));
+      else if(sortMode==="oldest")visible.sort((x,y)=>new Date(x.submitted_at)-new Date(y.submitted_at));
+      else if(sortMode==="name")visible.sort((x,y)=>clean(x.candidate_name).localeCompare(clean(y.candidate_name),"uz"));
+      summary.textContent=visible.length+" ta ariza ko‘rsatilmoqda (jami "+applications.length+" ta).";
+      if(!visible.length){empty(results,"Qidiruv yoki holat filtri bo‘yicha ariza topilmadi.");return;}
+      visible.forEach(item=>{
+        const candidateLines=[
+          item.candidate_city||"",
+          item.candidate_roles?.length?"Kasblar: "+item.candidate_roles.join(", "):"",
+          item.candidate_skills?.length?"Ko‘nikmalar: "+item.candidate_skills.join(", "):"",
+          item.candidate_experience_years!=null?"Tajriba: "+item.candidate_experience_years+" yil":"",
+          item.candidate_experience_summary||"",
+          item.candidate_education_summary||"",
+          "Ariza holati: "+(statusLabels[item.status]||item.status),
+          "Ariza xabari: "+item.message,
+          "Yuborilgan: "+new Date(item.submitted_at).toLocaleString("uz-UZ")
+        ];
+        const node=card(item.candidate_name||"Nomzod",candidateLines);
+        if(item.status==="submitted"){
+          const actions=document.createElement("div");actions.className="card-actions";
+          const feedback=document.createElement("p");feedback.className="notice";feedback.setAttribute("role","status");feedback.setAttribute("aria-live","polite");
+          [["Qabul qilish","accepted"],["Rad etish","declined"]].forEach(([label,nextStatus])=>{
+            const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
+            button.setAttribute("aria-label",label+" — "+(item.candidate_name||"nomzod"));
+            button.addEventListener("click",async()=>{
+              actions.querySelectorAll("button").forEach(control=>control.disabled=true);
+              feedback.textContent=label+" qarori saqlanmoqda…";
+              try{
+                const x=await data.reviewJobApplication(item.application_id,nextStatus);
+                if(!x.ok||x.data!==true){feedback.textContent=errorText(x);actions.querySelectorAll("button").forEach(control=>control.disabled=false);return;}
+                feedback.textContent="Qaror saqlandi. Arizalar ro‘yxati yangilanmoqda…";
+                await loadApplicationsFor(job,box);
+              }catch(_){
+                feedback.textContent="Qarorni saqlashda xatolik yuz berdi. Qayta urinib ko‘ring.";
+                actions.querySelectorAll("button").forEach(control=>control.disabled=false);
+              }
+            });
+            actions.append(button);
+          });
+          actions.append(feedback);node.append(actions);
+        }
+        results.append(node);
+      });
+    }
+    search.addEventListener("input",render);filter.addEventListener("change",render);sort.addEventListener("change",render);render();
   }
   async function createJob(event){
     event.preventDefault();
