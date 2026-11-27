@@ -25,7 +25,8 @@ begin
  set title=btrim(p_title),description=btrim(p_description),salary_label=coalesce(btrim(p_salary_label),''),
   location_label=btrim(p_location_label),employment_type=p_employment_type,
   required_skills=coalesce(p_required_skills,'{}'),experience_years_min=coalesce(p_experience_years_min,0),schedule_label=coalesce(btrim(p_schedule_label),''),
-  status=case when status in ('published','rejected') then 'pending_review' else status end,\n  moderation_reason=case when status='rejected' then null else moderation_reason end,
+  status=case when status in ('published','rejected') then 'pending_review' else status end,
+  moderation_reason=case when status='rejected' then null else moderation_reason end,
   updated_at=now()
  where id=p_job_post_id and created_by=auth.uid() and status in ('published','closed','pending_review','rejected');
  get diagnostics v_count=row_count; return v_count=1;
