@@ -267,3 +267,28 @@ test("owners can correct rejected vacancies and resubmit them for moderation", (
   assert.match(ownerEditMigration, /status in \('published','closed','pending_review','rejected'\)/i);
   assert.match(server, /\["published","closed","pending_review","rejected"\]\.includes\(job\.status\)/);
 });
+
+const vacancyReportsMigration = read("supabase/migrations/20261127030000_idea_app_job_post_reports.sql");
+
+test("vacancy reports enforce authenticated ownership, one report per user and moderator-only review", () => {
+  assert.match(vacancyReportsMigration, /enable row level security/i);
+  assert.match(vacancyReportsMigration, /unique\(job_post_id,reporter_id\)/i);
+  assert.match(vacancyReportsMigration, /reporter_id=\(select auth\.uid\(\)\)/i);
+  assert.match(vacancyReportsMigration, /role in \('admin','moderator'\)/i);
+  assert.match(vacancyReportsMigration, /j\.status='published' and j\.created_by<>\(select auth\.uid\(\)\)/i);
+  assert.match(vacancyReportsMigration, /on conflict\(job_post_id,reporter_id\) do nothing/i);
+  assert.match(vacancyReportsMigration, /grant execute on function public\.idea_lab_create_job_post_report\(uuid,text,text\) to authenticated/i);
+  assert.match(vacancyReportsMigration, /grant execute on function public\.idea_lab_list_job_post_reports\(\) to authenticated/i);
+  assert.match(vacancyReportsMigration, /grant execute on function public\.idea_lab_update_job_post_report\(uuid,text,text\) to authenticated/i);
+});
+
+test("public vacancy cards can submit reports and moderator panel can review them", () => {
+  assert.match(page, /id="moderationReports"/);
+  assert.match(server, /Shikoyat qilish/);
+  assert.match(server, /data\.createJobPostReport\(\{jobPostId:job\.id/);
+  assert.match(server, /data\.listJobPostReports\(\)/);
+  assert.match(server, /data\.updateJobPostReport\(\{reportId:report\.report_id/);
+  assert.match(data, /createJobPostReport\(input = \{\}\)/);
+  assert.match(data, /listJobPostReports\(\)/);
+  assert.match(data, /updateJobPostReport\(input = \{\}\)/);
+});
