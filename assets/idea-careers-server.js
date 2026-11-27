@@ -380,7 +380,7 @@
       select.add(new Option("Faol tashkilot yo‘q",""));
       select.disabled=true;
       const message=all.some(x=>x.status==="pending_review")
-        ?"Tashkilot profilingiz tekshiruvda. Moderator tasdiqlagach vakansiya joylashtirish ochiladi."
+        ?"Tashkilot profilingiz tekshiruvda. Tashkilot faollashgach vakansiya joylashtirish ochiladi."
          :"Avval tashkilot profilini yarating. U avtomatik faollashadi; faol tashkilotdan joylangan vakansiya darhol e’lon qilinadi.";
       formHint.textContent=message;
       if(orgHelp)orgHelp.textContent=message+" Quyidagi “Tashkilot yaratish” tugmasi orqali davom eting.";
