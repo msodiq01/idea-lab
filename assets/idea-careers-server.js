@@ -257,9 +257,18 @@
     });
   }
   async function loadJobs(){
-    const r=await data.listPublicJobPosts({limit:50});
-    if(!r.ok){setStatus(errorText(r),true);jobs=[];renderJobs();return;}
-    jobs=Array.isArray(r.data)?r.data:[];
+    setStatus("Barcha faol vakansiyalar yuklanmoqda…");
+    const pageSize=50;let offset=0,all=[];
+    while(true){
+      const r=await data.listPublicJobPosts({limit:pageSize,offset});
+      if(!r.ok){setStatus(errorText(r),true);jobs=[];renderJobs();return;}
+      const page=Array.isArray(r.data)?r.data:[];
+      all=all.concat(page);
+      if(page.length<pageSize)break;
+      offset+=pageSize;
+    }
+    jobs=all;
+    setStatus("Barcha faol vakansiyalar katalogi yangilandi.");
     renderJobs();
   }
   async function loadOrganizations(){
