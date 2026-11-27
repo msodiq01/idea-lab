@@ -184,6 +184,7 @@ test("employer dashboard exposes a prefilled vacancy editor and validated save f
 test("employer dashboard shows vacancy and application analytics", () => {
   assert.match(server, /Ish beruvchi statistikasi/);
   assert.match(server, /listJobPostApplications\(job\.job_post_id\)/);
+  assert.match(server, /ownedJobs\.filter\(job=>\["published","closed"\]\.includes\(job\.status\)\)\.map\(job=>data\.listJobPostApplications\(job\.job_post_id\)\)/);
   assert.match(server, /Ko‘rinadigan arizalar/);
   assert.match(server, /statsData\.accepted\+\+/);
 });
