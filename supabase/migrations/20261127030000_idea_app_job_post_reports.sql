@@ -41,7 +41,7 @@ as $function$
 declare v_count integer;
 begin
  if auth.uid() is null then raise exception 'Authentication required' using errcode='42501'; end if;
- if p_category not in ('scam','misleading','inappropriate','duplicate','expired','other')
+ if p_category is null or p_category not in ('scam','misleading','inappropriate','duplicate','expired','other')
   or p_details is null or char_length(btrim(p_details)) not between 10 and 1000 then
   raise exception 'Invalid report details' using errcode='22023';
  end if;
@@ -84,7 +84,7 @@ begin
  if auth.uid() is null or not exists(select 1 from public.user_roles ur where ur.user_id=(select auth.uid()) and ur.role in ('admin','moderator')) then
   raise exception 'Moderator access required' using errcode='42501';
  end if;
- if p_status not in ('in_review','resolved','dismissed') or coalesce(char_length(v_note),0)>1000 then
+ if p_status is null or p_status not in ('in_review','resolved','dismissed') or coalesce(char_length(v_note),0)>1000 then
   raise exception 'Invalid report review status or note' using errcode='22023';
  end if;
  update idea_app.job_post_reports
