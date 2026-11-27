@@ -248,7 +248,7 @@
     const select=$("jobOrganization");if(!select)return;
     select.replaceChildren(new Option("Tashkilotni tanlang",""));
     const statusBox=$("employerOrgStatus");if(statusBox)statusBox.replaceChildren();
-    const orgHelp=$("jobOrganizationHelp");if(orgHelp){orgHelp.hidden=false;orgHelp.textContent="Vakansiya joylash uchun tasdiqlangan tashkilot kerak. Tashkilotingiz bo‘lmasa, avval tashkilot profilini yarating."; }
+    const orgHelp=$("jobOrganizationHelp");if(orgHelp){orgHelp.hidden=false;orgHelp.textContent="Vakansiya joylash uchun faol tashkilot kerak. Tashkilot profili avtomatik faollashadi; vakansiya alohida tekshiriladi."; }
     if(!userId){select.disabled=true;if(statusBox)empty(statusBox,"Tashkilot holatini ko‘rish uchun akkauntga kiring.");if(orgHelp)orgHelp.textContent="Avval akkauntga kiring, keyin tashkilot profilini yarating.";return;}
     const r=await data.listMyOrganizations();
     if(!r.ok){select.disabled=true;setStatus(errorText(r),true);if(statusBox)empty(statusBox,errorText(r));return;}
@@ -259,16 +259,18 @@
     if(statusBox){
       if(!all.length)empty(statusBox,"Hali ish beruvchi tashkilot profilingiz yo‘q.");
       all.forEach(org=>{
-        const labels={draft:"Qoralama",pending_review:"Tekshiruvda",active:"Tasdiqlangan",rejected:"Rad etilgan",archived:"Arxivlangan"};
-        statusBox.append(card(org.name,["Holat: "+(labels[org.status]||org.status),org.location_label||"Hudud ko‘rsatilmagan"]));
+        const labels={draft:"Qoralama",pending_review:"Tekshiruvda",active:"Faol — avtomatik",rejected:"Rad etilgan",archived:"Arxivlangan"};
+        const details=["Holat: "+(labels[org.status]||org.status),org.location_label||"Hudud ko‘rsatilmagan"];
+        if(org.status==="active")details.push("Avtomatik faollashtirilgan; bu yuridik tekshiruvdan o‘tganini anglatmaydi.");
+        statusBox.append(card(org.name,details));
       });
     }
     if(!organizations.length){
-      select.add(new Option("Tasdiqlangan tashkilot yo‘q",""));
+      select.add(new Option("Faol tashkilot yo‘q",""));
       select.disabled=true;
       const message=all.some(x=>x.status==="pending_review")
         ?"Tashkilot profilingiz tekshiruvda. Moderator tasdiqlagach vakansiya joylashtirish ochiladi."
-        :"Avval tashkilot profilini yarating va moderator tekshiruviga yuboring.";
+        :"Avval tashkilot profilini yarating. U avtomatik faollashadi, vakansiya esa alohida tekshiriladi.";
       formHint.textContent=message;
       if(orgHelp)orgHelp.textContent=message+" Quyidagi “Tashkilot yaratish” tugmasi orqali davom eting.";
     }else{select.disabled=false;if(orgHelp)orgHelp.textContent="Tashkilotni tanlang, keyin vakansiya ma’lumotlarini to‘ldiring.";}
@@ -285,7 +287,7 @@
     };
     const button=employerOrgForm.querySelector('[type="submit"]');button.disabled=true;
     setStatus("Tashkilot ma’lumotlari saqlanmoqda…");
-    const submitted=await data.submitOrganizationForReview(input);
+    const submitted=await data.createActiveOrganization(input);
     button.disabled=false;
     if(!submitted.ok){
       setStatus(errorText(submitted),true);
@@ -297,7 +299,7 @@
       await loadOrganizations();return;
     }
     employerOrgForm.reset();
-    setStatus("Tashkilot tekshiruvga yuborildi. Tasdiqlanmaguncha vakansiyalar ommaviy chiqmaydi.");
+    setStatus("Tashkilot avtomatik faollashtirildi. Bu yuridik tekshiruvdan o‘tganini anglatmaydi; vakansiyalar alohida tekshiruvdan o‘tadi.");
     await loadOrganizations();
   }
   async function loadMyApplications(){
