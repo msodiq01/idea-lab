@@ -426,6 +426,33 @@
     listPendingJobPosts() {
       return runPublicCommand("idea_lab_list_pending_job_posts", {});
     },
+    createJobPostReport(input = {}) {
+      const categories = ["scam","misleading","inappropriate","duplicate","expired","other"];
+      if (!isUuid(input.jobPostId) || !categories.includes(input.category) ||
+          !requiredText(input.details, 10, 1000)) {
+        return Promise.resolve(fail("INVALID_JOB_REPORT", "Shikoyat turi va izohi to‘g‘ri kiritilishi kerak (10–1000 belgi)."));
+      }
+      return runPublicCommand("idea_lab_create_job_post_report", {
+        p_job_post_id: input.jobPostId,
+        p_category: input.category,
+        p_details: input.details.trim()
+      });
+    },
+    listJobPostReports() {
+      return runPublicCommand("idea_lab_list_job_post_reports", {});
+    },
+    updateJobPostReport(input = {}) {
+      const statuses = ["in_review","resolved","dismissed"];
+      if (!isUuid(input.reportId) || !statuses.includes(input.status) ||
+          (input.moderatorNote !== undefined && (typeof input.moderatorNote !== "string" || input.moderatorNote.length > 1000))) {
+        return Promise.resolve(fail("INVALID_JOB_REPORT_REVIEW", "Shikoyat holati yoki moderator izohi noto‘g‘ri."));
+      }
+      return runPublicCommand("idea_lab_update_job_post_report", {
+        p_report_id: input.reportId,
+        p_status: input.status,
+        p_moderator_note: input.moderatorNote === undefined ? null : input.moderatorNote.trim()
+      });
+    },
     reviewJobPost(jobPostId, approve, reason = "") {
       const cleanReason = String(reason ?? "").trim();
       if (!isUuid(jobPostId) || typeof approve !== "boolean" ||
