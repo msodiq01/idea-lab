@@ -80,22 +80,31 @@
   }
   function updateCounts(visibleCount=jobs.length){
     if($("jobCount"))$("jobCount").textContent=String(jobs.length);
-    if($("vacancyTotalCount"))$("vacancyTotalCount").textContent=String(jobs.length);
-    if($("vacancyVisibleCount"))$("vacancyVisibleCount").textContent=String(visibleCount);
+    const statsRows=$("vacancyStatsRows");
+    if(statsRows){
+      statsRows.replaceChildren();
+      [["Jami faol e’lonlar",jobs.length],["Filtrdan keyin ko‘rinayotgan e’lonlar",visibleCount],["E’lon joylangan hududlar",new Set(jobs.map(job=>clean(job.location_label)||"Hudud ko‘rsatilmagan")).size]].forEach(([label,value])=>{
+        const row=document.createElement("tr"),left=document.createElement("td"),right=document.createElement("td");
+        left.textContent=label;right.textContent=String(value);right.style.textAlign="right";
+        [left,right].forEach(cell=>{cell.style.padding="10px";cell.style.borderTop="1px solid var(--border,rgba(255,255,255,.12))";});
+        row.append(left,right);statsRows.append(row);
+      });
+    }
     const regions=new Map();
     jobs.forEach(job=>{
       const region=clean(job.location_label)||"Hudud ko‘rsatilmagan";
       regions.set(region,(regions.get(region)||0)+1);
     });
-    if($("vacancyRegionCount"))$("vacancyRegionCount").textContent=String(regions.size);
-    const regionBox=$("vacancyRegionStats");
-    if(regionBox){
-      regionBox.replaceChildren();
-      [...regions.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],"uz")).slice(0,8).forEach(([region,count])=>{
-        const item=card(region,[count+" ta faol e’lon"]);
-        regionBox.append(item);
+    const regionRows=$("vacancyRegionRows");
+    if(regionRows){
+      regionRows.replaceChildren();
+      [...regions.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],"uz")).forEach(([region,count])=>{
+        const row=document.createElement("tr"),left=document.createElement("td"),right=document.createElement("td");
+        left.textContent=region;right.textContent=String(count);right.style.textAlign="right";
+        [left,right].forEach(cell=>{cell.style.padding="10px";cell.style.borderTop="1px solid var(--border,rgba(255,255,255,.12))";});
+        row.append(left,right);regionRows.append(row);
       });
-      if(!regions.size)empty(regionBox,"Hududiy statistika uchun vakansiya topilmadi.");
+      if(!regions.size){const row=document.createElement("tr"),cell=document.createElement("td");cell.colSpan=2;cell.textContent="Hududiy statistika uchun vakansiya topilmadi.";cell.style.padding="10px";row.append(cell);regionRows.append(row);}
     }
   }
   function renderJobs(){
