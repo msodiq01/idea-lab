@@ -487,7 +487,7 @@
       return runPublicCommand("idea_lab_list_job_post_applications", { p_job_post_id: jobPostId });
     },
     reviewJobApplication(applicationId, status) {
-      if (!isUuid(applicationId) || !["accepted", "declined"].includes(status)) return Promise.resolve(fail("INVALID_JOB_REVIEW", "Ariza qarori noto‘g‘ri."));
+      if (!isUuid(applicationId) || !["interview", "accepted", "declined"].includes(status)) return Promise.resolve(fail("INVALID_JOB_REVIEW", "Ariza qarori noto‘g‘ri."));
       return runPublicCommand("idea_lab_review_job_application", { p_application_id: applicationId, p_status: status });
     },
     createResourceOffer(input = {}) {
