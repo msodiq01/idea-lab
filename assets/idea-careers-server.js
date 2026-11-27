@@ -78,6 +78,9 @@
   function employmentType(raw){
     const found=Object.entries(typeLabels).find(([key])=>key===raw);return found?found[1]:"Boshqa";
   }
+  function locationLabel(job){
+    return [clean(job.region_label),clean(job.district_label),clean(job.location_label)].filter(Boolean).join(" · ")||"Hudud ko‘rsatilmagan";
+  }
   function updateCounts(visibleCount=jobs.length){
     if($("jobCount"))$("jobCount").textContent=String(jobs.length);
     const statsRows=$("vacancyStatsRows");
@@ -189,8 +192,8 @@
       return amount;
     };
     const visible=jobs.filter(job=>{
-      const hay=[job.title,job.company_name,job.location_label,job.description,job.schedule_label,employmentType(job.employment_type),...(job.required_skills||[])].join(" ").toLocaleLowerCase("uz-UZ");
-      const location=clean(job.location_label).toLocaleLowerCase("uz-UZ");
+      const hay=[job.title,job.company_name,job.region_label,job.district_label,job.location_label,job.description,job.schedule_label,employmentType(job.employment_type),...(job.required_skills||[])].join(" ").toLocaleLowerCase("uz-UZ");
+      const location=[job.region_label,job.district_label,job.location_label].map(clean).join(" ").toLocaleLowerCase("uz-UZ");
       const salary=salaryNumber(job);
       return hay.includes(q)&&(!locationQuery||location.includes(locationQuery))&&(!f||employmentType(job.employment_type)===f)&&(!salaryFloor||salary>=salaryFloor);
     });
@@ -204,7 +207,7 @@
       const node=card(job.title,[job.company_name,job.description]);
       const paragraphs=node.querySelectorAll("p");if(paragraphs[1])paragraphs[1].className="career-description";
       const meta=document.createElement("div");meta.className="career-meta";
-      const chips=[job.location_label,employmentType(job.employment_type),job.schedule_label||"",Number(job.openings_count)>1?String(job.openings_count)+" ta ish o‘rni":"1 ta ish o‘rni",job.experience_years_min>0?"Tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.salary_label||"Maosh kelishiladi"];
+      const chips=[locationLabel(job),employmentType(job.employment_type),job.schedule_label||"",Number(job.openings_count)>1?String(job.openings_count)+" ta ish o‘rni":"1 ta ish o‘rni",job.experience_years_min>0?"Tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.salary_label||"Maosh kelishiladi"];
       chips.filter(Boolean).forEach((label,index)=>{const chip=document.createElement("span");chip.className="career-chip"+(index===5?" career-salary":"");chip.textContent=label;meta.append(chip);});
       const skills=job.required_skills||[];
       if(skills.length){const skillLine=document.createElement("p");skillLine.textContent="Ko‘nikmalar: "+skills.join(", ");node.append(skillLine);}
@@ -289,10 +292,10 @@
     if(!r.data?.length){empty(matchBox,"Hozircha rezyumengizga mos haqiqiy vakansiya topilmadi. Yangi e’lonlar joylashtirilganda shu yerda ko‘rinadi.");return;}
     r.data.forEach(job=>{
       const reasons=Array.isArray(job.match_reasons)?job.match_reasons.join(" • "):"";
-      const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Kerakli ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",reasons]);
+      const node=card(job.title,[job.company_name,locationLabel(job),employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Kerakli ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",reasons]);
       const score=document.createElement("p");score.className="notice";score.textContent="Moslik: "+Number(job.match_score||0)+"% — bu yo‘naltiruvchi baho, ishga qabul qilish kafolati emas.";node.append(score);
       const actions=document.createElement("div");actions.className="card-actions";
-      const apply=document.createElement("button");apply.className="btn green career-apply-action";apply.type="button";apply.textContent=userId?"Ariza yuborish":"Kirish orqali ariza yuborish";apply.hidden=activeMode==="employer";
+      const apply=document.createElement("button");apply.className="btn green career-apply-action";apply.type="button";const alreadyApplied=appliedJobIds.has(job.id);apply.textContent=alreadyApplied?"Ariza yuborilgan":userId?"Ariza yuborish":"Kirish orqali ariza yuborish";apply.disabled=alreadyApplied;apply.hidden=activeMode==="employer";
       apply.addEventListener("click",()=>{if(!userId){location.href="auth.html?next=career.html";return;}selectedJob=job;$("ilApplyTitle").textContent=job.title+" — ariza";$("ilApplyMessage").value="";applicationPanel.hidden=false;applicationPanel.scrollIntoView({behavior:"smooth",block:"center"});});
       actions.append(apply);node.append(actions);matchBox.append(node);
     });
