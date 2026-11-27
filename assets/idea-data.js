@@ -426,9 +426,18 @@
     listPendingJobPosts() {
       return runPublicCommand("idea_lab_list_pending_job_posts", {});
     },
-    reviewJobPost(jobPostId, approve) {
-      if (!isUuid(jobPostId) || typeof approve !== "boolean") return Promise.resolve(fail("INVALID_JOB_REVIEW", "Vakansiya tekshiruvi ma’lumoti noto‘g‘ri."));
-      return runPublicCommand("idea_lab_review_job_post", { p_job_post_id: jobPostId, p_approve: approve });
+    reviewJobPost(jobPostId, approve, reason = "") {
+      const cleanReason = String(reason ?? "").trim();
+      if (!isUuid(jobPostId) || typeof approve !== "boolean" ||
+          (!approve && (cleanReason.length < 10 || cleanReason.length > 500)) ||
+          (approve && cleanReason.length > 500)) {
+        return Promise.resolve(fail("INVALID_JOB_REVIEW", "Rad etish sababi 10–500 belgidan iborat bo‘lishi kerak."));
+      }
+      return runPublicCommand("idea_lab_review_job_post", {
+        p_job_post_id: jobPostId,
+        p_approve: approve,
+        p_reason: approve ? null : cleanReason
+      });
     },
     listMyJobPosts() {
       return runPublicCommand("idea_lab_list_my_job_posts", {});
