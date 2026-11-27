@@ -287,17 +287,15 @@
     };
     const button=employerOrgForm.querySelector('[type="submit"]');button.disabled=true;
     setStatus("Tashkilot ma’lumotlari saqlanmoqda…");
-    const created=await data.createOrganization(input);
-    if(!created.ok){button.disabled=false;setStatus(errorText(created),true);return;}
-    const organizationId=typeof created.data==="string"?created.data:created.data?.id;
-    if(!organizationId){button.disabled=false;setStatus("Tashkilot yaratildi, ammo identifikatorni o‘qib bo‘lmadi. Qayta yubormang; kabinetdan tekshiring.",true);return;}
-    const submitted=await data.updateOrganization({
-      organizationId,name:input.name,type:input.type,description:input.description,
-      location:input.location,websiteUrl:input.websiteUrl,visibility:"public",status:"pending_review"
-    });
+    const submitted=await data.submitOrganizationForReview(input);
     button.disabled=false;
-    if(!submitted.ok||submitted.data!==true){
-      setStatus("Tashkilot profili yaratildi, lekin tekshiruvga yuborilmadi. Kabinetdagi holatini tekshiring.",true);
+    if(!submitted.ok){
+      setStatus(errorText(submitted),true);
+      await loadOrganizations();return;
+    }
+    const organizationId=typeof submitted.data==="string"?submitted.data:submitted.data?.id;
+    if(!organizationId){
+      setStatus("Tashkilot yuborildi, lekin ID qaytmadi. Kabinetdan holatini tekshiring.",true);
       await loadOrganizations();return;
     }
     employerOrgForm.reset();

@@ -325,6 +325,17 @@
         p_website_url: input.websiteUrl || null, p_visibility: visibility
       });
     },
+    submitOrganizationForReview(input = {}) {
+      if (!requiredText(input.name, 2, 120) || (input.description || "").length > 2400) return Promise.resolve(fail("INVALID_ORGANIZATION", "Tashkilot nomi yoki tavsifi noto‘g‘ri."));
+      const types = ["company", "nonprofit", "educational_institution", "community", "team", "other"];
+      const visibility = ["private", "unlisted", "public"].includes(input.visibility) ? input.visibility : "public";
+      return runPublicCommand("idea_lab_submit_organization_for_review", {
+        p_name: input.name.trim(), p_slug: input.slug || null,
+        p_organization_type: types.includes(input.type) ? input.type : "other",
+        p_description: input.description || "", p_location_label: input.location || null,
+        p_website_url: input.websiteUrl || null, p_visibility: visibility
+      });
+    },
     updateOrganization(input = {}) {
       if (!isUuid(input.organizationId) || !requiredText(input.name, 2, 120)) return Promise.resolve(fail("INVALID_ORGANIZATION", "Tashkilot ma’lumoti noto‘g‘ri."));
       return runPublicCommand("idea_lab_update_organization", {
