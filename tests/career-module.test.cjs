@@ -207,3 +207,14 @@ test("vacancy edit includes schedule, experience and required skills", () => {
   assert.match(ownerEditMigration, /experience_years_min=coalesce\(p_experience_years_min,0\)/);
   assert.match(ownerEditMigration, /schedule_label=coalesce\(btrim\(p_schedule_label\),''\)/);
 });
+
+
+test("employer application panel supports candidate search and status filtering with live counts", () => {
+  assert.match(server, /career-application-tools/);
+  assert.match(server, /Nomzod, ko‘nikma yoki shahar bo‘yicha qidirish/);
+  assert.match(server, /Ariza holati bo‘yicha filtrlash/);
+  assert.match(server, /visible\.length\+" ta ariza ko‘rsatilmoqda/);
+  assert.match(server, /item\.candidate_name,item\.candidate_city,item\.candidate_experience_summary/);
+  assert.match(server, /search\.addEventListener\("input",render\)/);
+  assert.match(server, /filter\.addEventListener\("change",render\)/);
+});
