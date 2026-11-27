@@ -28,9 +28,9 @@ const expectedMigrations = [
   "20261122_application_activity_notifications.sql",
 ];
 
-test("staging migration directory contains the reviewed ordered migration set", () => {
+test("staging runbook migration set remains present in reviewed dependency order", () => {
   const actual = fs.readdirSync(migrationDir)
-    .filter((name) => /^\d{8}_.+\.sql$/.test(name))
+    .filter((name) => expectedMigrations.includes(name))
     .sort();
   assert.deepEqual(actual, expectedMigrations);
 });

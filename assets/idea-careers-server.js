@@ -90,12 +90,73 @@
         row.append(left,right);statsRows.append(row);
       });
     }
+    const employerTotals=new Map();
+    jobs.forEach(job=>{
+      const employer=clean(job.company_name)||"Tashkilot ko‘rsatilmagan";
+      const totals=employerTotals.get(employer)||{posts:0,openings:0};
+      totals.posts+=1;totals.openings+=Number(job.openings_count)||1;employerTotals.set(employer,totals);
+    });
+    const employerRows=$("vacancyEmployerRows");
+    if(employerRows){
+      employerRows.replaceChildren();
+      [...employerTotals.entries()].sort((a,b)=>b[1].openings-a[1].openings||a[0].localeCompare(b[0],"uz")).slice(0,10).forEach(([employer,totals])=>{
+        const row=document.createElement("tr"),left=document.createElement("td"),posts=document.createElement("td"),openings=document.createElement("td");
+        left.textContent=employer;posts.textContent=String(totals.posts);openings.textContent=String(totals.openings);
+        posts.style.textAlign="right";openings.style.textAlign="right";
+        [left,posts,openings].forEach(cell=>{cell.style.padding="10px";cell.style.borderTop="1px solid var(--border,rgba(255,255,255,.12))";});
+        row.append(left,posts,openings);employerRows.append(row);
+      });
+      if(!employerTotals.size){const row=document.createElement("tr"),cell=document.createElement("td");cell.colSpan=3;cell.textContent="Ish beruvchilar statistikasi uchun ma’lumot topilmadi.";cell.style.padding="10px";row.append(cell);employerRows.append(row);}
+    }
+    const monthTotals=new Map();
+    const now=new Date();
+    for(let offset=5;offset>=0;offset--){
+      const date=new Date(now.getFullYear(),now.getMonth()-offset,1);
+      const key=date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0");
+      monthTotals.set(key,{label:date.toLocaleDateString("uz-UZ",{month:"long",year:"numeric"}),posts:0,openings:0});
+    }
+    jobs.forEach(job=>{
+      const rawDate=job.published_at||job.created_at;
+      if(!rawDate)return;
+      const date=new Date(rawDate);if(Number.isNaN(date.getTime()))return;
+      const key=date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0");
+      const totals=monthTotals.get(key);if(totals){totals.posts+=1;totals.openings+=Number(job.openings_count)||1;}
+    });
+    const trendRows=$("vacancyTrendRows");
+    if(trendRows){
+      trendRows.replaceChildren();
+      [...monthTotals.values()].forEach(totals=>{
+        const row=document.createElement("tr"),left=document.createElement("td"),posts=document.createElement("td"),openings=document.createElement("td");
+        left.textContent=totals.label;posts.textContent=String(totals.posts);openings.textContent=String(totals.openings);
+        posts.style.textAlign="right";openings.style.textAlign="right";
+        [left,posts,openings].forEach(cell=>{cell.style.padding="10px";cell.style.borderTop="1px solid var(--border,rgba(255,255,255,.12))";});
+        row.append(left,posts,openings);trendRows.append(row);
+      });
+    }
     const regions=new Map();
     jobs.forEach(job=>{
       const region=clean(job.location_label)||"Hudud ko‘rsatilmagan";
       const totals=regions.get(region)||{posts:0,openings:0};
       totals.posts+=1;totals.openings+=Number(job.openings_count)||1;regions.set(region,totals);
     });
+    const professionTotals=new Map();
+    jobs.forEach(job=>{
+      const profession=clean(job.title)||"Lavozim ko‘rsatilmagan";
+      const totals=professionTotals.get(profession)||{posts:0,openings:0};
+      totals.posts+=1;totals.openings+=Number(job.openings_count)||1;professionTotals.set(profession,totals);
+    });
+    const professionRows=$("vacancyProfessionRows");
+    if(professionRows){
+      professionRows.replaceChildren();
+      [...professionTotals.entries()].sort((a,b)=>b[1].openings-a[1].openings||a[0].localeCompare(b[0],"uz")).forEach(([profession,totals])=>{
+        const row=document.createElement("tr"),left=document.createElement("td"),posts=document.createElement("td"),openings=document.createElement("td");
+        left.textContent=profession;posts.textContent=String(totals.posts);openings.textContent=String(totals.openings);
+        posts.style.textAlign="right";openings.style.textAlign="right";
+        [left,posts,openings].forEach(cell=>{cell.style.padding="10px";cell.style.borderTop="1px solid var(--border,rgba(255,255,255,.12))";});
+        row.append(left,posts,openings);professionRows.append(row);
+      });
+      if(!professionTotals.size){const row=document.createElement("tr"),cell=document.createElement("td");cell.colSpan=3;cell.textContent="Kasblar statistikasi uchun vakansiya topilmadi.";cell.style.padding="10px";row.append(cell);professionRows.append(row);}
+    }
     const regionRows=$("vacancyRegionRows");
     if(regionRows){
       regionRows.replaceChildren();
