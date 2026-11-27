@@ -381,6 +381,7 @@
       const years = Number(input.experienceYearsMin || 0);
       if (!isUuid(input.organizationId) || !requiredText(input.title, 3, 100) ||
           !requiredText(input.description, 10, 3000) || !requiredText(input.location, 2, 120) ||
+          !Number.isInteger(Number(input.openingsCount)) || Number(input.openingsCount) < 1 || Number(input.openingsCount) > 500 ||
           (input.salary || "").length > 120 || !types.includes(input.employmentType) ||
           !Array.isArray(skills) || skills.length > 20 ||
           skills.some(x => typeof x !== "string" || !x.trim() || x.trim().length > 80) ||
@@ -393,7 +394,7 @@
         p_description: input.description.trim(), p_salary_label: input.salary || "",
         p_location_label: input.location.trim(), p_employment_type: input.employmentType,
         p_required_skills: skills.map(x => x.trim()), p_experience_years_min: years,
-        p_schedule_label: input.schedule || ""
+        p_schedule_label: input.schedule || "", p_openings_count: Number(input.openingsCount)
       });
     },
     getMyJobSeekerProfile() {
