@@ -549,7 +549,7 @@
       contactPhone:clean($("jobContactPhone")?.value)
     };
     if(!input.organizationId){alert("Avval o‘zingizga tegishli tashkilotni tanlang.");return;}
-    const contactDigits=input.contactPhone.replace(/\\D/g,"");
+    const contactDigits=input.contactPhone.replace(/\D/g,"");
     if(input.contactName.length<2){alert("Aloqa uchun mas’ul shaxs ismini kiriting.");return;}
     if(!/^998[0-9]{9}$/.test(contactDigits)){alert("Telefon raqamini +998 90 123 45 67 formatida kiriting.");return;}
     const submit=form.querySelector('[type="submit"]');if(submit)submit.disabled=true;
