@@ -61,7 +61,7 @@
     const label=field?.querySelector("label");if(label)label.textContent="Ish beruvchi tashkilot *";
   }
   const phoneField=$("employerPhone")?.closest(".field");if(phoneField)phoneField.remove();
-  const formHint=document.createElement("p");formHint.className="notice";formHint.textContent="Vakansiya joylashtirish uchun IDEA LAB’da tashkilot egasi bo‘lishingiz kerak. Aloqa telefonini ochiq e’longa kiritmang.";
+  const formHint=document.createElement("p");formHint.className="notice";formHint.textContent="Vakansiya joylashtirish uchun IDEA LAB’da faol tashkilot egasi bo‘lishingiz kerak. Joylangan vakansiya moderator kutuvisiz darhol ochiq katalogda chiqadi. Aloqa telefonini ochiq e’longa kiritmang.";
   form.insertBefore(formHint,form.firstChild);
 
   const applicationPanel=document.createElement("div");
@@ -380,8 +380,8 @@
       select.add(new Option("Faol tashkilot yo‘q",""));
       select.disabled=true;
       const message=all.some(x=>x.status==="pending_review")
-        ?"Tashkilot profilingiz tekshiruvda. Moderator tasdiqlagach vakansiya joylashtirish ochiladi."
-        :"Avval tashkilot profilini yarating. U avtomatik faollashadi, vakansiya esa alohida tekshiriladi.";
+        ?"Tashkilot profilingiz tekshiruvda. Tashkilot faollashgach vakansiya joylashtirish ochiladi."
+         :"Avval tashkilot profilini yarating. U avtomatik faollashadi; faol tashkilotdan joylangan vakansiya darhol e’lon qilinadi.";
       formHint.textContent=message;
       if(orgHelp)orgHelp.textContent=message+" Quyidagi “Tashkilot yaratish” tugmasi orqali davom eting.";
     }else{select.disabled=false;if(orgHelp)orgHelp.textContent="Tashkilotni tanlang, keyin vakansiya ma’lumotlarini to‘ldiring.";}
@@ -534,7 +534,7 @@
     const r=await data.createJobPost(input);
     if(!r.ok){setStatus(errorText(r),true);if(submit)submit.disabled=false;return;}
     form.reset();if($("jobFormPanel"))$("jobFormPanel").hidden=true;if(submit)submit.disabled=false;
-    setStatus("Vakansiya moderator tekshiruviga yuborildi. Tasdiqlangach katalogda ko‘rinadi.");
+    setStatus("Vakansiya muvaffaqiyatli joylandi va ochiq katalogda avtomatik e’lon qilindi.");
     await loadJobs();await loadOwnedJobs();
   }
   document.addEventListener("submit",async event=>{
