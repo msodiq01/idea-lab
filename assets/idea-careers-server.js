@@ -142,7 +142,7 @@
       const paragraphs=node.querySelectorAll("p");if(paragraphs[1])paragraphs[1].className="career-description";
       const meta=document.createElement("div");meta.className="career-meta";
       const chips=[job.location_label,employmentType(job.employment_type),job.schedule_label||"",Number(job.openings_count)>1?String(job.openings_count)+" ta ish o‘rni":"1 ta ish o‘rni",job.experience_years_min>0?"Tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.salary_label||"Maosh kelishiladi"];
-      chips.filter(Boolean).forEach((label,index)=>{const chip=document.createElement("span");chip.className="career-chip"+(index===4?" career-salary":"");chip.textContent=label;meta.append(chip);});
+      chips.filter(Boolean).forEach((label,index)=>{const chip=document.createElement("span");chip.className="career-chip"+(index===5?" career-salary":"");chip.textContent=label;meta.append(chip);});
       const skills=job.required_skills||[];
       if(skills.length){const skillLine=document.createElement("p");skillLine.textContent="Ko‘nikmalar: "+skills.join(", ");node.append(skillLine);}
       node.insertBefore(meta,node.children[1]||null);
