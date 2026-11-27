@@ -8,7 +8,7 @@
   const $=id=>document.getElementById(id);
   const clean=value=>String(value??"").trim();
   const typeLabels={full_time:"To‘liq ish kuni",part_time:"Yarim stavka",remote:"Masofaviy",internship:"Amaliyot",freelance:"Frilans"};
-  const statusLabels={submitted:"Ko‘rib chiqilmoqda",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"};
+  const statusLabels={submitted:"Ko‘rib chiqilmoqda",interview:"Suhbatga taklif",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"};
   let userId=null,jobs=[],ownedJobs=[],selectedJob=null,activeMode="seeker",appliedJobIds=new Set();
   const section=$("career-section"),jobList=$("jobList"),form=$("jobForm");
   function setCareerMode(mode){
@@ -34,7 +34,7 @@
   myPosts.id="ilMyPostsSection";
   myPosts.className="section";
   myPosts.dataset.careerFlow="employer";
-  myPosts.innerHTML='<div class="section-head"><div><h2>Mening e’lonlarim</h2><p>Bu yerda aynan shu IDEA LAB akkauntidan joylangan vakansiyalar va ularning holati ko‘rinadi. Boshqa qurilmada ham shu akkauntga kiring.</p></div><button class="btn secondary" id="ilRefreshCareerData" type="button">Ma’lumotlarni yangilash</button></div><div class="panel" id="ilCentralApplicationsPanel"><h3>Yagona arizalar markazi</h3><p class="notice">Barcha vakansiyalaringizga kelgan arizalar bitta ro‘yxatda. Holat bo‘yicha filtrlashingiz mumkin.</p><div class="form-grid"><div class="field"><label for="ilCentralApplicationSearch">Nomzod yoki vakansiya</label><input id="ilCentralApplicationSearch" type="search" placeholder="Qidirish"></div><div class="field"><label for="ilCentralApplicationStatus">Ariza holati</label><select id="ilCentralApplicationStatus"><option value="">Barcha holatlar</option><option value="submitted">Yangi / ko‘rib chiqilmoqda</option><option value="accepted">Qabul qilindi</option><option value="declined">Rad etildi</option><option value="withdrawn">Qaytarib olindi</option></select></div></div><div class="cards" id="ilCentralApplications"></div></div><div id="ilMyJobPosts" class="cards"></div><h3 style="margin-top:22px">Vakansiya bo‘yicha arizalar</h3><p class="notice">Arizalarni alohida vakansiya bo‘yicha ham ko‘rishingiz mumkin.</p><div id="ilJobOwnerApplications" class="cards"></div>';
+  myPosts.innerHTML='<div class="section-head"><div><h2>Mening e’lonlarim</h2><p>Bu yerda aynan shu IDEA LAB akkauntidan joylangan vakansiyalar va ularning holati ko‘rinadi. Boshqa qurilmada ham shu akkauntga kiring.</p></div><button class="btn secondary" id="ilRefreshCareerData" type="button">Ma’lumotlarni yangilash</button></div><div class="panel" id="ilCentralApplicationsPanel"><h3>Yagona arizalar markazi</h3><p class="notice">Barcha vakansiyalaringizga kelgan arizalar bitta ro‘yxatda. Holat bo‘yicha filtrlashingiz mumkin.</p><div class="form-grid"><div class="field"><label for="ilCentralApplicationSearch">Nomzod yoki vakansiya</label><input id="ilCentralApplicationSearch" type="search" placeholder="Qidirish"></div><div class="field"><label for="ilCentralApplicationStatus">Ariza holati</label><select id="ilCentralApplicationStatus"><option value="">Barcha holatlar</option><option value="submitted">Yangi / ko‘rib chiqilmoqda</option><option value="interview">Suhbatga taklif</option><option value="accepted">Qabul qilindi</option><option value="declined">Rad etildi</option><option value="withdrawn">Qaytarib olindi</option></select></div></div><div class="cards" id="ilCentralApplications"></div></div><div id="ilMyJobPosts" class="cards"></div><h3 style="margin-top:22px">Vakansiya bo‘yicha arizalar</h3><p class="notice">Arizalarni alohida vakansiya bo‘yicha ham ko‘rishingiz mumkin.</p><div id="ilJobOwnerApplications" class="cards"></div>';
   section.append(myPosts);
   const myApps=document.createElement("section");
   myApps.id="ilMyApplicationsSection";
@@ -470,15 +470,15 @@
     const query=clean($("ilCentralApplicationSearch")?.value).toLowerCase();
     const status=clean($("ilCentralApplicationStatus")?.value);
     const rows=centralApplicationsCache.filter(item=>(!status||item.status===status)&&(!query||[item.candidate_name,item.job_title,item.company_name,item.candidate_city].some(value=>String(value||"").toLowerCase().includes(query))));
-    const counts={submitted:0,accepted:0,declined:0,withdrawn:0};centralApplicationsCache.forEach(item=>{if(counts[item.status]!=null)counts[item.status]++;});
-    const summary=document.createElement("p");summary.className="notice";summary.textContent="Jami: "+centralApplicationsCache.length+" | Yangi: "+counts.submitted+" | Qabul: "+counts.accepted+" | Rad: "+counts.declined+" | Qaytarilgan: "+counts.withdrawn;box.append(summary);
+    const counts={submitted:0,interview:0,accepted:0,declined:0,withdrawn:0};centralApplicationsCache.forEach(item=>{if(counts[item.status]!=null)counts[item.status]++;});
+    const summary=document.createElement("p");summary.className="notice";summary.textContent="Jami: "+centralApplicationsCache.length+" | Yangi: "+counts.submitted+" | Suhbat: "+counts.interview+" | Qabul: "+counts.accepted+" | Rad: "+counts.declined+" | Qaytarilgan: "+counts.withdrawn;box.append(summary);
     if(!rows.length){empty(box,"Tanlangan filtr bo‘yicha arizalar topilmadi.");return;}
     rows.forEach(item=>{
-      const labels={submitted:"Yangi / ko‘rib chiqilmoqda",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"};
+      const labels={submitted:"Yangi / ko‘rib chiqilmoqda",interview:"Suhbatga taklif",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"};
       const node=card(item.candidate_name||"Nomzod",[item.job_title||"Vakansiya",item.company_name||"Ish beruvchi",item.candidate_city||"",item.candidate_roles?.length?"Kasblar: "+item.candidate_roles.join(", "):"",item.candidate_skills?.length?"Ko‘nikmalar: "+item.candidate_skills.join(", "):"",item.candidate_experience_years!=null?"Tajriba: "+item.candidate_experience_years+" yil":"",item.candidate_experience_summary||"",item.candidate_education_summary||"", "Holat: "+(labels[item.status]||item.status),item.message||"", "Yuborilgan: "+new Date(item.submitted_at).toLocaleString("uz-UZ")]);
-      if(item.status==="submitted"){
+      if(item.status==="submitted"||item.status==="interview"){
         const actions=document.createElement("div");actions.className="card-actions";
-        [["Qabul qilish","accepted"],["Rad etish","declined"]].forEach(([label,nextStatus])=>{
+        (item.status==="submitted"?[["Suhbatga taklif","interview"],["Qabul qilish","accepted"],["Rad etish","declined"]]:[["Qabul qilish","accepted"],["Rad etish","declined"]]).forEach(([label,nextStatus])=>{
           const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
           button.addEventListener("click",async()=>{button.disabled=true;const result=await data.reviewJobApplication(item.application_id,nextStatus);if(!result.ok||result.data!==true){alert(errorText(result));button.disabled=false;return;}await loadOwnedJobs();});
           actions.append(button);
@@ -558,9 +558,9 @@
         "Yuborilgan: "+new Date(item.submitted_at).toLocaleString("uz-UZ")
       ];
       const node=card(item.candidate_name||"Nomzod",candidateLines);
-      if(item.status==="submitted"){
+      if(item.status==="submitted"||item.status==="interview"){
         const actions=document.createElement("div");actions.className="card-actions";
-        [["Qabul qilish","accepted"],["Rad etish","declined"]].forEach(([label,status])=>{
+        (item.status==="submitted"?[["Suhbatga taklif","interview"],["Qabul qilish","accepted"],["Rad etish","declined"]]:[["Qabul qilish","accepted"],["Rad etish","declined"]]).forEach(([label,status])=>{
           const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
           button.addEventListener("click",async()=>{button.disabled=true;const x=await data.reviewJobApplication(item.application_id,status);if(!x.ok||x.data!==true){alert(errorText(x));button.disabled=false;return;}await loadApplicationsFor(job,box);});
           actions.append(button);
