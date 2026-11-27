@@ -387,7 +387,7 @@
           skills.some(x => typeof x !== "string" || !x.trim() || x.trim().length > 80) ||
           !Number.isInteger(years) || years < 0 || years > 50 ||
           (input.schedule || "").length > 160 || !requiredText(input.contactName, 2, 120) ||
-          !/^998[0-9]{9}$/.test(String(input.contactPhone || "").replace(/\\D/g, ""))) {
+          !/^998[0-9]{9}$/.test(String(input.contactPhone || "").replace(/\D/g, ""))) {
         return Promise.resolve(fail("INVALID_JOB_POST", "Vakansiya maydonlari noto‘g‘ri."));
       }
       return runPublicCommand("idea_lab_create_job_post", {
