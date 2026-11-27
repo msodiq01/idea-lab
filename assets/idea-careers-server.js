@@ -99,11 +99,12 @@
     const regionRows=$("vacancyRegionRows");
     if(regionRows){
       regionRows.replaceChildren();
-      [...regions.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],"uz")).forEach(([region,count])=>{
-        const row=document.createElement("tr"),left=document.createElement("td"),right=document.createElement("td");
-        left.textContent=region;right.textContent=String(count);right.style.textAlign="right";
-        [left,right].forEach(cell=>{cell.style.padding="10px";cell.style.borderTop="1px solid var(--border,rgba(255,255,255,.12))";});
-        row.append(left,right);regionRows.append(row);
+      [...regions.entries()].sort((a,b)=>b[1].posts-a[1].posts||a[0].localeCompare(b[0],"uz")).forEach(([region,totals])=>{
+        const row=document.createElement("tr"),left=document.createElement("td"),posts=document.createElement("td"),openings=document.createElement("td");
+        left.textContent=region;posts.textContent=String(totals.posts);openings.textContent=String(totals.openings);
+        posts.style.textAlign="right";openings.style.textAlign="right";
+        [left,posts,openings].forEach(cell=>{cell.style.padding="10px";cell.style.borderTop="1px solid var(--border,rgba(255,255,255,.12))";});
+        row.append(left,posts,openings);regionRows.append(row);
       });
       if(!regions.size){const row=document.createElement("tr"),cell=document.createElement("td");cell.colSpan=3;cell.textContent="Hududiy statistika uchun vakansiya topilmadi.";cell.style.padding="10px";row.append(cell);regionRows.append(row);}
     }
