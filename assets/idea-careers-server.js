@@ -447,12 +447,26 @@
       const node=card(item.candidate_name||"Nomzod",candidateLines);
       if(item.status==="submitted"){
         const actions=document.createElement("div");actions.className="card-actions";
+        const feedback=document.createElement("p");feedback.className="notice";feedback.setAttribute("role","status");feedback.setAttribute("aria-live","polite");
         [["Qabul qilish","accepted"],["Rad etish","declined"]].forEach(([label,status])=>{
           const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
-          button.addEventListener("click",async()=>{button.disabled=true;const x=await data.reviewJobApplication(item.application_id,status);if(!x.ok||x.data!==true){alert(errorText(x));button.disabled=false;return;}await loadApplicationsFor(job,box);});
+          button.setAttribute("aria-label",label+" — "+(item.candidate_name||"nomzod"));
+          button.addEventListener("click",async()=>{
+            actions.querySelectorAll("button").forEach(control=>control.disabled=true);
+            feedback.textContent=label+" qarori saqlanmoqda…";
+            try{
+              const x=await data.reviewJobApplication(item.application_id,status);
+              if(!x.ok||x.data!==true){feedback.textContent=errorText(x);actions.querySelectorAll("button").forEach(control=>control.disabled=false);return;}
+              feedback.textContent="Qaror saqlandi. Arizalar ro‘yxati yangilanmoqda…";
+              await loadApplicationsFor(job,box);
+            }catch(_){
+              feedback.textContent="Qarorni saqlashda xatolik yuz berdi. Qayta urinib ko‘ring.";
+              actions.querySelectorAll("button").forEach(control=>control.disabled=false);
+            }
+          });
           actions.append(button);
         });
-        node.append(actions);
+        actions.append(feedback);node.append(actions);
       }
       box.append(node);
     });
