@@ -258,7 +258,8 @@ test("moderator UI requires a clear rejection reason and displays it in the empl
   assert.match(server, /data\.reviewJobPost\(job\.job_post_id,false,text,getChecklist\(\)\)/);
   assert.ok(server.includes('job.moderation_reason?"Moderator izohi: "+job.moderation_reason'));
   assert.match(data, /reviewJobPost\(jobPostId, approve, reason = "", checklist = \{\}\)/);
-  assert.match(data, /p_reason: approve \? null : cleanReason/);\n  assert.match(data, /p_checklist: Object\.fromEntries/);
+  assert.match(data, /p_reason: approve \? null : cleanReason/);
+  assert.match(data, /p_checklist: Object\.fromEntries/);
 });
 
 test("owners can correct rejected vacancies and resubmit them for moderation", () => {
