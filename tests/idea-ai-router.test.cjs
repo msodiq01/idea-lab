@@ -32,5 +32,5 @@ test("provider keys are read only from server environment variables", () => {
 test("provider errors do not return upstream response bodies or secrets", () => {
   assert.match(source, /UPSTREAM_PROVIDER_ERROR/);
   assert.match(source, /AI provayder javobi xato/);
-  assert.doesNotMatch(source, /JSON\.stringify\(data\)/);
+  assert.doesNotMatch(source, /response\.text\(\)|data\.error\s*\|\|/);
 });
