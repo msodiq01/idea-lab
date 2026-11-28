@@ -590,7 +590,7 @@ refreshAuthSession(false).then(()=>loadProfile()).catch(()=>loadProfile());rende
   function paintApplications(list){
     applications.innerHTML=list.length?list.map(item=>{
       const id=item.application_id||item.id;
-      const button=id?'<div class="card-actions"><button class="btn btn-secondary" type="button" data-history="'+escapeHtml(historyId(id))+'">Holat tarixini ko‘rish</button></div>':"";
+      const button=id?'<div class="card-actions"><button class="btn btn-secondary" type="button" data-history="'+escapeHtml(historyId(id))+'">Holat tarixini ko‘rish</button><button class="btn btn-primary" type="button" data-chat="'+escapeHtml(historyId(id))+'">Kabinetdagi suhbat ↗</button></div>':"";
       return card(item.job_title||item.title||item.vacancy_title,item.message||item.application_message,item.status,item.created_at,item.organization_name||item.employer_name||item.location_label,button);
     }).join(""):'<div class="empty">Serverda sizga tegishli vakansiya arizalari topilmadi.</div>';
   }
@@ -602,6 +602,7 @@ refreshAuthSession(false).then(()=>loadProfile()).catch(()=>loadProfile());rende
       return card(item.title||item.event_title,item.message||item.description,item.status,item.created_at,(item.job_title||item.organization_name||"")+(isRead?" · O‘qilgan":" · Yangi"),button);
     }).join(""):'<div class="empty">Hozircha server bildirishnomalari yo‘q.</div>';
   }
+  applications.addEventListener("click",event=>{const button=event.target.closest("[data-chat]");if(!button)return;const open=window.openCabinetChat;if(typeof open!=="function"){alert("Kabinet chat moduli yuklanmadi. Sahifani yangilang.");return;}open(button.dataset.chat);});
   applications.addEventListener("click",async event=>{
     const button=event.target.closest("[data-history]");if(!button)return;
     const id=button.dataset.history;button.disabled=true;
