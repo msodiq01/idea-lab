@@ -482,6 +482,10 @@
     listMyJobApplications() {
       return runPublicCommand("idea_lab_list_my_job_applications", {});
     },
+    listJobApplicationStatusHistory(applicationId) {
+      if (!isUuid(applicationId)) return Promise.resolve(fail("INVALID_APPLICATION_ID", "Ariza identifikatori noto‘g‘ri."));
+      return runPublicCommand("idea_lab_list_job_application_status_history", { p_application_id: applicationId });
+    },
     listJobPostApplications(jobPostId) {
       if (!isUuid(jobPostId)) return Promise.resolve(fail("INVALID_JOB_POST_ID", "Vakansiya identifikatori noto‘g‘ri."));
       return runPublicCommand("idea_lab_list_job_post_applications", { p_job_post_id: jobPostId });
