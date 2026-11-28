@@ -467,3 +467,32 @@ body:has(.topbar) .field textarea:invalid:not(:placeholder-shown){
   body:has(.topbar) .hero-actions .btn{flex:1 1 auto}
   body:has(.topbar) .career-hero-points span{font-size:9px;padding:8px 10px}
 }
+
+/* Consent-based AI vacancy drafting */
+body:has(.topbar) .career-ai-panel{
+  padding:18px 20px;border:1px solid rgba(84,227,212,.22);border-radius:17px;
+  background:radial-gradient(ellipse at 100% 0,rgba(139,92,246,.13),transparent 42%),rgba(15,20,36,.82);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+body:has(.topbar) .career-ai-heading{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+body:has(.topbar) .career-ai-heading strong{font-size:15px;color:#f3efff}
+body:has(.topbar) .career-ai-kicker{
+  padding:5px 8px;border-radius:7px;background:rgba(139,92,246,.16);
+  color:#c7b4ff;font-size:9px;font-weight:900;letter-spacing:1px
+}
+body:has(.topbar) .career-ai-copy,
+body:has(.topbar) .career-ai-footnote{color:#aaa8c1;font-size:12px;line-height:1.65}
+body:has(.topbar) .career-ai-consent{
+  display:flex;align-items:flex-start;gap:10px;padding:11px 12px;margin:12px 0;
+  border:1px solid rgba(190,178,225,.15);border-radius:11px;background:rgba(255,255,255,.025);
+  color:#e1dced;font-size:12px;line-height:1.55
+}
+body:has(.topbar) .career-ai-consent input{flex:0 0 auto;accent-color:#54e3d4;margin-top:2px}
+body:has(.topbar) .career-ai-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+body:has(.topbar) #jobAiDraftStatus{color:#b9b3cd;font-size:11px;line-height:1.5}
+body:has(.topbar) .career-ai-footnote{margin:10px 0 0;font-size:10px}
+@media(max-width:620px){
+  body:has(.topbar) .career-ai-panel{padding:15px}
+  body:has(.topbar) .career-ai-actions{align-items:stretch;flex-direction:column}
+  body:has(.topbar) .career-ai-actions .btn{width:100%}
+}
