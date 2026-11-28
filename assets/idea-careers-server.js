@@ -714,41 +714,16 @@
     if(!userId){status.textContent="AI yordamidan foydalanish uchun avval akkauntga kiring.";return;}
     if(!$("jobAiConsent")?.checked){status.textContent="Davom etishdan oldin AI xizmatiga yuborishga rozilikni belgilang.";return;}
     const title=clean($("jobTitle")?.value),description=clean($("jobDescription")?.value);
-    if(title.length<2||description.length<10){status.textContent="Avval lavozim va vazifalar haqida kamida qisqa ma’lumot kiriting.";return;}
-    const client=auth.getClient?.();
-    if(!client?.functions?.invoke){status.textContent="AI xizmati uchun Supabase sessiyasi topilmadi. Qayta kiring.";return;}
-    const details=[
-      "Bandlik turi: "+clean($("jobType")?.value),
-      "Kerakli ko‘nikmalar: "+clean($("jobSkills")?.value),
-      "Tajriba: "+clean($("jobExperienceYears")?.value)+" yil",
-      "Ish jadvali: "+clean($("jobSchedule")?.value)
-    ].filter(Boolean).join("\n");
-    const buttonText=button.textContent;
-    button.disabled=true;button.textContent="AI tayyorlamoqda…";
-    status.textContent="Faqat vakansiya tafsilotlari AI xizmatiga yuborilmoqda…";
+    if(title.length<2||description.length<10){status.textContent="Avval lavozim va vazifalar haqida ma’lumot kiriting.";return;}
+    const details=["Bandlik turi: "+clean($("jobType")?.value),"Kerakli ko‘nikmalar: "+clean($("jobSkills")?.value),"Tajriba: "+clean($("jobExperienceYears")?.value)+" yil","Ish jadvali: "+clean($("jobSchedule")?.value)].filter(Boolean).join("\\n");
+    const buttonText=button.textContent;button.disabled=true;button.textContent="AI tayyorlamoqda…";
+    status.textContent="Faqat vakansiyaning kasbiy tafsilotlari AI xizmatiga yuborilmoqda…";
     try{
-      const response=await client.functions.invoke("idea-ai",{body:{
-        idea:title,
-        problem:description,
-        audience:[clean($("jobRegion")?.value),clean($("jobDistrict")?.value),clean($("jobLocation")?.value)].filter(Boolean).join(", "),
-        budget:clean($("jobSalary")?.value),
-        goal:details,
-        mode:"vacancy_draft"
-      }});
-      if(response.error||!response.data?.analysis){
-        status.textContent=response.data?.error||"AI matnni tayyorlay olmadi. Keyinroq qayta urinib ko‘ring.";
-        return;
-      }
-      const generated=String(response.data.analysis).trim();
+      const generated=await callCareerAI({mode:"vacancy_improve",title,vacancy:[description,details].filter(Boolean).join("\\n")});
       $("jobDescription").value=generated.slice(0,3000);
-      status.textContent=generated.length>3000
-        ?"Matn tayyorlandi; maydon hajmiga moslab qisqartirildi. E’lonni tekshirib chiqing."
-        :"Matn tayyor. E’lonni tekshiring, kerak bo‘lsa tahrirlang va keyin o‘zingiz joylang.";
-    }catch(_){
-      status.textContent="AI xizmatiga ulanib bo‘lmadi. Internet va akkaunt sessiyasini tekshiring.";
-    }finally{
-      button.disabled=false;button.textContent=buttonText;
-    }
+      status.textContent=generated.length>3000?"Matn 3000 belgiga moslab qisqartirildi. E’lonni tekshiring.":"Matn tayyor. Tekshiring va kerak bo‘lsa tahrirlang.";
+    }catch(error){status.textContent=error.message||"AI matnni tayyorlay olmadi.";}
+    finally{button.disabled=false;button.textContent=buttonText;}
   }
   $("jobAiDraftButton")?.addEventListener("click",draftVacancyWithAI);
   document.addEventListener("submit",async event=>{
