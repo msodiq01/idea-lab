@@ -34,7 +34,7 @@
   myPosts.id="ilMyPostsSection";
   myPosts.className="section";
   myPosts.dataset.careerFlow="employer";
-  myPosts.innerHTML='<div class="section-head"><div><h2>Mening e’lonlarim</h2><p>Bu yerda aynan shu IDEA LAB akkauntidan joylangan vakansiyalar va ularning holati ko‘rinadi. Boshqa qurilmada ham shu akkauntga kiring.</p></div><button class="btn secondary" id="ilRefreshCareerData" type="button">Ma’lumotlarni yangilash</button></div><div class="panel" id="ilEmployerDailyDashboard"><h3>Kunlik nomzodlar nazorati</h3><p class="notice">Keyingi bog‘lanish sanasi belgilangan nomzodlar, bugungi vazifalar va muddati o‘tgan eslatmalar.</p><div class="cards" id="ilEmployerFollowups"></div><h4>Suhbat bosqichidagi nomzodlar</h4><div class="cards" id="ilEmployerInterviewCandidates"></div></div><div class="panel" id="ilCentralApplicationsPanel"><h3>Yagona arizalar markazi</h3><p class="notice">Barcha vakansiyalaringizga kelgan arizalar bitta ro‘yxatda. Holat bo‘yicha filtrlashingiz mumkin.</p><div class="form-grid"><div class="field"><label for="ilCentralApplicationSearch">Nomzod yoki vakansiya</label><input id="ilCentralApplicationSearch" type="search" placeholder="Qidirish"></div><div class="field"><label for="ilCentralApplicationStatus">Ariza holati</label><select id="ilCentralApplicationStatus"><option value="">Barcha holatlar</option><option value="submitted">Yangi / ko‘rib chiqilmoqda</option><option value="interview">Suhbatga taklif</option><option value="accepted">Qabul qilindi</option><option value="declined">Rad etildi</option><option value="withdrawn">Qaytarib olindi</option></select></div></div><div class="cards" id="ilCentralApplications"></div></div><div id="ilMyJobPosts" class="cards"></div><h3 style="margin-top:22px">Vakansiya bo‘yicha arizalar</h3><p class="notice">Arizalarni alohida vakansiya bo‘yicha ham ko‘rishingiz mumkin.</p><div id="ilJobOwnerApplications" class="cards"></div>';
+  myPosts.innerHTML='<div class="section-head"><div><h2>Mening e’lonlarim</h2><p>Bu yerda aynan shu IDEA LAB akkauntidan joylangan vakansiyalar va ularning holati ko‘rinadi. Boshqa qurilmada ham shu akkauntga kiring.</p></div><button class="btn secondary" id="ilRefreshCareerData" type="button">Ma’lumotlarni yangilash</button></div><div class="panel" id="ilEmployerDailyDashboard"><h3>Kunlik nomzodlar nazorati</h3><p class="notice">Keyingi bog‘lanish sanasi belgilangan nomzodlar, bugungi vazifalar va muddati o‘tgan eslatmalar.</p><div class="cards" id="ilEmployerFollowups"></div><h4>Bog‘lanilgan nomzodlar</h4><div class="cards" id="ilEmployerContactedCandidates"></div><h4>Suhbat bosqichidagi nomzodlar</h4><div class="cards" id="ilEmployerInterviewCandidates"></div></div><div class="panel" id="ilCentralApplicationsPanel"><h3>Yagona arizalar markazi</h3><p class="notice">Barcha vakansiyalaringizga kelgan arizalar bitta ro‘yxatda. Holat bo‘yicha filtrlashingiz mumkin.</p><div class="form-grid"><div class="field"><label for="ilCentralApplicationSearch">Nomzod yoki vakansiya</label><input id="ilCentralApplicationSearch" type="search" placeholder="Qidirish"></div><div class="field"><label for="ilCentralApplicationStatus">Ariza holati</label><select id="ilCentralApplicationStatus"><option value="">Barcha holatlar</option><option value="submitted">Yangi / ko‘rib chiqilmoqda</option><option value="interview">Suhbatga taklif</option><option value="accepted">Qabul qilindi</option><option value="declined">Rad etildi</option><option value="withdrawn">Qaytarib olindi</option></select></div></div><div class="cards" id="ilCentralApplications"></div></div><div id="ilMyJobPosts" class="cards"></div><h3 style="margin-top:22px">Vakansiya bo‘yicha arizalar</h3><p class="notice">Arizalarni alohida vakansiya bo‘yicha ham ko‘rishingiz mumkin.</p><div id="ilJobOwnerApplications" class="cards"></div>';
   section.append(myPosts);
   const myApps=document.createElement("section");
   myApps.id="ilMyApplicationsSection";
@@ -466,24 +466,23 @@
   }
   let centralApplicationsCache=[];
   async function renderEmployerDailyDashboard(){
-    const followBox=$("ilEmployerFollowups"),interviewBox=$("ilEmployerInterviewCandidates");
-    if(!followBox||!interviewBox)return;
-    followBox.replaceChildren();interviewBox.replaceChildren();
-    if(!userId){empty(followBox,"Kunlik nazorat uchun ish beruvchi akkauntiga kiring.");empty(interviewBox,"Suhbatdagi nomzodlar ko‘rinmaydi.");return;}
+    const followBox=$("ilEmployerFollowups"),interviewBox=$("ilEmployerInterviewCandidates"),contactedBox=$("ilEmployerContactedCandidates");
+    if(!followBox||!interviewBox||!contactedBox)return;
+    followBox.replaceChildren();interviewBox.replaceChildren();contactedBox.replaceChildren();
+    if(!userId){empty(followBox,"Kunlik nazorat uchun ish beruvchi akkauntiga kiring.");empty(interviewBox,"Suhbatdagi nomzodlar ko‘rinmaydi.");empty(contactedBox,"Bog‘lanilgan nomzodlar ko‘rinmaydi.");return;}
     const interviews=centralApplicationsCache.filter(item=>item.status==="interview");
     if(!interviews.length)empty(interviewBox,"Suhbat bosqichida nomzod yo‘q.");
     interviews.forEach(item=>interviewBox.append(card(item.candidate_name||"Nomzod",[item.job_title||"Vakansiya",item.company_name||"Ish beruvchi","Holat: Suhbatga taklif"])));
     const today=new Date();today.setHours(0,0,0,0);
-    const followups=[];
+    const followups=[],contacted=[];
     for(const item of centralApplicationsCache){
       const result=await data.getEmployerApplicationNote(item.application_id);
       if(!result.ok)continue;
       const note=Array.isArray(result.data)?result.data[0]:result.data;
+      if(note?.contacted_at){contacted.push({item,note});continue;}
       const date=note?.next_contact_date;
       if(!date)continue;
-      const dateKey=String(date).slice(0,10);
-      const dateValue=new Date(dateKey+"T00:00:00");
-      const diff=Math.round((dateValue-today)/86400000);
+      const dateKey=String(date).slice(0,10),dateValue=new Date(dateKey+"T00:00:00"),diff=Math.round((dateValue-today)/86400000);
       followups.push({item,note,dateKey,diff});
     }
     followups.sort((a,b)=>a.diff-b.diff);
@@ -492,11 +491,16 @@
     due.forEach(({item,note,dateKey,diff})=>{
       const label=diff<0?"Muddati o‘tgan: "+Math.abs(diff)+" kun":"Bugun bog‘lanish";
       const node=card(item.candidate_name||"Nomzod",[item.job_title||"Vakansiya",item.company_name||"",label,"Sana: "+dateKey,note?.note||""]);
+      const actions=document.createElement("div");actions.className="card-actions";
       const open=document.createElement("button");open.className="btn secondary";open.type="button";open.textContent="Ichki qaydga o‘tish";
       open.addEventListener("click",()=>{const search=$("ilCentralApplicationSearch");if(search){search.value=item.candidate_name||"";renderCentralApplications();$("ilCentralApplications")?.scrollIntoView({behavior:"smooth",block:"center"});}});
-      node.append(open);followBox.append(node);
+      const done=document.createElement("button");done.className="btn green";done.type="button";done.textContent="Bog‘lanildi";
+      done.addEventListener("click",async()=>{done.disabled=true;done.textContent="Saqlanmoqda…";const result=await data.markEmployerApplicationContacted(item.application_id);if(!result.ok||result.data!==true){alert(errorText(result));done.disabled=false;done.textContent="Bog‘lanildi";return;}await renderEmployerDailyDashboard();});
+      actions.append(open,done);node.append(actions);followBox.append(node);
     });
-    if(upcoming.length){const heading=document.createElement("h4");heading.textContent="Kelgusi bog‘lanishlar";followBox.append(heading);upcoming.forEach(({item,note,dateKey,diff})=>followBox.append(card(item.candidate_name||"Nomzod",[item.job_title||"Vakansiya",item.company_name||"","Rejalashtirilgan: "+dateKey,diff+" kun qoldi",note?.note||""])));
+    if(upcoming.length){const heading=document.createElement("h4");heading.textContent="Kelgusi bog‘lanishlar";followBox.append(heading);upcoming.forEach(({item,note,dateKey,diff})=>followBox.append(card(item.candidate_name||"Nomzod",[item.job_title||"Vakansiya",item.company_name||"","Rejalashtirilgan: "+dateKey,diff+" kun qoldi",note?.note||""])));}
+    if(!contacted.length)empty(contactedBox,"Hali bog‘lanilgan deb belgilangan nomzod yo‘q.");
+    contacted.forEach(({item,note})=>contactedBox.append(card(item.candidate_name||"Nomzod",[item.job_title||"Vakansiya",item.company_name||"","Bog‘lanilgan: "+new Date(note.contacted_at).toLocaleString("uz-UZ"),note.note||""])));
   }
   function renderCentralApplications(){
     const box=$("ilCentralApplications");if(!box)return;box.replaceChildren();
