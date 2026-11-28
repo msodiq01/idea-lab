@@ -581,6 +581,18 @@
         p_message: input.message.trim()
       });
     },
+    reviewResourceRequest(requestId, status) {
+      if (!isUuid(requestId) || !["accepted", "rejected", "cancelled"].includes(status)) return Promise.resolve(fail("INVALID_RESOURCE_REQUEST_REVIEW", "Resurs so‘rovi qarori noto‘g‘ri."));
+      return runPublicCommand("idea_lab_review_resource_request", { p_request_id: requestId, p_status: status });
+    },
+    reviewPartnershipEnquiry(enquiryId, status) {
+      if (!isUuid(enquiryId) || !["in_review", "accepted", "declined", "withdrawn"].includes(status)) return Promise.resolve(fail("INVALID_PARTNERSHIP_REVIEW", "Hamkorlik murojaati qarori noto‘g‘ri."));
+      return runPublicCommand("idea_lab_review_partnership_enquiry", { p_enquiry_id: enquiryId, p_status: status });
+    },
+    reviewSpecialistRequest(requestId, status) {
+      if (!isUuid(requestId) || !["accepted", "declined", "cancelled"].includes(status)) return Promise.resolve(fail("INVALID_SPECIALIST_REVIEW", "Mutaxassis so‘rovi qarori noto‘g‘ri."));
+      return runPublicCommand("idea_lab_review_specialist_request", { p_request_id: requestId, p_status: status });
+    },
     updateProjectApplication(input = {}) {
       if (!isUuid(input.applicationId)) return Promise.resolve(fail("INVALID_APPLICATION_ID", "Ariza identifikatori noto‘g‘ri."));
       const allowed = ["in_review", "accepted", "rejected", "withdrawn"];
