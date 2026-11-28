@@ -13,7 +13,7 @@ const MODES: Record<string, string> = {
   score: "100 ballik baholash: muammo (20), auditoriya (15), talab dalili (20), amalga oshirish (15), resurs (10), kengayish (10), risk (10). Dalil yo‘q bo‘lsa konservativ ball. Umumiy ball, asos, kuchli/zaif tomonlar va keyingi qaror.",
   pitch: "Qisqa pitch: 1 jumla, muammo, yechim, auditoriya, farq, MVP, natija mezoni, resurs. Daromad yoki investitsiya va’dasini kafolatlamasdan, faktlarni uydirma.",
   strategy: "90 kunlik strategiya: 3 maqsad, haftalik harakatlar, rollar, resurslar, KPI, qaror nuqtalari, risklar va muqobil reja. Kam resursli pilotdan boshlash.",
-  vacancy_draft: "Ish beruvchi bergan ma’lumotlardan aniq va xolis vakansiya e’loni yoz. Lavozim tavsifi, asosiy vazifalar, zarur ko‘nikmalar, tajriba, ish jadvali va shartlarni tartibli bayon qil. Faqat kiritilgan faktlardan foydalan; noma’lum maosh, imtiyoz, manzil yoki talablarni uydirma. Yetishmayotgan muhim tafsilotlarni [Aniqlashtirish kerak] deb belgila. Yosh, jins, millat, din, nogironlik yoki boshqa himoyalangan belgilar asosida cheklov qo‘shma. 3000 belgidan oshirma.";
+  vacancy_draft: "Ish beruvchi bergan ma’lumotlardan aniq va xolis vakansiya e’loni yoz. Lavozim tavsifi, asosiy vazifalar, zarur ko‘nikmalar, tajriba, ish jadvali va shartlarni tartibli bayon qil. Faqat kiritilgan faktlardan foydalan; noma’lum maosh, imtiyoz, manzil yoki talablarni uydirma. Yetishmayotgan muhim tafsilotlarni [Aniqlashtirish kerak] deb belgila. Yosh, jins, millat, din, nogironlik yoki boshqa himoyalangan belgilar asosida cheklov qo‘shma. 3000 belgidan oshirma.",
 };
 
 type Input = {
