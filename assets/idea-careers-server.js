@@ -443,6 +443,10 @@
         button.addEventListener("click",async()=>{button.disabled=true;const x=await data.withdrawJobApplication(item.application_id);if(!x.ok||x.data!==true){alert(errorText(x));button.disabled=false;return;}await loadMyApplications();await loadMyActivity();});
         node.append(button);
       }
+      const historyButton=document.createElement("button");historyButton.className="btn secondary";historyButton.type="button";historyButton.textContent="Ariza tarixi";
+      const historyPanel=document.createElement("div");historyPanel.className="form-panel";historyPanel.hidden=true;
+      historyButton.addEventListener("click",async()=>{historyPanel.hidden=!historyPanel.hidden;if(historyPanel.hidden||historyPanel.dataset.loaded==="true")return;historyButton.disabled=true;const h=await data.listJobApplicationStatusHistory(item.application_id);historyButton.disabled=false;if(!h.ok){empty(historyPanel,errorText(h));return;}const entries=Array.isArray(h.data)?h.data:[];if(!entries.length){empty(historyPanel,"Ariza statusi bo‘yicha tarix hali mavjud emas.");historyPanel.dataset.loaded="true";return;}entries.forEach(entry=>historyPanel.append(card("Status o‘zgarishi",[entry.old_status?(statusLabels[entry.old_status]||entry.old_status):"Ariza yaratildi","Yangi: "+(statusLabels[entry.new_status]||entry.new_status),new Date(entry.changed_at).toLocaleString("uz-UZ")])));historyPanel.dataset.loaded="true";});
+      node.append(historyButton,historyPanel);
       box.append(node);
     });
   }
@@ -520,6 +524,10 @@
       noteToggle.addEventListener("click",async()=>{notePanel.hidden=!notePanel.hidden;if(notePanel.hidden||notePanel.dataset.loaded==="true")return;noteToggle.disabled=true;const existing=await data.getEmployerApplicationNote(item.application_id);noteToggle.disabled=false;if(!existing.ok){alert(errorText(existing));return;}const note=Array.isArray(existing.data)?existing.data[0]:existing.data;if(note){noteText.value=note.note||"";noteDate.value=note.next_contact_date||"";}notePanel.dataset.loaded="true";});
       noteSave.addEventListener("click",async()=>{noteSave.disabled=true;noteSave.textContent="Saqlanmoqda…";const saved=await data.saveEmployerApplicationNote({applicationId:item.application_id,note:noteText.value,nextContactDate:noteDate.value});if(!saved.ok||saved.data!==true){alert(errorText(saved));noteSave.disabled=false;noteSave.textContent="Qaydni saqlash";return;}noteSave.textContent="Saqlandi";noteSave.disabled=false;notePanel.dataset.loaded="true";});
       node.append(noteToggle,notePanel);
+      const historyToggle=document.createElement("button");historyToggle.className="btn secondary";historyToggle.type="button";historyToggle.textContent="Ariza tarixi";
+      const historyPanel=document.createElement("div");historyPanel.className="form-panel";historyPanel.hidden=true;
+      historyToggle.addEventListener("click",async()=>{historyPanel.hidden=!historyPanel.hidden;if(historyPanel.hidden||historyPanel.dataset.loaded==="true")return;historyToggle.disabled=true;const h=await data.listJobApplicationStatusHistory(item.application_id);historyToggle.disabled=false;if(!h.ok){empty(historyPanel,errorText(h));return;}const entries=Array.isArray(h.data)?h.data:[];if(!entries.length){empty(historyPanel,"Status o‘zgarishlari tarixi yo‘q.");historyPanel.dataset.loaded="true";return;}entries.forEach(entry=>historyPanel.append(card("Status o‘zgarishi",[entry.old_status?(labels[entry.old_status]||entry.old_status):"Ariza yaratildi","Yangi: "+(labels[entry.new_status]||entry.new_status),new Date(entry.changed_at).toLocaleString("uz-UZ")])));historyPanel.dataset.loaded="true";});
+      node.append(historyToggle,historyPanel);
       if(item.status==="submitted"||item.status==="interview"){
         const actions=document.createElement("div");actions.className="card-actions";
         (item.status==="submitted"?[["Suhbatga taklif","interview"],["Qabul qilish","accepted"],["Rad etish","declined"]]:[["Qabul qilish","accepted"],["Rad etish","declined"]]).forEach(([label,nextStatus])=>{
