@@ -528,3 +528,42 @@ body:has(.topbar) .career-match-disclaimer{margin:11px 0 0;color:#87839e;font-si
 .career-ai-footnote{font-size:11px;margin:12px 0 0}
 .career-match-card .career-ai-result{font-size:13px}
 @media(max-width:640px){.career-ai-actions{align-items:stretch;flex-direction:column}.career-ai-actions .btn{width:100%}}
+
+/* Resume form: remove inherited light field cards and keep every control inside the grid. */
+body:has(.topbar) #resume-section .form-grid{
+  width:100%;max-width:100%;min-width:0;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  align-items:stretch;
+}
+body:has(.topbar) #resume-section .form-grid>.field{
+  min-width:0;width:100%;max-width:100%;
+  padding:15px 16px 16px;
+  border:1px solid rgba(167,139,250,.2)!important;
+  border-radius:16px!important;
+  background:linear-gradient(145deg,rgba(29,27,49,.94),rgba(17,19,35,.98))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 8px 22px rgba(0,0,0,.12)!important;
+}
+body:has(.topbar) #resume-section .form-grid>.field.full{grid-column:1/-1}
+body:has(.topbar) #resume-section .form-grid>.field>label{
+  color:#e5def8!important;font-size:12px!important;font-weight:750!important;
+  line-height:1.45;letter-spacing:.01em;
+}
+body:has(.topbar) #resume-section .form-grid>.field input,
+body:has(.topbar) #resume-section .form-grid>.field textarea,
+body:has(.topbar) #resume-section .form-grid>.field select{
+  display:block;width:100%;min-width:0;max-width:100%;
+  background:#0b1020!important;border:1px solid rgba(167,139,250,.22)!important;
+  color:#f5f2ff!important;border-radius:12px!important;
+}
+body:has(.topbar) #resume-section .form-grid>.field input:focus,
+body:has(.topbar) #resume-section .form-grid>.field textarea:focus,
+body:has(.topbar) #resume-section .form-grid>.field select:focus{
+  border-color:#8b7bff!important;box-shadow:0 0 0 3px rgba(139,92,246,.16)!important;
+}
+body:has(.topbar) #resume-section .form-grid>.field textarea{min-height:112px}
+body:has(.topbar) #resume-section .form-grid>.field .employment-choices{min-width:0}
+@media(max-width:760px){
+  body:has(.topbar) #resume-section .form-grid{grid-template-columns:minmax(0,1fr)}
+  body:has(.topbar) #resume-section .form-grid>.field.full{grid-column:1}
+  body:has(.topbar) #resume-section .form-grid>.field{padding:14px}
+}
