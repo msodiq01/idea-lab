@@ -37,13 +37,13 @@ test("Applications Center recognizes career applications and their status labels
 
 test("unified center routes incoming career decisions to the protected review RPC", () => {
   assert.match(page, /IDEALAB_DATA\.reviewJobApplication\(r\.id,next==="rejected"\?"declined":next\)/);
-  assert.match(page, /r\.source\.type==="job"\?\(r\.status==="submitted"\?\["interview","accepted","rejected"\]/);
-  assert.match(page, /\["investment","job"\]\.includes\(r\.source\.type\)/);
+  assert.match(page, /if\(r\.source\.type==="job"\)return r\.status==="submitted"\?\["interview","accepted","rejected"\]/);
+  assert.match(page, /if\(r\.source\.type==="job"\)/);
 });
 
 test("unified center lets applicants withdraw only submitted career applications", () => {
   assert.match(page, /IDEALAB_DATA\.withdrawJobApplication\(r\.id\)/);
-  assert.match(page, /r\.source\.type==="job"&&r\.status==="submitted"/);
+  assert.match(page, /if\(r\.source\.type==="job"\)return r\.status==="submitted"\?\["withdrawn"\]/);
 });
 
 test("market request review RPCs enforce explicit participant ownership and allowed statuses", () => {
