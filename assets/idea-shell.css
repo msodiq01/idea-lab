@@ -526,3 +526,150 @@ footer{background:transparent!important;border-top:1px solid #e4e8f2!important;c
 #il-global .il-status .il-dot{background:#f0b34c!important;box-shadow:0 0 0 3px rgba(240,179,76,.16)!important}
 #il-global .il-status[data-state="partial"]{color:#b9f4e8!important;border-color:rgba(90,211,188,.22)!important;background:rgba(14,159,154,.13)!important}
 #il-global .il-status[data-state="partial"] .il-dot{background:#56d6b8!important;box-shadow:0 0 0 3px rgba(86,214,184,.16)!important}
+
+
+/* IDEA LAB — Hybrid Innovation design layer
+ * Premium graphite navigation + violet/cyan accents + readable light work surfaces.
+ * Existing component classes and layout contracts are preserved.
+ */
+:root{
+ --il-ink:#11101b;
+ --il-ink-soft:#1b1930;
+ --il-violet:#7865f5;
+ --il-violet-soft:#f0edff;
+ --il-cyan:#16b8c2;
+ --il-cyan-soft:#e8fbfc;
+ --il-table-head:#f3f2fb;
+ --il-table-line:#e7e7f0;
+ --il-focus:rgba(120,101,245,.22);
+}
+body{
+ background:
+  radial-gradient(ellipse at 8% 0%,rgba(120,101,245,.075),transparent 28%),
+  radial-gradient(ellipse at 92% 8%,rgba(22,184,194,.055),transparent 24%),
+  var(--il-bg)!important;
+}
+body>#il-global{
+ background:linear-gradient(112deg,#11101b 0%,#1b1930 68%,#242044 100%)!important;
+ border-bottom:1px solid rgba(196,181,253,.16)!important;
+ box-shadow:0 12px 34px rgba(17,16,27,.2)!important;
+ color:#f7f5ff!important;
+}
+#il-global .il-brand{color:#f7f5ff!important}
+#il-global .il-brand b{color:#b9aaff!important}
+#il-global .il-brand-mark{
+ background:linear-gradient(145deg,#a78bfa,#6d55e8)!important;
+ box-shadow:0 7px 20px rgba(120,101,245,.32)!important;
+}
+#il-global .il-links>a,#il-global .il-all-menu>summary{
+ color:#c7c2dc!important;
+}
+#il-global .il-links>a:hover,
+#il-global .il-links>a[aria-current=page],
+#il-global .il-all-menu[open]>summary,
+#il-global .il-all-menu>summary:hover{
+ color:#fff!important;background:rgba(167,139,250,.16)!important;
+ border-color:rgba(196,181,253,.22)!important;
+}
+#il-global .il-all-menu>summary:after{color:#c4b5fd!important}
+#il-global .il-quick-action{
+ background:linear-gradient(105deg,#8b5cf6,#6d55e8)!important;
+ border:1px solid rgba(221,214,254,.18)!important;
+ box-shadow:0 6px 18px rgba(109,85,232,.28)!important;
+}
+#il-global .il-status{
+ color:#a7f3d0!important;background:rgba(16,185,129,.12)!important;
+ border-color:rgba(110,231,183,.2)!important;
+}
+#il-global .il-dot{background:#6ee7b7!important}
+#il-global .il-profile-link{
+ color:#f7f5ff!important;background:rgba(255,255,255,.07)!important;
+ border-color:rgba(196,181,253,.2)!important;
+}
+#il-global .il-profile-link:hover{background:rgba(167,139,250,.14)!important}
+#il-global .il-profile-avatar{background:linear-gradient(145deg,#8b5cf6,#0891b2)!important}
+#il-global .il-menu-panel{
+ background:#171526!important;border-color:#37324f!important;
+ box-shadow:0 24px 70px rgba(9,8,18,.42)!important;
+}
+#il-global .il-menu-group strong{color:#9c94b8!important}
+#il-global .il-menu-group a{color:#ddd8ef!important}
+#il-global .il-menu-group a:hover,
+#il-global .il-menu-group a[aria-current=page]{
+ background:rgba(167,139,250,.15)!important;color:#fff!important;
+}
+body>header:not(#il-global):not(.il-legacy-nav-shell){
+ background:linear-gradient(125deg,#171526 0%,#211c3b 74%,#252047 100%)!important;
+ color:#f7f5ff!important;border-color:#393251!important;
+ box-shadow:0 18px 46px rgba(30,24,58,.16)!important;
+}
+body>header:not(#il-global):not(.il-legacy-nav-shell) h1{color:#fff!important}
+body>header:not(#il-global):not(.il-legacy-nav-shell) p{color:#c7c2dc!important}
+.hero,.intro,.oc-hero{
+ background:
+  radial-gradient(circle at 92% 8%,rgba(34,211,238,.12),transparent 25%),
+  linear-gradient(125deg,#171526 0%,#211c3b 72%,#252047 100%)!important;
+ color:#f7f5ff!important;border:1px solid #393251!important;
+ box-shadow:0 18px 46px rgba(30,24,58,.14)!important;
+}
+.hero h1,.intro h1,.oc-hero h1{color:#fff!important}
+.hero p,.intro p,.hero-description,.oc-hero p{color:#c7c2dc!important}
+.eyebrow,.hero-label,.section-label,.oc-hero .oc-kicker{color:#b9aaff!important}
+.gradient-text,.gradient{
+ background:linear-gradient(100deg,#c4b5fd,#67e8f9)!important;
+ -webkit-background-clip:text!important;background-clip:text!important;
+ color:transparent!important;
+}
+.stat,.stat-card,.d-card,.d-panel,.d-module,.card,.project-card,.offer-card,
+.application-card,.search-panel,.profile,.panel,.match,.listing,.investor-card,
+.specialist-card,.organization-card,.product-card,.item-card,.chat-layout,
+.side-card,.activity-group,.oc-panel{
+ box-shadow:0 9px 28px rgba(24,22,45,.055)!important;
+}
+.btn,[type=submit],a.button{
+ background:linear-gradient(105deg,#7865f5,#604bd7)!important;
+ border-color:#7865f5!important;
+}
+.btn:hover,[type=submit]:hover,a.button:hover{
+ background:linear-gradient(105deg,#6954e8,#4f3bc5)!important;
+}
+.btn-secondary,.btn-outline,.secondary-button,.tab-btn,.tab{
+ background:#fff!important;
+}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+ outline-color:#7865f5!important;box-shadow:0 0 0 4px var(--il-focus)!important;
+}
+/* Shared data-table language for dashboards and module workspaces */
+.table-wrap,.data-table-wrap,.table-container{
+ width:100%;overflow-x:auto;border:1px solid var(--il-table-line);
+ border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(24,22,45,.045);
+ -webkit-overflow-scrolling:touch;
+}
+table,.data-table{
+ width:100%;border-collapse:separate;border-spacing:0;
+ color:var(--il-text);font-size:12px;line-height:1.5;
+}
+thead th,table thead th{
+ position:sticky;top:0;z-index:1;background:var(--il-table-head);
+ color:#514b70;font-size:10px;font-weight:800;letter-spacing:.055em;
+ text-transform:uppercase;white-space:nowrap;
+}
+th,td{padding:13px 15px;text-align:left;border-bottom:1px solid var(--il-table-line);vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:#faf9ff}
+td{color:#4d566b}
+td strong{color:#20243a}
+.table-status,.status-pill,.badge{
+ display:inline-flex;align-items:center;gap:5px;border-radius:30px;
+ padding:5px 9px;font-size:10px;font-weight:750;white-space:nowrap;
+}
+.table-toolbar,.data-toolbar{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ flex-wrap:wrap;margin:0 0 14px;
+}
+.table-toolbar input,.data-toolbar input{max-width:320px}
+@media(max-width:640px){
+ th,td{padding:11px 12px;font-size:11px}
+ .table-toolbar,.data-toolbar{align-items:stretch}
+ .table-toolbar input,.data-toolbar input{max-width:none}
+}
