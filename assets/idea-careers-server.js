@@ -458,7 +458,7 @@
     if(!r.ok){empty(box,errorText(r));return;}
     if(!r.data?.length){empty(box,"Hozircha yangi bildirishnoma yo‘q.");return;}
     r.data.forEach(item=>{
-      const labels={submitted:"Yangi ariza kelib tushdi",accepted:"Arizangiz qabul qilindi",declined:"Arizangiz rad etildi",withdrawn:"Ariza qaytarib olindi"};
+      const labels={submitted:"Yangi ariza kelib tushdi",interview:"Suhbatga taklif qilindingiz",accepted:"Arizangiz qabul qilindi",declined:"Arizangiz rad etildi",withdrawn:"Ariza qaytarib olindi"};
       const node=card(item.job_title||"Ish arizasi",[item.company_name||"Ish beruvchi",labels[item.to_status]||"Ariza holati: "+item.to_status,new Date(item.created_at).toLocaleString("uz-UZ"),item.read_at?"O‘qilgan":"Yangi bildirishnoma"]);
       if(!item.read_at){
         const button=document.createElement("button");button.className="btn secondary";button.type="button";button.textContent="O‘qildi deb belgilash";
