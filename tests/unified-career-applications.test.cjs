@@ -66,6 +66,8 @@ test("unified center calls the dedicated server RPCs for resource, partnership, 
 
 test("market review RPCs are executable only by authenticated users", () => {
   const sql = fs.readFileSync(path.join(root, "supabase/migrations/20261128151000_restrict_market_review_rpc_execute.sql"), "utf8");
-  assert.equal((sql.match(/from public, anon, service_role/g)||[]).length, 3);
-  assert.equal((sql.match(/to authenticated/g)||[]).length, 3);
+  for (const name of ["resource_request", "partnership_enquiry", "specialist_request"]) {
+    assert.match(sql, new RegExp("revoke all on function public\\\\.idea_lab_review_" + name + "\\\\(uuid,text\\\\) from public, anon, service_role", "i"));
+    assert.match(sql, new RegExp("grant execute on function public\\\\.idea_lab_review_" + name + "\\\\(uuid,text\\\\) to authenticated", "i"));
+  }
 });
