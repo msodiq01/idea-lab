@@ -27,12 +27,11 @@ returns table(application_id uuid, job_title text, company_name text, applicatio
 language sql stable security invoker set search_path=''
 as $$
  select a.id,j.title,o.name,a.status,
-   case when a.applicant_id=auth.uid() then o.name else coalesce(p.display_name,'Nomzod') end,
+   case when a.applicant_id=auth.uid() then o.name else 'Nomzod' end,
    latest.body,latest.created_at
  from idea_app.job_applications a
  join idea_app.job_posts j on j.id=a.job_post_id
  join idea_app.organizations o on o.id=j.organization_id
- left join public.profiles p on p.id=a.applicant_id
  left join lateral (
    select m.body,m.created_at from idea_app.job_application_messages m
    where m.application_id=a.id order by m.created_at desc limit 1
