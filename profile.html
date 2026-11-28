@@ -555,14 +555,14 @@ refreshAuthSession(false).then(()=>loadProfile()).catch(()=>loadProfile());rende
   if(!userId){badge.textContent='0 SUHBAT';empty(list,'Suhbatlar uchun akkauntga kiring.');empty(body,'Kirishdan so‘ng arizalarga bog‘langan chatlar ko‘rinadi.');input.disabled=send.disabled=true;return;}
   const result=await api.listMyJobChats();
   if(!result.ok){empty(list,'Chatlar serverdan yuklanmadi. Qayta yuklang.');empty(body,'Server xatosi.');return;}
-  chats=Array.isArray(result.data)?result.data:[[]].flat();badge.textContent=chats.length+' SUHBAT';
+  chats=Array.isArray(result.data)?result.data:[];badge.textContent=chats.length+' SUHBAT';
   if(!chats.length){empty(list,'Arizaga bog‘langan suhbatlar hali yo‘q.');empty(body,'Suhbatlar arizalar asosida shu yerda paydo bo‘ladi.');input.disabled=send.disabled=true;activeId='';return;}
   if(!activeId||!chats.some(c=>c.application_id===activeId))activeId=chats[0].application_id;
   chats.forEach(c=>{const button=document.createElement('button');button.type='button';button.className='cabinet-chat-item'+(c.application_id===activeId?' active':'');button.innerHTML='<strong>'+safe(c.counterpart_label||c.company_name||'Suhbat')+'</strong><small>'+safe(c.job_title||'Vakansiya')+'</small><small>'+safe(c.application_status||'Ariza')+(c.last_message?' · '+safe(c.last_message):'')+'</small>';button.addEventListener('click',()=>{activeId=c.application_id;loadChats()});list.append(button)});
   const current=chats.find(c=>c.application_id===activeId);head.textContent=(current.counterpart_label||current.company_name||'Suhbat')+' · '+(current.job_title||'Vakansiya');input.disabled=send.disabled=false;
   const messages=await api.listJobChatMessages(activeId);body.replaceChildren();
   if(!messages.ok){empty(body,'Xabarlar yuklanmadi.');return;}
-  const rows=Array.isArray(messages.data)?messages.data:[[];
+  const rows=Array.isArray(messages.data)?messages.data:[];
   if(!rows.length){empty(body,'Hali xabarlar yo‘q. Xavfsiz va ishga oid xabar bilan suhbatni boshlang.');return;}
   rows.forEach(m=>{const bubble=document.createElement('div');bubble.className='cabinet-chat-bubble'+(m.sender_id===userId?' mine':'');bubble.textContent=m.body||'';const meta=document.createElement('small');meta.textContent=new Date(m.created_at).toLocaleString('uz-UZ');bubble.append(meta);body.append(bubble)});body.scrollTop=body.scrollHeight;
  }
