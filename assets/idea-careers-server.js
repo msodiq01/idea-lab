@@ -757,7 +757,8 @@
   $("ilApplyCancel").addEventListener("click",()=>{applicationPanel.hidden=true;selectedJob=null;$("ilApplyFeedback").hidden=true;$("ilApplyFeedback").textContent="";});
   $("modeSeeker")?.addEventListener("click",()=>setCareerMode("seeker"));
   $("modeEmployer")?.addEventListener("click",()=>setCareerMode("employer"));
-  setCareerMode("seeker");
+  const cabinetMode=new URLSearchParams(location.search).get("mode");
+  setCareerMode(cabinetMode==="employer"?"employer":"seeker");
   $("openEmployerOrg")?.addEventListener("click",()=>{if(!userId){location.href="auth.html?next=career.html";return;}$("employerOrgPanel").hidden=!$("employerOrgPanel").hidden;loadOrganizations();});
   $("cancelEmployerOrg")?.addEventListener("click",()=>{$("employerOrgPanel").hidden=true;});
   $("refreshMatches")?.addEventListener("click",loadMatches);
