@@ -20,7 +20,7 @@ test("AI Edge Function keeps JWT verification enabled in deployment configuratio
 test("AI Edge Function validates user fields and restricts prompt modes", () => {
   assert.match(source, /value\.length > 3000/);
   assert.match(source, /MODES\[raw\.mode\]/);
-  assert.match(source, /content-length/);
+  assert.match(source, /rawBody\.length > 16000/);
 });
 
 test("provider keys are read only from server environment variables", () => {
