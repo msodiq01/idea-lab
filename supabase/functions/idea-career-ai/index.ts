@@ -38,7 +38,7 @@ function parseInput(raw: unknown): Input | null {
   if (mode === "resume_review" && !resume) return null;
   if (mode === "job_match" && (!resume || !vacancy)) return null;
   if (mode === "vacancy_improve" && !vacancy) return null;
-  return { mode, resume, vacancy, title, provider: body.provider === "openai" ? "openai" : "gemini" };
+  const provider = body.provider === "openai" || body.provider === "gemini"\n    ? body.provider\n    : (Deno.env.get("GEMINI_API_KEY") ? "gemini" : "openai");\n  return { mode, resume, vacancy, title, provider };
 }
 function buildPrompt(input: Input) {
   return [
