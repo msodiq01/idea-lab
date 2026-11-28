@@ -34,3 +34,20 @@ test("provider errors do not return upstream response bodies or secrets", () => 
   assert.match(source, /AI provayder javobi xato/);
   assert.doesNotMatch(source, /response\.text\(\)|data\.error\s*\|\|/);
 });
+
+const careerSource = fs.readFileSync("assets/idea-careers-server.js", "utf8");
+
+test("AI router supports a constrained vacancy drafting mode", () => {
+  assert.match(source, /vacancy_draft:/);
+  assert.match(source, /Faqat kiritilgan faktlardan foydalan/);
+  assert.match(source, /himoyalangan belgilar asosida cheklov/);
+});
+
+test("vacancy AI request is opt-in and excludes contact and applicant data", () => {
+  const match = careerSource.match(/async function draftVacancyWithAI\(\)\s*\{[\s\S]*?\n  \}/);
+  assert.ok(match, "vacancy AI handler exists");
+  assert.match(match[0], /jobAiConsent/);
+  assert.match(match[0], /callCareerAI\(/);
+  assert.match(match[0], /mode:\s*"vacancy_improve"/);
+  assert.doesNotMatch(match[0], /jobContactName|jobContactPhone|resume|candidate/i);
+});

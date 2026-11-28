@@ -40,4 +40,4 @@ jobs:
         with:
           deno-version: v2.x
       - name: Type-check IDEA LAB AI Edge Function
-        run: deno check supabase/functions/idea-ai/index.ts
+        run: deno check supabase/functions/idea-ai/index.ts supabase/functions/idea-career-ai/index.ts

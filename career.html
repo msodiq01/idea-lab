@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="IDEA LAB ichidagi ish imkoniyatlari markazi. Haqiqiy vakansiyalarni toping va ariza yuboring.">
-<title>IDEA LAB | Ish imkoniyatlari</title>
+<meta name="description" content="IDEA LAB Career Studio: o‘zingizga mos ish imkoniyatlarini toping, rezyume yarating yoki tashkilotingiz uchun munosib nomzodlarni izlang.">
+<title>Ish topish va xodim topish | IDEA LAB Career Studio</title>
 <link rel="icon" type="image/svg+xml" href="assets/idea-lab-logo.svg">
 <link rel="stylesheet" href="assets/idea-shell.css">
 <link rel="stylesheet" href="assets/idea-nextgen.css">
@@ -31,17 +31,21 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}
 @media(max-width:680px){.topbar-inner{align-items:flex-start;flex-direction:column}.navlinks{width:100%}.wrap{margin-top:18px}.hero{padding:24px}.form-grid,.cards,.searchrow{grid-template-columns:1fr}.section-head h2{font-size:20px}}
 </style>
 <link rel="stylesheet" href="assets/idea-visual-system.css">
+<link rel="stylesheet" href="assets/idea-career-studio.css">
 </head>
 <body>
 <header class="topbar"><nav class="topbar-inner">
 <a class="brand" href="index.html" aria-label="IDEA LAB — bosh sahifa"><img src="assets/idea-lab-logo.svg" alt="IDEA LAB"></a>
-<div class="navlinks"><a href="index.html">Bosh sahifa</a><a href="projects.html">Loyihalar</a><a href="teams.html">Jamoalar</a><a class="active" href="career.html">Ish imkoniyatlari</a><a href="profile.html">Kabinet</a></div>
+<div class="navlinks"><a href="index.html">Bosh sahifa</a><a href="projects.html">Loyihalar</a><a href="teams.html">Jamoalar</a><a class="active" href="career.html">Ish imkoniyatlari</a><a href="profile.html">Kabinet</a><a href="profile.html#applicationCenter" class="btn secondary" style="padding:8px 12px">Arizalar markazi</a></div>
 </nav></header>
 <main class="wrap">
 <section class="hero">
-<div class="eyebrow">IDEA LAB FUNKSIYASI</div>
-<h1>Ish toping. Xodim toping.</h1>
-<p>Haqiqiy ish beruvchilar joylashtirgan faol vakansiyalarni ko‘ring, mos ishga ariza yuboring yoki tashkilotingiz nomidan vakansiya e’lon qiling.</p>
+<div class="eyebrow">IDEA LAB · CAREER STUDIO</div>
+<h1>Ish topish va kuchli jamoa qurish — bitta aqlli platformada.</h1>
+<p>O‘zingizga mos imkoniyatlarni toping yoki tashkilotingiz uchun munosib mutaxassislarni izlang. Vakansiyalar, rezyumelar va arizalar — yagona boshqaruv maydonida.</p>
+<div class="career-hero-points" aria-label="Platforma imkoniyatlari">
+<span>AI yordamida tavsiyalar</span><span>Kasbiy moslik tahlili</span><span>Yagona boshqaruv kabineti</span>
+</div>
 <div class="hero-actions">
 <button class="btn green" id="modeSeeker" type="button">Ish izlayapman</button>
 <button class="btn secondary" id="modeEmployer" type="button">Ish beruvchiman</button>
@@ -104,6 +108,15 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}
 <div class="field"><label for="jobContactName">Aloqa uchun mas’ul shaxs ismi *</label><input id="jobContactName" required minlength="2" maxlength="120" autocomplete="name" placeholder="Masalan, Ali Valiyev"></div>
 <div class="field"><label for="jobContactPhone">Aloqa telefon raqami *</label><input id="jobContactPhone" type="tel" required inputmode="tel" autocomplete="tel" maxlength="20" pattern="\+?998[0-9 ()-]{9,16}" placeholder="+998 90 123 45 67"><p class="notice">Ushbu ism va telefon raqami vakansiya e’lonida hammaga ko‘rinadi. Faqat ish bo‘yicha bog‘lanish uchun mo‘ljallangan raqamni kiriting.</p></div>
 <div class="field full"><label for="jobDescription">Vazifalar va talablar *</label><textarea id="jobDescription" required minlength="10" maxlength="3000" placeholder="Ish vazifalari, malaka talablari va shartlarini aniq yozing."></textarea></div>
+<div class="field full career-ai-assistant">
+  <div class="career-ai-panel">
+    <div class="career-ai-heading"><span class="career-ai-kicker">IDEA LAB AI</span><strong>Vakansiya matnini aqlli tayyorlash</strong></div>
+    <p class="career-ai-copy">AI siz kiritgan lavozim, vazifalar va ish shartlari asosida e’lon matnini yaxshilaydi. Natijani joylashdan oldin o‘zingiz tekshirasiz.</p>
+    <label class="career-ai-consent"><input id="jobAiConsent" type="checkbox"> Vakansiya mazmuni tanlangan AI provayderiga yuborilishiga roziman. Aloqa ismi va telefon raqami yuborilmaydi.</label>
+    <div class="career-ai-actions"><button class="btn secondary" id="jobAiDraftButton" type="button">✦ AI bilan matnni tayyorlash</button><span id="jobAiDraftStatus" role="status" aria-live="polite">AI yordamidan foydalanish ixtiyoriy.</span></div>
+    <p class="career-ai-footnote">Rezyumelar, nomzod ma’lumotlari, tashkilot IDsi va aloqa telefonlari bu so‘rovga qo‘shilmaydi. AI xatosiz bo‘lishi kafolatlanmaydi.</p>
+  </div>
+</div>
 </div><div class="hero-actions"><button class="btn green" type="submit">Vakansiyani joylashtirish</button><button class="btn secondary" type="button" onclick="document.getElementById('jobFormPanel').hidden=true">Bekor qilish</button></div>
 </form></div>
 <div class="searchrow"><input class="search" id="jobSearch" type="search" placeholder="Lavozim, tashkilot yoki ko‘nikma bo‘yicha qidirish"><input class="search" id="jobLocationFilter" type="search" placeholder="Shahar / hudud"><select class="search" id="jobSalaryFilter"><option value="0">Maosh: barcha</option><option value="2000000">2 mln+ so‘m</option><option value="3000000">3 mln+ so‘m</option><option value="5000000">5 mln+ so‘m</option></select><select class="search" id="jobSort"><option value="default">Saralash: standart</option><option value="title">Lavozim A–Z</option><option value="salary">Maosh yuqoridan</option></select><select class="search" id="jobFilter"><option value="">Barcha ish turlari</option><option>To‘liq ish kuni</option><option>Yarim stavka</option><option>Masofaviy</option><option>Amaliyot</option><option>Frilans</option></select></div>

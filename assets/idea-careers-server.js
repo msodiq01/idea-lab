@@ -231,6 +231,18 @@
       const skills=job.required_skills||[];
       if(skills.length){const skillLine=document.createElement("p");skillLine.textContent="Ko‘nikmalar: "+skills.join(", ");node.append(skillLine);}
       node.insertBefore(meta,node.children[1]||null);
+      const aiCompare=document.createElement("button");aiCompare.type="button";aiCompare.className="btn secondary";aiCompare.textContent="✦ AI bilan moslikni tahlil qilish";
+      aiCompare.addEventListener("click",async()=>{
+        if(!$("resumeAiConsent")?.checked){$("resumeAiResult").hidden=false;$("resumeAiResult").textContent="AI tahlili uchun avval rezyume bo‘limidagi rozilikni belgilang.";return;}
+        aiCompare.disabled=true;aiCompare.textContent="Tahlil qilinmoqda…";
+        try{
+          const resume=resumeForAI();
+          const vacancy=[job.title,job.company_name,job.description,job.required_skills?.join(", "),job.schedule_label].filter(Boolean).join("\\n");
+          const result=await callCareerAI({mode:"job_match",resume,vacancy});
+          const panel=document.createElement("div");panel.className="career-ai-result";panel.textContent=result;node.append(panel);
+        }catch(error){const panel=document.createElement("p");panel.className="notice";panel.textContent=error.message||"AI tahlili bajarilmadi.";node.append(panel);}
+        finally{aiCompare.disabled=false;aiCompare.textContent="✦ AI bilan moslikni tahlil qilish";}
+      });
       const contact=contactBlock(job);if(contact)node.append(contact);
       const actions=document.createElement("div");actions.className="card-actions";
       const apply=document.createElement("button");apply.className="btn btn-green";apply.type="button";
@@ -266,6 +278,36 @@
     const selected=new Set(profile.employment_types||["full_time"]);
     Array.from($("resumeEmploymentTypes").querySelectorAll('input[type="checkbox"]')).forEach(option=>option.checked=selected.has(option.value));
   }
+  async function callCareerAI(payload){
+    const client=auth.getClient?.();
+    if(!client?.functions?.invoke)throw new Error("Supabase sessiyasi topilmadi. Qayta kiring.");
+    const response=await client.functions.invoke("idea-career-ai",{body:payload});
+    if(response.error||!response.data?.result)throw new Error(response.data?.error||response.error?.message||"AI xizmati javob bermadi.");
+    return String(response.data.result);
+  }
+  function resumeForAI(){
+    return [
+      "Kasbiy yo‘nalish: "+clean($("resumeRoles")?.value),
+      "Ko‘nikmalar: "+clean($("resumeSkills")?.value),
+      "Tajriba (yil): "+clean($("resumeYears")?.value),
+      "Tajriba tavsifi: "+clean($("resumeExperience")?.value),
+      "Ta’lim: "+clean($("resumeEducation")?.value)
+    ].filter(Boolean).join("\\n");
+  }
+  const resumeAI=document.createElement("section");
+  resumeAI.className="career-ai-panel";
+  resumeAI.innerHTML='<div class="career-ai-heading"><span class="career-ai-kicker">IDEA LAB AI</span><strong>Rezyume tahlilchisi</strong></div><p class="career-ai-copy">Kasbiy ma’lumotlaringizni tahlil qilib, rezyumeni yaxshilash bo‘yicha tavsiyalar oling.</p><label class="career-ai-consent"><input id="resumeAiConsent" type="checkbox"> Ism, telefon va manzilsiz kasbiy ma’lumotlarim AI xizmatiga yuborilishiga roziman.</label><button class="btn secondary" id="resumeAiButton" type="button">✦ Rezyumeni AI bilan tahlil qilish</button><div id="resumeAiResult" class="career-ai-result" role="status" aria-live="polite" hidden></div>';
+  resumeForm?.insertAdjacentElement("afterend",resumeAI);
+  $("resumeAiButton")?.addEventListener("click",async()=>{
+    const output=$("resumeAiResult"),button=$("resumeAiButton");
+    if(!userId){output.hidden=false;output.textContent="Avval akkauntga kiring.";return;}
+    if(!$("resumeAiConsent").checked){output.hidden=false;output.textContent="Avval AI xizmatiga yuborishga rozilik bering.";return;}
+    const resume=resumeForAI();if(resume.length<20){output.hidden=false;output.textContent="Avval rezyume bo‘limidagi kasbiy ma’lumotlarni to‘ldiring.";return;}
+    button.disabled=true;output.hidden=false;output.textContent="AI rezyumeni tahlil qilmoqda…";
+    try{output.textContent=await callCareerAI({mode:"resume_review",resume});}
+    catch(error){output.textContent=error.message||"AI tahlili bajarilmadi.";}
+    finally{button.disabled=false;}
+  });
   async function loadResume(){
     if(!resumeForm)return;
     if(!userId){resumeForm.querySelectorAll("input,textarea,select,button").forEach(x=>x.disabled=true);$("resumeSaveStatus").textContent="Rezyumeni yaratish uchun avval IDEA LAB akkauntiga kiring.";return;}
@@ -311,14 +353,25 @@
     if(!r.ok){empty(matchBox,errorText(r));return;}
     if(!r.data?.length){empty(matchBox,"Hozircha rezyumengizga mos haqiqiy vakansiya topilmadi. Yangi e’lonlar joylashtirilganda shu yerda ko‘rinadi.");return;}
     r.data.forEach(job=>{
-      const reasons=Array.isArray(job.match_reasons)?job.match_reasons.join(" • "):"";
-      const node=card(job.title,[job.company_name,locationLabel(job),employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Kerakli ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",reasons]);
+      const reasons=Array.isArray(job.match_reasons)?job.match_reasons.filter(Boolean):[];
+      const scoreValue=Math.max(0,Math.min(100,Number(job.match_score)||0));
+      const node=card(job.title,[job.company_name,locationLabel(job),employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Kerakli ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi"]);
+      node.classList.add("career-match-card");
+      const matchPanel=document.createElement("section");matchPanel.className="career-match-panel";matchPanel.setAttribute("aria-label","Vakansiya mosligi");
+      const matchTop=document.createElement("div");matchTop.className="career-match-top";
+      const matchLabel=document.createElement("strong");matchLabel.textContent="Rezyumega mosligi";
+      const score=document.createElement("span");score.className="career-match-score";score.textContent=scoreValue+"%";
+      matchTop.append(matchLabel,score);matchPanel.append(matchTop);
+      const track=document.createElement("div");track.className="career-match-track";track.setAttribute("role","meter");track.setAttribute("aria-label","Moslik foizi");track.setAttribute("aria-valuemin","0");track.setAttribute("aria-valuemax","100");track.setAttribute("aria-valuenow",String(scoreValue));
+      const fill=document.createElement("span");fill.className="career-match-fill";fill.style.width=scoreValue+"%";track.append(fill);matchPanel.append(track);
+      if(reasons.length){const why=document.createElement("div");why.className="career-match-reasons";const whyTitle=document.createElement("span");whyTitle.className="career-match-caption";whyTitle.textContent="Nega tavsiya qilindi?";why.append(whyTitle);const list=document.createElement("ul");reasons.forEach(reason=>{const li=document.createElement("li");li.textContent=reason;list.append(li);});why.append(list);matchPanel.append(why);}
+      const disclaimer=document.createElement("p");disclaimer.className="career-match-disclaimer";disclaimer.textContent="Moslik foizi yo‘naltiruvchi baho, ishga qabul qilish kafolati emas.";matchPanel.append(disclaimer);
+      node.append(matchPanel);
       const contact=contactBlock(job);if(contact)node.append(contact);
-      const score=document.createElement("p");score.className="notice";score.textContent="Moslik: "+Number(job.match_score||0)+"% — bu yo‘naltiruvchi baho, ishga qabul qilish kafolati emas.";node.append(score);
       const actions=document.createElement("div");actions.className="card-actions";
       const apply=document.createElement("button");apply.className="btn green career-apply-action";apply.type="button";const alreadyApplied=appliedJobIds.has(job.id);apply.textContent=alreadyApplied?"Ariza yuborilgan":userId?"Ariza yuborish":"Kirish orqali ariza yuborish";apply.disabled=alreadyApplied;apply.hidden=activeMode==="employer";
       apply.addEventListener("click",()=>{if(!userId){location.href="auth.html?next=career.html";return;}selectedJob=job;$("ilApplyTitle").textContent=job.title+" — ariza";$("ilApplyMessage").value="";applicationPanel.hidden=false;applicationPanel.scrollIntoView({behavior:"smooth",block:"center"});});
-      actions.append(apply);node.append(actions);matchBox.append(node);
+      actions.append(aiCompare,apply);node.append(actions);matchBox.append(node);
     });
   }
   async function loadModeration(){
@@ -656,6 +709,23 @@
     setStatus("Vakansiya muvaffaqiyatli joylandi va ochiq katalogda avtomatik e’lon qilindi.");
     await loadJobs();await loadOwnedJobs();
   }
+  async function draftVacancyWithAI(){
+    const button=$("jobAiDraftButton"),status=$("jobAiDraftStatus");
+    if(!userId){status.textContent="AI yordamidan foydalanish uchun avval akkauntga kiring.";return;}
+    if(!$("jobAiConsent")?.checked){status.textContent="Davom etishdan oldin AI xizmatiga yuborishga rozilikni belgilang.";return;}
+    const title=clean($("jobTitle")?.value),description=clean($("jobDescription")?.value);
+    if(title.length<2||description.length<10){status.textContent="Avval lavozim va vazifalar haqida ma’lumot kiriting.";return;}
+    const details=["Bandlik turi: "+clean($("jobType")?.value),"Kerakli ko‘nikmalar: "+clean($("jobSkills")?.value),"Tajriba: "+clean($("jobExperienceYears")?.value)+" yil","Ish jadvali: "+clean($("jobSchedule")?.value)].filter(Boolean).join("\\n");
+    const buttonText=button.textContent;button.disabled=true;button.textContent="AI tayyorlamoqda…";
+    status.textContent="Faqat vakansiyaning kasbiy tafsilotlari AI xizmatiga yuborilmoqda…";
+    try{
+      const generated=await callCareerAI({mode:"vacancy_improve",title,vacancy:[description,details].filter(Boolean).join("\\n")});
+      $("jobDescription").value=generated.slice(0,3000);
+      status.textContent=generated.length>3000?"Matn 3000 belgiga moslab qisqartirildi. E’lonni tekshiring.":"Matn tayyor. Tekshiring va kerak bo‘lsa tahrirlang.";
+    }catch(error){status.textContent=error.message||"AI matnni tayyorlay olmadi.";}
+    finally{button.disabled=false;button.textContent=buttonText;}
+  }
+  $("jobAiDraftButton")?.addEventListener("click",draftVacancyWithAI);
   document.addEventListener("submit",async event=>{
     if(event.target?.id==="employerOrgForm"){
       event.preventDefault();event.stopImmediatePropagation();
@@ -704,7 +774,8 @@
   $("ilApplyCancel").addEventListener("click",()=>{applicationPanel.hidden=true;selectedJob=null;$("ilApplyFeedback").hidden=true;$("ilApplyFeedback").textContent="";});
   $("modeSeeker")?.addEventListener("click",()=>setCareerMode("seeker"));
   $("modeEmployer")?.addEventListener("click",()=>setCareerMode("employer"));
-  setCareerMode("seeker");
+  const cabinetMode=new URLSearchParams(location.search).get("mode");
+  setCareerMode(cabinetMode==="employer"?"employer":"seeker");
   $("openEmployerOrg")?.addEventListener("click",()=>{if(!userId){location.href="auth.html?next=career.html";return;}$("employerOrgPanel").hidden=!$("employerOrgPanel").hidden;loadOrganizations();});
   $("cancelEmployerOrg")?.addEventListener("click",()=>{$("employerOrgPanel").hidden=true;});
   $("refreshMatches")?.addEventListener("click",loadMatches);
