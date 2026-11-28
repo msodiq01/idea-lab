@@ -341,8 +341,8 @@ body:has(.topbar) #jobResultSummary{
  padding:14px 17px;border:1px solid rgba(84,227,212,.17);
  background:rgba(84,227,212,.045);border-radius:13px;
 }
-body:has(.topbar) .career-quick-nav{padding-top:19px;border-top:1px solid rgba(190,170,255,.13)}
-body:has(.topbar) .career-quick-nav .btn{font-size:11px!important}
+body:has(.topbar) .hero > .hero-actions:last-child{padding-top:19px;border-top:1px solid rgba(190,170,255,.13)}
+body:has(.topbar) .hero > .hero-actions:last-child .btn{font-size:11px!important}
 @media(max-width:760px){
  body:has(.topbar) #ilCentralApplicationsPanel .form-grid{grid-template-columns:1fr}
  body:has(.topbar) #ilMyApplicationsSection,
