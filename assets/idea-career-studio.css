@@ -354,3 +354,82 @@ body:has(.topbar) .hero > .hero-actions:last-child .btn{font-size:11px!important
  body:has(.topbar) .card:hover,
  body:has(.topbar) .btn:hover{transform:none!important}
 }
+
+
+/* Role selector and seeker matching workspace */
+body:has(.topbar) .hero-actions:has(#modeSeeker){
+ display:inline-flex;align-items:center;gap:7px;margin-top:28px;padding:7px;
+ border:1px solid rgba(190,170,255,.2);border-radius:17px;
+ background:rgba(7,8,20,.48);box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+ backdrop-filter:blur(12px);
+}
+body:has(.topbar) .hero-actions:has(#modeSeeker):before{
+ content:"KABINET TURINI TANLANG";display:block;padding:0 10px 0 12px;
+ color:#aaa4c3;font-size:9px;font-weight:900;letter-spacing:1.25px;
+}
+body:has(.topbar) .hero-actions:has(#modeSeeker) #modeSeeker,
+body:has(.topbar) .hero-actions:has(#modeSeeker) #modeEmployer{
+ min-height:42px;min-width:150px;border-radius:11px!important;
+}
+body:has(.topbar) .hero-actions:has(#modeSeeker) #modeSeeker.green,
+body:has(.topbar) .hero-actions:has(#modeSeeker) #modeEmployer.green{
+ box-shadow:0 7px 20px rgba(84,227,212,.18),inset 0 1px 0 rgba(255,255,255,.3)!important;
+}
+body:has(.topbar) #resume-section>.section-head,
+body:has(.topbar) #matching-section>.section-head{
+ padding:0 4px 0 2px;
+}
+body:has(.topbar) #resume-section>.panel{
+ background:
+  radial-gradient(ellipse at 100% 0,rgba(84,227,212,.07),transparent 34%),
+  linear-gradient(145deg,rgba(24,24,44,.98),rgba(13,15,29,.99))!important;
+}
+body:has(.topbar) #resume-section .notice{
+ border-color:rgba(84,227,212,.16)!important;
+ background:rgba(84,227,212,.045)!important;
+}
+body:has(.topbar) #resume-section .field input[type=checkbox]{
+ accent-color:#8b5cf6;width:16px;height:16px;min-height:0;
+}
+body:has(.topbar) #resume-section .employment-choices{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px;
+}
+body:has(.topbar) #resume-section .employment-choices label{
+ min-height:45px;padding:11px 13px;border-radius:12px;
+ background:rgba(255,255,255,.035);border:1px solid rgba(190,178,225,.16);
+ transition:border-color .18s ease,background .18s ease;
+}
+body:has(.topbar) #resume-section .employment-choices label:has(input:checked){
+ border-color:rgba(167,139,250,.55);background:rgba(139,92,246,.12);color:#eee9ff!important;
+}
+body:has(.topbar) #resumeSaveStatus{display:inline-flex;align-items:center;min-height:40px;margin:0}
+body:has(.topbar) #matching-section{
+ padding:24px;border:1px solid rgba(84,227,212,.15);border-radius:24px;
+ background:
+  radial-gradient(ellipse at 100% 0,rgba(84,227,212,.07),transparent 35%),
+  rgba(14,17,31,.62);
+}
+body:has(.topbar) #matching-section .card{
+ border-color:rgba(84,227,212,.16)!important;
+ background:linear-gradient(145deg,rgba(19,34,43,.94),rgba(16,18,34,.98))!important;
+}
+body:has(.topbar) #matching-section .card:before{
+ content:"";position:absolute;inset:0 auto 0 0;width:2px;
+ background:linear-gradient(180deg,#54e3d4,#8b5cf6);opacity:.8;
+}
+body:has(.topbar) #matching-section .card{position:relative;overflow:hidden}
+body:has(.topbar) #matching-section .section-head button{white-space:nowrap}
+body:has(.topbar) #career-section>.section-head{
+ padding:20px 22px;border:1px solid rgba(190,170,255,.13);border-radius:18px;
+ background:rgba(18,17,34,.72);
+}
+body:has(.topbar) #careerNotice{margin-top:13px}
+@media(max-width:760px){
+ body:has(.topbar) .hero-actions:has(#modeSeeker){
+  display:grid;width:100%;grid-template-columns:1fr 1fr;
+ }
+ body:has(.topbar) .hero-actions:has(#modeSeeker):before{grid-column:1/-1;padding:4px 8px}
+ body:has(.topbar) .hero-actions:has(#modeSeeker) #modeSeeker,
+ body:has(.topbar) .hero-actions:has(#modeSeeker) #modeEmployer{min-width:0;width:100%}
+ body:has(.topbar) #matching-section{padding:17px}
+}
