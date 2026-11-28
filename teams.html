@@ -439,6 +439,28 @@ button, input, textarea, select {
         font-size: 22px;
     }
 }
+
+/* IDEA LAB — collaboration center neon styling */
+:root{--bg:#03040a;--panel:#0b0c19;--panel2:#14142a;--primary:#7d6bff;--secondary:#42dcff;--text:#f5f5ff;--muted:#a0a5bd;--border:rgba(155,126,255,.17)}
+body{background:radial-gradient(ellipse at 14% 0%,rgba(86,73,255,.15),transparent 36%),radial-gradient(ellipse at 86% 58%,rgba(157,60,230,.09),transparent 32%),#03040a;color:var(--text)}
+.header{background:rgba(3,4,10,.88);border-color:rgba(154,126,255,.15)}
+.logo{color:#b59aff}
+.hero{background:radial-gradient(ellipse at 75% 15%,rgba(128,70,255,.16),transparent 35%),linear-gradient(180deg,rgba(10,10,22,.88),rgba(3,4,10,.55));border-color:rgba(154,126,255,.15)}
+.eyebrow{color:#67dfff}
+.btn,.form-submit{background-image:linear-gradient(115deg,#5c69ff,#a349f2 58%,#37cfff);border-color:transparent;box-shadow:0 7px 22px rgba(100,72,255,.16)}
+.btn-secondary{background:rgba(129,100,255,.11);border-color:rgba(160,128,255,.21);color:#c4adff}
+.btn-green{background:linear-gradient(110deg,#506bff,#35cfff);color:#fff}
+.stat,.stats .stat{background:linear-gradient(145deg,rgba(19,18,40,.94),rgba(7,9,18,.97));border-color:rgba(155,126,255,.16);box-shadow:0 12px 34px rgba(0,0,0,.24)}
+.section-heading,.section h2{color:#f4f4ff}
+.tabs{background:rgba(10,10,22,.7);border-color:rgba(155,126,255,.15)}
+.tab.active{background:linear-gradient(110deg,#5c69ff,#a349f2);color:#fff}
+.form-panel,.card,.empty{background:linear-gradient(145deg,rgba(19,18,40,.94),rgba(7,9,18,.97));border-color:rgba(155,126,255,.17);box-shadow:0 12px 34px rgba(0,0,0,.24)}
+.card:hover{border-color:rgba(163,118,255,.46);box-shadow:0 16px 40px rgba(90,57,210,.13)}
+.tag{background:rgba(139,92,246,.13);color:#c5a9ff;border-color:rgba(155,126,255,.2)}
+input,textarea,select{background:#070914!important;color:var(--text)!important;border-color:rgba(148,126,255,.19)!important}
+input:focus,textarea:focus,select:focus{border-color:#8f70ff!important;box-shadow:0 0 0 3px rgba(139,92,246,.13)!important}
+@media(prefers-reduced-motion:no-preference){.card,.stat{animation:teams-neon-in .42s ease-out both}@keyframes teams-neon-in{from{opacity:.72;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}}
+
 </style>
     <link rel="stylesheet" href="assets/idea-shell.css">
 <link rel="stylesheet" href="assets/idea-nextgen.css">
