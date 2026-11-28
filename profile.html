@@ -97,6 +97,11 @@ button{cursor:pointer}
 .footer-inner{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
 @media(max-width:850px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}.sidebar{position:static;grid-template-columns:1fr 1fr}.nav-links{gap:10px}.cards{grid-template-columns:1fr 1fr}}
 @media(max-width:620px){.profile-extra{grid-template-columns:1fr}.profile-extra .field-group.full{grid-column:auto}.nav-inner{padding:13px 0;align-items:flex-start;flex-direction:column}.nav-links{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}.container,.nav-inner{width:calc(100% - 28px)}.hero{padding-top:34px}.hero h1{letter-spacing:-1.3px}.stats{grid-template-columns:1fr;gap:9px}.stat{padding:15px}.layout{padding-bottom:45px}.sidebar{grid-template-columns:1fr}.panel{padding:16px}.form-grid,.roles-grid,.cards{grid-template-columns:1fr}.field-group.full{grid-column:auto}.panel-heading{flex-direction:column}.footer-inner{flex-direction:column}}
+
+/* Career Hub cabinet messaging integration */
+.cabinet-chat{display:grid;grid-template-columns:minmax(190px,.72fr) minmax(0,1.5fr);gap:12px;min-height:390px}
+.cabinet-chat-list{display:grid;align-content:start;gap:8px}.cabinet-chat-item{width:100%;text-align:left;border:1px solid var(--border);border-radius:11px;padding:12px;background:var(--surface2);color:var(--text)}.cabinet-chat-item.active{border-color:var(--cyan);background:rgba(39,215,232,.07)}.cabinet-chat-item strong{display:block;font-size:12px}.cabinet-chat-item small{display:block;color:var(--muted);font-size:10px;margin-top:5px}.cabinet-chat-window{border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;min-width:0;overflow:hidden}.cabinet-chat-head{padding:13px;border-bottom:1px solid var(--border);font-size:12px}.cabinet-chat-body{padding:13px;display:flex;flex-direction:column;gap:9px;overflow:auto;min-height:240px;max-height:390px}.cabinet-chat-bubble{max-width:82%;padding:10px 12px;border-radius:11px;background:var(--surface2);font-size:11px;line-height:1.6;overflow-wrap:anywhere}.cabinet-chat-bubble.mine{align-self:flex-end;background:rgba(57,133,255,.2)}.cabinet-chat-bubble small{display:block;color:var(--muted);font-size:9px;margin-top:5px}.cabinet-chat-form{display:flex;gap:8px;padding:11px;border-top:1px solid var(--border)}.cabinet-chat-form .field{flex:1;min-width:0}.cabinet-chat-empty{color:var(--muted);font-size:11px;line-height:1.7;text-align:center;margin:auto;padding:20px}
+@media(max-width:620px){.cabinet-chat{grid-template-columns:1fr}.cabinet-chat-list{max-height:200px;overflow:auto}.cabinet-chat-form{flex-wrap:wrap}.cabinet-chat-form .field{flex-basis:100%}}
 </style>
     <link rel="stylesheet" href="assets/idea-shell.css">
 <link rel="stylesheet" href="assets/idea-nextgen.css">
@@ -130,7 +135,7 @@ button{cursor:pointer}
         <a class="side-link active" href="#profileSection"><span class="side-icon">◉</span> Profil ma’lumotlari</a>
         <a class="side-link" href="#projectsSection"><span class="side-icon">▦</span> Mening loyihalarim</a>
         <a class="side-link" href="#offersSection"><span class="side-icon">◇</span> Investor takliflari</a>
-        <a class="side-link" href="#applicationCenter"><span class="side-icon">✉</span> Arizalar markazi</a>
+        <a class="side-link" href="#applicationCenter"><span class="side-icon">✉</span> Arizalar markazi</a><a class="side-link" href="#careerMessages"><span class="side-icon">◌</span> Ish chatlari</a>
         <a class="side-link" href="#activitySection"><span class="side-icon">↗</span> Mening faoliyatim</a>
       </div>
       <div class="side-card">
@@ -219,7 +224,28 @@ button{cursor:pointer}
         <div class="panel-heading"><div><h2>Yagona arizalar markazi</h2><p>Barcha tegishli modullardan kelgan va siz yuborgan murojaatlar.</p></div><span class="pill">ARIZALAR</span></div>
         <div class="activity-group"><h3>Kiruvchi arizalar</h3><div id="incomingApplications" class="cards"></div></div>
         <div class="activity-group"><h3>Yuborgan arizalarim</h3><div id="outgoingApplications" class="cards"></div></div>
+        <div class="activity-group" id="careerServerCenter">
+          <h3>Vakansiya tizimidagi server arizalari</h3>
+          <p class="tip" style="margin-bottom:10px">Ish beruvchi va ish izlovchi o‘rtasidagi haqiqiy ariza holatlari serverdan olinadi.</p>
+          <div class="cards" id="careerServerApplications"><div class="empty">Server arizalari yuklanmoqda…</div></div>
+          <h3 style="margin-top:18px">Server bildirishnomalari</h3>
+          <div class="cards" id="careerServerActivity"><div class="empty">Faoliyat yuklanmoqda…</div></div>
+        </div>
         <div class="notice">Faqat profil ID yoki mos email orqali ishonchli bog‘langan yangi yozuvlar ko‘rsatiladi. Eski yozuvlar avtomatik ravishda sizga biriktirilmaydi.</div>
+        <div class="career-center-shortcuts" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px">
+          <a class="btn btn-secondary" href="career.html?mode=seeker" style="display:flex;justify-content:space-between;align-items:center">Ish izlovchi kabineti <span>↗</span></a>
+          <a class="btn btn-secondary" href="career.html?mode=employer" style="display:flex;justify-content:space-between;align-items:center">Ish beruvchi kabineti <span>↗</span></a>
+        </div>
+      </section>
+
+      <section class="panel" id="careerMessages">
+        <div class="panel-heading"><div><h2>Ish va takliflar bo‘yicha suhbatlar</h2><p>Ish beruvchi va ish izlovchi arizaga bog‘langan server chatda yozishadi. Xabarlar faqat ariza ishtirokchilariga ko‘rinadi.</p></div><span class="pill" id="cabinetChatCount">0 SUHBAT</span></div>
+        <div class="cabinet-chat"><div class="cabinet-chat-list" id="cabinetChatList"></div><div class="cabinet-chat-window"><div class="cabinet-chat-head" id="cabinetChatHeader">Suhbat tanlang</div><div class="cabinet-chat-body" id="cabinetChatBody"><div class="cabinet-chat-empty">Chap tomondan suhbatni tanlang.</div></div><form class="cabinet-chat-form" id="cabinetChatForm"><input class="field" id="cabinetChatInput" maxlength="2000" placeholder="Xabar yozing..." disabled><button class="btn btn-primary" id="cabinetChatSend" type="submit" disabled>Yuborish</button></form></div></div>
+      </section>
+
+      <section class="panel" id="careerNotifications">
+        <div class="panel-heading"><div><h2>Ish faoliyati bildirishnomalari</h2><p>Arizalar va chatdagi yangi faoliyat bo‘yicha qisqa xabarlar.</p></div><span class="pill" id="careerNotifBadge">0 XABAR</span></div>
+        <div id="careerNotifList" class="cards"></div>
       </section>
       <section class="panel" id="activitySection">
         <div class="panel-heading"><div><h2>Mening faoliyatim</h2><p>Faqat profilingizga ishonchli bog‘lash mumkin bo‘lgan yozuvlar ko‘rsatiladi.</p></div><span class="pill">FAOLIYAT</span></div>
@@ -513,7 +539,88 @@ profileForm.addEventListener("submit",async function(event){event.preventDefault
  updateProfileProgress();renderProfileIdentityReview();renderDashboard()});
 window.addEventListener("storage",function(event){if(["userProfile","projects","investmentApplications","jobApplications","teamApplications","resourceOrders"].includes(event.key))renderDashboard()});
 refreshAuthSession(false).then(()=>loadProfile()).catch(()=>loadProfile());renderDashboard();
+
+/* Career application chat — Supabase-backed, participant-only. */
+(function initServerCareerChat(){
+ const api=window.IDEALAB_DATA,list=document.getElementById('cabinetChatList'),body=document.getElementById('cabinetChatBody'),head=document.getElementById('cabinetChatHeader'),form=document.getElementById('cabinetChatForm'),input=document.getElementById('cabinetChatInput'),send=document.getElementById('cabinetChatSend'),badge=document.getElementById('cabinetChatCount');
+ if(!list||!body||!form)return;
+ let chats=[],activeId='',userId=null;
+ const safe=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const empty=(node,msg)=>{node.replaceChildren();const el=document.createElement('div');el.className='cabinet-chat-empty';el.textContent=msg;node.append(el)};
+ async function loadChats(){
+  list.replaceChildren();body.replaceChildren();
+  if(!api){empty(list,'Backend API yuklanmadi.');return;}
+  const auth=window.IDEALAB_AUTH;const session=auth&&await auth.getSession();
+  userId=session&&session.ok?session.data?.session?.user?.id:null;
+  if(!userId){badge.textContent='0 SUHBAT';empty(list,'Suhbatlar uchun akkauntga kiring.');empty(body,'Kirishdan so‘ng arizalarga bog‘langan chatlar ko‘rinadi.');input.disabled=send.disabled=true;return;}
+  const result=await api.listMyJobChats();
+  if(!result.ok){empty(list,'Chatlar serverdan yuklanmadi. Qayta yuklang.');empty(body,'Server xatosi.');return;}
+  chats=Array.isArray(result.data)?result.data:[];badge.textContent=chats.length+' SUHBAT';
+  if(!chats.length){empty(list,'Arizaga bog‘langan suhbatlar hali yo‘q.');empty(body,'Suhbatlar arizalar asosida shu yerda paydo bo‘ladi.');input.disabled=send.disabled=true;activeId='';return;}
+  if(!activeId||!chats.some(c=>c.application_id===activeId))activeId=chats[0].application_id;
+  chats.forEach(c=>{const button=document.createElement('button');button.type='button';button.className='cabinet-chat-item'+(c.application_id===activeId?' active':'');button.innerHTML='<strong>'+safe(c.counterpart_label||c.company_name||'Suhbat')+'</strong><small>'+safe(c.job_title||'Vakansiya')+'</small><small>'+safe(c.application_status||'Ariza')+(c.last_message?' · '+safe(c.last_message):'')+'</small>';button.addEventListener('click',()=>{activeId=c.application_id;loadChats()});list.append(button)});
+  const current=chats.find(c=>c.application_id===activeId);head.textContent=(current.counterpart_label||current.company_name||'Suhbat')+' · '+(current.job_title||'Vakansiya');input.disabled=send.disabled=false;
+  const messages=await api.listJobChatMessages(activeId);body.replaceChildren();
+  if(!messages.ok){empty(body,'Xabarlar yuklanmadi.');return;}
+  const rows=Array.isArray(messages.data)?messages.data:[];
+  if(!rows.length){empty(body,'Hali xabarlar yo‘q. Xavfsiz va ishga oid xabar bilan suhbatni boshlang.');return;}
+  rows.forEach(m=>{const bubble=document.createElement('div');bubble.className='cabinet-chat-bubble'+(m.sender_id===userId?' mine':'');bubble.textContent=m.body||'';const meta=document.createElement('small');meta.textContent=new Date(m.created_at).toLocaleString('uz-UZ');bubble.append(meta);body.append(bubble)});body.scrollTop=body.scrollHeight;
+ }
+ form.addEventListener('submit',async e=>{e.preventDefault();const text=input.value.trim();if(!text||!activeId)return;send.disabled=true;send.textContent='Yuborilmoqda…';const result=await api.sendJobChatMessage(activeId,text);send.disabled=false;send.textContent='Yuborish';if(!result.ok){alert(result.error?.message||'Xabar yuborilmadi.');return;}input.value='';await loadChats();});
+ window.openCabinetChat=applicationId=>{activeId=applicationId;loadChats();document.getElementById('careerMessages')?.scrollIntoView({behavior:'smooth'});};
+ window.addEventListener('ideaLab:profile-updated',loadChats);
+ loadChats();
+})();
+
 </script>
-    <script src="assets/idea-shell.js" defer></script>
+    <script>
+(function(){
+  "use strict";
+  const api=window.IDEALAB_DATA;
+  const applications=document.getElementById("careerServerApplications");
+  const activity=document.getElementById("careerServerActivity");
+  if(!api||!applications||!activity)return;
+  const escapeHtml=value=>String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+  const unwrap=result=>result&&result.ok===true?(result.data||[]):result&&Array.isArray(result.data)?result.data:result;
+  const rows=value=>Array.isArray(value)?value:Array.isArray(value?.rows)?value.rows:Array.isArray(value?.applications)?value.applications:[];
+  const statusLabel=status=>({submitted:"Ko‘rib chiqilmoqda",interview:"Suhbatga taklif",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"}[status]||status||"Holat noma’lum");
+  const fmtDate=value=>{if(!value)return "";const d=new Date(value);return Number.isNaN(d.getTime())?"":d.toLocaleString("uz-UZ");};
+  const historyId=id=>String(id||"").replace(/[^a-zA-Z0-9_-]/g,"");
+  const card=(title,description,status,date,meta,actions="")=>'<article class="item-card"><h3>'+escapeHtml(title||"Vakansiya arizasi")+'</h3><p>'+escapeHtml(description||"Ariza server tizimida qayd etilgan.")+'</p><span class="status">'+escapeHtml(statusLabel(status))+'</span><p>'+escapeHtml(meta||"")+'</p><p>'+escapeHtml(fmtDate(date))+'</p>'+actions+'</article>';
+  function paintApplications(list){
+    applications.innerHTML=list.length?list.map(item=>{
+      const id=item.application_id||item.id;
+      const button=id?'<div class="card-actions"><button class="btn btn-secondary" type="button" data-history="'+escapeHtml(historyId(id))+'">Holat tarixini ko‘rish</button><button class="btn btn-primary" type="button" data-chat="'+escapeHtml(historyId(id))+'">Kabinetdagi suhbat ↗</button></div>':"";
+      return card(item.job_title||item.title||item.vacancy_title,item.message||item.application_message,item.status,item.created_at,item.organization_name||item.employer_name||item.location_label,button);
+    }).join(""):'<div class="empty">Serverda sizga tegishli vakansiya arizalari topilmadi.</div>';
+  }
+  function paintActivity(list){
+    activity.innerHTML=list.length?list.map(item=>{
+      const id=item.activity_id||item.id;
+      const isRead=item.is_read===true||item.read_at!=null;
+      const button=id&&!isRead?'<div class="card-actions"><button class="btn btn-secondary" type="button" data-read="'+escapeHtml(historyId(id))+'">O‘qilgan deb belgilash</button></div>':"";
+      return card(item.title||item.event_title,item.message||item.description,item.status,item.created_at,(item.job_title||item.organization_name||"")+(isRead?" · O‘qilgan":" · Yangi"),button);
+    }).join(""):'<div class="empty">Hozircha server bildirishnomalari yo‘q.</div>';
+  }
+  applications.addEventListener("click",event=>{const button=event.target.closest("[data-chat]");if(!button)return;const open=window.openCabinetChat;if(typeof open!=="function"){alert("Kabinet chat moduli yuklanmadi. Sahifani yangilang.");return;}open(button.dataset.chat);});
+  applications.addEventListener("click",async event=>{
+    const button=event.target.closest("[data-history]");if(!button)return;
+    const id=button.dataset.history;button.disabled=true;
+    let historyPanel=button.closest(".item-card").querySelector(".career-status-history");
+    if(!historyPanel){historyPanel=document.createElement("div");historyPanel.className="career-status-history notice";button.closest(".item-card").appendChild(historyPanel);}
+    historyPanel.textContent="Ariza holatlari yuklanmoqda…";
+    try{const result=await api.listJobApplicationStatusHistory(id);if(result?.ok===false)throw new Error(result.error?.message||"Tarix olinmadi");const entries=rows(unwrap(result));historyPanel.innerHTML=entries.length?entries.map(row=>'<p><strong>'+escapeHtml(statusLabel(row.status||row.new_status))+'</strong> · '+escapeHtml(fmtDate(row.created_at||row.changed_at||row.updated_at))+'<br>'+escapeHtml(row.note||row.message||row.reason||"Holat yangilandi")+'</p>').join(""):'<p>Holat tarixi mavjud emas.</p>';}catch(error){historyPanel.textContent="Holat tarixi olinmadi: "+(error?.message||"Server xatosi");}finally{button.disabled=false;}
+  });
+  activity.addEventListener("click",async event=>{
+    const button=event.target.closest("[data-read]");if(!button)return;
+    button.disabled=true;try{const result=await api.markJobActivityRead(button.dataset.read);if(result?.ok===false)throw new Error(result.error?.message||"Yangilash muvaffaqiyatsiz");button.closest(".item-card").querySelector(".status").textContent="O‘qildi";button.remove();}catch(error){button.disabled=false;button.textContent="Xato — qayta urinib ko‘ring";}
+  });
+  Promise.all([api.listMyJobApplications(),api.listMyJobActivity()]).then(results=>{
+    const appResult=results[0],activityResult=results[1];
+    if(appResult?.ok===false){applications.innerHTML='<div class="empty">Arizalarni olishda xatolik: '+escapeHtml(appResult.error?.message||"Kirish sessiyasini tekshiring")+'</div>';}else paintApplications(rows(unwrap(appResult)));
+    if(activityResult?.ok===false){activity.innerHTML='<div class="empty">Bildirishnomalarni olishda xatolik: '+escapeHtml(activityResult.error?.message||"Kirish sessiyasini tekshiring")+'</div>';}else paintActivity(rows(unwrap(activityResult)));
+  }).catch(error=>{applications.innerHTML='<div class="empty">Server arizalari yuklanmadi. '+escapeHtml(error?.message||"")+'</div>';activity.innerHTML='<div class="empty">Server faoliyati yuklanmadi.</div>';});
+})();</script>
+<script src="assets/idea-shell.js" defer></script>
 </body>
 </html>

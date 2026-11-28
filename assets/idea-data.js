@@ -482,6 +482,17 @@
     listMyJobApplications() {
       return runPublicCommand("idea_lab_list_my_job_applications", {});
     },
+    listMyJobChats() {
+      return runPublicCommand("idea_lab_list_my_job_chats", {});
+    },
+    listJobChatMessages(applicationId) {
+      if (!isUuid(applicationId)) return Promise.resolve(fail("INVALID_APPLICATION_ID", "Ariza identifikatori noto‘g‘ri."));
+      return runPublicCommand("idea_lab_list_job_chat_messages", { p_application_id: applicationId });
+    },
+    sendJobChatMessage(applicationId, body) {
+      if (!isUuid(applicationId) || !requiredText(body, 1, 2000)) return Promise.resolve(fail("INVALID_CHAT_MESSAGE", "Xabar 1–2000 belgidan iborat bo‘lishi kerak."));
+      return runPublicCommand("idea_lab_send_job_chat_message", { p_application_id: applicationId, p_body: body.trim() });
+    },
     listJobApplicationStatusHistory(applicationId) {
       if (!isUuid(applicationId)) return Promise.resolve(fail("INVALID_APPLICATION_ID", "Ariza identifikatori noto‘g‘ri."));
       return runPublicCommand("idea_lab_list_job_application_status_history", { p_application_id: applicationId });
