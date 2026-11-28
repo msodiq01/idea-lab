@@ -45,3 +45,21 @@ test("unified center lets applicants withdraw only submitted career applications
   assert.match(page, /IDEALAB_DATA\.withdrawJobApplication\(r\.id\)/);
   assert.match(page, /r\.source\.type==="job"&&r\.status==="submitted"/);
 });
+
+test("market request review RPCs enforce explicit participant ownership and allowed statuses", () => {
+  const sql = fs.readFileSync(path.join(root, "supabase/migrations/20261128150000_idea_app_marketplace_application_review_rpcs.sql"), "utf8");
+  assert.match(sql, /security definer/ig);
+  assert.match(sql, /r\.requester_id = auth\.uid\(\)/);
+  assert.match(sql, /o\.owner_id = auth\.uid\(\)/);
+  assert.match(sql, /e\.requester_id = auth\.uid\(\)/);
+  assert.match(sql, /p\.user_id = auth\.uid\(\)/);
+  assert.match(sql, /revoke all on function public\.idea_lab_review_resource_request/i);
+  assert.doesNotMatch(sql.replace(/--.*$/gm, ""), /grant update on/i);
+});
+
+test("unified center calls the dedicated server RPCs for resource, partnership, and specialist decisions", () => {
+  assert.match(page, /IDEALAB_DATA\.reviewResourceRequest\(r\.id,next\)/);
+  assert.match(page, /IDEALAB_DATA\.reviewPartnershipEnquiry\(r\.id/);
+  assert.match(page, /IDEALAB_DATA\.reviewSpecialistRequest\(r\.id/);
+  assert.match(page, /function serverActions\(r\)/);
+});
