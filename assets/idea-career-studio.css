@@ -169,3 +169,40 @@ body:has(.topbar) [hidden]{display:none!important}
 @media(prefers-reduced-motion:reduce){
   body:has(.topbar) *,body:has(.topbar) *:before,body:has(.topbar) *:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
+
+/* Premium career dashboard finishing details */
+body:has(.topbar) #modeSeeker,
+body:has(.topbar) #modeEmployer{
+  min-width:176px;display:inline-flex;align-items:center;justify-content:center;gap:9px;
+}
+body:has(.topbar) #modeSeeker:before,
+body:has(.topbar) #modeEmployer:before{
+  content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 12px currentColor;
+}
+body:has(.topbar) #modeSeeker.green,
+body:has(.topbar) #modeEmployer.green{outline:3px solid rgba(139,92,246,.16);outline-offset:2px}
+body:has(.topbar) #resume-section>.panel,
+body:has(.topbar) #jobFormPanel{position:relative;overflow:hidden}
+body:has(.topbar) #resume-section>.panel:before,
+body:has(.topbar) #jobFormPanel:before{
+ content:"";position:absolute;top:0;left:26px;right:26px;height:1px;
+ background:linear-gradient(90deg,transparent,rgba(167,139,250,.55),rgba(84,227,212,.35),transparent);
+ pointer-events:none;
+}
+body:has(.topbar) #matchingJobs .card,
+body:has(.topbar) #jobList .card{position:relative;overflow:hidden}
+body:has(.topbar) #matchingJobs .card:before,
+body:has(.topbar) #jobList .card:before{
+ content:"";position:absolute;inset:0 auto 0 0;width:2px;
+ background:linear-gradient(180deg,#a78bfa,#54e3d4);opacity:.7;
+}
+body:has(.topbar) .career-chip{font-weight:700;letter-spacing:.01em}
+body:has(.topbar) .searchrow{position:relative}
+body:has(.topbar) .searchrow:before{
+ content:"QIDIRUV VA FILTRLAR";grid-column:1/-1;color:#8f89aa;
+ font-size:9px;font-weight:800;letter-spacing:1.5px;padding:2px 2px 0;
+}
+@media(max-width:620px){
+ body:has(.topbar) #modeSeeker,body:has(.topbar) #modeEmployer{min-width:0;flex:1}
+ body:has(.topbar) .hero-actions>a{width:100%;justify-content:center}
+}
