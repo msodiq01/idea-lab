@@ -16,6 +16,7 @@ const teamMigration = read("supabase/migrations/20261117051020_idea_app_team_mem
 const careerMigration = read("supabase/migrations/20261117051526_idea_app_career_center.sql");
 const careerGuard = read("supabase/migrations/20261117051708_idea_app_job_organization_publish_guard.sql");
 const careerGrants = read("supabase/migrations/20261117051855_idea_app_job_column_grants.sql");
+const careerTransition = read("supabase/migrations/20261128055529_allow_interview_application_transition.sql");
 
 function scriptSources(html) {
   return Array.from(html.matchAll(/<script[^>]*src=["']([^"']+)["'][^>]*>/g), match => match[1]);
@@ -84,6 +85,14 @@ test("career migration creates private applications with participant-scoped RLS"
   assert.match(careerMigration, /alter table idea_app\.job_applications enable row level security/i);
   assert.match(careerMigration, /applicant_id=\(select auth\.uid\(\)\) or exists/i);
   assert.match(careerMigration, /security_invoker=true/i);
+});
+
+test("employer interview stage is permitted by both trigger and RLS policy", () => {
+  assert.match(careerTransition, /new\.status = 'interview'/i);
+  assert.match(careerTransition, /old\.status in \('submitted', 'interview'\)/i);
+  assert.match(careerTransition, /status in \('interview', 'accepted', 'declined'\)/i);
+  assert.match(careerTransition, /to authenticated/i);
+  assert.match(careerTransition, /security definer/i);
 });
 
 test("vacancy publishing is restricted to the owner's active public non-team organization", () => {
