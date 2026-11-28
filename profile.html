@@ -588,7 +588,7 @@ refreshAuthSession(false).then(()=>loadProfile()).catch(()=>loadProfile());rende
       const id=item.activity_id||item.id;
       const isRead=item.is_read===true||item.read_at!=null;
       const button=id&&!isRead?'<div class="card-actions"><button class="btn btn-secondary" type="button" data-read="'+escapeHtml(historyId(id))+'">O‘qilgan deb belgilash</button></div>':"";
-      return card(item.title||item.event_title,item.message||item.description,item.status,item.created_at,item.job_title||item.organization_name+(isRead?" · O‘qilgan":" · Yangi"),button);
+      return card(item.title||item.event_title,item.message||item.description,item.status,item.created_at,(item.job_title||item.organization_name||"")+(isRead?" · O‘qilgan":" · Yangi"),button);
     }).join(""):'<div class="empty">Hozircha server bildirishnomalari yo‘q.</div>';
   }
   applications.addEventListener("click",async event=>{
