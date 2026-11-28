@@ -678,6 +678,18 @@
       box.append(node);
     });
   }
+  function showJobPreview(){
+    const preview=$("jobPreview");if(!preview)return;
+    preview.replaceChildren();
+    const title=clean($("jobTitle")?.value),organization=clean($("jobOrganization")?.selectedOptions?.[0]?.textContent),salary=clean($("jobSalary")?.value)||"Maosh kelishiladi",location=clean($("jobLocation")?.value),region=clean($("jobRegion")?.value),district=clean($("jobDistrict")?.value),type=clean($("jobType")?.value),schedule=clean($("jobSchedule")?.value),experience=clean($("jobExperienceYears")?.value)||"0",skills=clean($("jobSkills")?.value),description=clean($("jobDescription")?.value);
+    const heading=document.createElement("h3");heading.textContent=title||"Vakansiya nomi";preview.append(heading);
+    const meta=document.createElement("p");meta.textContent=[organization,[region,district,location].filter(Boolean).join(", "),type,schedule,salary,"Tajriba: "+experience+" yil"].filter(Boolean).join(" • ");preview.append(meta);
+    if(skills){const p=document.createElement("p");p.textContent="Ko‘nikmalar: "+skills;preview.append(p);}
+    const body=document.createElement("p");body.textContent=description||"Vazifalar va talablar shu yerda ko‘rinadi.";body.style.whiteSpace="pre-line";preview.append(body);
+    const contact=document.createElement("p");contact.textContent=[clean($("jobContactName")?.value),clean($("jobContactPhone")?.value)].filter(Boolean).join(" • ");if(contact.textContent)preview.append(contact);
+    preview.hidden=false;preview.scrollIntoView({behavior:"smooth",block:"nearest"});
+  }
+  $("jobPreviewButton")?.addEventListener("click",showJobPreview);
   async function createJob(event){
     event.preventDefault();
     if(!userId){alert("Vakansiya joylashtirish uchun avval akkauntga kiring.");location.href="auth.html?next=career.html";return;}
