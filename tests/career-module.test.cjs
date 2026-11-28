@@ -166,3 +166,10 @@ test("organization creation RPC is executable only by authenticated users", () =
   assert.ok(organizationRpcSecurity.includes("revoke all on function public.idea_lab_create_active_organization(text,text,text,text,text,text,text) from public, anon"));
   assert.ok(organizationRpcSecurity.includes("grant execute on function public.idea_lab_create_active_organization(text,text,text,text,text,text,text) to authenticated"));
 });
+
+test("vacancy form provides a safe preview and clear salary examples", () => {
+  assert.match(page, /jobPreviewButton/);
+  assert.match(page, /120 000 so‘m/);
+  assert.match(server, /function showJobPreview/);
+  assert.match(server, /preview\.append\(body\)/);
+});
