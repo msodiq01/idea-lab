@@ -173,3 +173,17 @@ test("vacancy form provides a safe preview and clear salary examples", () => {
   assert.match(server, /function showJobPreview/);
   assert.match(server, /preview\.append\(body\)/);
 });
+
+
+test("vacancy form validates inputs, prevents duplicate submits and preserves drafts", () => {
+  assert.match(server, /if\(jobSubmitInFlight\)return/);
+  assert.match(server, /jobSubmitInFlight=true/);
+  assert.match(server, /jobSubmitInFlight=false/);
+  assert.match(server, /localStorage\.setItem\(jobDraftKey/);
+  assert.match(server, /localStorage\.getItem\(jobDraftKey/);
+  assert.match(server, /clearJobDraft\(\)/);
+  assert.match(server, /restoreJobOrganizationDraft\(\)/);
+  assert.match(server, /Vakansiya nomi 3–100 belgi bo‘lishi kerak/);
+  assert.match(server, /Tavsif 40–5000 belgi bo‘lishi kerak/);
+  assert.match(server, /input\.experienceYearsMin<0\|\|input\.experienceYearsMin>50/);
+});
