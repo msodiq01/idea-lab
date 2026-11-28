@@ -7,7 +7,7 @@
   ["Kabinet va boshqaruv",[["Shaxsiy kabinet","profile.html"],["Boshqaruv paneli","dashboard.html"],["Arizalar markazi","applications.html"],["Bildirishnomalar","notifications.html"],["Faoliyatlar tarixi","activity.html"],["Tashkilotlar","organizations.html"],["Boshqaruv markazi","management.html"],["Moliya markazi","finance.html"],["Analitika va hisobotlar","analytics.html"],["Rollar va ruxsatlar","access.html"],["Ma’lumotlar zaxirasi","backup.html"],["Mening to‘plamim","collection.html"]]],
   ["G‘oya va loyihalar",[["Kelajak loyihalari","portfolio.html"],["Loyiha xarajatlari","project-expenses.html"],["Tadbirlar","events.html"],["Yo‘l xaritasi","roadmap.html"]]],
   ["Bozor va hamkorlik",[["Talab va taklif","exchange.html"],["Takliflar markazi","offers.html"],["Investorlar","investors.html"],["Mening investitsiyalarim","investor-portfolio.html"]]],
-  ["Jamoa va karyera",[["Ish va vakansiyalar","career.html"],["Jamoa vakansiyalari","teams.html#career-section"],["Mutaxassislar","specialists.html"]]],
+  ["Jamoa va karyera",[["Jamoa vakansiyalari","teams.html#career-section"],["Mutaxassislar","specialists.html"]]],
   ["Resurslar va ta’minot",[["Resurslar reyestri","resources.html"],["Resurs buyurtmalari","resource-orders.html"],["Resurschilar katalogi","suppliers.html"],["Hujjatlar markazi","supplier-verification.html"],["Tekshiruvchi kabineti","supplier-reviewer.html"],["Tekshiruv boshqaruvi","supplier-verification-admin.html"]]],
   ["Platforma",[["Platforma haqida","about.html"]]]
  ];
