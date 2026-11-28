@@ -16,6 +16,7 @@ const teamMigration = read("supabase/migrations/20261117051020_idea_app_team_mem
 const careerMigration = read("supabase/migrations/20261117051526_idea_app_career_center.sql");
 const careerGuard = read("supabase/migrations/20261117051708_idea_app_job_organization_publish_guard.sql");
 const careerGrants = read("supabase/migrations/20261117051855_idea_app_job_column_grants.sql");
+const careerTransition = read("supabase/migrations/20261128055529_allow_interview_application_transition.sql");
 
 function scriptSources(html) {
   return Array.from(html.matchAll(/<script[^>]*src=["']([^"']+)["'][^>]*>/g), match => match[1]);
@@ -66,8 +67,8 @@ test("public vacancy directory and vacancy application flows use server adapters
 
 test("vacancy UI disables legacy employer application panel and protects contact details", () => {
   assert.match(careers, /legacyEmployerPanel\)legacyEmployerPanel\.hidden=true/);
-  assert.match(careers, /Shaxsiy telefon raqamlar ochiq katalogda ko‘rsatilmaydi/);
-  assert.match(careers, /Aloqa telefonini ochiq e’longa kiritmang/);
+  assert.match(careers, /ish telefoni hammaga ko‘rinadi/);
+  assert.match(careers, /shaxsiy raqamingizni kiritmang/);
   assert.match(careers, /auth\.html\?next=career\.html/);
   const careerScripts = scriptSources(careerPage);
   assert.ok(careerScripts.includes("assets/idea-auth.js"));
@@ -84,6 +85,14 @@ test("career migration creates private applications with participant-scoped RLS"
   assert.match(careerMigration, /alter table idea_app\.job_applications enable row level security/i);
   assert.match(careerMigration, /applicant_id=\(select auth\.uid\(\)\) or exists/i);
   assert.match(careerMigration, /security_invoker=true/i);
+});
+
+test("employer interview stage is permitted by both trigger and RLS policy", () => {
+  assert.match(careerTransition, /new\.status = 'interview'/i);
+  assert.match(careerTransition, /old\.status in \('submitted', 'interview'\)/i);
+  assert.match(careerTransition, /status in \('interview', 'accepted', 'declined'\)/i);
+  assert.match(careerTransition, /to authenticated/i);
+  assert.match(careerTransition, /security definer/i);
 });
 
 test("vacancy publishing is restricted to the owner's active public non-team organization", () => {
@@ -103,5 +112,5 @@ test("data adapter validates job and membership identifiers before RPC calls", (
   assert.match(data, /requestTeamMembership\(organizationId\)[\s\S]*?if \(!isUuid\(organizationId\)\)/);
   assert.match(data, /createJobPost\(input = \{\}\)[\s\S]*?if \(!isUuid\(input\.organizationId\)/);
   assert.match(data, /applyJobPost\(jobPostId, message\)[\s\S]*?if \(!isUuid\(jobPostId\)/);
-  assert.match(data, /reviewJobApplication\(applicationId, status\)[\s\S]*?!\["accepted", "declined"\]\.includes\(status\)/);
+  assert.match(data, /reviewJobApplication\(applicationId, status\)[\s\S]*?!\["interview", "accepted", "declined"\]\.includes\(status\)/);
 });
