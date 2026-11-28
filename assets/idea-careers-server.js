@@ -398,13 +398,18 @@
     else if(!jobResult.data?.length)empty(jobBox,"Tekshiruv navbatida vakansiya yo‘q.");
     else jobResult.data.forEach(job=>{
       const node=card(job.title,[job.company_name,job.location_label,employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",job.description,"Yuborilgan: "+new Date(job.created_at).toLocaleString("uz-UZ")]);
+      const checklistTitle=document.createElement("p");checklistTitle.textContent="Tasdiqlashdan oldingi xavfsizlik tekshiruvi";checklistTitle.style.fontWeight="700";checklistTitle.style.marginTop="12px";
+      const checklist=document.createElement("div");checklist.className="moderation-checklist";checklist.style.display="grid";checklist.style.gap="8px";
+      const checklistItems=["Ish beruvchi va tashkilot ma’lumotlari tekshirildi","Lavozim va vazifalar aniq, tushunarli","Hudud, ish vaqti va to‘lov shartlari ko‘rsatilgan","Oldindan pul, OTP, parol yoki karta ma’lumotlari so‘ralmaydi","Talablar ishga mos va kamsituvchi emas","Ariza topshirish jarayoni xavfsiz, shaxsiy ma’lumotlar ochiq so‘ralmaydi"];
+      const checks=checklistItems.map(label=>{const row=document.createElement("label");row.style.display="flex";row.style.gap="8px";row.style.alignItems="flex-start";const input=document.createElement("input");input.type="checkbox";input.style.marginTop="4px";const text=document.createElement("span");text.textContent=label;row.append(input,text);checklist.append(row);return input;});
       const actions=document.createElement("div");actions.className="card-actions";
       [["Vakansiyani tasdiqlash",true],["Rad etish",false]].forEach(([label,approve])=>{
-        const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;
-        button.addEventListener("click",async()=>{button.disabled=true;const reviewed=await data.reviewJobPost(job.job_post_id,approve);if(!reviewed.ok||reviewed.data!==true){alert(errorText(reviewed));button.disabled=false;return;}await loadModeration();await loadJobs();await loadOwnedJobs();});
+        const button=document.createElement("button");button.className="btn";button.type="button";button.textContent=label;button.disabled=approve;
+        if(approve){const updateApprovalState=()=>{button.disabled=!checks.every(input=>input.checked);};checks.forEach(input=>input.addEventListener("change",updateApprovalState));}
+        button.addEventListener("click",async()=>{if(approve&&!checks.every(input=>input.checked))return;button.disabled=true;const reviewed=await data.reviewJobPost(job.job_post_id,approve);if(!reviewed.ok||reviewed.data!==true){alert(errorText(reviewed));button.disabled=approve?!checks.every(input=>input.checked):false;return;}await loadModeration();await loadJobs();await loadOwnedJobs();});
         actions.append(button);
       });
-      node.append(actions);jobBox.append(node);
+      node.append(checklistTitle,checklist,actions);jobBox.append(node);
     });
   }
   async function loadJobs(){
