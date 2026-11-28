@@ -159,3 +159,10 @@ test("application notifications are visible in both seeker and employer modes", 
   assert.match(server, /node\.dataset\.careerFlow!=="both"&&node\.dataset\.careerFlow!==active/);
   assert.match(server, /loadMyActivity\(\)/);
 });
+
+const organizationRpcSecurity = read("supabase/migrations/20261128071000_restrict_org_create_rpc.sql");
+
+test("organization creation RPC is executable only by authenticated users", () => {
+  assert.match(organizationRpcSecurity, /revoke all on function public\\.idea_lab_create_active_organization\\(text,text,text,text,text,text,text\\) from public, anon/i);
+  assert.match(organizationRpcSecurity, /grant execute on function public\\.idea_lab_create_active_organization\\(text,text,text,text,text,text,text\\) to authenticated/i);
+});
