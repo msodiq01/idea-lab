@@ -47,7 +47,7 @@ test("vacancy AI request is opt-in and excludes contact and applicant data", () 
   const match = careerSource.match(/async function draftVacancyWithAI\(\)\s*\{[\s\S]*?\n  \}/);
   assert.ok(match, "vacancy AI handler exists");
   assert.match(match[0], /jobAiConsent/);
-  assert.match(match[0], /functions\.invoke\("idea-ai"/);
-  assert.match(match[0], /mode:\s*"vacancy_draft"/);
+  assert.match(match[0], /callCareerAI\(/);
+  assert.match(match[0], /mode:\s*"vacancy_improve"/);
   assert.doesNotMatch(match[0], /jobContactName|jobContactPhone|resume|candidate/i);
 });
