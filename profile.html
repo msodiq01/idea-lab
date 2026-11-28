@@ -239,7 +239,7 @@ button{cursor:pointer}
       </section>
 
       <section class="panel" id="careerMessages">
-        <div class="panel-heading"><div><h2>Ish va takliflar bo‘yicha suhbatlar</h2><p>Arizaga bog‘langan suhbatlarni kabinet ichida boshqaring. Xabarlar brauzerda saqlanadigan demo chatdir.</p></div><span class="pill" id="cabinetChatCount">0 SUHBAT</span></div>
+        <div class="panel-heading"><div><h2>Ish va takliflar bo‘yicha suhbatlar</h2><p>Ish beruvchi va ish izlovchi arizaga bog‘langan server chatda yozishadi. Xabarlar faqat ariza ishtirokchilariga ko‘rinadi.</p></div><span class="pill" id="cabinetChatCount">0 SUHBAT</span></div>
         <div class="cabinet-chat"><div class="cabinet-chat-list" id="cabinetChatList"></div><div class="cabinet-chat-window"><div class="cabinet-chat-head" id="cabinetChatHeader">Suhbat tanlang</div><div class="cabinet-chat-body" id="cabinetChatBody"><div class="cabinet-chat-empty">Chap tomondan suhbatni tanlang.</div></div><form class="cabinet-chat-form" id="cabinetChatForm"><input class="field" id="cabinetChatInput" maxlength="2000" placeholder="Xabar yozing..." disabled><button class="btn btn-primary" id="cabinetChatSend" type="submit" disabled>Yuborish</button></form></div></div>
       </section>
 
@@ -540,25 +540,37 @@ profileForm.addEventListener("submit",async function(event){event.preventDefault
 window.addEventListener("storage",function(event){if(["userProfile","projects","investmentApplications","jobApplications","teamApplications","resourceOrders"].includes(event.key))renderDashboard()});
 refreshAuthSession(false).then(()=>loadProfile()).catch(()=>loadProfile());renderDashboard();
 
-/* Cabinet-integrated offer conversations (browser-local demo, reuses offers.html stores) */
-(function initCabinetChat(){
- const list=document.getElementById('cabinetChatList'),body=document.getElementById('cabinetChatBody'),head=document.getElementById('cabinetChatHeader'),form=document.getElementById('cabinetChatForm'),input=document.getElementById('cabinetChatInput'),send=document.getElementById('cabinetChatSend'),badge=document.getElementById('cabinetChatCount');
+/* Career application chat — Supabase-backed, participant-only. */
+(function initServerCareerChat(){
+ const api=window.IDEALAB_DATA,list=document.getElementById('cabinetChatList'),body=document.getElementById('cabinetChatBody'),head=document.getElementById('cabinetChatHeader'),form=document.getElementById('cabinetChatForm'),input=document.getElementById('cabinetChatInput'),send=document.getElementById('cabinetChatSend'),badge=document.getElementById('cabinetChatCount');
  if(!list||!body||!form)return;
- let activeId='';
+ let chats=[],activeId='',userId=null;
  const safe=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const profile=()=>getProfile()||{};
- const name=()=>profile().fullName||'';
- const readLocal=key=>{try{const x=ideaCore&&ideaCore.legacy?ideaCore.legacy.read(key,[]):JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(x)?x:[]}catch(_){return[]}};
- const saveLocal=(key,value)=>{try{if(ideaCore&&ideaCore.legacy){const r=ideaCore.legacy.write(key,value);return !!(r&&r.ok)}localStorage.setItem(key,JSON.stringify(value));return true}catch(_){return false}};
- const belongs=app=>app.applicant===name()||app.offerOwner===name();
- function render(){const apps=readLocal('offerApplications').filter(belongs),messages=readLocal('offerMessages');badge.textContent=apps.length+' SUHBAT';list.replaceChildren();if(!apps.length){list.innerHTML='<div class="cabinet-chat-empty">Takliflar bo‘yicha suhbatlar topilmadi.</div>';activeId='';input.disabled=send.disabled=true;head.textContent='Suhbatlar yo‘q';body.innerHTML='<div class="cabinet-chat-empty">Taklifga ariza yuborilganda suhbat shu yerda ko‘rinadi.</div>';return}
- apps.forEach(app=>{const other=app.applicant===name()?app.offerOwner:app.applicant;const lastRead=app.lastReadBy&&app.lastReadBy[name()]?Date.parse(app.lastReadBy[name()])||0:0;const unread=messages.filter(m=>String(m.applicationId)===String(app.id)&&m.sender!==name()&&(Date.parse(m.date)||0)>lastRead).length;const b=document.createElement('button');b.type='button';b.className='cabinet-chat-item'+(app.id===activeId?' active':'');b.innerHTML='<strong>'+safe(other)+'</strong><small>'+safe(app.offerTitle)+'</small><small>'+safe(app.status||'Yangi ariza')+(unread?' · '+unread+' xabar':'')+'</small>';b.onclick=()=>{activeId=app.id;render()};list.appendChild(b)});
- if(!activeId||!apps.some(a=>a.id===activeId))activeId=apps[0].id;const app=apps.find(a=>a.id===activeId);if(!app)return;const other=app.applicant===name()?app.offerOwner:app.applicant;head.textContent=(other||'Suhbat')+' · '+(app.offerTitle||'Taklif');input.disabled=send.disabled=false;body.replaceChildren();const convo=messages.filter(m=>String(m.applicationId)===String(activeId));if(app.lastReadBy&&typeof app.lastReadBy==='object'){app.lastReadBy[name()]=new Date().toISOString();saveLocal('offerApplications',readLocal('offerApplications').map(a=>String(a.id)===String(app.id)?app:a))}else{app.lastReadBy={[name()]:new Date().toISOString()};saveLocal('offerApplications',readLocal('offerApplications').map(a=>String(a.id)===String(app.id)?app:a))}if(!convo.length){body.innerHTML='<div class="cabinet-chat-empty">Hali xabarlar yo‘q. Suhbatni boshlashingiz mumkin.</div>';return}convo.forEach(m=>{const div=document.createElement('div');div.className='cabinet-chat-bubble'+(m.sender===name()?' mine':'');div.innerHTML='<div>'+safe(m.text)+'</div><small>'+safe(m.sender)+' · '+safe(m.date?new Date(m.date).toLocaleString('uz-UZ'):'')+'</small>';body.appendChild(div)});body.scrollTop=body.scrollHeight;
+ const empty=(node,msg)=>{node.replaceChildren();const el=document.createElement('div');el.className='cabinet-chat-empty';el.textContent=msg;node.append(el)};
+ async function loadChats(){
+  list.replaceChildren();body.replaceChildren();
+  if(!api){empty(list,'Backend API yuklanmadi.');return;}
+  const auth=window.IDEALAB_AUTH;const session=auth&&await auth.getSession();
+  userId=session&&session.ok?session.data?.session?.user?.id:null;
+  if(!userId){badge.textContent='0 SUHBAT';empty(list,'Suhbatlar uchun akkauntga kiring.');empty(body,'Kirishdan so‘ng arizalarga bog‘langan chatlar ko‘rinadi.');input.disabled=send.disabled=true;return;}
+  const result=await api.listMyJobChats();
+  if(!result.ok){empty(list,'Chatlar serverdan yuklanmadi. Qayta yuklang.');empty(body,'Server xatosi.');return;}
+  chats=Array.isArray(result.data)?result.data:[[]].flat();badge.textContent=chats.length+' SUHBAT';
+  if(!chats.length){empty(list,'Arizaga bog‘langan suhbatlar hali yo‘q.');empty(body,'Suhbatlar arizalar asosida shu yerda paydo bo‘ladi.');input.disabled=send.disabled=true;activeId='';return;}
+  if(!activeId||!chats.some(c=>c.application_id===activeId))activeId=chats[0].application_id;
+  chats.forEach(c=>{const button=document.createElement('button');button.type='button';button.className='cabinet-chat-item'+(c.application_id===activeId?' active':'');button.innerHTML='<strong>'+safe(c.counterpart_label||c.company_name||'Suhbat')+'</strong><small>'+safe(c.job_title||'Vakansiya')+'</small><small>'+safe(c.application_status||'Ariza')+(c.last_message?' · '+safe(c.last_message):'')+'</small>';button.addEventListener('click',()=>{activeId=c.application_id;loadChats()});list.append(button)});
+  const current=chats.find(c=>c.application_id===activeId);head.textContent=(current.counterpart_label||current.company_name||'Suhbat')+' · '+(current.job_title||'Vakansiya');input.disabled=send.disabled=false;
+  const messages=await api.listJobChatMessages(activeId);body.replaceChildren();
+  if(!messages.ok){empty(body,'Xabarlar yuklanmadi.');return;}
+  const rows=Array.isArray(messages.data)?messages.data:[[];
+  if(!rows.length){empty(body,'Hali xabarlar yo‘q. Xavfsiz va ishga oid xabar bilan suhbatni boshlang.');return;}
+  rows.forEach(m=>{const bubble=document.createElement('div');bubble.className='cabinet-chat-bubble'+(m.sender_id===userId?' mine':'');bubble.textContent=m.body||'';const meta=document.createElement('small');meta.textContent=new Date(m.created_at).toLocaleString('uz-UZ');bubble.append(meta);body.append(bubble)});body.scrollTop=body.scrollHeight;
  }
- form.addEventListener('submit',e=>{e.preventDefault();const text=input.value.trim();if(!text||!activeId)return;const apps=readLocal('offerApplications'),app=apps.find(a=>a.id===activeId);if(!app||!belongs(app)){alert('Bu suhbatga kirish huquqi tasdiqlanmadi.');return}const msgs=readLocal('offerMessages');msgs.push({id:ideaCore&&ideaCore.createId?ideaCore.createId():'msg-'+Date.now(),applicationId:activeId,sender:name(),text,date:new Date().toISOString()});if(!saveLocal('offerMessages',msgs)){alert('Xabar saqlanmadi.');return}input.value='';render();renderCareerNotifications()});
- window.openCabinetChat=function(applicationId){activeId=applicationId;render();const section=document.getElementById('careerMessages');if(section)section.scrollIntoView({behavior:'smooth'})};\n window.addEventListener('storage',e=>{if(['offerApplications','offerMessages','userProfile'].includes(e.key))render()});window.addEventListener('ideaLab:profile-updated',render);render();
+ form.addEventListener('submit',async e=>{e.preventDefault();const text=input.value.trim();if(!text||!activeId)return;send.disabled=true;send.textContent='Yuborilmoqda…';const result=await api.sendJobChatMessage(activeId,text);send.disabled=false;send.textContent='Yuborish';if(!result.ok){alert(result.error?.message||'Xabar yuborilmadi.');return;}input.value='';await loadChats();});
+ window.openCabinetChat=applicationId=>{activeId=applicationId;loadChats();document.getElementById('careerMessages')?.scrollIntoView({behavior:'smooth'});};
+ window.addEventListener('ideaLab:profile-updated',loadChats);
+ loadChats();
 })();
-
  function renderCareerNotifications(){const target=document.getElementById('careerNotifList');if(!target)return;target.replaceChildren();const profileName=name();const apps=readLocal('offerApplications').filter(a=>a.applicant===profileName||a.offerOwner===profileName);const messages=readLocal('offerMessages');const notifications=[];apps.forEach(a=>{const readAt=a.lastReadBy&&a.lastReadBy[profileName]?Date.parse(a.lastReadBy)||0:0;const newMessages=messages.filter(m=>String(m.applicationId)===String(a.id)&&m.sender!==profileName&&(Date.parse(m.date)||0)>readAt);if(newMessages.length)notifications.push({title:a.offerTitle||'Ariza bo‘yicha suhbat',detail:newMessages.length+' ta o‘qilmagan xabar',date:newMessages[newMessages.length-1].date,applicationId:a.id});if(a.updatedAt)notifications.push({title:a.offerTitle||'Ariza holati',detail:'Ariza holati: '+(a.status||'Yangi'),date:a.updatedAt,applicationId:a.id})});notifications.sort((a,b)=>(Date.parse(b.date)||0)-(Date.parse(a.date)||0));const badge=document.getElementById('careerNotifBadge');badge.textContent=notifications.length+' XABAR';if(!notifications.length){target.appendChild(emptyState('Hozircha yangi bildirishnomalar yo‘q.'));return}notifications.slice(0,30).forEach(n=>{const card=make('article','item-card');card.appendChild(make('h3','',n.title));card.appendChild(make('p','',n.detail));if(n.date)card.appendChild(make('p','',new Date(n.date).toLocaleString('uz-UZ')));const button=make('button','btn btn-secondary','Suhbatni ochish');button.type='button';button.addEventListener('click',()=>{if(window.openCabinetChat)window.openCabinetChat(n.applicationId)});card.appendChild(button);target.appendChild(card)})}
 
 </script>
