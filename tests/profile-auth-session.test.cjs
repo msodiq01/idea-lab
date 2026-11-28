@@ -21,8 +21,8 @@ test("profile Auth controls refresh session and guard sign-out", () => {
   assert.match(profile, /if \(!authAdapter \|\| profileSignOutButton\.disabled\) return/);
   assert.match(profile, /profileSignOutButton\.disabled = !configured \|\| !active/);
   const scripts = [...profile.matchAll(/<script>([\s\S]*?)<\/script>/g)];
-  assert.equal(scripts.length, 1);
-  assert.doesNotThrow(() => new vm.Script(scripts[0][1]));
+  assert.ok(scripts.length >= 1);
+  for (const script of scripts) assert.doesNotThrow(() => new vm.Script(script[1]));
 });
 
 test("profile page never automatically links local profile data to Auth", () => {
