@@ -224,6 +224,13 @@ button{cursor:pointer}
         <div class="panel-heading"><div><h2>Yagona arizalar markazi</h2><p>Barcha tegishli modullardan kelgan va siz yuborgan murojaatlar.</p></div><span class="pill">ARIZALAR</span></div>
         <div class="activity-group"><h3>Kiruvchi arizalar</h3><div id="incomingApplications" class="cards"></div></div>
         <div class="activity-group"><h3>Yuborgan arizalarim</h3><div id="outgoingApplications" class="cards"></div></div>
+        <div class="activity-group" id="careerServerCenter">
+          <h3>Vakansiya tizimidagi server arizalari</h3>
+          <p class="tip" style="margin-bottom:10px">Ish beruvchi va ish izlovchi o‘rtasidagi haqiqiy ariza holatlari serverdan olinadi.</p>
+          <div class="cards" id="careerServerApplications"><div class="empty">Server arizalari yuklanmoqda…</div></div>
+          <h3 style="margin-top:18px">Server bildirishnomalari</h3>
+          <div class="cards" id="careerServerActivity"><div class="empty">Faoliyat yuklanmoqda…</div></div>
+        </div>
         <div class="notice">Faqat profil ID yoki mos email orqali ishonchli bog‘langan yangi yozuvlar ko‘rsatiladi. Eski yozuvlar avtomatik ravishda sizga biriktirilmaydi.</div>
         <div class="career-center-shortcuts" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px">
           <a class="btn btn-secondary" href="career.html?mode=seeker" style="display:flex;justify-content:space-between;align-items:center">Ish izlovchi kabineti <span>↗</span></a>
@@ -555,6 +562,27 @@ refreshAuthSession(false).then(()=>loadProfile()).catch(()=>loadProfile());rende
  function renderCareerNotifications(){const target=document.getElementById('careerNotifList');if(!target)return;target.replaceChildren();const profileName=name();const apps=readLocal('offerApplications').filter(a=>a.applicant===profileName||a.offerOwner===profileName);const messages=readLocal('offerMessages');const notifications=[];apps.forEach(a=>{const readAt=a.lastReadBy&&a.lastReadBy[profileName]?Date.parse(a.lastReadBy)||0:0;const newMessages=messages.filter(m=>String(m.applicationId)===String(a.id)&&m.sender!==profileName&&(Date.parse(m.date)||0)>readAt);if(newMessages.length)notifications.push({title:a.offerTitle||'Ariza bo‘yicha suhbat',detail:newMessages.length+' ta o‘qilmagan xabar',date:newMessages[newMessages.length-1].date,applicationId:a.id});if(a.updatedAt)notifications.push({title:a.offerTitle||'Ariza holati',detail:'Ariza holati: '+(a.status||'Yangi'),date:a.updatedAt,applicationId:a.id})});notifications.sort((a,b)=>(Date.parse(b.date)||0)-(Date.parse(a.date)||0));const badge=document.getElementById('careerNotifBadge');badge.textContent=notifications.length+' XABAR';if(!notifications.length){target.appendChild(emptyState('Hozircha yangi bildirishnomalar yo‘q.'));return}notifications.slice(0,30).forEach(n=>{const card=make('article','item-card');card.appendChild(make('h3','',n.title));card.appendChild(make('p','',n.detail));if(n.date)card.appendChild(make('p','',new Date(n.date).toLocaleString('uz-UZ')));const button=make('button','btn btn-secondary','Suhbatni ochish');button.type='button';button.addEventListener('click',()=>{if(window.openCabinetChat)window.openCabinetChat(n.applicationId)});card.appendChild(button);target.appendChild(card)})}
 
 </script>
-    <script src="assets/idea-shell.js" defer></script>
+    <script>
+(function(){
+  "use strict";
+  const api=window.IDEALAB_DATA;
+  const applications=document.getElementById("careerServerApplications");
+  const activity=document.getElementById("careerServerActivity");
+  if(!api||!applications||!activity)return;
+  const escapeHtml=value=>String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+  const unwrap=result=>result&&result.ok===true?(result.data||[]):result&&Array.isArray(result.data)?result.data:result;
+  const rows=value=>Array.isArray(value)?value:Array.isArray(value?.rows)?value.rows:Array.isArray(value?.applications)?value.applications:[];
+  const statusLabel=status=>({submitted:"Ko‘rib chiqilmoqda",interview:"Suhbatga taklif",accepted:"Qabul qilindi",declined:"Rad etildi",withdrawn:"Qaytarib olindi"}[status]||status||"Holat noma’lum");
+  const card=(title,description,status,date,meta)=>'<article class="item-card"><h3>'+escapeHtml(title||"Vakansiya arizasi")+'</h3><p>'+escapeHtml(description||"Ariza server tizimida qayd etilgan.")+'</p><span class="status">'+escapeHtml(statusLabel(status))+'</span><p>'+escapeHtml(meta||"")+'</p><p>'+escapeHtml(date?new Date(date).toLocaleString("uz-UZ"):"")+'</p></article>';
+  function paintApplications(list){applications.innerHTML=list.length?list.map(item=>card(item.job_title||item.title||item.vacancy_title,item.message||item.application_message,item.status,item.created_at,item.organization_name||item.employer_name||item.location_label)).join(""):'<div class="empty">Serverda sizga tegishli vakansiya arizalari topilmadi.</div>';}
+  function paintActivity(list){activity.innerHTML=list.length?list.map(item=>card(item.title||item.event_title,item.message||item.description,item.status,item.created_at,item.job_title||item.organization_name)).join(""):'<div class="empty">Hozircha server bildirishnomalari yo‘q.</div>';}
+  Promise.all([api.listMyJobApplications(),api.listMyJobActivity()]).then(results=>{
+    const appResult=results[0],activityResult=results[1];
+    if(appResult?.ok===false){applications.innerHTML='<div class="empty">Arizalarni olishda xatolik: '+escapeHtml(appResult.error?.message||"Kirish sessiyasini tekshiring")+'</div>';}else paintApplications(rows(unwrap(appResult)));
+    if(activityResult?.ok===false){activity.innerHTML='<div class="empty">Bildirishnomalarni olishda xatolik: '+escapeHtml(activityResult.error?.message||"Kirish sessiyasini tekshiring")+'</div>';}else paintActivity(rows(unwrap(activityResult)));
+  }).catch(error=>{applications.innerHTML='<div class="empty">Server arizalari yuklanmadi. '+escapeHtml(error?.message||"")+'</div>';activity.innerHTML='<div class="empty">Server faoliyati yuklanmadi.</div>';});
+})();
+</script>
+<script src="assets/idea-shell.js" defer></script>
 </body>
 </html>
