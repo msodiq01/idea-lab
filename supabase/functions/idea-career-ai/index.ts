@@ -4,7 +4,7 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Vary: "Origin",
+  "Vary": "Origin",
 };
 
 type Mode = "resume_review" | "job_match" | "vacancy_improve";
