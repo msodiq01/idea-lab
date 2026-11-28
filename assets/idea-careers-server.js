@@ -311,10 +311,21 @@
     if(!r.ok){empty(matchBox,errorText(r));return;}
     if(!r.data?.length){empty(matchBox,"Hozircha rezyumengizga mos haqiqiy vakansiya topilmadi. Yangi e’lonlar joylashtirilganda shu yerda ko‘rinadi.");return;}
     r.data.forEach(job=>{
-      const reasons=Array.isArray(job.match_reasons)?job.match_reasons.join(" • "):"";
-      const node=card(job.title,[job.company_name,locationLabel(job),employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Kerakli ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi",reasons]);
+      const reasons=Array.isArray(job.match_reasons)?job.match_reasons.filter(Boolean):[];
+      const scoreValue=Math.max(0,Math.min(100,Number(job.match_score)||0));
+      const node=card(job.title,[job.company_name,locationLabel(job),employmentType(job.employment_type),job.schedule_label||"",job.experience_years_min>0?"Eng kam tajriba: "+job.experience_years_min+" yil":"Tajriba shart emas",job.required_skills?.length?"Kerakli ko‘nikmalar: "+job.required_skills.join(", "):"",job.salary_label||"Maosh: kelishiladi"]);
+      node.classList.add("career-match-card");
+      const matchPanel=document.createElement("section");matchPanel.className="career-match-panel";matchPanel.setAttribute("aria-label","Vakansiya mosligi");
+      const matchTop=document.createElement("div");matchTop.className="career-match-top";
+      const matchLabel=document.createElement("strong");matchLabel.textContent="Rezyumega mosligi";
+      const score=document.createElement("span");score.className="career-match-score";score.textContent=scoreValue+"%";
+      matchTop.append(matchLabel,score);matchPanel.append(matchTop);
+      const track=document.createElement("div");track.className="career-match-track";track.setAttribute("role","meter");track.setAttribute("aria-label","Moslik foizi");track.setAttribute("aria-valuemin","0");track.setAttribute("aria-valuemax","100");track.setAttribute("aria-valuenow",String(scoreValue));
+      const fill=document.createElement("span");fill.className="career-match-fill";fill.style.width=scoreValue+"%";track.append(fill);matchPanel.append(track);
+      if(reasons.length){const why=document.createElement("div");why.className="career-match-reasons";const whyTitle=document.createElement("span");whyTitle.className="career-match-caption";whyTitle.textContent="Nega tavsiya qilindi?";why.append(whyTitle);const list=document.createElement("ul");reasons.forEach(reason=>{const li=document.createElement("li");li.textContent=reason;list.append(li);});why.append(list);matchPanel.append(why);}
+      const disclaimer=document.createElement("p");disclaimer.className="career-match-disclaimer";disclaimer.textContent="Moslik foizi yo‘naltiruvchi baho, ishga qabul qilish kafolati emas.";matchPanel.append(disclaimer);
+      node.append(matchPanel);
       const contact=contactBlock(job);if(contact)node.append(contact);
-      const score=document.createElement("p");score.className="notice";score.textContent="Moslik: "+Number(job.match_score||0)+"% — bu yo‘naltiruvchi baho, ishga qabul qilish kafolati emas.";node.append(score);
       const actions=document.createElement("div");actions.className="card-actions";
       const apply=document.createElement("button");apply.className="btn green career-apply-action";apply.type="button";const alreadyApplied=appliedJobIds.has(job.id);apply.textContent=alreadyApplied?"Ariza yuborilgan":userId?"Ariza yuborish":"Kirish orqali ariza yuborish";apply.disabled=alreadyApplied;apply.hidden=activeMode==="employer";
       apply.addEventListener("click",()=>{if(!userId){location.href="auth.html?next=career.html";return;}selectedJob=job;$("ilApplyTitle").textContent=job.title+" — ariza";$("ilApplyMessage").value="";applicationPanel.hidden=false;applicationPanel.scrollIntoView({behavior:"smooth",block:"center"});});
