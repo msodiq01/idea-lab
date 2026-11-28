@@ -23,7 +23,8 @@ test("career application rows are participant-filtered through the invoker view 
   assert.match(migration, /with \(security_invoker = true\)/i);
   assert.match(migration, /a\.applicant_id = \(select auth\.uid\(\)\).*'outgoing' else 'incoming'/s);
   assert.match(migration, /join idea_app\.job_posts j on j\.id = a\.job_post_id/i);
-  assert.doesNotMatch(migration, /service_role|security definer|phone|email|resume_path|storage_path/i);
+  const executableSql = migration.replace(/--.*$/gm, "");
+  assert.doesNotMatch(executableSql, /service_role|security definer|phone|email|resume_path|storage_path/i);
   assert.match(migration, /grant select on public\.application_center to authenticated/i);
 });
 
