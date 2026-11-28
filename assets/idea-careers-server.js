@@ -473,7 +473,7 @@
     const interviews=centralApplicationsCache.filter(item=>item.status==="interview");
     if(!interviews.length)empty(interviewBox,"Suhbat bosqichida nomzod yo‘q.");
     interviews.forEach(item=>interviewBox.append(card(item.candidate_name||"Nomzod",[item.job_title||"Vakansiya",item.company_name||"Ish beruvchi","Holat: Suhbatga taklif"])));
-    const today=new Date();today.setHours(0,0,0,0);const todayKey=today.toISOString().slice(0,10);
+    const today=new Date();today.setHours(0,0,0,0);
     const followups=[];
     for(const item of centralApplicationsCache){
       const result=await data.getEmployerApplicationNote(item.application_id);
@@ -487,7 +487,7 @@
       followups.push({item,note,dateKey,diff});
     }
     followups.sort((a,b)=>a.diff-b.diff);
-    const due=followups.filter(x=>x.diff<=0);
+    const due=followups.filter(x=>x.diff<=0),upcoming=followups.filter(x=>x.diff>0);
     if(!due.length)empty(followBox,"Bugun yoki muddati o‘tgan qayta bog‘lanish vazifasi yo‘q.");
     due.forEach(({item,note,dateKey,diff})=>{
       const label=diff<0?"Muddati o‘tgan: "+Math.abs(diff)+" kun":"Bugun bog‘lanish";
@@ -496,6 +496,7 @@
       open.addEventListener("click",()=>{const search=$("ilCentralApplicationSearch");if(search){search.value=item.candidate_name||"";renderCentralApplications();$("ilCentralApplications")?.scrollIntoView({behavior:"smooth",block:"center"});}});
       node.append(open);followBox.append(node);
     });
+    if(upcoming.length){const heading=document.createElement("h4");heading.textContent="Kelgusi bog‘lanishlar";followBox.append(heading);upcoming.forEach(({item,note,dateKey,diff})=>followBox.append(card(item.candidate_name||"Nomzod",[item.job_title||"Vakansiya",item.company_name||"","Rejalashtirilgan: "+dateKey,diff+" kun qoldi",note?.note||""])));
   }
   function renderCentralApplications(){
     const box=$("ilCentralApplications");if(!box)return;box.replaceChildren();
