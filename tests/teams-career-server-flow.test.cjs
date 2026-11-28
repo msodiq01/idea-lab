@@ -66,8 +66,8 @@ test("public vacancy directory and vacancy application flows use server adapters
 
 test("vacancy UI disables legacy employer application panel and protects contact details", () => {
   assert.match(careers, /legacyEmployerPanel\)legacyEmployerPanel\.hidden=true/);
-  assert.match(careers, /Shaxsiy telefon raqamlar ochiq katalogda ko‘rsatilmaydi/);
-  assert.match(careers, /Aloqa telefonini ochiq e’longa kiritmang/);
+  assert.match(careers, /ish telefoni hammaga ko‘rinadi/);
+  assert.match(careers, /shaxsiy raqamingizni kiritmang/);
   assert.match(careers, /auth\.html\?next=career\.html/);
   const careerScripts = scriptSources(careerPage);
   assert.ok(careerScripts.includes("assets/idea-auth.js"));
@@ -103,5 +103,5 @@ test("data adapter validates job and membership identifiers before RPC calls", (
   assert.match(data, /requestTeamMembership\(organizationId\)[\s\S]*?if \(!isUuid\(organizationId\)\)/);
   assert.match(data, /createJobPost\(input = \{\}\)[\s\S]*?if \(!isUuid\(input\.organizationId\)/);
   assert.match(data, /applyJobPost\(jobPostId, message\)[\s\S]*?if \(!isUuid\(jobPostId\)/);
-  assert.match(data, /reviewJobApplication\(applicationId, status\)[\s\S]*?!\["accepted", "declined"\]\.includes\(status\)/);
+  assert.match(data, /reviewJobApplication\(applicationId, status\)[\s\S]*?!\["interview", "accepted", "declined"\]\.includes\(status\)/);
 });
