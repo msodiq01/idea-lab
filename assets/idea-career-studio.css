@@ -433,3 +433,37 @@ body:has(.topbar) #careerNotice{margin-top:13px}
  body:has(.topbar) .hero-actions:has(#modeSeeker) #modeEmployer{min-width:0;width:100%}
  body:has(.topbar) #matching-section{padding:17px}
 }
+
+
+/* Accessibility and responsive polish */
+body:has(.topbar) :is(a,button,input,select,textarea,[tabindex]):focus-visible{
+  outline:3px solid #7cecdf!important;
+  outline-offset:3px!important;
+  box-shadow:0 0 0 5px rgba(84,227,212,.14)!important;
+}
+body:has(.topbar) .btn:disabled,
+body:has(.topbar) button:disabled{
+  opacity:.52!important;cursor:not-allowed!important;transform:none!important;filter:none!important;
+}
+body:has(.topbar) .employment-choices label:has(input:checked){
+  border-color:rgba(84,227,212,.55)!important;
+  background:rgba(84,227,212,.09)!important;
+  color:#e8fffb!important;
+}
+body:has(.topbar) .employment-choices input{accent-color:#54e3d4}
+body:has(.topbar) .panel,
+body:has(.topbar) .card{min-width:0}
+body:has(.topbar) table{
+  display:block;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;
+  scrollbar-width:thin;white-space:nowrap;
+}
+body:has(.topbar) .field input:invalid:not(:placeholder-shown),
+body:has(.topbar) .field textarea:invalid:not(:placeholder-shown){
+  border-color:rgba(255,119,145,.7)!important;
+}
+@media(max-width:620px){
+  body:has(.topbar) .topbar{position:relative}
+  body:has(.topbar) .navlinks{scrollbar-width:thin}
+  body:has(.topbar) .hero-actions .btn{flex:1 1 auto}
+  body:has(.topbar) .career-hero-points span{font-size:9px;padding:8px 10px}
+}
