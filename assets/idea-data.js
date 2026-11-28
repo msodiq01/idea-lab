@@ -494,7 +494,11 @@
       if (!isUuid(applicationId)) return Promise.resolve(fail("INVALID_APPLICATION_ID", "Ariza identifikatori noto‘g‘ri."));
       return runPublicCommand("idea_lab_get_job_application_employer_note", { p_application_id: applicationId });
     },
-    markEmployerApplicationContacted(applicationId) {\n      if (!isUuid(applicationId)) return Promise.resolve(fail("INVALID_APPLICATION_ID", "Ariza identifikatori noto‘g‘ri."));\n      return runPublicCommand("idea_lab_mark_employer_application_contacted", { p_application_id: applicationId });\n    },\n    saveEmployerApplicationNote(input = {}) {
+    markEmployerApplicationContacted(applicationId) {
+      if (!isUuid(applicationId)) return Promise.resolve(fail("INVALID_APPLICATION_ID", "Ariza identifikatori noto‘g‘ri."));
+      return runPublicCommand("idea_lab_mark_employer_application_contacted", { p_application_id: applicationId });
+    },
+    saveEmployerApplicationNote(input = {}) {
       if (!isUuid(input.applicationId) || typeof input.note !== "string" || input.note.length > 3000 || (input.nextContactDate && !/^\\d{4}-\\d{2}-\\d{2}$/.test(input.nextContactDate))) return Promise.resolve(fail("INVALID_APPLICATION_NOTE", "Qayd ma’lumotlari noto‘g‘ri."));
       return runPublicCommand("idea_lab_save_job_application_employer_note", { p_application_id: input.applicationId, p_note: input.note, p_next_contact_date: input.nextContactDate || null });
     },
