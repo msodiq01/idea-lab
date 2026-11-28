@@ -206,3 +206,15 @@ body:has(.topbar) .searchrow:before{
  body:has(.topbar) #modeSeeker,body:has(.topbar) #modeEmployer{min-width:0;flex:1}
  body:has(.topbar) .hero-actions>a{width:100%;justify-content:center}
 }
+
+body:has(.topbar) .career-hero-points{display:flex;gap:9px;flex-wrap:wrap;margin-top:23px}
+body:has(.topbar) .career-hero-points span{
+ display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;
+ border:1px solid rgba(190,178,225,.2);background:rgba(255,255,255,.045);
+ color:#d9d3ed;font-size:10px;font-weight:700;letter-spacing:.02em;
+ backdrop-filter:blur(10px);
+}
+body:has(.topbar) .career-hero-points span:before{
+ content:"";width:6px;height:6px;border-radius:50%;background:#54e3d4;
+ box-shadow:0 0 10px rgba(84,227,212,.7);
+}
