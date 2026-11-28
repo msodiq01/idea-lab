@@ -19,14 +19,14 @@ const MODE_PROMPTS: Record<Mode, string> = {
 function json(data: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(data), { status, headers: { ...corsHeaders, "Content-Type": "application/json; charset=utf-8" } });
 }
-function parseInput(raw: unknown): Input | null {
+function redactPersonalData(value: string): string {\n  return value\n    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}/gi, "[email yashirildi]")\n    .replace(/(?:\\+?\\d[\\d ()-]{7,}\\d)/g, "[telefon yashirildi]")\n    .replace(/\\b[A-Z]{2}\\d{7,9}\\b/gi, "[hujjat raqami yashirildi]")\n    .replace(/https?:\\/\\/\\S+/gi, "[havola yashirildi]");\n}\nfunction parseInput(raw: unknown): Input | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const body = raw as Record<string, unknown>;
   const mode = body.mode;
   if (mode !== "resume_review" && mode !== "job_match" && mode !== "vacancy_improve") return null;
-  const resume = typeof body.resume === "string" ? body.resume.trim() : "";
-  const vacancy = typeof body.vacancy === "string" ? body.vacancy.trim() : "";
-  const title = typeof body.title === "string" ? body.title.trim() : "";
+  const resume = typeof body.resume === "string" ? redactPersonalData(body.resume.trim()) : "";
+  const vacancy = typeof body.vacancy === "string" ? redactPersonalData(body.vacancy.trim()) : "";
+  const title = typeof body.title === "string" ? redactPersonalData(body.title.trim()) : "";
   if (resume.length > 6000 || vacancy.length > 6000 || title.length > 250) return null;
   if (mode === "resume_review" && !resume) return null;
   if (mode === "job_match" && (!resume || !vacancy)) return null;
