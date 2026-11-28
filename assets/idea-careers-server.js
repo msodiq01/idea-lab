@@ -433,6 +433,7 @@
     const all=Array.isArray(r.data)?r.data:[];
     const organizations=all.filter(x=>x.organization_type!=="team"&&x.visibility==="public"&&x.status==="active");
     organizations.forEach(org=>select.add(new Option(org.name,org.id)));
+    restoreJobOrganizationDraft();
     select.disabled=false;
     if(statusBox){
       if(!all.length)empty(statusBox,"Hali ish beruvchi tashkilot profilingiz yo‘q.");
@@ -690,6 +691,37 @@
     preview.hidden=false;preview.scrollIntoView({behavior:"smooth",block:"nearest"});
   }
   $("jobPreviewButton")?.addEventListener("click",showJobPreview);
+  let jobSubmitInFlight=false;
+  const jobDraftKey="idea_lab_job_draft_v1";
+  let pendingJobDraft=null;
+  const jobDraftFields=["jobTitle","jobSalary","jobLocation","jobRegion","jobDistrict","jobType","jobExperienceYears","jobSchedule","jobSkills","jobDescription","jobContactName","jobContactPhone","jobOpenings"];
+  function readJobDraft(){
+    try{
+      const raw=localStorage.getItem(jobDraftKey);
+      if(!raw)return;
+      pendingJobDraft=JSON.parse(raw);
+      jobDraftFields.forEach(id=>{const el=$(id);if(el&&pendingJobDraft[id]!==undefined)el.value=pendingJobDraft[id];});
+    }catch(_){pendingJobDraft=null;}
+  }
+  function restoreJobOrganizationDraft(){
+    const select=$("jobOrganization");
+    if(!select||!pendingJobDraft||!pendingJobDraft.jobOrganization)return;
+    if(Array.from(select.options).some(option=>option.value===pendingJobDraft.jobOrganization)){
+      select.value=pendingJobDraft.jobOrganization;
+      pendingJobDraft=null;
+    }
+  }
+  function saveJobDraft(){
+    try{
+      const draft={};
+      ["jobOrganization",...jobDraftFields].forEach(id=>{const el=$(id);if(el)draft[id]=el.value;});
+      localStorage.setItem(jobDraftKey,JSON.stringify(draft));
+    }catch(_){}
+  }
+  function clearJobDraft(){try{localStorage.removeItem(jobDraftKey);pendingJobDraft=null;}catch(_){}}
+  readJobDraft();
+  form.addEventListener("input",saveJobDraft);
+  form.addEventListener("change",saveJobDraft);
   async function createJob(event){
     event.preventDefault();
     if(!userId){alert("Vakansiya joylashtirish uchun avval akkauntga kiring.");location.href="auth.html?next=career.html";return;}
@@ -709,17 +741,33 @@
       contactName:clean($("jobContactName")?.value),
       contactPhone:clean($("jobContactPhone")?.value)
     };
-    if(!input.organizationId){alert("Avval o‘zingizga tegishli tashkilotni tanlang.");return;}
+    const fields=[
+      ["jobTitle",input.title.length>=3&&input.title.length<=100,"Vakansiya nomi 3–100 belgi bo‘lishi kerak."],
+      ["jobLocation",input.location.length>=2&&input.location.length<=120,"Ish joyi 2–120 belgi bo‘lishi kerak."],
+      ["jobDescription",input.description.length>=40&&input.description.length<=5000,"Tavsif 40–5000 belgi bo‘lishi kerak."],
+      ["jobSalary",!input.salary||input.salary.length<=120,"Maosh ma’lumotini 120 belgidan oshirmang."],
+      ["jobSchedule",!input.schedule||input.schedule.length<=160,"Ish jadvalini 160 belgidan oshirmang."]
+    ];
+    const invalid=fields.find(([id,valid])=>!valid);
+    if(invalid){const field=$(invalid[0]);field?.focus();setStatus(invalid[2],true);return;}
+    if(!Number.isInteger(input.openingsCount)||input.openingsCount<1||input.openingsCount>500){$("jobOpenings")?.focus();setStatus("Ish o‘rinlari soni 1–500 oralig‘ida bo‘lishi kerak.",true);return;}
+    if(!Number.isInteger(input.experienceYearsMin)||input.experienceYearsMin<0||input.experienceYearsMin>50){$("jobExperienceYears")?.focus();setStatus("Minimal tajriba 0–50 yil oralig‘ida bo‘lishi kerak.",true);return;}
+    if(!input.organizationId){setStatus("Avval o‘zingizga tegishli tashkilotni tanlang.",true);$("jobOrganization")?.focus();return;}
+
     const contactDigits=input.contactPhone.replace(/\D/g,"");
     if(input.contactName.length<2){alert("Aloqa uchun mas’ul shaxs ismini kiriting.");return;}
     if(!/^998[0-9]{9}$/.test(contactDigits)){alert("Telefon raqamini +998 90 123 45 67 formatida kiriting.");return;}
-    const submit=form.querySelector('[type="submit"]');if(submit)submit.disabled=true;
+    if(jobSubmitInFlight)return;
+    const submit=form.querySelector('[type="submit"]');
+    jobSubmitInFlight=true;if(submit)submit.disabled=true;
     setStatus("Vakansiya serverga joylanmoqda…");
-    const r=await data.createJobPost(input);
-    if(!r.ok){setStatus(errorText(r),true);if(submit)submit.disabled=false;return;}
-    form.reset();if($("jobFormPanel"))$("jobFormPanel").hidden=true;if(submit)submit.disabled=false;
-    setStatus("Vakansiya muvaffaqiyatli joylandi va ochiq katalogda avtomatik e’lon qilindi.");
-    await loadJobs();await loadOwnedJobs();
+    try{
+      const r=await data.createJobPost(input);
+      if(!r.ok){setStatus(errorText(r),true);return;}
+      form.reset();clearJobDraft();if($("jobFormPanel"))$("jobFormPanel").hidden=true;
+      setStatus("Vakansiya muvaffaqiyatli joylandi va ochiq katalogda avtomatik e’lon qilindi.");
+      await loadJobs();await loadOwnedJobs();
+    }finally{jobSubmitInFlight=false;if(submit)submit.disabled=false;}
   }
   async function draftVacancyWithAI(){
     const button=$("jobAiDraftButton"),status=$("jobAiDraftStatus");
