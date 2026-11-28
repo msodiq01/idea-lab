@@ -131,11 +131,10 @@ Deno.serve(async (req: Request) => {
     return json({ error: "Akkauntga kirish talab qilinadi" }, 401);
   }
 
-  const contentLength = Number(req.headers.get("content-length") || "0");
-  if (contentLength > 16000) return json({ error: "So‘rov hajmi juda katta" }, 413);
-
   try {
-    const body = await req.json();
+    const rawBody = await req.text();
+    if (rawBody.length > 16000) return json({ error: "So‘rov hajmi juda katta" }, 413);
+    const body = JSON.parse(rawBody);
     const input = readInput(body);
     if (!input) return json({ error: "G‘oya nomini kiriting yoki maydonlarni tekshiring (har biri 3000 belgigacha)" }, 400);
 
