@@ -19,7 +19,14 @@ const MODE_PROMPTS: Record<Mode, string> = {
 function json(data: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(data), { status, headers: { ...corsHeaders, "Content-Type": "application/json; charset=utf-8" } });
 }
-function redactPersonalData(value: string): string {\n  return value\n    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}/gi, "[email yashirildi]")\n    .replace(/(?:\\+?\\d[\\d ()-]{7,}\\d)/g, "[telefon yashirildi]")\n    .replace(/\\b[A-Z]{2}\\d{7,9}\\b/gi, "[hujjat raqami yashirildi]")\n    .replace(/https?:\\/\\/\\S+/gi, "[havola yashirildi]");\n}\nfunction parseInput(raw: unknown): Input | null {
+function redactPersonalData(value: string): string {
+  return value
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[email yashirildi]")
+    .replace(/(?:\+?\d[\d ()-]{7,}\d)/g, "[telefon yashirildi]")
+    .replace(/\b[A-Z]{2}\d{7,9}\b/gi, "[hujjat raqami yashirildi]")
+    .replace(/https?:\/\/\S+/gi, "[havola yashirildi]");
+}
+function parseInput(raw: unknown): Input | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const body = raw as Record<string, unknown>;
   const mode = body.mode;
