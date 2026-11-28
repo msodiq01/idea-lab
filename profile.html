@@ -97,6 +97,11 @@ button{cursor:pointer}
 .footer-inner{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
 @media(max-width:850px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}.sidebar{position:static;grid-template-columns:1fr 1fr}.nav-links{gap:10px}.cards{grid-template-columns:1fr 1fr}}
 @media(max-width:620px){.profile-extra{grid-template-columns:1fr}.profile-extra .field-group.full{grid-column:auto}.nav-inner{padding:13px 0;align-items:flex-start;flex-direction:column}.nav-links{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}.container,.nav-inner{width:calc(100% - 28px)}.hero{padding-top:34px}.hero h1{letter-spacing:-1.3px}.stats{grid-template-columns:1fr;gap:9px}.stat{padding:15px}.layout{padding-bottom:45px}.sidebar{grid-template-columns:1fr}.panel{padding:16px}.form-grid,.roles-grid,.cards{grid-template-columns:1fr}.field-group.full{grid-column:auto}.panel-heading{flex-direction:column}.footer-inner{flex-direction:column}}
+
+/* Career Hub cabinet messaging integration */
+.cabinet-chat{display:grid;grid-template-columns:minmax(190px,.72fr) minmax(0,1.5fr);gap:12px;min-height:390px}
+.cabinet-chat-list{display:grid;align-content:start;gap:8px}.cabinet-chat-item{width:100%;text-align:left;border:1px solid var(--border);border-radius:11px;padding:12px;background:var(--surface2);color:var(--text)}.cabinet-chat-item.active{border-color:var(--cyan);background:rgba(39,215,232,.07)}.cabinet-chat-item strong{display:block;font-size:12px}.cabinet-chat-item small{display:block;color:var(--muted);font-size:10px;margin-top:5px}.cabinet-chat-window{border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;min-width:0;overflow:hidden}.cabinet-chat-head{padding:13px;border-bottom:1px solid var(--border);font-size:12px}.cabinet-chat-body{padding:13px;display:flex;flex-direction:column;gap:9px;overflow:auto;min-height:240px;max-height:390px}.cabinet-chat-bubble{max-width:82%;padding:10px 12px;border-radius:11px;background:var(--surface2);font-size:11px;line-height:1.6;overflow-wrap:anywhere}.cabinet-chat-bubble.mine{align-self:flex-end;background:rgba(57,133,255,.2)}.cabinet-chat-bubble small{display:block;color:var(--muted);font-size:9px;margin-top:5px}.cabinet-chat-form{display:flex;gap:8px;padding:11px;border-top:1px solid var(--border)}.cabinet-chat-form .field{flex:1;min-width:0}.cabinet-chat-empty{color:var(--muted);font-size:11px;line-height:1.7;text-align:center;margin:auto;padding:20px}
+@media(max-width:620px){.cabinet-chat{grid-template-columns:1fr}.cabinet-chat-list{max-height:200px;overflow:auto}.cabinet-chat-form{flex-wrap:wrap}.cabinet-chat-form .field{flex-basis:100%}}
 </style>
     <link rel="stylesheet" href="assets/idea-shell.css">
 <link rel="stylesheet" href="assets/idea-nextgen.css">
@@ -130,7 +135,7 @@ button{cursor:pointer}
         <a class="side-link active" href="#profileSection"><span class="side-icon">◉</span> Profil ma’lumotlari</a>
         <a class="side-link" href="#projectsSection"><span class="side-icon">▦</span> Mening loyihalarim</a>
         <a class="side-link" href="#offersSection"><span class="side-icon">◇</span> Investor takliflari</a>
-        <a class="side-link" href="#applicationCenter"><span class="side-icon">✉</span> Arizalar markazi</a>
+        <a class="side-link" href="#applicationCenter"><span class="side-icon">✉</span> Arizalar markazi</a><a class="side-link" href="#careerMessages"><span class="side-icon">◌</span> Ish chatlari</a>
         <a class="side-link" href="#activitySection"><span class="side-icon">↗</span> Mening faoliyatim</a>
       </div>
       <div class="side-card">
@@ -220,6 +225,11 @@ button{cursor:pointer}
         <div class="activity-group"><h3>Kiruvchi arizalar</h3><div id="incomingApplications" class="cards"></div></div>
         <div class="activity-group"><h3>Yuborgan arizalarim</h3><div id="outgoingApplications" class="cards"></div></div>
         <div class="notice">Faqat profil ID yoki mos email orqali ishonchli bog‘langan yangi yozuvlar ko‘rsatiladi. Eski yozuvlar avtomatik ravishda sizga biriktirilmaydi.</div>
+      </section>
+
+      <section class="panel" id="careerMessages">
+        <div class="panel-heading"><div><h2>Ish va takliflar bo‘yicha suhbatlar</h2><p>Arizaga bog‘langan suhbatlarni kabinet ichida boshqaring. Xabarlar brauzerda saqlanadigan demo chatdir.</p></div><span class="pill" id="cabinetChatCount">0 SUHBAT</span></div>
+        <div class="cabinet-chat"><div class="cabinet-chat-list" id="cabinetChatList"></div><div class="cabinet-chat-window"><div class="cabinet-chat-head" id="cabinetChatHeader">Suhbat tanlang</div><div class="cabinet-chat-body" id="cabinetChatBody"><div class="cabinet-chat-empty">Chap tomondan suhbatni tanlang.</div></div><form class="cabinet-chat-form" id="cabinetChatForm"><input class="field" id="cabinetChatInput" maxlength="2000" placeholder="Xabar yozing..." disabled><button class="btn btn-primary" id="cabinetChatSend" type="submit" disabled>Yuborish</button></form></div></div>
       </section>
       <section class="panel" id="activitySection">
         <div class="panel-heading"><div><h2>Mening faoliyatim</h2><p>Faqat profilingizga ishonchli bog‘lash mumkin bo‘lgan yozuvlar ko‘rsatiladi.</p></div><span class="pill">FAOLIYAT</span></div>
@@ -513,6 +523,25 @@ profileForm.addEventListener("submit",async function(event){event.preventDefault
  updateProfileProgress();renderProfileIdentityReview();renderDashboard()});
 window.addEventListener("storage",function(event){if(["userProfile","projects","investmentApplications","jobApplications","teamApplications","resourceOrders"].includes(event.key))renderDashboard()});
 refreshAuthSession(false).then(()=>loadProfile()).catch(()=>loadProfile());renderDashboard();
+
+/* Cabinet-integrated offer conversations (browser-local demo, reuses offers.html stores) */
+(function initCabinetChat(){
+ const list=document.getElementById('cabinetChatList'),body=document.getElementById('cabinetChatBody'),head=document.getElementById('cabinetChatHeader'),form=document.getElementById('cabinetChatForm'),input=document.getElementById('cabinetChatInput'),send=document.getElementById('cabinetChatSend'),badge=document.getElementById('cabinetChatCount');
+ if(!list||!body||!form)return;
+ let activeId='';
+ const safe=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const profile=()=>getProfile()||{};
+ const name=()=>profile().fullName||'';
+ const readLocal=key=>{try{const x=ideaCore&&ideaCore.legacy?ideaCore.legacy.read(key,[]):JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(x)?x:[]}catch(_){return[]}};
+ const saveLocal=(key,value)=>{try{if(ideaCore&&ideaCore.legacy){const r=ideaCore.legacy.write(key,value);return !!(r&&r.ok)}localStorage.setItem(key,JSON.stringify(value));return true}catch(_){return false}};
+ const belongs=app=>app.applicant===name()||app.offerOwner===name();
+ function render(){const apps=readLocal('offerApplications').filter(belongs),messages=readLocal('offerMessages');badge.textContent=apps.length+' SUHBAT';list.replaceChildren();if(!apps.length){list.innerHTML='<div class="cabinet-chat-empty">Takliflar bo‘yicha suhbatlar topilmadi.</div>';activeId='';input.disabled=send.disabled=true;head.textContent='Suhbatlar yo‘q';body.innerHTML='<div class="cabinet-chat-empty">Taklifga ariza yuborilganda suhbat shu yerda ko‘rinadi.</div>';return}
+ apps.forEach(app=>{const other=app.applicant===name()?app.offerOwner:app.applicant;const unread=messages.filter(m=>m.applicationId===app.id&&m.sender!==name()).length;const b=document.createElement('button');b.type='button';b.className='cabinet-chat-item'+(app.id===activeId?' active':'');b.innerHTML='<strong>'+safe(other)+'</strong><small>'+safe(app.offerTitle)+'</small><small>'+safe(app.status||'Yangi ariza')+(unread?' · '+unread+' xabar':'')+'</small>';b.onclick=()=>{activeId=app.id;render()};list.appendChild(b)});
+ if(!activeId||!apps.some(a=>a.id===activeId))activeId=apps[0].id;const app=apps.find(a=>a.id===activeId);if(!app)return;const other=app.applicant===name()?app.offerOwner:app.applicant;head.textContent=(other||'Suhbat')+' · '+(app.offerTitle||'Taklif');input.disabled=send.disabled=false;body.replaceChildren();const convo=messages.filter(m=>m.applicationId===activeId);if(!convo.length){body.innerHTML='<div class="cabinet-chat-empty">Hali xabarlar yo‘q. Suhbatni boshlashingiz mumkin.</div>';return}convo.forEach(m=>{const div=document.createElement('div');div.className='cabinet-chat-bubble'+(m.sender===name()?' mine':'');div.innerHTML='<div>'+safe(m.text)+'</div><small>'+safe(m.sender)+' · '+safe(m.date?new Date(m.date).toLocaleString('uz-UZ'):'')+'</small>';body.appendChild(div)});body.scrollTop=body.scrollHeight;
+ }
+ form.addEventListener('submit',e=>{e.preventDefault();const text=input.value.trim();if(!text||!activeId)return;const apps=readLocal('offerApplications'),app=apps.find(a=>a.id===activeId);if(!app||!belongs(app)){alert('Bu suhbatga kirish huquqi tasdiqlanmadi.');return}const msgs=readLocal('offerMessages');msgs.push({id:ideaCore&&ideaCore.createId?ideaCore.createId():'msg-'+Date.now(),applicationId:activeId,sender:name(),text,date:new Date().toISOString()});if(!saveLocal('offerMessages',msgs)){alert('Xabar saqlanmadi.');return}input.value='';render()});
+ window.addEventListener('storage',e=>{if(['offerApplications','offerMessages','userProfile'].includes(e.key))render()});window.addEventListener('ideaLab:profile-updated',render);render();
+})();
 </script>
     <script src="assets/idea-shell.js" defer></script>
 </body>
