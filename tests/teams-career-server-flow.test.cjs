@@ -62,7 +62,9 @@ test("public vacancy directory and vacancy application flows use server adapters
     assert.match(careers, new RegExp("data\\." + method + "\\("), method);
     assert.match(data, new RegExp(method + "\\s*\\("), method + " adapter");
   }
-  assert.doesNotMatch(careers, /localStorage|IDEALAB\.legacy/);
+  assert.doesNotMatch(careers, /IDEALAB\.legacy/);
+  assert.match(careers, /localStorage\.setItem\(jobDraftKey/);
+  assert.match(careers, /localStorage\.getItem\(jobDraftKey/);
 });
 
 test("vacancy UI disables legacy employer application panel and protects contact details", () => {
