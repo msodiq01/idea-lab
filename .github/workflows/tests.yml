@@ -29,3 +29,15 @@ jobs:
         run: node --check assets/idea-careers-server.js && node --check assets/idea-data.js
       - name: Run regression tests
         run: node --test tests/*.test.cjs
+
+  edge-function-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type-check IDEA LAB AI Edge Function
+        run: deno check supabase/functions/idea-ai/index.ts
